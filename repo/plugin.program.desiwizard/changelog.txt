@@ -1,0 +1,6 @@
+1.0.0
+-- Initial Version
+1.0.1
+-- Added Log upload to Pastebin
+1.0.2
+-- Added Option to choose backup folder.
