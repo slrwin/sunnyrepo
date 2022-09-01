@@ -100,7 +100,7 @@ REPOID = 'repository.sunnyrepo'
 # Url to Addons.xml file in your repo folder(this is so we can get the latest version)
 REPOADDONXML = 'https://raw.githack.com/slrwin/sunnyrepo/master/repo/zips/addons.xml'
 # Url to folder zip is located in
-REPOZIPURL = 'https://github.com/slrwin/sunnyrepo/blob/master/repo/zips/repository.sunnyrepo/repository.sunnyrepo-1.0.1.zip?raw=true'
+REPOZIPURL = 'https://github.com/slrwin/sunnyrepo/raw/master/repository.sunnyrepo-1.0.1.zip'
 #########################################################
 
 #########################################################
