@@ -5,7 +5,7 @@ from a4kSubtitles.lib import utils, request, kodi
 __languages_filename = 'languages.json'
 __tvshows_filename = 'tvshows.json'
 __etags_filename = 'etags.json'
-__github_url = 'https://raw.githack.com/a4k-openproject/a4kSubtitles/master/a4kSubtitles/data/addic7ed/%s'
+__github_url = 'https://raw.githubusercontent.com/a4k-openproject/a4kSubtitles/master/a4kSubtitles/data/addic7ed/%s'
 __github_tvshows_url = __github_url % __tvshows_filename
 
 __dirname = utils.os.path.dirname(__file__)

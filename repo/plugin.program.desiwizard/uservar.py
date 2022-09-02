@@ -17,7 +17,7 @@ ADDONTITLE = '[COLOR limegreen][B]Desi[/B][/COLOR]Wizard'
 BUILDERNAME = 'DesiWizard'
 EXCLUDES = [ADDON_ID, 'repository.sunnyrepo']
 # Text File with build info in it. Please read https://github.com/a4k-openproject/plugin.program./wiki/Installing-Builds
-BUILDFILE = 'https://raw.githack.com/slrwin/sunnyrepo/master/build.txt'
+BUILDFILE = 'https://raw.githubusercontent.com/slrwin/sunnyrepo/master/build.txt'
 # How often you would like it to check for build updates in days
 # 0 being every startup of kodi
 UPDATECHECK = 0
@@ -98,9 +98,9 @@ AUTOINSTALL = 'Yes'
 # Addon ID for the repository
 REPOID = 'repository.sunnyrepo'
 # Url to Addons.xml file in your repo folder(this is so we can get the latest version)
-REPOADDONXML = 'https://raw.githack.com/slrwin/sunnyrepo/master/repo/zips/addons.xml'
+REPOADDONXML = 'https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml'
 # Url to folder zip is located in
-REPOZIPURL = 'https://github.com/slrwin/sunnyrepo/raw/master/repository.sunnyrepo-1.0.1.zip'
+REPOZIPURL = 'https://github.com/slrwin/sunnyrepo/blob/master/repository.sunnyrepo-1.0.1.zip?raw=true'
 #########################################################
 
 #########################################################

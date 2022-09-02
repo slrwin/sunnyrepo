@@ -32,14 +32,14 @@
 </addon><addon id="repository.sunnyrepo" name="sunnyrepo" version="1.0.1" provider-name="sunny">
     <extension point="xbmc.addon.repository" name="sunnyrepo">
         <dir>
-            <info compressed="false">https://github.com/slrwin/sunnyrepo/blob/master/repo/zips/addons.xml</info>
-            <checksum>https://github.com/slrwin/sunnyrepo/blob/master/repo/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://github.com/slrwin/sunnyrepo/blob/master/repo/zips/</datadir>
+            <info compressed="false">https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/</datadir>
         </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary>sunnyrepo</summary>
-        <description>Sunny Test Repo</description>
+        <description>Sunny Repo</description>
         <disclaimer />
         <platform>all</platform>
         <assets>
