@@ -1,0 +1,3 @@
+[submodule "repo/plugin.program.desiwizard"]
+	path = repo/plugin.program.desiwizard
+	url = https://github.com/slrwin/plugin.program.desiwizard.git
