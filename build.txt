@@ -1,6 +1,6 @@
 id="plugin.program.desiwizard"
-version="1.0.0"
-zip="https://github.com/sathish804/plugin.program.desiwizard/raw/master/plugin.program.desiwizard.zip"
+version="1.0.2"
+zip="https://github.com/slrwin/sunnyrepo/raw/master/repo/zips/plugin.program.desiwizard/plugin.program.desiwizard-1.0.2.zip"
 
 name="Desi Build"
 version="1.0"
