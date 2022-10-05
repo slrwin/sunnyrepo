@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.6.5" provider-name="doko">
+    <requires>
+        <import addon="script.module.requests"/>
+        <import addon="script.module.six"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.6.5:[/B]
+- Changed user agent
+
+[B]0.6.4:[/B]
+- Changed site to new domain
+
+[B]0.6.3:[/B]
+- Fixed Cloudflare TLS issue</news>
+        <description lang="en">
+Watch cartoons and anime from [COLOR orange][B]www.wcofun.net[/B][/COLOR].
+
+Support the WatchCartoonOnline website with a PayPal donation to:
+[COLOR khaki][B]wcohelp@yandex.com[/B][/COLOR]
+
+Add-on originally by doko.
+        </description>
+		<assets>
+            <icon>icon.png</icon>
+        </assets>
+        <platform lang="en">all</platform>
+        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
+    </extension>
+</addon>
