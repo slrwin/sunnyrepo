@@ -7,8 +7,9 @@
         <setting type="lsep" label="Catalog:"/>
         <setting id="showCatalog" label="Show Catalog Sections" type="bool" default="true"/>
         <setting id="showCatalogThumbs" label="Show Letter Thumbnails" subsetting="true" type="bool" default="false" enable="eq(-1,true)"/>
-        <setting id="useLatestDate" label="Order &#39;Latest Releases&#39; By Date" type="bool" default="false"/>
-        <setting id="showLatestThumbs" label="Show &#39;Latest Releases&#39; Thumbnails" type="bool" default="false"/>
+        <setting id="useLatestDate" label="Order &#39;Latest Releases&#39; By Date" type="bool" default="true"/>
+        <setting id="showLatestThumbs" label="Show &#39;Latest Releases&#39; Thumbnails" type="bool" default="true"/>
+        <setting id="showSeriesThumbs" label="Show &#39;Series&#39; Thumbnails" type="bool" default="false"/>
         <setting type="sep"/>
         <setting type="lsep" label="Episodes:"/>
         <setting id="reverseEpisodes" label="Reverse Episode List Order" type="bool" default="false"/>

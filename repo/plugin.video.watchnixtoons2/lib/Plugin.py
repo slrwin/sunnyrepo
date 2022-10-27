@@ -9,7 +9,9 @@ from six.moves import urllib_parse
 from string import ascii_uppercase
 
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
+import xbmcvfs
 import ssl
+
 from lib.Common import *
 from lib.SimpleTrakt import SimpleTrakt
 
@@ -18,8 +20,6 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 BASEURL = 'https://www.wcofun.net'
-# Due to a recent bug on the server end, the mobile URL is now only used on 'makeLatestCatalog()'.
-# BASEURL_ALT = 'https://m.wcostream.com' # Mobile version of one of their domains (seems to be the only one). now has cloudflare
 BASEURL_ALT = 'https://www.wcofun.net'
 
 from urllib3.poolmanager import PoolManager
@@ -47,6 +47,7 @@ tls_adapters = [TLS12HttpAdapter(), TLS11HttpAdapter()]
 
 PLUGIN_ID = int(sys.argv[1])
 PLUGIN_URL = sys.argv[0]
+PLUGIN_NAME = PLUGIN_URL.replace("plugin://","")
 PROPERTY_CATALOG_PATH = 'wnt2.catalogPath'
 PROPERTY_CATALOG = 'wnt2.catalog'
 PROPERTY_EPISODE_LIST_URL = 'wnt2.listURL'
@@ -64,12 +65,15 @@ ADDON_LATEST_DATE = ADDON.getSetting('useLatestDate') == 'true'
 ADDON_LATEST_THUMBS = ADDON.getSetting('showLatestThumbs') == 'true'
 # Use poster images for each catalog folder. Makes for a better experience on custom Kodi skins.
 ADDON_CATALOG_THUMBS = ADDON.getSetting('showCatalogThumbs') == 'true'
+#Use ids from files for the series to show the thumbnails
+ADDON_SERIES_THUMBS = ADDON.getSetting('showSeriesThumbs') == 'true'
 ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_ICON_DICT = {'icon': ADDON_ICON, 'thumb': ADDON_ICON, 'poster': ADDON_ICON}
-ADDON_TRAKT_ICON = 'special://home/addons/plugin.video.watchnixtoons2/resources/traktIcon.png'
+RESOURCE_URL = 'special://home/addons/{0}resources/'.format(PLUGIN_NAME)
+ADDON_TRAKT_ICON = RESOURCE_URL + 'media/traktIcon.png'
 
 # To let the source website know it's this plugin. Also used inside "makeLatestCatalog()" and "actionResolve()".
-WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
 
 MEDIA_HEADERS = None # Initialized in 'actionResolve()'.
 
@@ -227,47 +231,59 @@ def actionCatalogSection(params):
         sectionItems = catalog[params['section']]
 
     def _sectionItemsGen():
+
         if ADDON_LATEST_THUMBS and path == URL_PATHS['latest']:
+            show_thumbs = True
+            form_hash = False
+
             # Special-case for the 'Latest Releases' catalog, which has some thumbnails available.
             # Each 'entry' is (URL, htmlTitle, thumb).
             NO_THUMB = '-120-72.jpg' # As seen on 2019-04-15.
-            for entry in sectionItems:
-                entryURL = entry[0]
-                entryArt = (
-                    artDict if entry[2].startswith(NO_THUMB) else {'icon':ADDON_ICON,'thumb':entry[2],'poster':entry[2]}
-                )
-                # If there's metadata for this entry (requested by the user with "Show Information"), use it.
-                if entryURL in infoItems:
-                    itemPlot, itemThumb = infoItems[entryURL]
-                    yield (
-                        buildURL({'action': action, 'url': entryURL}),
-                        listItemFunc(entry[1], entryURL, entryArt, itemPlot, isFolder, isSpecial, None),
-                        isFolder
-                    )
-                else:
-                    yield (
-                        buildURL({'action': action, 'url': entryURL}),
-                        listItemFunc(entry[1], entryURL, entryArt, '', isFolder, isSpecial, params),
-                        isFolder
-                    )
+
+        elif ADDON_SERIES_THUMBS and path in [ URL_PATHS['dubbed'], URL_PATHS['cartoons'], URL_PATHS['subbed'] ]:
+            show_thumbs = True
+            form_hash = True
+            if six.PY2:
+                f = open( xbmc.translatePath( RESOURCE_URL + 'data/' + path.replace('/','') + '.json' ) )
+            else:
+                f = open( xbmcvfs.translatePath( RESOURCE_URL + 'data/' + path.replace('/','') + '.json' ) )
+            hashes = json.load(f)
         else:
-            # Normal item listing, each 'entry' is (URL, htmlTitle).
-            for entry in sectionItems:
-                entryURL = entry[0]
-                if entryURL in infoItems:
-                    itemPlot, itemThumb = infoItems[entryURL]
-                    entryArt = {'icon': ADDON_ICON, 'thumb': itemThumb, 'poster': itemThumb}
-                    yield (
-                        buildURL({'action': action, 'url': entryURL}),
-                        listItemFunc(entry[1], entryURL, entryArt, itemPlot, isFolder, isSpecial, None),
-                        isFolder
+            show_thumbs = False
+
+
+        for entry in sectionItems:
+
+            entryURL = entry[0]
+
+            # If there's metadata for this entry (requested by the user with "Show Information"), use it.
+            if entryURL in infoItems:
+                itemPlot, itemThumb = infoItems[entryURL]
+                entryArt = {'icon': ADDON_ICON, 'thumb': itemThumb, 'poster': itemThumb}
+                yield (
+                    buildURL({'action': action, 'url': entryURL}),
+                    listItemFunc(entry[1], entryURL, entryArt, itemPlot, isFolder, isSpecial, None),
+                    isFolder
+                )
+            else:
+
+                if show_thumbs and form_hash == False:
+                    entryArt = (
+                        artDict if entry[2].startswith(NO_THUMB) else {'icon':ADDON_ICON,'thumb':entry[2],'poster':entry[2]}
+                    )
+                elif show_thumbs and form_hash and generateMd5( entryURL ) in hashes.keys():
+                    thumb_from_hash = 'https://cdn.animationexplore.com/catimg/' + hashes[ generateMd5( entryURL ) ] + '.jpg'
+                    entryArt = (
+                        {'icon':ADDON_ICON,'thumb':thumb_from_hash,'poster':thumb_from_hash}
                     )
                 else:
-                    yield (
-                        buildURL({'action': action, 'url': entryURL}),
-                        listItemFunc(entry[1], entryURL, artDict, '', isFolder, isSpecial, params),
-                        isFolder
-                    )
+                    entryArt = artDict
+
+                yield (
+                    buildURL({'action': action, 'url': entryURL}),
+                    listItemFunc(entry[1], entryURL, entryArt, '', isFolder, isSpecial, params),
+                    isFolder
+                )
 
     xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_sectionItemsGen()))
     xbmcplugin.endOfDirectory(PLUGIN_ID)
@@ -641,7 +657,6 @@ def actionRestoreDatabase(params):
     # This will update all the WatchNixtoons2 'strFilename' columns of table 'files' of Kodi's MyVideos###.db
     # with the new BASEURL used by the add-on so that episodes are still considered as watched (playcount >= 1).
 
-    import xbmcvfs
     try:
         import sqlite3
     except:
@@ -654,7 +669,10 @@ def actionRestoreDatabase(params):
     dirs, files = xbmcvfs.listdir('special://database')
     for file in files:
         if 'MyVideos' in file and file.endswith('.db'):
-            path = xbmc.translatePath('special://database/' + file)
+            if six.PY2:
+                path = xbmc.translatePath('special://database/' + file)
+            else:
+                path = xbmcvfs.translatePath('special://database/' + file)
             break
     else:
         xbmcgui.Dialog().notification(
@@ -723,7 +741,6 @@ def actionUpdateFavourites(params):
     # Action called from the settings dialog.
     # This will update all the Kodi favourites that use WatchNixtoons2 so that they use the new BASEURL.
 
-    import xbmcvfs
     FAVOURITES_PATH = 'special://userdata/favourites.xml'
 
     file = xbmcvfs.File(FAVOURITES_PATH)
@@ -801,12 +818,18 @@ def getPageMetadata(html):
     thumb = ''
     stringStartIndex = html.find('og:image" content="')
     if stringStartIndex != -1:
-        thumbPath = html[stringStartIndex+19 : html.find('"', stringStartIndex+19)] # 19 = len('og:image" content="')
+        # 19 = len('og:image" content="')
+        thumbPath = html[stringStartIndex+19 : html.find('"', stringStartIndex+19)]
         if thumbPath:
             if thumbPath.startswith('http'):
                 thumb = thumbPath + getThumbnailHeaders()
             elif thumbPath.startswith('/'):
                 thumb = BASEURL + thumbPath + getThumbnailHeaders()
+
+    if thumb:
+        # animationexplore seems more reliable
+        thumb = thumb.replace( BASEURL + '/wp-content', 'https://cdn.animationexplore.com' )
+        
 
     # (Show) plot scraping.
     plot = ''
@@ -1485,9 +1508,8 @@ def getThumbnailHeaders():
     cookies = ('&Cookie=' + urllib_parse.quote_plus(cookieProperty)) if cookieProperty else ''
 
     # Since it's a constant value, it can be precomputed.
-    return '|User-Agent=Mozilla%2F5.0+%28compatible%3B+WatchNixtoons2%2F0.4.1%3B' \
-    '+%2Bhttps%3A%2F%2Fgithub.com%2Fdoko-desuka%2Fplugin.video.watchnixtoons2%29' \
-    '&Accept=image%2Fwebp%2C%2A%2F%2A&Referer=https%3A%2F%2Fwww.wcofun.net%2F' + cookies
+    return '|User-Agent='+urllib_parse.quote_plus(WNT2_USER_AGENT)
+    + '&Accept=image%2Fwebp%2C%2A%2F%2A&Referer='+urllib_parse.quote_plus(BASEURL+'/') + cookies
 
 
 def getOldDomains():
@@ -1559,25 +1581,6 @@ def requestHelper(url, data=None, extraHeaders=None):
         sleep(1.5 - elapsed)
 
     return response
-
-
-#def getRandomUserAgent():
-#    # Random user-agent logic. Thanks to http://edmundmartin.com/random-user-agent-requests-python/
-#    from random import choice
-#    desktop_agents = (
-#        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-#        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-#        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-#        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14',
-#        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-#        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
-#        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
-#        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-#        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-#        'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'
-#    )
-#    return choice(desktop_agents)
-
 
 # Defined after all the functions exist.
 CATALOG_FUNCS = {

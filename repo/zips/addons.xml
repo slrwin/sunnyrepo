@@ -597,7 +597,7 @@ DeccanDelight and its developers [B]DO NOT[/B] host, create, or distribute any o
             Debrid account status now visible from Seren settings
         </news>
     </extension>
-</addon><addon id="plugin.video.themoviedb.helper" version="5.0.20" name="TheMovieDb Helper" provider-name="jurialmunkey">
+</addon><addon id="plugin.video.themoviedb.helper" version="5.0.21" name="TheMovieDb Helper" provider-name="jurialmunkey">
 <requires>
   <import addon="xbmc.python" version="3.0.0" />
   <import addon="script.module.requests" version="2.9.1" />
@@ -626,7 +626,7 @@ DeccanDelight and its developers [B]DO NOT[/B] host, create, or distribute any o
     <screenshot>resources/screenshot-02.jpg</screenshot>
   </assets>
 </extension>
-</addon><addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.6.5" provider-name="doko">
+</addon><addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.7.0" provider-name="doko">
     <requires>
         <import addon="script.module.requests" />
         <import addon="script.module.six" />
@@ -635,15 +635,7 @@ DeccanDelight and its developers [B]DO NOT[/B] host, create, or distribute any o
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
-[B]0.6.5:[/B]
-- Changed user agent
-
-[B]0.6.4:[/B]
-- Changed site to new domain
-
-[B]0.6.3:[/B]
-- Fixed Cloudflare TLS issue</news>
+        <summary lang="en">WatchNixtoons2</summary>
         <description lang="en">
 Watch cartoons and anime from [COLOR orange][B]www.wcofun.net[/B][/COLOR].
 
@@ -652,11 +644,19 @@ Support the WatchCartoonOnline website with a PayPal donation to:
 
 Add-on originally by doko.
         </description>
+        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
+		<language>en</language>
+        <platform lang="en">all</platform>
+        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+[B]0.7.0:[/B]
+- Update User Agent
+- Small code clean-up
+- Change some default settings
+- Now has the ability to show show thumbnails in dubbed, subbed &amp; cartoons
+  - This needs to be enabled in the options</news>
 		<assets>
             <icon>icon.png</icon>
         </assets>
-        <platform lang="en">all</platform>
-        <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
     </extension>
 </addon><addon id="repository.sunnyrepo" name="sunnyrepo" version="1.0.1" provider-name="sunny">
     <extension point="xbmc.addon.repository" name="sunnyrepo">
@@ -999,13 +999,13 @@ Supports: OpenSubtitles, BSPlayer, Podnadpisi.NET, Subscene, Addic7ed
   * results ordering with preferred language ordered first
         </news>
     </extension>
-</addon><addon id="skin.arctic.horizon.2" name="Arctic Horizon 2" provider-name="jurialmunkey" version="0.5.28">
+</addon><addon id="skin.arctic.horizon.2" name="Arctic Horizon 2" provider-name="jurialmunkey" version="0.5.37">
     <requires>
         <import addon="xbmc.gui" version="5.15.0" />
         <import addon="script.skinshortcuts" version="0.4.0" />
         <import addon="script.skinvariables" version="1.0.0" />
         <import addon="script.texturemaker" version="0.2.8" />
-        <import addon="plugin.video.themoviedb.helper" version="5.0.15" />
+        <import addon="plugin.video.themoviedb.helper" version="5.0.21" />
         <import addon="resource.images.weatherfanart.multi" version="0.0.1" />
         <import addon="resource.images.weathericons.white" version="0.0.1" />
         <import addon="resource.images.studios.coloured" version="0.0.1" />

@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
 import xbmcgui
+import six
+
+try:
+    import md5
+except ImportError:
+    from hashlib import md5
 
 def getWindowProperty(prop):
     window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
@@ -27,3 +33,16 @@ def getRawWindowProperty(prop):
 def setRawWindowProperty(prop, data):
     window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
     window.setProperty(prop, data)
+
+def generateMd5(strToMd5):
+    encrptedMd5 = ""
+
+    if six.PY2:
+        md5Instance = md5.new()
+    else:
+        md5Instance = md5()
+        strToMd5 = bytes(strToMd5, "UTF-8")
+
+    md5Instance.update(strToMd5)
+    encrptedMd5 = md5Instance.hexdigest()
+    return encrptedMd5
