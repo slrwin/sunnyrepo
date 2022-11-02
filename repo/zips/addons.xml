@@ -111,7 +111,7 @@ DeccanDelight and its developers [B]DO NOT[/B] host, create, or distribute any o
 		<screenshot>resources/images/screenshot-03.jpg</screenshot>
 	</assets>
 </extension>
-</addon><addon id="plugin.video.seren" version="2.2.1" name="Seren" provider-name="Nixgates">
+</addon><addon id="plugin.video.seren" version="2.2.2" name="Seren" provider-name="Nixgates">
     <requires>
         <import addon="xbmc.addon" version="17.9.910" />
         <import addon="script.module.future" version="0.17.1" />
@@ -174,6 +174,12 @@ DeccanDelight and its developers [B]DO NOT[/B] host, create, or distribute any o
             <screenshot>resources/screenshots/screenshot-03.jpg</screenshot>
         </assets>
         <news>
+            Changelog 2.2.2
+            [BUG] Trakt scrobbling hitting rate limiter
+            [BUG] Improve onWake and sleeping service calls
+            [FEATURE] Update pytz to 2022.5
+            [FEATURE] Fixed 'info_text' item property for themes
+
             Changelog 2.2.1
             [BUG] Error on fresh install from update news
             [BUG] Discover TV Shows Genre multi-select not working
@@ -999,14 +1005,13 @@ Supports: OpenSubtitles, BSPlayer, Podnadpisi.NET, Subscene, Addic7ed
   * results ordering with preferred language ordered first
         </news>
     </extension>
-</addon><addon id="skin.arctic.horizon.2" name="Arctic Horizon 2" provider-name="jurialmunkey" version="0.5.37">
+</addon><addon id="skin.arctic.horizon.2" name="Arctic Horizon 2" provider-name="jurialmunkey" version="0.6.0">
     <requires>
         <import addon="xbmc.gui" version="5.15.0" />
         <import addon="script.skinshortcuts" version="0.4.0" />
         <import addon="script.skinvariables" version="1.0.0" />
         <import addon="script.texturemaker" version="0.2.8" />
         <import addon="plugin.video.themoviedb.helper" version="5.0.21" />
-        <import addon="resource.images.weatherfanart.multi" version="0.0.1" />
         <import addon="resource.images.weathericons.white" version="0.0.1" />
         <import addon="resource.images.studios.coloured" version="0.0.1" />
     </requires>
