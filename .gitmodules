@@ -22,6 +22,3 @@
 [submodule "repo/plugin.video.seren"]
 	path = repo/plugin.video.seren
 	url = https://github.com/nixgates/plugin.video.seren
-[submodule "repo/plugin.video.deccandelight"]
-	path = repo/plugin.video.deccandelight
-	url = https://github.com/slrwin/plugin.video.deccandelight
