@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>common/black.png</texture>
+            <animation type="WindowOpen" reversible="false">
+                <effect type="fade" start="0" end="80" time="200" tween="sine" easing="in" />
+            </animation>
+        </control>
+        <control type="group">
+            <left>320</left>
+            <top>252</top>
+            <animation type="WindowOpen" reversible="false">
+                <effect type="zoom" start="50" end="100" time="200" center="910,440" tween="quadratic" easing="out" />
+            </animation>
+            <control type="group">
+                <width>1250</width>
+                <control type="image">
+                    <height>575</height>
+                    <texture colordiffuse="FF4a4347">common/white.png</texture>
+                </control>
+                <control type="image">
+                    <height>100</height>
+                    <texture colordiffuse="$INFO[Window(10000).Property(fen.highlight)]">common/gradients/gradient-underlayer-horizontal-flipped.png</texture>
+                </control>
+                <control type="image">
+                    <left>15</left>
+                    <top>15</top>
+                    <width>70</width>
+                    <height>70</height>
+                    <align>left</align>
+                    <aligny>top</aligny>
+                    <aspectratio aligny="top">keep</aspectratio>
+                    <texture colordiffuse="FFCCCCCC">common/fen.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <left>218</left>
+                <top>115</top>
+                <height>370</height>
+                <aspectratio>keep</aspectratio>
+                <align>top</align>
+                <texture>$INFO[Container(5001).ListItem.Property(image)]</texture>
+                <fadetime>100</fadetime>
+            </control>
+            <control type="fixedlist" id="5001">
+                <pagecontrol>5060</pagecontrol>
+                <left>0</left>
+                <top>115</top>
+                <width>530</width>
+                <height>460</height>
+                <onup>5001</onup>
+                <ondown>5001</ondown>
+                <onright>5060</onright>
+                <scrolltime tween="sine">200</scrolltime>
+                <orientation>Vertical</orientation>
+                <focusposition>2</focusposition>
+                <movement>2</movement>
+                <itemlayout height="90" width="530">
+                    <control type="label">
+                        <width max="480">auto</width>
+                        <left>40</left>
+                        <height>90</height>
+                        <font>font12</font> <!-- FEN_26 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>left</align>
+                        <aligny>center</aligny>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(name)][/UPPERCASE]</label>
+                    </control>
+                    <control type="image">
+                        <top>0</top>
+                        <left>3</left>
+                        <width>25</width>
+                        <align>left</align>
+                        <aligny>center</aligny>
+                        <aspectratio>keep</aspectratio>
+                        <texture>common/overlay_selected.png</texture>
+                        <visible>!String.IsEmpty(ListItem.Property(check_status))</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="90" width="530">
+                    <control type="image">
+                        <width>720</width>
+                        <height>90</height>
+                        <aligny>top</aligny>
+                        <texture colordiffuse="FFCCCCCC">common/white.png</texture>
+                        <animation effect="fade" start="100" end="30" time="0" condition="!Control.HasFocus(5001)">Conditional</animation>
+                    </control>
+                    <control type="image">
+                        <width>30</width>
+                        <height>90</height>
+                        <aligny>top</aligny>
+                        <texture colordiffuse="$INFO[Window(10000).Property(fen.highlight)]">common/white.png</texture>
+                        <animation effect="fade" start="100" end="30" time="0" condition="!Control.HasFocus(5001)">Conditional</animation>
+                    </control>
+                    <control type="label">
+                        <left>40</left>
+                        <width max="480">auto</width>
+                        <height>90</height>
+                        <font>font12</font> <!-- FEN_26 -->
+                        <textcolor>FF4a4347</textcolor>
+                        <align>left</align>
+                        <aligny>center</aligny>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(name)][/UPPERCASE]</label>
+                    </control>
+                    <control type="image">
+                        <top>0</top>
+                        <left>3</left>
+                        <width>25</width>
+                        <align>left</align>
+                        <aligny>center</aligny>
+                        <aspectratio>keep</aspectratio>
+                        <texture>common/overlay_selected.png</texture>
+                        <visible>!String.IsEmpty(ListItem.Property(check_status))</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="scrollbar" id="5060">
+                <top>115</top>
+                <left>550</left>
+                <width>20</width>
+                <height>450</height>
+                <onleft>5001</onleft>
+                <onright>10</onright>
+                <texturesliderbackground colordiffuse="FF302F2F">common/white.png</texturesliderbackground>
+                <texturesliderbar colordiffuse="FF555556">common/white.png</texturesliderbar>
+                <texturesliderbarfocus colordiffuse="$INFO[Window(10000).Property(fen.highlight)]">common/white.png</texturesliderbarfocus>
+                <showonepage>false</showonepage>
+                <orientation>vertical</orientation>
+                <visible>Control.IsVisible(5001)</visible>
+            </control>
+            <control type="group">
+                <top>500</top>
+                <left>600</left>
+                <control type="button" id="10">
+                    <description>OK</description>
+                    <width>300</width>
+                    <height>60</height>
+                    <onup>5001</onup>
+                    <ondown>5001</ondown>
+                    <onleft>5001</onleft>
+                    <onright>11</onright>
+                    <label>[B]$ADDON[plugin.video.fen 32839][/B]</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFB7B4BB</textcolor>
+                    <focusedcolor>$INFO[Window(10000).Property(fen.highlight)]</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC">common/white.png</texturefocus>
+                    <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
+                    <align>center</align>
+                </control>
+                <control type="button" id="11">
+                    <description>Cancel</description>
+                    <left>315</left>
+                    <width>300</width>
+                    <height>60</height>
+                    <onup>5001</onup>
+                    <ondown>5001</ondown>
+                    <onleft>10</onleft>
+                    <onright>10</onright>
+                    <label>[B]$ADDON[plugin.video.fen 32840][/B]</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFB7B4BB</textcolor>
+                    <focusedcolor>$INFO[Window(10000).Property(fen.highlight)]</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC">common/white.png</texturefocus>
+                    <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
+                    <align>center</align>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

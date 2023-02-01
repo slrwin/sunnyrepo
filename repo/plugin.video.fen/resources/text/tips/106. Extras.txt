@@ -1,0 +1,8 @@
+
+[COLOR dodgerblue][B]Extras[/B][/COLOR]
+
+Movie and TV Show context menus have an 'Extras...' listing.
+
+This will open a fullscreen window with information about the movie/tv show including cast, ratings, similar media, reviews, etc.
+
+Also can be set in Settings->General->Extras for Movies/TV Shows to open to this window when they are selected in Fen.

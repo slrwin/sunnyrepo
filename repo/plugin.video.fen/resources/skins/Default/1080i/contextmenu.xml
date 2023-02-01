@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>common/black.png</texture>
+            <animation type="WindowOpen" reversible="false">
+                <effect type="fade" start="0" end="80" time="200" tween="sine" easing="in" />
+            </animation>
+        </control>
+        <control type="group">
+            <animation type="WindowOpen" reversible="false">
+                <effect type="zoom" start="50" end="100" time="200" center="910,440" tween="quadratic" easing="out" />
+            </animation>
+            <left>710</left>
+            <top>280</top>
+            <control type="group">
+                <width>500</width>
+                <control type="image">
+                    <height>110</height>
+                    <texture colordiffuse="FF4a4347">common/white.png</texture>
+                </control>
+                <control type="image">
+                    <height>100</height>
+                    <texture colordiffuse="$INFO[Window(10000).Property(fen.highlight)]">common/gradients/gradient-underlayer-horizontal-flipped.png</texture>
+                </control>
+                <control type="image">
+                    <left>15</left>
+                    <top>15</top>
+                    <width>70</width>
+                    <height>70</height>
+                    <align>left</align>
+                    <aligny>top</aligny>
+                    <aspectratio aligny="top">keep</aspectratio>
+                    <texture colordiffuse="FFCCCCCC">common/fen.png</texture>
+                </control>
+            </control>
+            <control type="list" id="2020">
+                <left>0</left>
+                <top>110</top>
+                <width>500</width>
+                <height>540</height>
+                <onup>2020</onup>
+                <ondown>2020</ondown>
+                <orientation>Vertical</orientation>
+                <itemlayout height="90" width="500">
+                    <control type="image">
+                        <width>500</width>
+                        <height>90</height>
+                        <texture colordiffuse="FF4a4347">common/white.png</texture>
+                    </control>
+                    <control type="label">
+                        <width max="450">auto</width>
+                        <left>40</left>
+                        <height>90</height>
+                        <font>font12</font> <!-- FEN_26 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(label)][/UPPERCASE]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="90" width="500">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>720</width>
+                        <height>90</height>
+                        <aligny>top</aligny>
+                        <texture colordiffuse="FFCCCCCC">common/white.png</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>30</width>
+                        <height>90</height>
+                        <aligny>top</aligny>
+                        <texture colordiffuse="$INFO[Window(10000).Property(fen.highlight)]">common/white.png</texture>
+                    </control>
+                    <control type="label">
+                        <left>40</left>
+                        <width max="450">auto</width>
+                        <height>90</height>
+                        <font>font12</font> <!-- FEN_26 -->
+                        <textcolor>FF4a4347</textcolor>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(label)][/UPPERCASE]</label>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+    </controls>
+</window>

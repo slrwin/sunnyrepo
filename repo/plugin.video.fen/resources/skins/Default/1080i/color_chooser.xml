@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>common/black.png</texture>
+            <animation type="WindowOpen" reversible="false">
+                <effect type="fade" start="0" end="80" />
+            </animation>
+        </control>
+        <!-- Colors Panel -->
+        <control type="group">
+            <left>130</left>
+            <top>90</top>
+            <animation type="WindowOpen" reversible="false">
+                <effect type="zoom" start="50" end="100" time="200" delay="300" center="auto" tween="quadratic" easing="out" />
+            </animation>
+            <control type="group">
+                <width>1660</width>
+                <control type="image">
+                    <height>900</height>
+                    <texture colordiffuse="FF4a4347">common/white.png</texture>
+                </control>
+                <control type="image">
+                    <height>100</height>
+                    <texture colordiffuse="$INFO[Window(10000).Property(fen.highlight)]">common/gradients/gradient-underlayer-horizontal-flipped.png</texture>
+                </control>
+                <control type="image">
+                    <left>15</left>
+                    <top>15</top>
+                    <width>70</width>
+                    <height>70</height>
+                    <align>left</align>
+                    <aligny>top</aligny>
+                    <aspectratio aligny="top">keep</aspectratio>
+                    <texture colordiffuse="FFCCCCCC">common/fen.png</texture>
+                </control>
+                <control type="label">
+                    <top>40</top>
+                    <left>105</left>
+                    <width max="1450">auto</width>
+                    <height>20</height>
+                    <font>font14</font> <!-- FEN_33 -->
+                    <textcolor>FFCCCCCC</textcolor>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <label>[B]$ADDON[plugin.video.fen 33106][/B]</label>
+                </control>
+            </control>
+            <!-- Color picker panel -->
+            <control type="panel" id="2000">
+                <left>30</left>
+                <top>130</top>
+                <width>1365</width>
+                <height>840</height>
+                <orientation>vertical</orientation>
+                <itemlayout height="44" width="44">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture>$INFO[ListItem.Property(image)]</texture>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="44" width="44">
+                    <control type="group">
+                        <animation effect="zoom" time="100" tween="sine" easing="inout" start="100" end="140" center="auto">Focus</animation>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>44</width>
+                            <height>44</height>
+                            <texture colordiffuse="FF302F2F">common/white.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>2</left>
+                            <top>2</top>
+                            <width>40</width>
+                            <height>40</height>
+                            <texture>$INFO[ListItem.Property(image)]</texture>
+                        </control>
+                    </control>
+                </focusedlayout>
+            </control>
+            <!-- Color preview -->
+            <control type="group">
+                <left>1420</left>
+                <top>617</top>
+                <control type="label">
+                    <width>210</width>
+                    <height>60</height>
+                    <align>center</align>
+                    <aligny>bottom</aligny>
+                    <textcolor>white</textcolor>
+                    <shadowcolor>black</shadowcolor>
+                    <font>font24</font>
+                    <shadowcolor>FF302F2F</shadowcolor>
+                    <label>[B][COLOR=$INFO[Container(2000).ListItem.Property(label)]]$INFO[Container(2000).ListItem.Property(label)][/COLOR][/B]</label>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>45</top>
+                    <width>210</width>
+                    <height>210</height>
+                    <texture colordiffuse="FF302F2F">common/white.png</texture>
+                </control>
+                <control type="image">
+                    <left>5</left>
+                    <top>50</top>
+                    <width>200</width>
+                    <height>200</height>
+                    <aspectratio>stretch</aspectratio>
+                    <texture>$INFO[Container(2000).ListItem.Property(image)]</texture>
+                </control>
+            </control>
+            <!-- Buttons -->
+            <control type="group">
+                <left>1425</left>
+                <top>130</top>
+                <control type="button" id="10">
+                    <description>OK</description>
+                    <width>200</width>
+                    <height>60</height>
+                    <onup>11</onup>
+                    <ondown>11</ondown>
+                    <onleft>2000</onleft>
+                    <onright>2000</onright>
+                    <label>[B]$ADDON[plugin.video.fen 32839][/B]</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFB7B4BB</textcolor>
+                    <focusedcolor>$INFO[Window(10000).Property(fen.highlight)]</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC">common/white.png</texturefocus>
+                    <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
+                    <align>center</align>
+                </control>
+                <control type="button" id="11">
+                    <description>Cancel</description>
+                    <top>80</top>
+                    <width>200</width>
+                    <height>60</height>
+                    <onup>10</onup>
+                    <ondown>10</ondown>
+                    <onleft>2000</onleft>
+                    <onright>2000d</onright>
+                    <label>[B]$ADDON[plugin.video.fen 32840][/B]</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFB7B4BB</textcolor>
+                    <focusedcolor>$INFO[Window(10000).Property(fen.highlight)]</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC">common/white.png</texturefocus>
+                    <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
+                    <align>center</align>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>
