@@ -31,3 +31,6 @@
 	url = https://github.com/nixgates/plugin.video.seren
 	branch = master
 
+[submodule "umbrellatest"]
+	path = umbrellatest
+	url = https://github.com/umbrellaplug/umbrellatest.git
