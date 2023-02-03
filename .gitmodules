@@ -33,3 +33,9 @@
 [submodule "umbrellatest"]
 	path = umbrellatest
 	url = https://github.com/umbrellaplug/umbrellatest.git
+[submodule "repo/a4kSubtitles"]
+	path = repo/a4kSubtitles
+	url = https://github.com/a4k-openproject/a4kSubtitles.git
+[submodule "repository.tikipeter"]
+	path = repository.tikipeter
+	url = https://github.com/Tikipeter/repository.tikipeter.git
