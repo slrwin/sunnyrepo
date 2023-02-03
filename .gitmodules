@@ -39,3 +39,9 @@
 [submodule "repository.tikipeter"]
 	path = repository.tikipeter
 	url = https://github.com/Tikipeter/repository.tikipeter.git
+[submodule "repo/plugin.program.autowidget"]
+	path = repo/plugin.program.autowidget
+	url = https://github.com/drinfernoo/plugin.program.autowidget.git
+[submodule "repo/plugin.video.dramacool"]
+	path = repo/plugin.video.dramacool
+	url = https://github.com/groggyegg/plugin.video.dramacool.git
