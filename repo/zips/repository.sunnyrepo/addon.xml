@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.sunnyrepo" name="sunnyrepo" version="1.0.1" provider-name="sunny">
+<addon id="repository.sunnyrepo" name="Sunnyrepo" version="1.0.2" provider-name="sunny">
     <extension point="xbmc.addon.repository" name="sunnyrepo">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml</info>

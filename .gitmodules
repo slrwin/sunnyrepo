@@ -45,3 +45,9 @@
 [submodule "repo/plugin.video.dramacool"]
 	path = repo/plugin.video.dramacool
 	url = https://github.com/groggyegg/plugin.video.dramacool.git
+[submodule "repo/script.module.xbmcext"]
+	path = repo/script.module.xbmcext
+	url = https://github.com/groggyegg/script.module.xbmcext.git
+[submodule "repo/script.module.peewee"]
+	path = repo/script.module.peewee
+	url = https://github.com/groggyegg/script.module.peewee.git

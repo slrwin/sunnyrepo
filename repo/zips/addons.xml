@@ -961,7 +961,7 @@ Add-on originally by doko.
             <icon>icon.png</icon>
         </assets>
     </extension>
-</addon><addon id="repository.sunnyrepo" name="sunnyrepo" version="1.0.1" provider-name="sunny">
+</addon><addon id="repository.sunnyrepo" name="Sunnyrepo" version="1.0.2" provider-name="sunny">
     <extension point="xbmc.addon.repository" name="sunnyrepo">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml</info>
@@ -1030,6 +1030,17 @@ Add-on originally by doko.
 - Fixed incorrect meta causing exception on marking as watched. -umbrella
 		</news>
 	</extension>
+</addon><addon id="script.module.peewee" name="Peewee" version="3.15.4" provider-name="groggyegg">
+    <extension point="xbmc.python.module" library="." />
+    <extension point="xbmc.addon.metadata">
+        <description lang="en_GB">Peewee is a simple and small ORM. It has few (but expressive) concepts, making it easy to learn and intuitive to use.</description>
+        <platform>all</platform>
+        <license>MIT License</license>
+        <source>https://github.com/coleifer/peewee</source>
+        <assets>
+            <icon>docs/peewee3-logo.png</icon>
+        </assets>
+    </extension>
 </addon><addon id="script.module.simpleeval" name="Simple Eval" version="0.9.10" provider-name="Daniel Fairhead">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
@@ -1043,6 +1054,20 @@ Add-on originally by doko.
         <source>https://github.com/mikesilvo164/script.module.simpleeval</source>
         <assets>
             <icon>icon.png</icon>
+        </assets>
+    </extension>
+</addon><addon id="script.module.xbmcext" name="XBMCExt" version="1.3.0" provider-name="groggyegg">
+    <requires>
+        <import addon="script.module.six" />
+    </requires>
+    <extension point="xbmc.python.module" library="." />
+    <extension point="xbmc.addon.metadata">
+        <description lang="en_GB">XBMCExt extends utilities, dialogs, and various control widgets.</description>
+        <platform>all</platform>
+        <license>MIT License</license>
+        <source>https://github.com/groggyegg/script.module.xbmcext</source>
+        <assets>
+            <icon>resources/icon.png</icon>
         </assets>
     </extension>
 </addon><addon id="script.skinvariables" version="1.0.7" name="Skin Variables" provider-name="jurialmunkey">
