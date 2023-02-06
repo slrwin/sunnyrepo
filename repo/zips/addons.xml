@@ -961,7 +961,7 @@ Add-on originally by doko.
             <icon>icon.png</icon>
         </assets>
     </extension>
-</addon><addon id="repository.sunnyrepo" name="Sunnyrepo" version="1.0.2" provider-name="sunny">
+</addon><addon id="repository.sunnyrepo" name="Sunny Repo" version="1.0.3" provider-name="sunny">
     <extension point="xbmc.addon.repository" name="sunnyrepo">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml</info>
