@@ -16,7 +16,7 @@ confirm_progress_media, poster_empty, get_setting, select_dialog = kodi_utils.co
 player, confirm_dialog, ok_dialog, addon_fanart, build_url = kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.addon_fanart, kodi_utils.build_url
 show_busy_dialog, hide_busy_dialog, make_directory, open_file = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.make_directory, kodi_utils.open_file
 external_browse, set_view_mode, make_listitem, list_dirs = kodi_utils.external_browse, kodi_utils.set_view_mode, kodi_utils.make_listitem, kodi_utils.list_dirs
-fen_clearlogo, sleep = kodi_utils.addon_clearlogo, kodi_utils.sleep
+fen_clearlogo, sleep, kodi_version = kodi_utils.addon_clearlogo, kodi_utils.sleep, kodi_utils.kodi_version
 sources = Sources()
 ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 levels =['../../../..', '../../..', '../..', '..']
@@ -377,7 +377,11 @@ def download_manager(params):
 				listitem = make_listitem()
 				listitem.setLabel(clean_file_name(normalize(path)))
 				listitem.setArt({'fanart': addon_fanart, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				yield (url, listitem, info[1])
 			except: pass
 	handle = int(sys.argv[1])

@@ -11,7 +11,7 @@ ls, sys, make_listitem, build_url, Thread, add_items = kodi_utils.local_string, 
 add_dir, external_browse, dialog, sleep, json, get_icon = kodi_utils.add_dir, kodi_utils.external_browse, kodi_utils.dialog, kodi_utils.sleep, kodi_utils.json, kodi_utils.get_icon
 trakt_icon, fanart, fen_clearlogo, add_item, build_content = get_icon('trakt'), kodi_utils.addon_fanart, kodi_utils.addon_clearlogo, kodi_utils.add_item, kodi_utils.build_content
 set_content, set_sort_method, set_view_mode, end_directory = kodi_utils.set_content, kodi_utils.set_sort_method, kodi_utils.set_view_mode, kodi_utils.end_directory
-make_placeholder = kodi_utils.make_placeholder_listitem
+make_placeholder, kodi_version = kodi_utils.make_placeholder_listitem, kodi_utils.kodi_version
 trakt_fetch_collection_watchlist, get_trakt_list_contents = trakt_api.trakt_fetch_collection_watchlist, trakt_api.get_trakt_list_contents
 trakt_trending_popular_lists, trakt_get_lists = trakt_api.trakt_trending_popular_lists, trakt_api.trakt_get_lists
 trakt_search_lists, trakt_fetch_movie_sets = trakt_api.trakt_search_lists, trakt_api.trakt_fetch_movie_sets
@@ -41,7 +41,11 @@ def search_trakt_lists(params):
 				listitem = make_listitem()
 				listitem.setLabel(display)
 				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': trakt_icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.addContextMenuItems(cm)
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': editor_display, 'iconImage': 'trakt'}))
 				yield (url, listitem, True)
@@ -84,7 +88,11 @@ def get_trakt_lists(params):
 				listitem = make_listitem()
 				listitem.setLabel(display)
 				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': trakt_icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.addContextMenuItems(cm)
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': editor_display, 'iconImage': 'trakt'}))
 				yield (url, listitem, True)
@@ -125,7 +133,11 @@ def get_trakt_trending_popular_lists(params):
 				listitem.addContextMenuItems(cm)
 				listitem.setLabel(display)
 				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': trakt_icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': editor_display, 'iconImage': 'trakt'}))
 				yield (url, listitem, True)
 			except: pass

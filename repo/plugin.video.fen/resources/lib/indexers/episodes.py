@@ -243,7 +243,7 @@ def build_single_episode(list_type, params={}):
 			if not item_get('duration'): item['duration'] = meta_get('duration')
 			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
 										'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_widget': is_widget})
-			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_widget': is_widget})
+			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_widget': is_widget})
 			url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})
 			cm_append((extras_str, run_plugin % extras_params))
 			cm_append((options_str, run_plugin % options_params))

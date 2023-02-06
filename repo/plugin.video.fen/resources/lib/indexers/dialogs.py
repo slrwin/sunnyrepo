@@ -15,14 +15,16 @@ json, ls, build_url, translate_path, select_dialog = kodi_utils.json, kodi_utils
 run_plugin, metadata_user_info, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.metadata_user_info, settings.autoplay_next_episode, settings.quality_filter
 make_window_properties, get_infolabel, kodi_refresh, item_jump = kodi_utils.make_window_properties, kodi_utils.get_infolabel, kodi_utils.kodi_refresh, kodi_utils.item_jump
 numeric_input, confirm_progress_media, container_update = kodi_utils.numeric_input, kodi_utils.confirm_progress_media, kodi_utils.container_update
-autoscrape_next_episode, audio_filters = settings.autoscrape_next_episode, settings.audio_filters
 poster_empty, fanart_empty, clear_property, highlight_prop = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.clear_property, kodi_utils.highlight_prop
 fen_str, addon_icon, database, maincache_db, custom_context_prop = ls(32036), kodi_utils.addon_icon, kodi_utils.database, kodi_utils.maincache_db, kodi_utils.custom_context_prop
+movie_extras_buttons_defaults, tvshow_extras_buttons_defaults = kodi_utils.movie_extras_buttons_defaults, kodi_utils.tvshow_extras_buttons_defaults
+extras_button_label_values = kodi_utils.extras_button_label_values
 get_language, extras_enabled_menus, active_internal_scrapers, auto_play = settings.get_language, settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
-quality_filter, watched_indicators = settings.quality_filter, settings.watched_indicators
 extras_open_action, get_art_provider, fanarttv_default, ignore_articles = settings.extras_open_action, settings.get_art_provider, settings.fanarttv_default, settings.ignore_articles
-toggle_all, enable_disable, set_default_scrapers = source_utils.toggle_all, source_utils.enable_disable, source_utils.set_default_scrapers
 clear_scrapers_cache, get_aliases_titles, make_alias_dict = source_utils.clear_scrapers_cache, source_utils.get_aliases_titles, source_utils.make_alias_dict
+toggle_all, enable_disable, set_default_scrapers = source_utils.toggle_all, source_utils.enable_disable, source_utils.set_default_scrapers
+autoscrape_next_episode, audio_filters = settings.autoscrape_next_episode, settings.audio_filters
+quality_filter, watched_indicators = settings.quality_filter, settings.watched_indicators
 default_highlights = kodi_utils.default_highlights
 closing_options = (None, 'trakt_manager', 'favorites_choice', 'playback_choice', 'clear_media_cache', 'set_media_artwork', 'clear_scrapers_cache', 'open_external_scrapers_choice',
 					'open_fen_settings', 'browse', 'browse_season', 'nextep_manager', 'recommended', 'random', 'playback', 'extras', 'mark_movie',
@@ -44,7 +46,65 @@ def tmdb_image_resolutions_choice(params):
 	unpause_settings_change()
 	make_settings_dict()
 	clear_cache('meta', silent=True)
-	execute_builtin('UpdateLibrary(video,special://skin/foo)')
+	kodi_refresh()
+
+def extras_buttons_choice(params):
+	media_type, button_dict, orig_button_dict = params.get('media_type', None), params.get('button_dict', {}), params.get('orig_button_dict', {})
+	if not orig_button_dict:
+		for _type in ('movie', 'tvshow'):
+			setting_id_base = 'extras.%s.button' % _type
+			for item in range(10, 18):
+				setting_id = setting_id_base + str(item)
+				button_action = get_setting(setting_id)
+				button_label = extras_button_label_values[_type][button_action]
+				button_dict[setting_id] = {'button_action': button_action, 'button_label': button_label, 'button_name': 'Button %s' % str(item - 9)}
+				orig_button_dict[setting_id] = {'button_action': button_action, 'button_label': button_label, 'button_name': 'Button %s' % str(item - 9)}
+	if media_type == None:
+		choices = [(32028, get_icon('movies'), 'movie'), (32029, get_icon('tv'), 'tvshow')]
+		list_items = [{'line1': ls(i[0]), 'icon': i[1]} for i in choices]
+		kwargs = {'items': json.dumps(list_items), 'heading': ls(33120)}
+		choice = select_dialog(choices, **kwargs)
+		if choice == None:
+			if button_dict != orig_button_dict:
+				pause_settings_change()
+				for k, v in button_dict.items(): set_setting(k, v['button_action'])
+				unpause_settings_change()
+				make_settings_dict()
+				return ok_dialog(text=32576)
+			return
+		media_type = choice[2]
+	icon = get_icon('movies' if media_type == 'movie' else 'tv')
+	choices = [('[B]%s[/B]   |   %s' % (v['button_name'], ls(v['button_label'])), v['button_name'], v['button_label'], k) for k, v in button_dict.items() if media_type in k]
+	list_items = [{'line1': i[0], 'icon': icon} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': ls(33121)}
+	choice = select_dialog(choices, **kwargs)
+	if choice == None: return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict})
+	button_name, button_label, button_setting = choice[1:]
+	choices = [(v, k) for k, v in extras_button_label_values[media_type].items() if not v == button_label]
+	choices = [i for i in choices if not i[0] == button_label]
+	list_items = [{'line1': ls(i[0]), 'icon': icon} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': ls(33122) % button_name}
+	choice = select_dialog(choices, **kwargs)
+	if choice == None: return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
+	button_label, button_action = choice
+	button_dict[button_setting] = {'button_action': button_action, 'button_label': button_label, 'button_name': button_name}
+	return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
+
+def default_extras_buttons_choice(params):
+	choices = [(32028, get_icon('movies'), 'movie'), (32029, get_icon('tv'), 'tvshow'), (32030, get_icon('genre_fantasy'), 'both')]
+	list_items = [{'line1': ls(i[0]), 'icon': i[1]} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': ls(33123)}
+	choice = select_dialog(choices, **kwargs)
+	if choice == None: return
+	media_type = choice[2]
+	pause_settings_change()
+	if media_type in ('movie', 'both'):
+		for item in movie_extras_buttons_defaults: set_setting(item[0], item[1])
+	if media_type in ('tvshow', 'both'):
+		for item in tvshow_extras_buttons_defaults: set_setting(item[0], item[1])
+	unpause_settings_change()
+	make_settings_dict()
+	ok_dialog(text=32576)
 
 def default_highlight_colors_choice(params):
 	silent = params.get('silent', 'false') != 'false'
@@ -591,12 +651,13 @@ def favorites_choice(params):
 	media_type, tmdb_id, title = params.get('media_type'), params.get('tmdb_id'), params.get('title')
 	from caches.favorites import favorites
 	current_favorites = favorites.get_favorites(media_type)
-	if any(i['tmdb_id'] == tmdb_id for i in current_favorites): function, text, refresh = favorites.delete_favourite, '%s %s?' % (ls(32603), ls(32453)), True
-	else: function, text, refresh = favorites.set_favourite, '%s %s?' % (ls(32602), ls(32453)), False
+	if any(i['tmdb_id'] == tmdb_id for i in current_favorites): function, text, refresh = favorites.delete_favourite, '%s %s?' % (ls(32603), ls(32453)), 'true'
+	else: function, text, refresh = favorites.set_favourite, '%s %s?' % (ls(32602), ls(32453)), 'false'
 	if not confirm_dialog(heading=title, text=text): return
 	success = function(media_type, tmdb_id, title)
+	refresh = params.get('refresh', refresh)
 	if success:
-		if refresh: kodi_refresh()
+		if refresh == 'true': kodi_refresh()
 		notification(32576, 3500)
 	else: notification(32574, 3500)
 
@@ -759,7 +820,7 @@ def options_menu_choice(params, meta=None):
 		listing_append((ls(32198), '', 'trakt_manager'))
 		listing_append((ls(32197), '', 'favorites_choice'))
 		listing_append((ls(32503), ls(32004) % rootname, 'recommended'))
-		if menu_type == 'tvshow' and not from_extras: listing_append((ls(32613), ls(32004) % rootname, 'random'))
+		if menu_type == 'tvshow': listing_append((ls(32613), ls(32004) % rootname, 'random'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list:
 		base_str1, base_str2, on_str, off_str = '%s%s', '%s: [B]%s[/B]' % (ls(32598), '%s'), ls(32090), ls(32027)
 		if auto_play(content): autoplay_status, autoplay_toggle, quality_setting = on_str, 'false', 'autoplay_quality_%s' % content
@@ -777,8 +838,9 @@ def options_menu_choice(params, meta=None):
 				listing_append((base_str1 % (ls(33086), ''), base_str2 % autoscrape_next_status, 'toggle_autoscrape_next'))
 		listing_append((base_str1 % (ls(32105), ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
 		listing_append((base_str1 % ('', '%s %s' % (ls(32055), ls(32533))), base_str2 % current_scrapers_status, 'enable_scrapers'))
-	listing_append((ls(32604) % (ls(32028) if menu_type == 'movie' else ls(32029)), ls(32497) % rootname, 'clear_media_cache'))
-	if menu_type in ('movie', 'tvshow') and not from_extras: listing_append((ls(33043), ls(33066) % rootname, 'set_media_artwork'))
+	if menu_type in ('movie', 'tvshow') and not from_extras:
+		listing_append((ls(32604) % (ls(32028) if menu_type == 'movie' else ls(32029)), ls(32497) % rootname, 'clear_media_cache'))
+		listing_append((ls(33043), ls(33066) % rootname, 'set_media_artwork'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append((ls(32637), '', 'clear_scrapers_cache'))
 	listing_append(('%s %s' % (ls(32118), ls(32513)), '', 'open_external_scrapers_choice'))
 	listing_append(('%s %s %s' % (ls(32641), ls(32036), ls(32247)), '', 'open_fen_settings'))
@@ -788,7 +850,7 @@ def options_menu_choice(params, meta=None):
 	choice = select_dialog([i[2] for i in listing], **kwargs)
 	if choice in closing_options: unpause_settings_change()
 	if choice == None: return
-	elif choice == 'playback':
+	if choice == 'playback':
 		return run_plugin({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 	elif choice == 'extras':
 		return extras_menu_choice({'tmdb_id': tmdb_id, 'media_type': content, 'is_widget': str(is_widget)})
@@ -857,16 +919,17 @@ def options_menu_choice(params, meta=None):
 	make_window_properties(override=True)
 	options_menu_choice(params, meta=meta)
 
-def extras_menu_choice(params):
-	show_busy_dialog()
-	function = metadata.movie_meta if params['media_type'] == 'movie' else metadata.tvshow_meta
-	meta = function('tmdb_id', params['tmdb_id'], metadata_user_info(), get_datetime())
-	hide_busy_dialog()
-	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_widget=params.get('is_widget', 'true' if external_browse() else 'false'))
-
 def person_search_choice(params):
 	from indexers.people import person_data_dialog
 	person_data_dialog({'query': params['query'], 'is_widget': params.get('is_widget', 'true' if external_browse() else 'false')})
+
+def extras_menu_choice(params):
+	show_busy_dialog()
+	media_type = params['media_type']
+	function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
+	meta = function('tmdb_id', params['tmdb_id'], metadata_user_info(), get_datetime())
+	hide_busy_dialog()
+	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_widget=params.get('is_widget', 'true' if external_browse() else 'false'), options_media_type=media_type)
 
 def media_extra_info_choice(params):
 	media_type, meta = params.get('media_type'), params.get('meta')

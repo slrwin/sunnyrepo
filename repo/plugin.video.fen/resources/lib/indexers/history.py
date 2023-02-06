@@ -3,8 +3,8 @@ from caches.main_cache import main_cache
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
+add_dir, add_items, set_content, end_directory, kodi_version = kodi_utils.add_dir, kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.kodi_version
 ls, sys, build_url, make_listitem, get_icon = kodi_utils.local_string, kodi_utils.sys, kodi_utils.build_url, kodi_utils.make_listitem, kodi_utils.get_icon
-add_dir, add_items, set_content, end_directory = kodi_utils.add_dir, kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory
 external_browse, set_view_mode, unquote = kodi_utils.external_browse, kodi_utils.set_view_mode, kodi_utils.unquote
 icon, fanart, fen_clearlogo = get_icon('search_history'), kodi_utils.addon_fanart, kodi_utils.addon_clearlogo
 history_str, remove_str, remove_all_str = '[B]%s:[/B] [I]%s[/I]' % (ls(32486).upper(), '%s'), ls(32786), '[B]%s[/B]' % ls(32699)
@@ -35,7 +35,11 @@ def search_history(params):
 				listitem.setLabel(display)
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external'}))#, 'name': display, 'iconImage': icon}))
 				yield (url, listitem, False)
 			except: pass

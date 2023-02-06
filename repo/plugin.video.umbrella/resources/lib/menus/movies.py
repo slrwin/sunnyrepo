@@ -141,6 +141,7 @@ class Movies:
 		self.tmdbrecentweek_hours = int(getSetting('cache.tmdbrecentweek'))
 		self.simkl_hours = int(getSetting('cache.simkl'))
 		self.mdblist_hours = int(getSetting('cache.mdblist'))
+		self.showwatchedlib = getSetting('showwatchedlib')
 
 	def get(self, url, idx=True, create_directory=True):
 		self.list = []
@@ -1322,7 +1323,7 @@ class Movies:
 		log_utils.log('Rec List From Library', 1)
 		try:
 			self.list = []
-			''' get recommended movies - library movies with score higher than 7 '''
+			#get recommended movies - library movies with score higher than 7
 			hasLibMovies = len(jsloads(control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "limits": { "start" : 0, "end": 1 }, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file"] }, "id": "1"}'))['result']['movies']) > 0
 			if not hasLibMovies:
 				control.notification('No Movies', 'No movies found in library to use.')
@@ -1353,7 +1354,7 @@ class Movies:
 				randomItems = {"tmdb": tmdb}
 			if not randomItems:
 				#no random item found from trakt history check library history
-				randomMovies = control.jsonrpc('{"jsonrpc": "2.0","method": "VideoLibrary.GetMovies","params": {"filter":{"and": {{"operator": "is", "field": "playcount", "operator": "lessthan", "value": "1"},"or":[%s]}},"properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file","director", "writer", "year", "mpaa"]}, "id": "1"}'% orFilterGenre)
+				randomMovies = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "filter": {"and": [{"or": [{"operator": "is", "field": "genre", "value": "%s"}]},{"operator": "lessthan", "field": "playcount", "value": "1"}]},  "properties": ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa"]}, "id": "libGenresUnwatched"}'% orFilterGenre)
 				randomMovies = jsloads(randomMovies)['result']['movies']
 				randomItems = [({"tmdb": x.get('uniqueid').get('tmdb')}) for x in randomMovies]
 			if not randomItems:
@@ -1365,6 +1366,7 @@ class Movies:
 			self.list = []
 			all_titles = list()
 			if originalMovie:
+				log_utils.log('[plugin.video.umbrella] Original Movie properties %s.'% str(originalMovie),1)
 				# get all movies for the genres in the movie
 				neOriginal = originalMovie['genre'].split('/')
 				genres = [x.strip() for x in neOriginal]
@@ -1377,28 +1379,55 @@ class Movies:
 							orFilterGenre += '{"operator": "is", "field": "genre", "value": "%s"}' % genre
 						else:
 							orFilterGenre += '{"operator": "is", "field": "genre", "value": "%s"},' % genre
-					genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter": {"or":[%s]}, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa"] }, "id": "1"}'% orFilterGenre)
+					
+					genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter": {"or": [%s]}, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa", "set", "studio", "cast"] }, "id": "1"}'% orFilterGenre)
+					#without watched
+					#genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "filter": {"and": [{"or": [%s]},{"operator": "lessthan", "field": "playcount", "value": "1"}]},  "properties": ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa"]}, "id": "libGenresUnwatched"}'% orFilterGenre)
 					sameGenreMovies = jsloads(genreResults)['result']['movies']
 				else:
-					genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter": {"operator": "is", "field": "genre", "value": "%s"}, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa"] }, "id": "1"}'% genres[0])
+					#if self.showwatchedlib == 'false':
+						#genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter": {"and": [{"operator": "is", "field": "genre", "value": "%s"},{"operator": "lessthan", "field": "playcount", "value": "1"}]}, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa"] }, "id": "1"}'% genres[0])
+					#else:
+					genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter": {"operator": "is", "field": "genre", "value": "%s"}, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file", "director", "writer", "year", "mpaa", "set", "studio", "cast"] }, "id": "1"}'% genres[0])
 					sameGenreMovies = jsloads(genreResults)['result']['movies']
 				set_genres = set(genres)
 				set_directors = set([originalMovie["director"]])
 				set_writers = set([originalMovie["writer"]])
+				#import web_pdb; web_pdb.set_trace()
+				castList = [x["name"] for x in originalMovie["castandart"]]
+				set_cast = set(castList)
 				for item in sameGenreMovies:
 					# prevent duplicates so skip reference movie and titles already in the list
 					if not item["title"] in all_titles and not item["title"] == similar_title:
-						item["extraproperties"] = {"similartitle": similar_title}
-						item["num_match"] = len(set(genres).intersection(item["genre"]))
 						item['tmdb'] = item.get('uniqueid').get('tmdb')
 						item['imdb'] = item.get('uniqueid').get('imdb')
-						genre_score = 0 if not set_genres else float(len(set_genres.intersection(item["genre"])) // len(set_genres.union(item["genre"])))
-						director_score = 0 if not set_directors else float(len(set_directors.intersection(item["director"]))) // len(set_directors.union(item["director"]))
+						itemcastList = [x["name"] for x in item["cast"]]
+						genre_score = 0 if not set_genres else (float(len(set_genres.intersection(item["genre"])) / len(set_genres.union(item["genre"])))) * 1
+						director_score = 0 if not set_directors else float(len(set_directors.intersection(item["director"]))) / len(set_directors.union(item["director"]))
 						writer_score = 0 if not set_writers else float(len(set_writers.intersection(item["writer"]))) / len(set_writers.union(item["writer"]))
 						if originalMovie["rating"] and item["rating"] and abs(float(originalMovie["rating"])-item["rating"]) < 3:
 							rating_score = 1 - abs(float(originalMovie["rating"])-item["rating"])//3
 						else:
 							rating_score = 0
+						#studio
+						try:
+							studio_score = 1 if originalMovie["studio"] and originalMovie["studio"] == str(item.get("studio")[0]) else 0
+							#log_utils.log('[ plugin.video.umbrella ] item similar scores item:%s studio score: %s original studio: %s compare studio: %s'% (item["title"], studio_score,originalMovie["studio"], item.get("studio")[0]))
+						except:
+							studio_score = 0
+							#log_utils.log('[ plugin.video.umbrella ] EXCEPTION: item similar scores item:%s studio score: %s original studio: %s compare studio: %s'% (item["title"], studio_score,originalMovie["studio"], item.get("studio")))
+						
+						#cast score
+						#import web_pdb; web_pdb.set_trace()
+						try:
+							cast_score = 0 if not set_cast else (float(len(set_cast.intersection(set(itemcastList)))) / len(set_cast.union(set(itemcastList)))) *1
+						except:
+							cast_score = 0
+						#log_utils.log('[ plugin.video.umbrella ] item similar scores item:%s cast score: %s'% (item["title"], cast_score))
+						try:
+							set_score = 1 if originalMovie["belongs_to_collection"] and originalMovie["belongs_to_collection"]["name"] == item["set"] else 0
+						except:
+							set_score = 0
 						# year_score is "closeness" in release year, scaled to 1 (0 if not from same decade)
 						if int(originalMovie["year"]) and int(item["year"]) and abs(float(originalMovie["rating"])-item["year"]) < 10:
 							year_score = 1 - abs(originalMovie["year"]-item["year"])//10
@@ -1407,17 +1436,37 @@ class Movies:
 						# mpaa_score gets 1 if same mpaa rating, otherwise 0
 						mpaa_score = 1 if originalMovie["mpaa"] and ('Rated '+str(originalMovie["mpaa"])) == item["mpaa"] else 0
 						# calculate overall score using weighted average
-						similarscore = .5*genre_score + .15*director_score + .1*writer_score + .05*rating_score + .075*year_score + .025*mpaa_score
+						similarscore = .75*set_score+.5*genre_score + .15*director_score + .1*writer_score +.1*cast_score+.025*studio_score+ .05*rating_score + .075*year_score + .025*mpaa_score
 						item["similarscore"] = similarscore
+						item["cast"] = None
 						self.list.append(item) 
 						all_titles.append(item["title"])
 			# return the list sorted by number of matching genres then rating
-			self.list = sorted(self.list, key=itemgetter("similarscore"), reverse=True)[:100]
+			similar_score_dict = {}
+			self.list = sorted(self.list, key=itemgetter("similarscore"), reverse=True)
+			for item in self.list:
+				similar_score = item['similarscore']
+				if not similar_score in similar_score_dict:
+					matches = [i for i in self.list if i['similarscore'] == similar_score]
+					similar_score_dict[similar_score] = matches
+			similar_list = []
+			if len(similar_score_dict)>1:
+				#for x in similar_score_dict:
+				for count, x in enumerate(similar_score_dict):
+					if len(similar_list) > 200 and count > 0: break
+					for z in similar_score_dict[x]:
+						similar_list.append(z)
+				self.list = similar_list
+			else:
+				log_utils.log('[plugin.video.umbrella] Only one similar score found.',1)
+
 			random.shuffle(self.list)
 			self.list = self.list[:50]
+			self.list = sorted(self.list, key=itemgetter("similarscore"), reverse=True)
 			next = ''
-			for i in range(len(self.list)):
+			for i in range(len(self.list)): 
 				self.list[i]['next'] = next
+				#log_utils.log('[ plugin.video.umbrella ] item similar scores item:%s score: %s'% (self.list[i]["title"], self.list[i]["similarscore"]))
 			#self.list = [x for x in self.list if x.get('playcount') == 0]
 			self.worker()
 			if self.useContainerTitles and originalMovie:
@@ -1426,22 +1475,12 @@ class Movies:
 					control.setHomeWindowProperty('umbrella.moviesimilarlibrary', str(getLS(40257)+' '+originalMovie["title"]))
 				except: pass
 			if self.list is None: self.list = []
-			
 			if create_directory: self.movieDirectory(self.list)
 			return self.list
 		except:
 			from resources.lib.modules import log_utils
 			log_utils.error()
 			return
-
-	def getGenreMovies(self, genre):
-		sameGenreMovies = []
-		try:
-			genreResults = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "limits": { "start" : 0, "end": 50 }, "filter": {"operator": "is", "field": "genre", "value": "%s"}, "properties" : ["title", "genre", "uniqueid", "art", "rating", "thumbnail", "playcount", "file"] }, "id": "1"}'% genre)
-			sameGenreMovies = jsloads(genreResults)['result']['movies']
-		except:
-			log_utils.error()
-		return sameGenreMovies
 
 	def worker(self):
 		

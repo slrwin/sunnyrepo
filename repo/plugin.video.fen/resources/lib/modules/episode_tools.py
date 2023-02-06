@@ -12,7 +12,7 @@ from modules.utils import adjust_premiered_date, get_datetime, make_thread_list,
 ls, sys, build_url, json, notification, focus_index = kodi_utils.local_string, kodi_utils.sys, kodi_utils.build_url, kodi_utils.json, kodi_utils.notification, kodi_utils.focus_index 
 Thread, get_property, set_property, add_dir, add_items = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.add_dir, kodi_utils.add_items
 make_listitem, set_content, end_directory, set_view_mode = kodi_utils.make_listitem, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
-trakt_icon, addon_fanart, fen_clearlogo = kodi_utils.get_icon('trakt'), kodi_utils.addon_fanart, kodi_utils.addon_clearlogo
+trakt_icon, addon_fanart, fen_clearlogo, kodi_version = kodi_utils.get_icon('trakt'), kodi_utils.addon_fanart, kodi_utils.addon_clearlogo, kodi_utils.kodi_version
 included_str, excluded_str, heading, window_prop = ls(32804).upper(), ls(32805).upper(), ls(32806), 'fen.random_episode_history'
 
 class EpisodeTools:
@@ -120,7 +120,11 @@ def build_next_episode_manager():
 			url = build_url(url_params)
 			listitem.setLabel(display)
 			listitem.setArt({'poster': trakt_icon, 'fanart': addon_fanart, 'icon': trakt_icon, 'clearlogo': fen_clearlogo})
-			listitem.setInfo('video', {'plot': ' '})
+			if kodi_version >= 20:
+				info_tag = listitem.getVideoInfoTag()
+				info_tag.setMediaType('video')
+				info_tag.setPlot(' ')
+			else: listitem.setInfo('video', {'plot': ' '})
 			append({'listitem': (url, listitem, False), 'sort_value': sort_value, 'sort_title': title})
 		except: pass
 	handle = int(sys.argv[1])

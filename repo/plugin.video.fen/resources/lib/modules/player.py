@@ -17,7 +17,7 @@ get_art_provider, get_fanart_data, watched_indicators, auto_resume = st.get_art_
 auto_nextep_settings, disable_content_lookup, widget_load_empty = st.auto_nextep_settings, st.disable_content_lookup, st.widget_load_empty
 get_progress_percent, get_bookmarks, erase_bookmark, clear_local_bookmarks = ws.get_progress_percent, ws.get_bookmarks, ws.erase_bookmark, ws.clear_local_bookmarks
 set_bookmark, mark_movie, mark_episode = ws.set_bookmark, ws.mark_movie, ws.mark_episode
-build_content_prop = ku.build_content_prop
+build_content_prop, kodi_version, xbmc_actor = ku.build_content_prop, ku.kodi_version, ku.xbmc_actor
 
 class FenPlayer(xbmc_player):
 	def __init__ (self):
@@ -88,9 +88,14 @@ class FenPlayer(xbmc_player):
 		listitem = make_listitem()
 		listitem.setPath(self.url)
 		if self.disable_lookup: listitem.setContentLookup(False)
-		if self.is_generic: listitem.setInfo('video', {'FileNameAndPath': self.url})
+		if self.is_generic:
+			if kodi_version >= 20:
+				info_tag = listitem.getVideoInfoTag()
+				info_tag.setMediaType('video')
+				info_tag.setFilenameAndPath(self.url)
+			else: listitem.setInfo('video', {'FileNameAndPath': self.url})
 		else:
-			self.tmdb_id, self.imdb_id, self.tvdb_id = self.meta_get('tmdb_id'), self.meta_get('imdb_id'), self.meta_get('tvdb_id')
+			self.tmdb_id, self.imdb_id, self.tvdb_id = self.meta_get('tmdb_id', ''), self.meta_get('imdb_id', ''), self.meta_get('tvdb_id', '')
 			self.media_type, self.title, self.year = self.meta_get('media_type'), self.meta_get('title'), self.meta_get('year')
 			self.season, self.episode = self.meta_get('season', ''), self.meta_get('episode', '')
 			self.auto_resume, self.fanart_enabled = auto_resume(self.media_type), get_fanart_data()
@@ -103,8 +108,9 @@ class FenPlayer(xbmc_player):
 				clearart = self.meta_get('custom_clearart') or self.meta_get('clearart') or ''
 				landscape = self.meta_get('custom_landscape') or self.meta_get('landscape') or ''
 			else: banner, clearart, landscape = '', '', ''
-			duration, plot, genre, trailer = self.meta_get('duration'), self.meta_get('plot'), self.meta_get('genre'), self.meta_get('trailer')
-			rating, votes, premiered, studio = self.meta_get('rating'), self.meta_get('votes'), self.meta_get('premiered'), self.meta_get('studio')
+			duration, plot, genre, trailer, mpaa = self.meta_get('duration'), self.meta_get('plot'), self.meta_get('genre'), self.meta_get('trailer'), self.meta_get('mpaa')
+			rating, votes, premiered, studio, tagline = self.meta_get('rating'), self.meta_get('votes'), self.meta_get('premiered'), self.meta_get('studio'), self.meta_get('tagline')
+			director, writer, cast, country = self.meta_get('director'), self.meta_get('writer'), self.meta_get('cast', []), self.meta_get('country')
 			if self.media_type == 'movie':
 				if self.fanart_enabled:
 					discart = self.meta_get('custom_discart') or self.meta_get('discart') or ''
@@ -112,20 +118,63 @@ class FenPlayer(xbmc_player):
 				else: discart, keyart = '', ''
 				listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'banner': banner, 'clearart': clearart,
 								'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape, 'discart': discart, 'keyart': keyart})
-				listitem.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
-				listitem.setInfo('video', {'mediatype': 'movie', 'trailer': trailer, 'title': self.title, 'size': '0', 'duration': duration, 'plot': plot,
-					'rating': rating, 'premiered': premiered, 'studio': studio,'year': self.year, 'genre': genre, 'tagline': self.meta_get('tagline'), 'code': self.imdb_id,
-					'imdbnumber': self.imdb_id, 'director': self.meta_get('director'), 'writer': self.meta_get('writer'), 'votes': votes})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('movie')
+					info_tag.setTitle(self.title)
+					info_tag.setPlot(plot)
+					info_tag.setYear(int(self.year))
+					info_tag.setRating(rating)
+					info_tag.setVotes(votes)
+					info_tag.setMpaa(mpaa)
+					info_tag.setDuration(duration)
+					info_tag.setCountries(country or '')
+					info_tag.setTrailer(trailer)
+					info_tag.setPremiered(premiered)
+					info_tag.setTagLine(tagline)
+					info_tag.setStudios((studio or '',))
+					info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
+					info_tag.setGenres(genre.split(', '))
+					info_tag.setWriters(writer.split(', '))
+					info_tag.setDirectors(director.split(', '))
+					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
+				else:
+					listitem.setInfo('video', {'mediatype': 'movie', 'trailer': trailer, 'title': self.title, 'size': '0', 'duration': duration, 'plot': plot,
+						'rating': rating, 'premiered': premiered, 'studio': studio, 'year': self.year, 'genre': genre, 'tagline': tagline, 'code': self.imdb_id,
+						'imdbnumber': self.imdb_id, 'director': director, 'writer': writer, 'votes': votes})
+					listitem.setCast(cast)
+					listitem.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
 			else:
 				listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'banner': banner, 'clearart': clearart, 'clearlogo': clearlogo, 'thumb': landscape,
 								'landscape': landscape, 'tvshow.poster': poster, 'tvshow.clearart': clearart, 'tvshow.clearlogo': clearlogo})
-				listitem.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id), 'tvdb': str(self.tvdb_id)})
-				listitem.setInfo('video', {'mediatype': 'episode', 'trailer': trailer, 'title': self.meta_get('ep_name'), 'imdbnumber': self.imdb_id,
-					'tvshowtitle': self.title, 'size': '0', 'plot': plot, 'year': self.year, 'votes': votes, 'premiered': premiered, 'studio': studio, 'genre': genre,
-					'season': self.season, 'episode': self.episode, 'duration': duration, 'rating': rating, 'FileNameAndPath': self.url})
-			listitem.setCast(self.meta_get('cast', []))
-			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'banner': banner, 'clearart': clearart, 'clearlogo': clearlogo, 'landscape': landscape,
-							'tvshow.clearart': clearart, 'tvshow.clearlogo': clearlogo, 'tvshow.landscape': landscape, 'tvshow.banner': banner})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('episode')
+					info_tag.setTitle(self.meta_get('ep_name'))
+					info_tag.setTvShowTitle(self.title)
+					info_tag.setTvShowStatus(self.meta_get('status'))
+					info_tag.setSeason(self.season)
+					info_tag.setEpisode(self.episode)
+					info_tag.setPlot(plot)
+					info_tag.setYear(int(self.year))
+					info_tag.setRating(rating)
+					info_tag.setVotes(votes)
+					info_tag.setMpaa(mpaa)
+					info_tag.setDuration(duration)
+					info_tag.setTrailer(trailer)
+					info_tag.setFirstAired(premiered)
+					info_tag.setStudios((studio or '',))
+					info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id), 'tvdb': str(self.tvdb_id)})
+					info_tag.setGenres(genre.split(', '))
+					info_tag.setWriters(writer.split(', '))
+					info_tag.setDirectors(director.split(', '))
+					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
+				else:
+					listitem.setInfo('video', {'mediatype': 'episode', 'trailer': trailer, 'title': self.meta_get('ep_name'), 'imdbnumber': self.imdb_id,
+						'tvshowtitle': self.title, 'size': '0', 'plot': plot, 'year': self.year, 'votes': votes, 'premiered': premiered, 'studio': studio, 'genre': genre,
+						'season': self.season, 'episode': self.episode, 'duration': duration, 'rating': rating, 'director': director, 'writer': writer})
+					listitem.setCast(cast)
+					listitem.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id), 'tvdb': str(self.tvdb_id)})
 			# listitem.setProperty('StartPercent', str('15'))
 			try:
 				clear_property('script.trakt.ids')

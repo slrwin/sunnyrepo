@@ -12,6 +12,7 @@ current_skin_prop, use_skin_fonts_prop, addon_installed = kodi_utils.current_ski
 left_action, right_action, info_action = kodi_utils.window_xml_left_action, kodi_utils.window_xml_right_action, kodi_utils.window_xml_info_action
 window_xml_dialog, logger, player, notification = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.player, kodi_utils.notification
 make_listitem, sleep, open_file, path_exists = kodi_utils.make_listitem, kodi_utils.sleep, kodi_utils.open_file, kodi_utils.path_exists
+get_setting = kodi_utils.get_setting
 extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
 needed_font_values = ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60'))
 addon_skins_folder = 'special://home/addons/plugin.video.fen/resources/skins/Default/1080i/'
@@ -51,6 +52,9 @@ class BaseDialog(window_xml_dialog):
 		self.info_action = info_action
 		self.left_action = left_action
 		self.right_action = right_action
+
+	def get_setting(self, setting_id):
+		return get_setting(setting_id)
 
 	def make_listitem(self):
 		return make_listitem()

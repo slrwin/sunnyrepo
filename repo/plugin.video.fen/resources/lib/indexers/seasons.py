@@ -98,8 +98,7 @@ def build_season_list(params):
 					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
 					if is_widget: listitem.setInfo('video', {'overlay': overlay})# needs to stay until setPlaycount works
 				else:
-					try: listitem.setCast(cast)
-					except: pass
+					listitem.setCast(cast)
 					listitem.setUniqueIDs({'imdb': imdb_id, 'tmdb': str_tmdb_id, 'tvdb': str_tvdb_id})
 					listitem.setInfo('video', {'mediatype': 'season', 'trailer': trailer, 'title': title, 'size': '0', 'duration': episode_run_time, 'plot': plot,
 									'rating': rating, 'premiered': premiered, 'studio': studio, 'year': year,'genre': genre, 'mpaa': mpaa, 'tvshowtitle': show_title,

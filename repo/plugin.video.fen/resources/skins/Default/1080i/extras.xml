@@ -277,47 +277,25 @@
                 <!-- Buttons Row 1 -->
                 <control type="group">
                     <control type="button" id="10">
-                        <description>Play</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="187,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="187,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <width>275</width>
                         <height>70</height>
                         <onleft>13</onleft>
                         <onright>11</onright>
                         <onup>2062</onup>
                         <ondown>14</ondown>
-                        <label>$ADDON[plugin.video.fen 32174]</label>
+                        <label>$INFO[Window.Property(button10.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
                         <texturefocus colordiffuse="FFB7B4BB">common/white.png</texturefocus>
                         <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
                         <align>center</align>
-                        <visible>String.IsEqual(Window.Property(media_type),movie)</visible>
-                    </control>
-                    <control type="button" id="10">
-                        <description>Browse</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="187,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="187,35">Unfocus</animation>
-                        <width>275</width>
-                        <height>70</height>
-                        <onleft>13</onleft>
-                        <onright>11</onright>
-                        <onup>2062</onup>
-                        <ondown>14</ondown>
-                        <label>$ADDON[plugin.video.fen 32838]</label>
-                        <font>font14</font> <!-- FEN_33 -->
-                        <textcolor>FFB7B4BB</textcolor>
-                        <focusedcolor>FF302F2F</focusedcolor>
-                        <texturefocus colordiffuse="FFB7B4BB">common/white.png</texturefocus>
-                        <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
-                        <align>center</align>
-                        <visible>String.IsEqual(Window.Property(media_type),tvshow)</visible>
                     </control>
                     <control type="button" id="11">
-                        <description>Trailer</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="487,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="487,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <left>300</left>
                         <width>275</width>
                         <height>70</height>
@@ -325,7 +303,7 @@
                         <onright>12</onright>
                         <onup>2062</onup>
                         <ondown>15</ondown>
-                        <label>$ADDON[plugin.video.fen 32606]</label>
+                        <label>$INFO[Window.Property(button11.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
@@ -334,9 +312,8 @@
                         <align>center</align>
                     </control>
                     <control type="button" id="12">
-                        <description>Keywords</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="787,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="787,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <left>600</left>
                         <width>275</width>
                         <height>70</height>
@@ -344,7 +321,7 @@
                         <onright>13</onright>
                         <onup>2062</onup>
                         <ondown>16</ondown>
-                        <label>$ADDON[plugin.video.fen 32092]</label>
+                        <label>$INFO[Window.Property(button12.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
@@ -353,9 +330,8 @@
                         <align>center</align>
                     </control>
                     <control type="button" id="13">
-                        <description>Images</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="1087,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="1087,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <left>900</left>
                         <width>275</width>
                         <height>70</height>
@@ -363,7 +339,7 @@
                         <onright>10</onright>
                         <onup>2062</onup>
                         <ondown>17</ondown>
-                        <label>$ADDON[plugin.video.fen 32798]</label>
+                        <label>$INFO[Window.Property(button13.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
@@ -376,16 +352,15 @@
                 <control type="group">
                     <top>90</top>
                     <control type="button" id="14">
-                        <description>Extra Info</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="187,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="187,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <width>275</width>
                         <height>70</height>
                         <onleft>17</onleft>
                         <onright>15</onright>
                         <onup>10</onup>
                         <ondown>50</ondown>
-                        <label>$ADDON[plugin.video.fen 32605]</label>
+                        <label>$INFO[Window.Property(button14.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
@@ -394,9 +369,8 @@
                         <align>center</align>
                     </control>
                     <control type="button" id="15">
-                        <description>Genres</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="487,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="487,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <left>300</left>
                         <width>275</width>
                         <height>70</height>
@@ -404,7 +378,7 @@
                         <onright>16</onright>
                         <onup>11</onup>
                         <ondown>50</ondown>
-                        <label>$ADDON[plugin.video.fen 32470]</label>
+                        <label>$INFO[Window.Property(button15.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
@@ -413,9 +387,8 @@
                         <align>center</align>
                     </control>
                     <control type="button" id="16">
-                        <description>Director</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="787,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="787,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <left>600</left>
                         <width>275</width>
                         <height>70</height>
@@ -423,39 +396,17 @@
                         <onright>17</onright>
                         <onup>12</onup>
                         <ondown>50</ondown>
-                        <label>$ADDON[plugin.video.fen 32627]</label>
+                        <label>$INFO[Window.Property(button16.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>
                         <texturefocus colordiffuse="FFB7B4BB">common/white.png</texturefocus>
                         <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
                         <align>center</align>
-                        <visible>String.IsEqual(Window.Property(media_type),movie)</visible>
-                    </control>
-                    <control type="button" id="16">
-                        <description>Play Random</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="787,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="787,35">Unfocus</animation>
-                        <left>600</left>
-                        <width>275</width>
-                        <height>70</height>
-                        <onleft>15</onleft>
-                        <onright>17</onright>
-                        <onup>12</onup>
-                        <ondown>50</ondown>
-                        <label>$ADDON[plugin.video.fen 32613]</label>
-                        <font>font14</font> <!-- FEN_33 -->
-                        <textcolor>FFB7B4BB</textcolor>
-                        <focusedcolor>FF302F2F</focusedcolor>
-                        <texturefocus colordiffuse="FFB7B4BB">common/white.png</texturefocus>
-                        <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
-                        <align>center</align>
-                        <visible>String.IsEqual(Window.Property(media_type),tvshow)</visible>
                     </control>
                     <control type="button" id="17">
-                        <description>Options...</description>
-                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="1087,35">Focus</animation>
-                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="1087,35">Unfocus</animation>
+                        <animation effect="zoom" start="100" end="102" time="100" tween="sine" easing="inout" center="auto">Focus</animation>
+                        <animation effect="zoom" start="102" end="100" time="100" tween="sine" easing="inout" center="auto">Unfocus</animation>
                         <left>900</left>
                         <width>275</width>
                         <height>70</height>
@@ -463,7 +414,7 @@
                         <onup>13</onup>
                         <onright>14</onright>
                         <ondown>50</ondown>
-                        <label>$ADDON[plugin.video.fen 32516]</label>
+                        <label>$INFO[Window.Property(button17.label)]</label>
                         <font>font14</font> <!-- FEN_33 -->
                         <textcolor>FFB7B4BB</textcolor>
                         <focusedcolor>FF302F2F</focusedcolor>

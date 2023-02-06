@@ -8,7 +8,7 @@ ls, sys, build_url, unquote, urlencode, quote = kodi_utils.local_string, kodi_ut
 show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.show_text, kodi_utils.set_view_mode
 default_easynews_icon, fanart, fen_clearlogo, sleep = kodi_utils.get_icon('easynews'), kodi_utils.addon_fanart, kodi_utils.addon_clearlogo, kodi_utils.sleep
 add_items, set_content, end_directory, external_browse = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.external_browse
-make_listitem, ok_dialog = kodi_utils.make_listitem, kodi_utils.ok_dialog
+make_listitem, ok_dialog, kodi_version = kodi_utils.make_listitem, kodi_utils.ok_dialog, kodi_utils.kodi_version
 down_str = ls(32747)
 EasyNews = import_easynews()
 
@@ -48,7 +48,11 @@ def easynews_file_browser(files, handle):
 				listitem.addContextMenuItems(cm)
 				thumbnail = item_get('thumbnail', default_easynews_icon)
 				listitem.setArt({'icon': thumbnail, 'poster': thumbnail, 'thumb': thumbnail, 'fanart': fanart, 'banner': default_easynews_icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': default_easynews_icon,
 									'action': 'cloud.easynews_direct'}))
 				yield (url, listitem, False)

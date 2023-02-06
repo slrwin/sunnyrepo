@@ -176,6 +176,7 @@
 						<heading>33005</heading>
 					</control>
 				</setting>
+			<!-- Hidden -->
 				<setting id="trakt.expires" type="string" help="">
 					<level>0</level>
 					<default>0</default>
@@ -737,6 +738,246 @@
 						<heading/>
 					</control>
 				</setting>
+				<setting id="extras.tvshow.button10" type="string" label="tvshow.button10" help="">
+					<level>0</level>
+					<default>tvshow_browse</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button10</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button11" type="string" label="tvshow.button11" help="">
+					<level>0</level>
+					<default>show_trailers</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button11</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button12" type="string" label="tvshow.button12" help="">
+					<level>0</level>
+					<default>show_keywords</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button12</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button13" type="string" label="tvshow.button13" help="">
+					<level>0</level>
+					<default>show_images</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button13</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button14" type="string" label="tvshow.button14" help="">
+					<level>0</level>
+					<default>show_extrainfo</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button14</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button15" type="string" label="tvshow.button15" help="">
+					<level>0</level>
+					<default>show_genres</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button15</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button16" type="string" label="tvshow.button16" help="">
+					<level>0</level>
+					<default>play_nextep</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button16</heading>
+					</control>
+				</setting>
+				<setting id="extras.tvshow.button17" type="string" label="tvshow.button17" help="">
+					<level>0</level>
+					<default>show_options</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>tvshow.button17</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button10" type="string" label="movie.button10" help="">
+					<level>0</level>
+					<default>movies_play</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button10</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button11" type="string" label="movie.button11" help="">
+					<level>0</level>
+					<default>show_trailers</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button11</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button12" type="string" label="movie.button12" help="">
+					<level>0</level>
+					<default>show_keywords</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button12</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button13" type="string" label="movie.button13" help="">
+					<level>0</level>
+					<default>show_images</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button13</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button14" type="string" label="movie.button14" help="">
+					<level>0</level>
+					<default>show_extrainfo</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button14</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button15" type="string" label="movie.button15" help="">
+					<level>0</level>
+					<default>show_genres</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button15</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button16" type="string" label="movie.button16" help="">
+					<level>0</level>
+					<default>show_director</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button16</heading>
+					</control>
+				</setting>
+				<setting id="extras.movie.button17" type="string" label="movie.button17" help="">
+					<level>0</level>
+					<default>show_options</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<condition on="property" name="InfoBool">false</condition>
+						</dependency>
+					</dependencies>
+					<control type="edit" format="string">
+						<heading>movie.button17</heading>
+					</control>
+				</setting>
 			</group>
 		</category>
 		<!-- Features -->
@@ -764,6 +1005,26 @@
 					</constraints>
 					<control type="button" format="action">
 						<data>RunPlugin(plugin://plugin.video.fen/?mode=extras_lists_choice)</data>
+					</control>
+				</setting>
+				<setting id="extras.button_choice" type="string" label="33118" help="">
+					<level>0</level>
+					<default>$ADDON[plugin.video.fen 32652]</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<control type="button" format="action">
+						<data>RunPlugin(plugin://plugin.video.fen/?mode=extras_buttons_choice)</data>
+					</control>
+				</setting>
+				<setting id="extras.restore_default" type="string" label="33119" help="">
+					<level>0</level>
+					<default>$ADDON[plugin.video.fen 32652]</default>
+					<constraints>
+						<allowempty>true</allowempty>
+					</constraints>
+					<control type="button" format="action">
+						<data>RunPlugin(plugin://plugin.video.fen/?mode=default_extras_buttons_choice)</data>
 					</control>
 				</setting>
 				<setting id="extras.enable_scrollbars" type="boolean" label="32846" help="">

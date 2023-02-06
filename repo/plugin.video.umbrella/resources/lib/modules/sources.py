@@ -327,7 +327,7 @@ class Sources:
 				progressDialog.create(header, '')
 			if getSetting('progress.dialog') == '2':
 				progressDialog = self.getProcessResolver(title, meta)
-			if getSetting('progress.dialog') == '3':
+			if getSetting('progress.dialog') == '3' or getSetting('progress.dialog') == '4':
 				progressDialog = self.getIconProgress()
 			for i in range(len(resolve_items)):
 				try:
@@ -486,7 +486,7 @@ class Sources:
 				except:
 					prometa = None
 				progressDialog = self.getProgressScraper(title, year, imdb, tvdb, season, episode, prometa)
-			if getSetting('progress.dialog') == '3':
+			if getSetting('progress.dialog') == '3' or getSetting('progress.dialog') == '4':
 				progressDialog = self.getIconProgress()
 			self.prepareSources()
 			sourceDict = self.sourceDict
@@ -1085,7 +1085,7 @@ class Sources:
 				progressDialog.create(header, '')
 			if getSetting('progress.dialog') == '2':
 				progressDialog = self.getProcessResolver(self.title, self.meta)
-			if getSetting('progress.dialog') == '3':
+			if getSetting('progress.dialog') == '3' or getSetting('progress.dialog') == '4':
 				progressDialog = self.getIconProgress()
 		except: pass
 		for i in range(len(items)):

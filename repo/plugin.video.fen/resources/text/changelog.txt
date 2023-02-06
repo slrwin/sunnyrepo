@@ -2,6 +2,12 @@
 
 [B]Please utilize Fen Tips (Tools->Tips for Fen Use) to catch up on any important new features. New features will be highlighted with a [COLOR chartreuse]NEW!!![/COLOR] label.[/B]
 
+[COLOR dodgerblue][B]Version 3.0.41[/B][/COLOR]
+- Added setting to change the actions of the buttons in the Extras Window. Settings->Features->Extras->"Set Actions for Extras Buttons". Set these to whathever you want them to be, from the available selections. Done for Movie and TV Show Extras.
+- Added setting to restore the Extras Buttons to default "Restore Extras Buttons to Default Actions".
+- Added more aggressive clearing of Trakt cache.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 3.0.40[/B][/COLOR]
 - Work around for Kodi 20 Python HTMLParser module not working correctly. This should ensure IMDb reviews/trivia/blunders/parental guide will now work. CLEAR IMDB CACHE TO GET NEW RESULTS.
 - Fixed incorrect playback of some torrent packs.

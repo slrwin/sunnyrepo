@@ -1731,11 +1731,11 @@ msgid "Created By"
 msgstr ""
 
 msgctxt "#32634"
-msgid "Last"
+msgid "Last Aired"
 msgstr ""
 
 msgctxt "#32635"
-msgid "Next"
+msgid "Next Aired"
 msgstr ""
 
 msgctxt "#32636"
@@ -3652,6 +3652,42 @@ msgstr ""
 
 msgctxt "#33114"
 msgid "Monitor For Successful Playback"
+msgstr ""
+
+msgctxt "#33115"
+msgid "Play Next Episode"
+msgstr ""
+
+msgctxt "#33116"
+msgid "No Episodes Available"
+msgstr ""
+
+msgctxt "#33117"
+msgid "Trakt Manager"
+msgstr ""
+
+msgctxt "#33118"
+msgid "Set Actions for Extras Buttons"
+msgstr ""
+
+msgctxt "#33119"
+msgid "Restore Extras Buttons to Default Actions"
+msgstr ""
+
+msgctxt "#33120"
+msgid "Choose Media Type to Set Buttons"
+msgstr ""
+
+msgctxt "#33121"
+msgid "Choose Button to Set"
+msgstr ""
+
+msgctxt "#33122"
+msgid "Choose Action For %s"
+msgstr ""
+
+msgctxt "#33123"
+msgid "Choose Which Media Type to Set Back to Default"
 msgstr ""
 
 msgctxt "#40001"

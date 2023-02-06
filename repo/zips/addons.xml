@@ -259,7 +259,7 @@
             <fanart>resources/fanart.jpg</fanart>
         </assets>
     </extension>
-</addon><addon id="plugin.video.fen" name="Fen" provider-name="Tikipeter" version="3.0.40">
+</addon><addon id="plugin.video.fen" name="Fen" provider-name="Tikipeter" version="3.0.41">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" version="2.19.1" />
@@ -889,7 +889,7 @@
     <screenshot>resources/screenshot-02.jpg</screenshot>
   </assets>
 </extension>
-</addon><addon id="plugin.video.umbrella" name="Umbrella" provider-name="Umbrella" version="6.6.12">
+</addon><addon id="plugin.video.umbrella" name="Umbrella" provider-name="Umbrella" version="6.6.13">
 	<requires>
 		<import addon="xbmc.python" version="3.0.0" />
 		<import addon="context.umbrella" version="1.2.8" optional="true" />
@@ -922,7 +922,7 @@
 			<screenshot>resources/screenshots/screenshot003.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR black]Update - v6.6.12 - Jan 31st, 2023[/COLOR][/B]
+[B][COLOR black]Update - v6.6.13 - Feb 2nd, 2023[/COLOR][/B]
 --[FIX][I] Multiple bug fixes under the hood related to Nexus and Kodi 20.[/I]
 --[FIX][I] Corrected add to cloud errors.[/I]
 --[ENHANCEMENT][I] Added similar to and recommended from Library.[/I]

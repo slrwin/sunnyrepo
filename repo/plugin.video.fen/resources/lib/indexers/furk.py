@@ -6,7 +6,7 @@ from modules.utils import clean_file_name
 
 add_items, set_content, show_text, external_browse, unquote = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.show_text, kodi_utils.external_browse, kodi_utils.unquote
 show_busy_dialog, hide_busy_dialog, set_view_mode, end_directory = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.set_view_mode, kodi_utils.end_directory
-confirm_dialog, notification, kodi_refresh = kodi_utils.confirm_dialog, kodi_utils.notification, kodi_utils.kodi_refresh
+confirm_dialog, notification, kodi_refresh, kodi_version = kodi_utils.confirm_dialog, kodi_utils.notification, kodi_utils.kodi_refresh, kodi_utils.kodi_version
 ls, sys, build_url, make_listitem = kodi_utils.local_string, kodi_utils.sys, kodi_utils.build_url, kodi_utils.make_listitem
 furk_icon, fanart, fen_clearlogo = kodi_utils.get_icon('furk'), kodi_utils.addon_fanart, kodi_utils.addon_clearlogo
 remove_str, prot_str, unprot_str, speed_str, files_str, down_str, add_str = ls(32766), ls(32767), ls(32768), ls(32775), ls(32493).upper(), ls(32747), ls(32769)
@@ -65,7 +65,11 @@ def furk_folder_browser(files, display_mode, handle):
 				listitem.setLabel(display)
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb, 'fanart': fanart, 'banner': furk_icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': furk_icon,
 									'action': 'archive', 'display_mode': display_mode, 'is_protected': is_protected}))
 				yield (url, listitem, True)
@@ -92,7 +96,11 @@ def furk_t_file_browser(params):
 				cm.append((down_str, 'RunPlugin(%s)' % build_url(down_file_params)))
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': furk_icon, 'poster': furk_icon, 'thumb': furk_icon, 'fanart': fanart, 'banner': furk_icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': furk_icon,
 									'action': 'cloud.furk_direct'}))
 				yield (url, listitem, False)

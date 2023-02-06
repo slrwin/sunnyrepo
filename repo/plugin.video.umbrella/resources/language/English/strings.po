@@ -4434,3 +4434,7 @@ msgstr ""
 msgctxt "#40393"
 msgid "Recommended (Library)"
 msgstr ""
+
+msgctxt "#40394"
+msgid "Show Watched in Lists (Library)"
+msgstr ""

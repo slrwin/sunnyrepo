@@ -34,6 +34,12 @@ view_type_prop, props_made_prop, pause_settings_prop, build_content_prop = 'fen.
 custom_context_main_menu_prop, custom_context_prop, custom_info_prop = 'fen.custom_main_menu_context', 'fen.custom_context_menu', 'fen.custom_info_dialog'
 current_skin_prop, use_skin_fonts_prop = 'fen.current_skin', 'fen.use_skin_fonts'
 int_window_prop, pause_services_prop = 'fen.internal_results.%s', 'fen.pause_services'
+userdata_path = translatePath('special://profile/addon_data/plugin.video.fen/')
+addon_settings = translatePath('special://home/addons/plugin.video.fen/resources/settings.xml')
+user_settings = translatePath('special://profile/addon_data/plugin.video.fen/settings.xml')
+addon_icon = translatePath('special://home/addons/plugin.video.fen/resources/media/fen_icon.png')
+addon_fanart = translatePath('special://home/addons/plugin.video.fen/resources/media/fen_fanart.png')
+addon_clearlogo = translatePath('special://home/addons/plugin.video.fen/resources/media/fen_clearlogo.png')
 databases_path = translatePath('special://profile/addon_data/plugin.video.fen/databases/')
 navigator_db = translatePath(database_path_raw % current_dbs[0])
 watched_db = translatePath(database_path_raw % current_dbs[1])
@@ -44,15 +50,21 @@ maincache_db = translatePath(database_path_raw % current_dbs[5])
 metacache_db = translatePath(database_path_raw % current_dbs[6])
 debridcache_db = translatePath(database_path_raw % current_dbs[7])
 external_db = translatePath(database_path_raw % current_dbs[8])
-userdata_path = translatePath('special://profile/addon_data/plugin.video.fen/')
-addon_settings = translatePath('special://home/addons/plugin.video.fen/resources/settings.xml')
-user_settings = translatePath('special://profile/addon_data/plugin.video.fen/settings.xml')
-addon_icon = translatePath('special://home/addons/plugin.video.fen/resources/media/fen_icon.png')
-addon_fanart = translatePath('special://home/addons/plugin.video.fen/resources/media/fen_fanart.png')
-addon_clearlogo = translatePath('special://home/addons/plugin.video.fen/resources/media/fen_clearlogo.png')
 myvideos_db_paths = {19: '119', 20: '121'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
 playlist_type_dict = {'music': 0, 'video': 1}
+extras_button_label_values = {'movie': {'movies_play': 32174, 'show_trailers': 32606, 'show_keywords': 32092, 'show_images': 32798,  'show_extrainfo': 32605,
+						'show_genres': 32470, 'show_director': 32627, 'show_options': 32516, 'show_recommended': 32503, 'show_trakt_manager': 33117,
+						'playback_choice': 32187, 'show_favorites_manager': 32197},
+						'tvshow': {'tvshow_browse': 32838, 'show_trailers': 32606, 'show_keywords': 32092, 'show_images': 32798, 'show_extrainfo': 32605,
+						'show_genres': 32470, 'play_nextep': 33115, 'show_options': 32516, 'show_recommended': 32503, 'show_trakt_manager': 33117,
+						'play_random_episode': 32613, 'show_favorites_manager': 32197}}
+movie_extras_buttons_defaults = [('extras.movie.button10', 'movies_play'), ('extras.movie.button11', 'show_trailers'), ('extras.movie.button12', 'show_keywords'),
+					('extras.movie.button13', 'show_images'), ('extras.movie.button14', 'show_extrainfo'), ('extras.movie.button15', 'show_genres'),
+					('extras.movie.button16', 'show_director'), ('extras.movie.button17', 'show_options')]
+tvshow_extras_buttons_defaults = [('extras.tvshow.button10', 'tvshow_browse'), ('extras.tvshow.button11', 'show_trailers'), ('extras.tvshow.button12', 'show_keywords'),
+					('extras.tvshow.button13', 'show_images'), ('extras.tvshow.button14', 'show_extrainfo'), ('extras.tvshow.button15', 'show_genres'),
+					('extras.tvshow.button16', 'play_nextep'), ('extras.tvshow.button17', 'show_options')]
 movie_dict_removals = ('fanart_added', 'cast', 'poster', 'rootname', 'imdb_id', 'tmdb_id', 'tvdb_id', 'all_trailers', 'fanart', 'banner', 'clearlogo', 'clearlogo2', 'clearart',
 						'landscape', 'discart', 'original_title', 'english_title', 'extra_info', 'alternative_titles', 'country_codes', 'fanarttv_fanart', 'fanarttv_poster',
 						'fanart2', 'poster2', 'keyart', 'images', 'custom_poster', 'custom_fanart', 'custom_clearlogo', 'custom_banner', 'custom_clearart', 'custom_landscape',
@@ -98,14 +110,20 @@ def add_dir(url_params, list_name, handle, iconImage='folder', fanartImage=None,
 	listitem = make_listitem()
 	listitem.setLabel(list_name)
 	listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'clearlogo': addon_clearlogo})
-	listitem.setInfo('video', {'plot': ' '})
+	if kodi_version >= 20:
+		info_tag = listitem.getVideoInfoTag()
+		info_tag.setPlot(' ')
+	else: listitem.setInfo('video', {'plot': ' '})
 	add_item(handle, url, listitem, isFolder)
 
 def make_placeholder_listitem():
 	listitem = make_listitem()
 	listitem.setLabel('Placeholder')
 	listitem.setArt({'icon': addon_icon, 'poster': addon_icon, 'thumb': addon_icon, 'fanart': addon_fanart, 'banner': addon_icon, 'clearlogo': addon_clearlogo})
-	listitem.setInfo('video', {'plot': 'this is a placeholder'})
+	if kodi_version >= 20:
+		info_tag = listitem.getVideoInfoTag()
+		info_tag.setPlot('this is a placeholder')
+	else: listitem.setInfo('video', {'plot': 'this is a placeholder'})
 	return [('', listitem, False)]
 
 def make_listitem():
@@ -358,7 +376,10 @@ def choose_view(view_type, content):
 	listitem.setLabel(set_view_str)
 	params_url = build_url({'mode': 'set_view', 'view_type': view_type})
 	listitem.setArt({'icon': settings_icon, 'poster': settings_icon, 'thumb': settings_icon, 'fanart': addon_fanart, 'banner': settings_icon, 'clearlogo': addon_clearlogo})
-	listitem.setInfo('video', {'plot': ' '})
+	if kodi_version >= 20:
+		info_tag = listitem.getVideoInfoTag()
+		info_tag.setPlot(' ')
+	else: listitem.setInfo('video', {'plot': ' '})
 	add_item(handle, params_url, listitem, False)
 	set_content(handle, content)
 	end_directory(handle)

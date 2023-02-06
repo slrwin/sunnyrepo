@@ -10,7 +10,7 @@ add_item, set_content, end_directory_function, set_view_mode, add_items, get_set
 json, external_browse, close_all_dialog, sleep, execute_builtin, external_browse = k.json, k.external_browse, k.close_all_dialog, k.sleep, k.execute_builtin, k.external_browse
 download_directory, furk_active, easynews_active, source_folders_directory, get_icon = s.download_directory, s.furk_active, s.easynews_active, s.source_folders_directory, k.get_icon
 get_shortcut_folders, currently_used_list, get_shortcut_folder_contents, fanart = nc.get_shortcut_folders, nc.currently_used_list, nc.get_shortcut_folder_contents, k.addon_fanart
-set_sort_method = k.set_sort_method
+set_sort_method, kodi_version = k.set_sort_method, k.kodi_version
 vid_str, fl_str, se_str, acc_str, dl_str, people_str, keywords_str = ls(32491), ls(32493), ls(32450), ls(32494), ls(32107), ls(32507), ls(32092)
 tools_str, manager_str, changelog_str, ext_str, short_str, source_str, cl_dbs_str, langinv_str = ls(32456), ls(32513), ls(32508), ls(32118), ls(32514), ls(32515), ls(32512), ls(33017)
 user_str, ml_str, ll_str, rec_str, cal_str, lv_str, lu_str, k_str, genre_select_str = ls(32065), ls(32454), ls(32502), ls(32503), ls(32081), ls(32509), ls(32853), ls(32538), ls(32847)
@@ -324,7 +324,11 @@ class Navigator:
 					listitem.addContextMenuItems(cm)
 					listitem.setLabel(display)
 					listitem.setArt({'fanart': fanart, 'clearlogo': fen_clearlogo})
-					listitem.setInfo('video', {'plot': ' '})
+					if kodi_version >= 20:
+						info_tag = listitem.getVideoInfoTag()
+						info_tag.setMediaType('video')
+						info_tag.setPlot(' ')
+					else: listitem.setInfo('video', {'plot': ' '})
 					listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': clean_title, 'iconImage': icon,
 										'service': 'FOLDERS', 'id': link_id}))
 					yield (url, listitem, info[1])
@@ -358,7 +362,11 @@ class Navigator:
 									'display_name': display_name, 'default_name': default_name})
 					listitem.setLabel(display)
 					listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'landscape': icon, 'clearlogo': fen_clearlogo})
-					listitem.setInfo('video', {'plot': ' '})
+					if kodi_version >= 20:
+						info_tag = listitem.getVideoInfoTag()
+						info_tag.setMediaType('video')
+						info_tag.setPlot(' ')
+					else: listitem.setInfo('video', {'plot': ' '})
 					yield (url, listitem, False)
 		icon = get_icon('folder')
 		handle = int(sys.argv[1])
@@ -372,7 +380,11 @@ class Navigator:
 			listitem = make_listitem()
 			listitem.setLabel('[I]%s...[/I]' % make_short_str)
 			listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'clearlogo': fen_clearlogo})
-			listitem.setInfo('video', {'plot': ' '})
+			if kodi_version >= 20:
+				info_tag = listitem.getVideoInfoTag()
+				info_tag.setMediaType('video')
+				info_tag.setPlot(' ')
+			else: listitem.setInfo('video', {'plot': ' '})
 			add_item(handle, url, listitem, False)
 		def _builder():
 			icon = get_icon('folder')
@@ -386,7 +398,11 @@ class Navigator:
 					listitem.addContextMenuItems(cm)
 					listitem.setLabel('[B]%s : [/B] %s ' % (short_str.upper(), name))
 					listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'clearlogo': fen_clearlogo})
-					listitem.setInfo('video', {'plot': ' '})
+					if kodi_version >= 20:
+						info_tag = listitem.getVideoInfoTag()
+						info_tag.setMediaType('video')
+						info_tag.setPlot(' ')
+					else: listitem.setInfo('video', {'plot': ' '})
 					listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': icon}))
 					yield (url, listitem, True)
 				except: pass
@@ -440,7 +456,11 @@ class Navigator:
 					listitem = make_listitem()
 					listitem.setLabel(name)
 					listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'clearlogo': fen_clearlogo})
-					listitem.setInfo('video', {'plot': ' '})
+					if kodi_version >= 20:
+						info_tag = listitem.getVideoInfoTag()
+						info_tag.setMediaType('video')
+						info_tag.setPlot(' ')
+					else: listitem.setInfo('video', {'plot': ' '})
 					listitem.addContextMenuItems(cm)
 					listitem.setProperty('fen.context_main_menu_params', menu_editor_url)
 					yield (build_url(item), listitem, item_get('mode', '') not in non_folder_items)
@@ -463,7 +483,11 @@ class Navigator:
 				listitem = make_listitem()
 				listitem.setLabel(ls(item_get('name', '')))
 				listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'landscape': icon, 'clearlogo': fen_clearlogo})
-				listitem.setInfo('video', {'plot': ' '})
+				if kodi_version >= 20:
+					info_tag = listitem.getVideoInfoTag()
+					info_tag.setMediaType('video')
+					info_tag.setPlot(' ')
+				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.addContextMenuItems(cm)
 				listitem.setProperty('fen.context_main_menu_params', menu_editor_url)
 				yield (build_url(item), listitem, item_get('mode', '') not in non_folder_items)
@@ -476,7 +500,11 @@ class Navigator:
 		listitem = make_listitem()
 		listitem.setLabel(list_name)
 		listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'landscape': icon, 'clearlogo': fen_clearlogo})
-		listitem.setInfo('video', {'plot': ' '})
+		if kodi_version >= 20:
+			info_tag = listitem.getVideoInfoTag()
+			info_tag.setMediaType('video')
+			info_tag.setPlot(' ')
+		else: listitem.setInfo('video', {'plot': ' '})
 		if contextmenu_edit:
 			cm = []
 			cm_append = cm.append
