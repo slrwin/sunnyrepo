@@ -461,6 +461,11 @@
 						<heading>35526</heading>
 					</control>
 				</setting>
+				<setting id="enable.umbrellahidewatched" type="boolean" label="40395" help="">
+					<level>0</level>
+					<default>false</default>
+					<control type="toggle"/>
+				</setting>
 				<setting id="notification.sound" type="boolean" label="35527" help="">
 					<level>0</level>
 					<default>false</default>
@@ -2454,6 +2459,7 @@
 							<option label="32337">1</option>
 							<option label="40335">2</option>
 							<option label="40336">3</option>
+							<option label="40396">4</option>
 						</options>
 					</constraints>
 					<control type="spinner" format="string"/>

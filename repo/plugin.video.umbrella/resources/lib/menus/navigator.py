@@ -457,7 +457,9 @@ class Navigator:
 			url = 'plugin://plugin.video.umbrella/?action=tools_addView&content=%s' % content
 			poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
 			item = control.item(label=title, offscreen=True)
-			item.setInfo(type='video', infoLabels = {'title': title})
+			#item.setInfo(type='video', infoLabels = {'title': title})
+			meta = {'title': title}
+			control.set_info(item, meta)
 			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'fanart': fanart, 'banner': banner})
 			control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
 			control.content(syshandle, content)
@@ -621,7 +623,9 @@ class Navigator:
 			item.addContextMenuItems(cm)
 			if isPlayable: item.setProperty('IsPlayable', 'true')
 			item.setArt({'icon': icon, 'poster': poster, 'thumb': poster, 'fanart': control.addonFanart(), 'banner': poster})
-			item.setInfo(type='video', infoLabels={'plot': name})
+			#item.setInfo(type='video', infoLabels={'plot': name}) #k20setinfo
+			meta = dict({'plot': name})#k20setinfo
+			control.set_info(item, meta)#k20setinfo
 			control.addItem(handle=int(argv[1]), url=url, listitem=item, isFolder= isFolder)
 		except:
 			from resources.lib.modules import log_utils

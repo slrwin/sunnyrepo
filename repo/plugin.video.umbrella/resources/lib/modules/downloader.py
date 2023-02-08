@@ -38,7 +38,6 @@ def download(name, image, url, meta_name=None, pack=None): # needs re-write, pac
 		url = url.split('|')[0]
 		try: transname = name.translate((None, '\/:*?"<>|')).strip('.')
 		except: transname = name.translate(name.maketrans('', '', '\/:*?"<>|')).strip('.')  # maketrans() is in string module for py2
-		#import web_pdb; web_pdb.set_trace()
 		# for i in video_extensions: transname = transname.rstrip(i)
 		# if pack == 'season':
 		if pack in ('season', 'show'):

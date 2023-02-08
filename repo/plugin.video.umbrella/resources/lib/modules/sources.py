@@ -243,7 +243,7 @@ class Sources:
 				return meta
 			except:
 				log_utils.error()
-				meta = ''
+				meta = {}
 			try:
 				if self.mediatype != 'episode': raise Exception()
 				# do not add IMDBNUMBER as tmdb scraper puts their id in the key value
@@ -274,7 +274,7 @@ class Sources:
 				return meta
 			except:
 				log_utils.error()
-				meta = ''
+				meta = {}
 		if self.meta is None or 'videodb' in control.infoLabel('ListItem.FolderPath'):
 			self.meta = checkLibMeta()
 		try:
@@ -1597,7 +1597,10 @@ class Sources:
 		return window
 
 	def getIconProgress(self):
+		blindmode = 'icon_scrape.xml'
+		if getSetting('progress.dialog') == '4':
+			blindmode = 'blind_scrape.xml'
 		from resources.lib.windows.icon_scrape import IconScrape
-		window = IconScrape('icon_scrape.xml', control.addonPath(control.addonId()))
+		window = IconScrape(blindmode, control.addonPath(control.addonId()))
 		Thread(target=window.run).start()
 		return window
