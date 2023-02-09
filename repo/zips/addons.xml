@@ -889,7 +889,7 @@
     <screenshot>resources/screenshot-02.jpg</screenshot>
   </assets>
 </extension>
-</addon><addon id="plugin.video.umbrella" name="Umbrella" provider-name="Umbrella" version="6.6.13">
+</addon><addon id="plugin.video.umbrella" name="Umbrella" provider-name="Umbrella" version="6.6.141">
 	<requires>
 		<import addon="xbmc.python" version="3.0.0" />
 		<import addon="context.umbrella" version="1.2.8" optional="true" />
@@ -922,11 +922,11 @@
 			<screenshot>resources/screenshots/screenshot003.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR black]Update - v6.6.13 - Feb 2nd, 2023[/COLOR][/B]
---[FIX][I] Multiple bug fixes under the hood related to Nexus and Kodi 20.[/I]
---[FIX][I] Corrected add to cloud errors.[/I]
---[ENHANCEMENT][I] Added similar to and recommended from Library.[/I]
---[ENHANCEMENT][I] Adjusted recommended lists from TMDB to remove some (adult) results.[/I]
+[B][COLOR black]Update - v6.6.141 - Feb 8th, 2023[/COLOR][/B]
+--[FIX][I] Change to copy methods.[/I]
+--[FIX][I] Fix for some items not showing in unaired.[/I]
+--[FIX][I] Adjusted TMDB search for tv show error.[/I]
+--[CREDIT][I] Big thanks to user jigoop1 for their help getting infolist items updated.[/I]
 		</news>
 	</extension>
 </addon><addon id="plugin.video.watchnixtoons2" name="WatchNixtoons2" version="0.7.0" provider-name="doko">

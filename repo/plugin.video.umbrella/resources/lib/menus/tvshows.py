@@ -88,7 +88,7 @@ class TVshows:
 		self.tmdb_similar = 'https://api.themoviedb.org/3/tv/%s/similar?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_recentday = 'https://api.themoviedb.org/3/trending/tv/day?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_recentweek = 'https://api.themoviedb.org/3/trending/tv/week?api_key=%s&language=en-US&region=US&page=1'
-		self.search_tmdb_link = 'https://api.themoviedb.org/3/search/tv/?api_key=%s&language=en-US&query=%s&region=US&page=1'% ('%s','%s')
+		self.search_tmdb_link = 'https://api.themoviedb.org/3/search/tv?api_key=%s&language=en-US&query=%s&region=US&page=1'% ('%s','%s')
 
 		self.tvmaze_link = 'https://www.tvmaze.com'
 		self.tmdb_key = getSetting('tmdb.apikey')
@@ -1258,9 +1258,8 @@ class TVshows:
 		from sys import argv # some functions like ActivateWindow() throw invalid handle less this is imported here.
 		
 		if getSetting('trakt.directProgress.scrape') == 'true' and getSetting('enable.playnext') == 'true':
-			control.log('addtvdirectory playlist do not clear',1)
+			pass
 		else:
-			control.log('addtvdirectory playlist clear',1)
 			control.playlist.clear()
 		if not items: # with reuselanguageinvoker on an empty directory must be loaded, do not use sys.exit()
 			control.hide() ; control.notification(title=32002, message=33049)
