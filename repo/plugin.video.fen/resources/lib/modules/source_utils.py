@@ -23,10 +23,10 @@ CAM = ('.cam.', 'camrip', 'hdcam', '.hd.cam', 'hqcam', '.hq.cam', 'cam.rip', 'dv
 SCR = ('.scr.', 'screener', 'dvdscr', 'dvd.scr', '.r5', '.r6')
 TELE = ('.tc.', '.ts.', 'tsrip', 'hdts', 'hdtc', '.hd.tc', 'dvdts', 'telesync', 'tele.sync', 'telecine', 'tele.cine')
 VIDEO_3D = ('.3d.', '.sbs.', '.hsbs', 'sidebyside', 'side.by.side', 'stereoscopic', '.tab.', '.htab.', 'topandbottom', 'top.and.bottom')
-DOLBY_VISION = ('dolby.vision', 'dolbyvision', '.dovi.', '.dv.', 'dov', 'dovi')
+DOLBY_VISION = ('dolby.vision', 'dolbyvision', '.dovi.', '.dv.')
 HDR = ('2160p.bluray.hevc.truehd', '2160p.bluray.hevc.dts', '2160p.bluray.hevc.lpcm', '2160p.blu.ray.hevc.truehd', '2160p.blu.ray.hevc.dts', '2160p.uhd.bluray',
-		'2160p.uhd.blu.ray', '2160p.us.bluray.hevc.truehd', '2160p.us.bluray.hevc.dts', '.hdr.', 'hdr', 'hdr10', 'hdr.10', 'uhd.bluray.2160p', 'uhd.blu.ray.2160p')
-HDR_TRUE = ('.hdr.', 'hdr', 'hdr10', 'hdr.10')
+		'2160p.uhd.blu.ray', '2160p.us.bluray.hevc.truehd', '2160p.us.bluray.hevc.dts', '.hdr.', 'hdr10', 'hdr.10', 'uhd.bluray.2160p', 'uhd.blu.ray.2160p')
+HDR_TRUE = ('.hdr.', 'hdr10', 'hdr.10')
 CODEC_H264 = ('avc', 'h264', 'h.264', 'x264', 'x.264')
 CODEC_H265 = ('h265', 'h.265', 'hevc', 'x265', 'x.265')
 CODEC_XVID = ('xvid', '.x.vid')

@@ -2,6 +2,10 @@
 
 [B]Please utilize Fen Tips (Tools->Tips for Fen Use) to catch up on any important new features. New features will be highlighted with a [COLOR chartreuse]NEW!!![/COLOR] label.[/B]
 
+[COLOR dodgerblue][B]Version 3.0.42[/B][/COLOR]
+- Added setting to enable using custom skin specific xmls within Fen. Settings->General->"Use Custom Skin XMLs When Available". Currently, there is only a custom Next Episode xml for the Arctic Horizon 2 skin. If you want to make some custom xmls for skins, submit them to my Github by opening an issue, and I will include them.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 3.0.41[/B][/COLOR]
 - Added setting to change the actions of the buttons in the Extras Window. Settings->Features->Extras->"Set Actions for Extras Buttons". Set these to whathever you want them to be, from the available selections. Done for Movie and TV Show Extras.
 - Added setting to restore the Extras Buttons to default "Restore Extras Buttons to Default Actions".

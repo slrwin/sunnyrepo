@@ -108,9 +108,11 @@ class FenPlayer(xbmc_player):
 				clearart = self.meta_get('custom_clearart') or self.meta_get('clearart') or ''
 				landscape = self.meta_get('custom_landscape') or self.meta_get('landscape') or ''
 			else: banner, clearart, landscape = '', '', ''
-			duration, plot, genre, trailer, mpaa = self.meta_get('duration'), self.meta_get('plot'), self.meta_get('genre'), self.meta_get('trailer'), self.meta_get('mpaa')
-			rating, votes, premiered, studio, tagline = self.meta_get('rating'), self.meta_get('votes'), self.meta_get('premiered'), self.meta_get('studio'), self.meta_get('tagline')
-			director, writer, cast, country = self.meta_get('director'), self.meta_get('writer'), self.meta_get('cast', []), self.meta_get('country')
+			duration, plot, genre, trailer, mpaa = self.meta_get('duration'), self.meta_get('plot'), self.meta_get('genre', ''), self.meta_get('trailer'), self.meta_get('mpaa')
+			rating, votes = self.meta_get('rating'), self.meta_get('votes')
+			premiered, studio, tagline = self.meta_get('premiered'), self.meta_get('studio', ''), self.meta_get('tagline')
+			director, writer, cast, country = self.meta_get('director', ''), self.meta_get('writer', ''), self.meta_get('cast', []), self.meta_get('country', '')
+			listitem.setLabel(self.title)
 			if self.media_type == 'movie':
 				if self.fanart_enabled:
 					discart = self.meta_get('custom_discart') or self.meta_get('discart') or ''
@@ -122,18 +124,20 @@ class FenPlayer(xbmc_player):
 					info_tag = listitem.getVideoInfoTag()
 					info_tag.setMediaType('movie')
 					info_tag.setTitle(self.title)
+					info_tag.setOriginalTitle(self.meta_get('original_title'))
 					info_tag.setPlot(plot)
 					info_tag.setYear(int(self.year))
 					info_tag.setRating(rating)
 					info_tag.setVotes(votes)
 					info_tag.setMpaa(mpaa)
 					info_tag.setDuration(duration)
-					info_tag.setCountries(country or '')
+					info_tag.setCountries(country)
 					info_tag.setTrailer(trailer)
 					info_tag.setPremiered(premiered)
 					info_tag.setTagLine(tagline)
 					info_tag.setStudios((studio or '',))
 					info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
+					info_tag.setIMDBNumber(self.imdb_id)
 					info_tag.setGenres(genre.split(', '))
 					info_tag.setWriters(writer.split(', '))
 					info_tag.setDirectors(director.split(', '))
@@ -151,6 +155,7 @@ class FenPlayer(xbmc_player):
 					info_tag = listitem.getVideoInfoTag()
 					info_tag.setMediaType('episode')
 					info_tag.setTitle(self.meta_get('ep_name'))
+					info_tag.setOriginalTitle(self.meta_get('original_title'))
 					info_tag.setTvShowTitle(self.title)
 					info_tag.setTvShowStatus(self.meta_get('status'))
 					info_tag.setSeason(self.season)
@@ -165,6 +170,7 @@ class FenPlayer(xbmc_player):
 					info_tag.setFirstAired(premiered)
 					info_tag.setStudios((studio or '',))
 					info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id), 'tvdb': str(self.tvdb_id)})
+					info_tag.setIMDBNumber(self.imdb_id)
 					info_tag.setGenres(genre.split(', '))
 					info_tag.setWriters(writer.split(', '))
 					info_tag.setDirectors(director.split(', '))

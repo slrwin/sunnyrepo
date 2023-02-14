@@ -283,16 +283,16 @@ def paginate_list(item_list, page, limit=20):
 	pages = list(chunks(item_list, limit))
 	return pages[page - 1], json.dumps(pages), len(pages)
 
-def download_color_palette(palette_location):
+def download_github_zip(url_insert, destination):
 	from io import BytesIO
 	from zipfile import ZipFile
 	from modules.kodi_utils import requests, path_exists, userdata_path
 	try:
-		url = 'https://github.com/Tikipeter/color_palette/raw/main/color_palette.zip'
+		url = 'https://github.com/Tikipeter/%s/raw/main/%s.zip' % (url_insert, url_insert)
 		result = requests.get(url, stream=True)
 		zipfile = ZipFile(BytesIO(result.raw.read()))
 		zipfile.extractall(path=userdata_path)
-		if path_exists(palette_location): status = True
+		if path_exists(destination): status = True
 		else: status = False
 	except: status = False
 	return status

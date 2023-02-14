@@ -2,7 +2,7 @@
 import time
 import datetime
 from xml.dom.minidom import parse as mdParse
-from windows import FontUtils
+from windows import FontUtils, get_custom_xmls_version, download_custom_xmls
 from caches import check_databases, clean_databases
 from apis.trakt_api import trakt_sync_activities
 from modules import kodi_utils, settings
@@ -17,16 +17,10 @@ logger, json, run_addon, confirm_dialog, close_dialog = kodi_utils.logger, kodi_
 get_property, set_property, clear_property, get_visibility = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property, kodi_utils.get_visibility
 trakt_sync_interval, trakt_sync_refresh_widgets, auto_start_fen = settings.trakt_sync_interval, settings.trakt_sync_refresh_widgets, settings.auto_start_fen
 make_directories, kodi_refresh, list_dirs, delete_file = kodi_utils.make_directories, kodi_utils.kodi_refresh, kodi_utils.list_dirs, kodi_utils.delete_file
-current_skin_prop, use_skin_fonts_prop = kodi_utils.current_skin_prop, kodi_utils.use_skin_fonts_prop
+current_skin_prop, use_skin_fonts_prop, custom_skin_path = kodi_utils.current_skin_prop, kodi_utils.use_skin_fonts_prop, kodi_utils.custom_skin_path
 fen_str, window_top_str, listitem_property_str = ls(32036).upper(), 'Window.IsTopMost(%s)', 'ListItem.Property(%s)'
 media_windows = (10000, 10025)
 movieinformation_str, contextmenu_str = 'movieinformation', 'contextmenu'
-
-class InitializeDatabases:
-	def run(self):
-		logger(fen_str, 'InitializeDatabases Service Starting')
-		check_databases()
-		return logger(fen_str, 'InitializeDatabases Service Finished')
 
 class SetKodiVersion:
 	def run(self):
@@ -34,6 +28,12 @@ class SetKodiVersion:
 		kodi_version = get_infolabel('System.BuildVersion')
 		set_property('fen.kodi_version', kodi_version)
 		return logger(fen_str, 'SetKodiVersion Service Finished - Kodi Version Detected: %s' % kodi_version)
+
+class InitializeDatabases:
+	def run(self):
+		logger(fen_str, 'InitializeDatabases Service Starting')
+		check_databases()
+		return logger(fen_str, 'InitializeDatabases Service Finished')
 
 class DatabaseMaintenance:
 	def run(self):
@@ -212,6 +212,18 @@ class CustomFonts:
 		try: del player
 		except: pass
 		return logger(fen_str, 'CustomFonts Service Finished')
+
+class CheckCustomXMLs:
+	def run(self):
+		logger(fen_str, 'CheckCustomXMLs Service Starting')
+		if '32859' in get_setting('custom_skins.enable', '$ADDON[plugin.video.fen 32860]'):
+			current_version = get_setting('custom_skins.version', '0.0.0')
+			latest_version = get_custom_xmls_version()
+			if current_version != latest_version or not path_exists(translate_path(custom_skin_path[:-2])):
+				success = download_custom_xmls()
+				if success: set_setting('custom_skins.version', latest_version)
+				logger(fen_str, 'CheckCustomXMLs Service - Attempted XMLs Update. Success? %s' % success)
+		logger(fen_str, 'CheckCustomXMLs Service Finished')
 
 class ClearSubs:
 	def run(self):

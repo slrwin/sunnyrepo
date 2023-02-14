@@ -75,7 +75,7 @@
                         <align>left</align>
                         <aligny>center</aligny>
                         <textcolor>FFB7B4BB</textcolor>
-                        <label>$INFO[Window.Property(next_episode)]</label>
+                        <label>[B]$INFO[Window.Property(next_ep_title)] - $INFO[Window.Property(next_ep_season)]x$INFO[Window.Property(next_ep_episode)][/B] - $INFO[Window.Property(next_ep_ep_name)]</label>
                         <autoscroll>true</autoscroll>
                     </control>
                     <control type="grouplist">
@@ -178,7 +178,7 @@
                             <align>center</align>
                         </control>
                         <control type="button" id="12">
-                            <description>Canel</description>
+                            <description>Cancel</description>
                             <animation effect="zoom" start="100" end="102" time="50" tween="sine" easing="inout" center="auto">Focus</animation>
                             <animation effect="zoom" start="102" end="100" time="50" tween="sine" easing="inout" center="auto">Unfocus</animation>
                             <width>160</width>

@@ -379,9 +379,9 @@ def download_manager(params):
 				listitem.setArt({'fanart': addon_fanart, 'clearlogo': fen_clearlogo})
 				if kodi_version >= 20:
 					info_tag = listitem.getVideoInfoTag()
-					info_tag.setMediaType('video')
+					info_tag.setMediaType('files')
 					info_tag.setPlot(' ')
-				else: listitem.setInfo('video', {'plot': ' '})
+				else: listitem.setInfo('files', {'plot': ' '})
 				yield (url, listitem, info[1])
 			except: pass
 	handle = int(sys.argv[1])

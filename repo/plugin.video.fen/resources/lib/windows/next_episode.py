@@ -43,7 +43,10 @@ class NextEpisode(BaseDialog):
 		self.setProperty('title', self.meta['title'])
 		self.setProperty('poster', self.original_poster())
 		self.setProperty('fanart', self.original_fanart())
-		self.setProperty('next_episode', '[B]%s - %02dx%02d[/B] - %s' % (self.meta['title'], self.meta['season'], self.meta['episode'], self.meta['ep_name']))
+		self.setProperty('next_ep_title', self.meta['title'])
+		self.setProperty('next_ep_season', '%02d' % self.meta['season'])
+		self.setProperty('next_ep_episode', '%02d' % self.meta['episode'])
+		self.setProperty('next_ep_ep_name', self.meta['ep_name'])
 
 	def original_poster(self):
 		self.poster = self.meta.get('custom_poster') or self.meta.get(self.poster_main) or self.meta.get(self.poster_backup) or empty_poster

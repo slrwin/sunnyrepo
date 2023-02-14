@@ -166,11 +166,13 @@ class Movies:
 				cm_append((clearprog_str, run_plugin % clearprog_params))
 			cm_append((watchedstr % self.watched_title, run_plugin % watched_status_params))
 			if not self.is_widget: cm_append((exit_str, container_refresh % self.exit_list_params))
+			display = rootname if self.include_year else title
 			if kodi_version >= 20:
 				if self.is_widget: cm_append((refr_widg_str, run_plugin % build_url({'mode': 'kodi_refresh'})))
 				info_tag = listitem.getVideoInfoTag()
 				info_tag.setMediaType('movie')
-				info_tag.setTitle(title)
+				info_tag.setTitle(display)
+				info_tag.setOriginalTitle(meta_get('original_title'))
 				info_tag.setPlot(meta_get('plot'))
 				info_tag.setYear(int(year))
 				info_tag.setRating(meta_get('rating'))
@@ -184,6 +186,7 @@ class Movies:
 				info_tag.setTagLine(meta_get('tagline'))
 				info_tag.setStudios((meta_get('studio') or '',))
 				info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id)})
+				info_tag.setIMDBNumber(imdb_id)
 				info_tag.setGenres(meta_get('genre').split(', '))
 				info_tag.setWriters(meta_get('writer').split(', '))
 				info_tag.setDirectors(meta_get('director').split(', '))
@@ -194,7 +197,7 @@ class Movies:
 				listitem.setCast(meta_get('cast', []))
 				listitem.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id)})
 				listitem.setInfo('video', remove_keys(meta, dict_removals))
-			listitem.setLabel(rootname if self.include_year else title)
+			listitem.setLabel(display)
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'banner': banner, 'clearart': clearart,
 							'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape, 'discart': discart, 'keyart': keyart})

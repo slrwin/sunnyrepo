@@ -11,7 +11,7 @@ path_exists, list_dirs, progress_dialog, make_directory = kodi_utils.path_exists
 show_busy_dialog, hide_busy_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 
 def check_databases():
-	if not path_exists((databases_path)): make_directory(databases_path)
+	if not path_exists(databases_path): make_directory(databases_path)
 	remove_old_caches()
 	#Navigator
 	dbcon = database.connect(navigator_db)

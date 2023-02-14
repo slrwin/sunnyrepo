@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from modules.kodi_utils import translate_path, get_property, tmdb_default_api, fanarttv_default_api, get_setting, external_browse
+from modules.kodi_utils import translate_path, get_property, tmdb_default_api, fanarttv_default_api, get_setting, external_browse, current_skin, path_exists, \
+								custom_xml_path, custom_skin_path, default_skin_path
 # from modules.kodi_utils import logger
 
 download_directories_dict = {'movie': 'movie_download_directory', 'episode': 'tvshow_download_directory', 'thumb_url': 'image_download_directory',
@@ -23,9 +24,11 @@ resolution_tuple = (
 	{'poster': 'w780', 'fanart': 'w1280', 'still': 'original', 'profile': 'h632', 'clearlogo': 'original'},
 	{'poster': 'original', 'fanart': 'original', 'still': 'original', 'profile': 'original', 'clearlogo': 'original'})
 
-
-def skin_location():
-	return translate_path('special://home/addons/plugin.video.fen')
+def skin_location(skin_xml):
+	if '32860' in get_setting('custom_skins.enable'): return translate_path(default_skin_path)
+	user_skin = current_skin()
+	if path_exists(translate_path(custom_xml_path % (user_skin, skin_xml))): return translate_path(custom_skin_path % user_skin)
+	return translate_path(default_skin_path)
 
 def use_skin_fonts():
 	return get_setting('use_skin_fonts')

@@ -4,7 +4,7 @@ from windows import open_window
 from caches import refresh_cached_data
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.utils import get_datetime, title_key
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external_browse = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external_browse
 get_property, open_settings, set_property, get_icon, dialog = kodi_utils.get_property, kodi_utils.open_settings, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog
@@ -18,7 +18,7 @@ numeric_input, confirm_progress_media, container_update = kodi_utils.numeric_inp
 poster_empty, fanart_empty, clear_property, highlight_prop = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.clear_property, kodi_utils.highlight_prop
 fen_str, addon_icon, database, maincache_db, custom_context_prop = ls(32036), kodi_utils.addon_icon, kodi_utils.database, kodi_utils.maincache_db, kodi_utils.custom_context_prop
 movie_extras_buttons_defaults, tvshow_extras_buttons_defaults = kodi_utils.movie_extras_buttons_defaults, kodi_utils.tvshow_extras_buttons_defaults
-extras_button_label_values = kodi_utils.extras_button_label_values
+extras_button_label_values, path_exists, custom_skin_path = kodi_utils.extras_button_label_values, kodi_utils.path_exists, kodi_utils.custom_skin_path
 get_language, extras_enabled_menus, active_internal_scrapers, auto_play = settings.get_language, settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 extras_open_action, get_art_provider, fanarttv_default, ignore_articles = settings.extras_open_action, settings.get_art_provider, settings.fanarttv_default, settings.ignore_articles
 clear_scrapers_cache, get_aliases_titles, make_alias_dict = source_utils.clear_scrapers_cache, source_utils.get_aliases_titles, source_utils.make_alias_dict
@@ -30,6 +30,29 @@ closing_options = (None, 'trakt_manager', 'favorites_choice', 'playback_choice',
 					'open_fen_settings', 'browse', 'browse_season', 'nextep_manager', 'recommended', 'random', 'playback', 'extras', 'mark_movie',
 					'mark_episode', 'mark_watched_tvshow', 'mark_unwatched_tvshow', 'mark_watched_season', 'mark_unwatched_season', 'clear_progress',
 					'refresh_widgets', 'exit_menu')
+
+def custom_skins_choice(params):
+	current_version = get_setting('custom_skins.version', '0.0.0')
+	currently_enabled = '32859' in get_setting('custom_skins.enable')
+	new_setting_value = '32860' if currently_enabled else '32859'
+	if not currently_enabled:
+		if path_exists(translate_path(custom_skin_path[:-2])) and current_version != '0.0.0': success = True
+		else:
+			show_busy_dialog()
+			from windows import download_custom_xmls, get_custom_xmls_version
+			latest_version = get_custom_xmls_version()
+			if latest_version:
+				success = download_custom_xmls()
+				hide_busy_dialog()
+				if success:
+					set_setting('custom_skins.version', latest_version)
+					ok_dialog(text=ls(33125) % latest_version)
+				else: notification(32574)
+			else:
+				notification(32574)
+				success = False
+	else: success = True
+	if success: set_setting('custom_skins.enable', '$ADDON[plugin.video.fen %s]' % new_setting_value)
 
 def tmdb_image_resolutions_choice(params):
 	icon = get_icon('tmdb')

@@ -80,7 +80,7 @@ def build_season_list(params):
 					info_tag = listitem.getVideoInfoTag()
 					info_tag.setMediaType('season')
 					info_tag.setTitle(title)
-					info_tag.setTvShowTitle(show_title)
+					info_tag.setOriginalTitle(orig_title)
 					info_tag.setTvShowStatus(status)
 					info_tag.setSeason(season_number)
 					info_tag.setPlot(plot)
@@ -94,6 +94,7 @@ def build_season_list(params):
 					info_tag.setFirstAired(premiered)
 					info_tag.setStudios((studio or '',))
 					info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': str_tmdb_id, 'tvdb': str_tvdb_id})
+					info_tag.setIMDBNumber(imdb_id)
 					info_tag.setGenres(genre.split(', '))
 					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
 					if is_widget: listitem.setInfo('video', {'overlay': overlay})# needs to stay until setPlaycount works
@@ -119,9 +120,10 @@ def build_season_list(params):
 		meta = tvshow_meta('tmdb_id', params['tmdb_id'], meta_user_info, current_date)
 		meta_get = meta.get
 		tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year')
-		str_tmdb_id, str_tvdb_id, rating, genre, premiered, status = string(tmdb_id), string(tvdb_id), meta_get('rating'), meta_get('genre'), meta_get('premiered'), meta_get('status')
-		cast, mpaa, votes, trailer, studio, show_plot = meta_get('cast', []), meta_get('mpaa'), meta_get('votes'), string(meta_get('trailer')), meta_get('studio'), meta_get('plot')
-		episode_run_time, season_data, total_seasons, total_aired_eps = meta_get('duration'), meta_get('season_data'), meta_get('total_seasons'), meta_get('total_aired_eps')
+		orig_title, status, show_plot, total_aired_eps = meta_get('original_title', ''), meta_get('status'), meta_get('plot'), meta_get('total_aired_eps')
+		str_tmdb_id, str_tvdb_id, rating, genre, premiered = string(tmdb_id), string(tvdb_id), meta_get('rating'), meta_get('genre'), meta_get('premiered')
+		cast, mpaa, votes, trailer, studio = meta_get('cast', []), meta_get('mpaa'), meta_get('votes'), string(meta_get('trailer')), meta_get('studio')
+		episode_run_time, season_data, total_seasons = meta_get('duration'), meta_get('season_data'), meta_get('total_seasons')
 		poster_main, poster_backup, fanart_main, fanart_backup, clearlogo_main, clearlogo_backup = get_art_provider()
 		fanart_default = poster_main == 'poster2'
 		show_poster = meta_get('custom_poster') or meta_get(poster_main) or meta_get(poster_backup) or poster_empty

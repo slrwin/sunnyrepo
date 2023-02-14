@@ -78,7 +78,8 @@ def build_episode_list(params):
 					if is_widget: cm_append((refr_widg_str, run_plugin % build_url({'mode': 'kodi_refresh'})))
 					info_tag = listitem.getVideoInfoTag()
 					info_tag.setMediaType('episode')
-					info_tag.setTitle(item_get('title'))
+					info_tag.setTitle(display)
+					info_tag.setOriginalTitle(orig_title)
 					info_tag.setTvShowTitle(title)
 					info_tag.setTvShowStatus(show_status)
 					info_tag.setSeason(season)
@@ -94,6 +95,7 @@ def build_episode_list(params):
 					info_tag.setFirstAired(item_get('premiered'))
 					info_tag.setStudios((studio or '',))
 					info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id), 'tvdb': string(tvdb_id)})
+					info_tag.setIMDBNumber(imdb_id)
 					info_tag.setGenres(genre.split(', '))
 					info_tag.setWriters(item_get('writer').split(', '))
 					info_tag.setDirectors(item_get('director').split(', '))
@@ -125,7 +127,7 @@ def build_episode_list(params):
 		fanart_enabled, hide_watched = meta_user_info['extra_fanart_enabled'], is_widget and meta_user_info['widget_hide_watched']
 		meta = tv_meta_function('tmdb_id', params.get('tmdb_id'), meta_user_info, current_date)
 		meta_get = meta.get
-		tmdb_id, tvdb_id, imdb_id, tvshow_plot = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot')
+		tmdb_id, tvdb_id, imdb_id, tvshow_plot, orig_title = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot'), meta_get('original_title')
 		title, year, rootname, show_duration, show_status = meta_get('title'), meta_get('year'), meta_get('rootname'), meta_get('duration'), meta_get('status')
 		cast, mpaa, trailer, genre, studio = meta_get('cast', []), meta_get('mpaa'), string(meta_get('trailer')), meta_get('genre'), meta_get('studio')
 		season = params['season']
@@ -193,7 +195,7 @@ def build_single_episode(list_type, params={}):
 				unaired = False
 				set_properties({'fen.unaired': 'false'})
 			tmdb_id, tvdb_id, imdb_id, title, year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year')
-			rootname, trailer, genre, studio = meta_get('rootname'), string(meta_get('trailer')), meta_get('genre'), meta_get('studio')
+			orig_title, rootname, trailer, genre, studio = meta_get('rootname'), string(meta_get('trailer')), meta_get('genre'), meta_get('studio'), meta_get('original_title')
 			cast, mpaa, tvshow_plot, show_status = meta_get('cast', []), meta_get('mpaa'), meta_get('plot'), meta_get('status')
 			show_poster = meta_get('custom_poster') or meta_get(poster_main) or meta_get(poster_backup) or poster_empty
 			show_fanart = meta_get('custom_fanart') or meta_get(fanart_main) or meta_get(fanart_backup) or fanart_empty
@@ -268,6 +270,7 @@ def build_single_episode(list_type, params={}):
 				info_tag = listitem.getVideoInfoTag()
 				info_tag.setMediaType('episode')
 				info_tag.setTitle(display)
+				info_tag.setOriginalTitle(orig_title)
 				info_tag.setTvShowTitle(title)
 				info_tag.setTvShowStatus(show_status)
 				info_tag.setSeason(season)
@@ -283,6 +286,7 @@ def build_single_episode(list_type, params={}):
 				info_tag.setFirstAired(item_get('premiered'))
 				info_tag.setStudios((studio or '',))
 				info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id), 'tvdb': string(tvdb_id)})
+				info_tag.setIMDBNumber(imdb_id)
 				info_tag.setGenres(genre.split(', '))
 				info_tag.setWriters(item_get('writer').split(', '))
 				info_tag.setDirectors(item_get('director').split(', '))

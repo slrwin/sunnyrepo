@@ -3690,6 +3690,18 @@ msgctxt "#33123"
 msgid "Choose Which Media Type to Set Back to Default"
 msgstr ""
 
+msgctxt "#33124"
+msgid "Use Custom Skin XMLs When Available"
+msgstr ""
+
+msgctxt "#33125"
+msgid "Custom skins automatically updated to version [B]%s[/B]"
+msgstr ""
+
+msgctxt "#33126"
+msgid ""
+msgstr ""
+
 msgctxt "#40001"
 msgid "[B]Refresh Widgets[/B]"
 msgstr ""

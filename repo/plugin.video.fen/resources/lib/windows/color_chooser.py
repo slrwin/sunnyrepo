@@ -22,8 +22,8 @@ class SelectColor(BaseDialog):
 		if self.path_exists(self.palette_location): status = True
 		else:
 			self.notification(33110)
-			from modules.utils import download_color_palette
-			status = download_color_palette(self.palette_location)
+			from modules.utils import download_github_zip
+			status = download_github_zip('color_palette', self.palette_location)
 		return status
 
 	def onInit(self):
