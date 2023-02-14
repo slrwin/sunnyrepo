@@ -51,3 +51,6 @@
 [submodule "repo/script.module.peewee"]
 	path = repo/script.module.peewee
 	url = https://github.com/groggyegg/script.module.peewee.git
+[submodule "repo/skin.cosmic"]
+	path = repo/skin.cosmic
+	url = https://github.com/heppen7/skin.cosmic.git
