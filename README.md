@@ -1,3 +1,5 @@
+# Download Kodi : <a href="https://kodi.tv/download" target="_blank" rel="noopener noreferrer">Link</a>
+
 # Sunny Repo
 
 ## Current Version: 1.0.3
