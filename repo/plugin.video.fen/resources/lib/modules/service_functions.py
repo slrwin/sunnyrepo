@@ -219,7 +219,7 @@ class CheckCustomXMLs:
 		if '32859' in get_setting('custom_skins.enable', '$ADDON[plugin.video.fen 32860]'):
 			current_version = get_setting('custom_skins.version', '0.0.0')
 			latest_version = get_custom_xmls_version()
-			if current_version != latest_version or not path_exists(translate_path(custom_skin_path[:-2])):
+			if current_version != latest_version or not path_exists(translate_path(custom_skin_path)):
 				success = download_custom_xmls()
 				if success: set_setting('custom_skins.version', latest_version)
 				logger(fen_str, 'CheckCustomXMLs Service - Attempted XMLs Update. Success? %s' % success)

@@ -41,12 +41,11 @@ class ConfirmProgressMedia(BaseDialog):
 		return status
 
 	def onAction(self, action):
-		if not self.enable_buttons:
-			if action in self.closing_actions:
-				self.is_canceled = True
-				if self.resolver_enabled: self.close()
-			if self.resolver_enabled:
-				if action == self.right_action: self.skip_resolve = True
+		if action in self.closing_actions:
+			self.is_canceled = True
+			if self.enable_buttons: self.close()
+		if self.resolver_enabled:
+			if action == self.right_action: self.skip_resolve = True
 
 	def reset_is_cancelled(self):
 		self.is_canceled = False

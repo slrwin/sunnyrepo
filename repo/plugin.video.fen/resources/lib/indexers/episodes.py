@@ -4,7 +4,7 @@ from caches.favorites import favorites
 from modules import kodi_utils, settings, watched_status as ws
 from modules.metadata import tvshow_meta, episodes_meta, all_episodes_meta
 from modules.utils import jsondate_to_datetime, adjust_premiered_date, make_day, get_datetime, title_key, date_difference, make_thread_list_enumerate
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 remove_keys, set_view_mode, external_browse, sys = kodi_utils.remove_keys, kodi_utils.set_view_mode, kodi_utils.external_browse, kodi_utils.sys
 add_items, set_content, set_sort_method, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.set_sort_method, kodi_utils.end_directory
@@ -90,7 +90,6 @@ def build_episode_list(params):
 					info_tag.setVotes(item_get('votes'))
 					info_tag.setMpaa(mpaa)
 					info_tag.setDuration(item_get('duration'))
-					info_tag.setPlaycount(playcount)
 					info_tag.setTrailer(trailer)
 					info_tag.setFirstAired(item_get('premiered'))
 					info_tag.setStudios((studio or '',))
@@ -100,7 +99,8 @@ def build_episode_list(params):
 					info_tag.setWriters(item_get('writer').split(', '))
 					info_tag.setDirectors(item_get('director').split(', '))
 					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast + item_get('guest_stars', [])])
-					if is_widget: listitem.setInfo('video', {'overlay': overlay})# needs to stay until setPlaycount works
+					info_tag.setPlaycount(playcount)
+					if progress: info_tag.setResumePoint(float(progress))
 				else:
 					item.update({'trailer': trailer, 'tvshowtitle': title, 'premiered': premiered, 'genre': genre, 'mpaa': mpaa, 'studio': studio, 'status': show_status,
 								'playcount': playcount, 'overlay': overlay})
@@ -265,7 +265,7 @@ def build_single_episode(list_type, params={}):
 												'season': season, 'episode': episode, 'refresh': 'true'})
 					cm_append((clearprog_str, run_plugin % clearprog_params))
 					set_properties({'WatchedProgress': progress, 'resumetime': progress, 'fen.in_progress': 'true'})
-			if kodi_version == 20:
+			if kodi_version >= 20:
 				if is_widget: cm_append((refr_widg_str, run_plugin % build_url({'mode': 'kodi_refresh'})))
 				info_tag = listitem.getVideoInfoTag()
 				info_tag.setMediaType('episode')
@@ -281,7 +281,6 @@ def build_single_episode(list_type, params={}):
 				info_tag.setVotes(item_get('votes'))
 				info_tag.setMpaa(mpaa)
 				info_tag.setDuration(item_get('duration'))
-				info_tag.setPlaycount(playcount)
 				info_tag.setTrailer(trailer)
 				info_tag.setFirstAired(item_get('premiered'))
 				info_tag.setStudios((studio or '',))
@@ -291,7 +290,8 @@ def build_single_episode(list_type, params={}):
 				info_tag.setWriters(item_get('writer').split(', '))
 				info_tag.setDirectors(item_get('director').split(', '))
 				info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast + item_get('guest_stars', [])])
-				if is_widget: listitem.setInfo('video', {'overlay': overlay})# needs to stay until setPlaycount works
+				info_tag.setPlaycount(playcount)
+				if progress: info_tag.setResumePoint(float(progress))
 			else:
 				item.update({'trailer': trailer, 'tvshowtitle': title, 'premiered': premiered, 'genre': genre, 'mpaa': mpaa, 'studio': studio, 'status': show_status,
 							'playcount': playcount, 'overlay': overlay, 'title': display})

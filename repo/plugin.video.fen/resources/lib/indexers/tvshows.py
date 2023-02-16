@@ -179,7 +179,6 @@ class TVShows:
 				info_tag.setMpaa(meta_get('mpaa'))
 				info_tag.setDuration(meta_get('duration'))
 				info_tag.setCountries(meta_get('country'))
-				info_tag.setPlaycount(playcount)
 				info_tag.setTrailer(meta_get('trailer'))
 				info_tag.setPremiered(meta_get('premiered'))
 				info_tag.setTagLine(meta_get('tagline'))
@@ -190,7 +189,7 @@ class TVShows:
 				info_tag.setWriters(meta_get('writer').split(', '))
 				info_tag.setDirectors(meta_get('director').split(', '))
 				info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in meta_get('cast', [])])
-				if self.is_widget: listitem.setInfo('video', {'overlay': overlay})# needs to stay until setPlaycount works
+				info_tag.setPlaycount(playcount)
 			else:
 				meta.update({'playcount': playcount, 'overlay': overlay})
 				listitem.setCast(meta_get('cast', []))

@@ -10,12 +10,12 @@ show_busy_dialog, kodi_utils.confirm_dialog, database, clear_property = kodi_uti
 progress_dialog, notification, kodi_utils.hide_busy_dialog, monitor = kodi_utils.progress_dialog, kodi_utils.notification, kodi_utils.hide_busy_dialog, kodi_utils.monitor
 ls, get_setting, set_setting, sleep, ok_dialog = kodi_utils.local_string, kodi_utils.get_setting, kodi_utils.set_setting, kodi_utils.sleep, kodi_utils.ok_dialog
 set_temp_highlight, restore_highlight, make_settings_dict = kodi_utils.set_temp_highlight, kodi_utils.restore_highlight, kodi_utils.make_settings_dict
-pause_settings_change, unpause_settings_change = kodi_utils.pause_settings_change, kodi_utils.unpause_settings_change
+pause_settings_change, unpause_settings_change, get_icon = kodi_utils.pause_settings_change, kodi_utils.unpause_settings_change, kodi_utils.get_icon
 path_exists, maincache_db, requests, Thread = kodi_utils.path_exists, kodi_utils.maincache_db, kodi_utils.requests, kodi_utils.Thread
 base_url = 'https://api.alldebrid.com/v4/'
 user_agent = 'fen_for_kodi'
 timeout = 20.0
-icon = kodi_utils.get_icon('alldebrid')
+icon = get_icon('alldebrid')
 
 class AllDebridAPI:
 	def __init__(self):
@@ -34,7 +34,7 @@ class AllDebridAPI:
 		sleep_interval = 5
 		content = line % (ls(32517), ls(32700) % response.get('base_url'), ls(32701) % '[COLOR goldenrod]%s[/COLOR]' % response.get('pin'))
 		current_highlight = set_temp_highlight('goldenrod')
-		progressDialog = progress_dialog('%s %s' % (ls(32063), ls(32057)), icon)
+		progressDialog = progress_dialog('%s %s' % (ls(32063), ls(32057)), get_icon('ad_qrcode'))
 		progressDialog.update(content, 0)
 		start, time_passed = time.time(), 0
 		sleep(2000)

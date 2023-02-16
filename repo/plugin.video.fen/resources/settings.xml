@@ -3164,6 +3164,27 @@
 					<default>false</default>
 					<control type="toggle"/>
 				</setting>
+				<setting id="playback.easynews_max_retries" type="integer" label="33126" help="">
+					<level>0</level>
+					<default>1</default>
+					<constraints>
+						<minimum>0</minimum>
+						<step>1</step>
+						<maximum>5</maximum>
+					</constraints>
+					<dependencies>
+						<dependency type="visible">
+							<and>
+								<condition operator="is" setting="playback.monitor_success">true</condition>
+								<condition operator="is" setting="provider.easynews">true</condition>
+								<condition operator="!is" setting="easynews_password"/>
+							</and>
+						</dependency>
+					</dependencies>
+					<control type="slider" format="integer">
+						<popup>false</popup>
+					</control>
+				</setting>
 				<setting id="playback.volumecheck_enabled" type="boolean" label="33064" help="">
 					<level>0</level>
 					<default>false</default>

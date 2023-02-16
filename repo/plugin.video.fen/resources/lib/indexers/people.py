@@ -18,7 +18,7 @@ def person_data_dialog(params):
 	if 'query' in params: query = unquote(params['query'])
 	else: query = None
 	open_window(('windows.people', 'People'), 'people.xml', query=query, actor_name=params.get('actor_name'), actor_image=params.get('actor_image'),
-				actor_id=params.get('actor_id'), is_widget=params.get('is_widget', 'false'))
+				actor_id=params.get('actor_id'), reference_tmdb_id=params.get('reference_tmdb_id'), is_widget=params.get('is_widget', 'false'))
 
 def person_search(query=None, window_xml='select.xml'):
 	show_busy_dialog()

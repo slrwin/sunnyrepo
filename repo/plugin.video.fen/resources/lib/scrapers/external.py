@@ -15,8 +15,9 @@ int_window_prop = kodi_utils.int_window_prop
 pack_display, format_line, total_format = '%s (%s)', '%s[CR]%s[CR]%s', '[COLOR %s][B]%s[/B][/COLOR]'
 int_format, ext_format = '[COLOR %s][B]Int:[/B][/COLOR] %s', '[COLOR %s][B]Ext:[/B][/COLOR] %s'
 ext_scr_format, unfinshed_import_format = '[COLOR %s][B]%s[/B][/COLOR]', '[COLOR green]+%s[/COLOR]'
-diag_format = '4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'
+diag_format = 'SD: %s | 720P: %s | 1080P: %s | 4K: %s | %s: %s'
 debrid_hash_tuple = (('Real-Debrid', 'rd_cached_hashes'), ('Premiumize.me', 'pm_cached_hashes'), ('AllDebrid', 'ad_cached_hashes'))
+remain_str, total_str = ls(32676), ls(32677)
 season_display, show_display = ls(32537), ls(32089)
 pack_check = (season_display, show_display)
 
@@ -61,7 +62,6 @@ class source:
 	def get_sources(self):
 		def _scraperDialog():
 			hide_busy_dialog()
-			string1, string2 = ls(32676), ls(32677)
 			if self.internal_activated or self.internal_prescraped: string3, string4 = int_format % (self.int_dialog_highlight, '%s'), ext_format % (self.ext_dialog_highlight, '%s')
 			else: string4 = ext_scr_format % (self.ext_dialog_highlight, ls(32118))
 			line1 = line2 = line3 = ''
@@ -80,15 +80,15 @@ class source:
 						int_720, int_sd = self.int_total % self.internal_sources_720p, self.int_total % self.internal_sources_sd
 						internalSource_total_label = self.int_total % self.internal_sources_total
 						alive_threads.extend(remaining_internal_scrapers)
-						line1 = string3 % diag_format % (int_4k, int_1080, int_720, int_sd, string2, internalSource_total_label)
-						line2 = string4 % diag_format % (ext_4k, ext_1080, ext_720, ext_sd, string2, source_total_label)
+						line1 = string3 % diag_format % (int_sd, int_720, int_1080, int_4k, total_str, internalSource_total_label)
+						line2 = string4 % diag_format % (ext_sd, ext_720, ext_1080, ext_4k, total_str, source_total_label)
 					else:
 						line1 = string4
-						line2 = diag_format % (ext_4k, ext_1080, ext_720, ext_sd, string2, source_total_label)
+						line2 = diag_format % (ext_sd, ext_720, ext_1080, ext_4k, total_str, source_total_label)
 					len_alive_threads = len(alive_threads)
-					if not self.threads_completed: line3 = string1 % unfinshed_import_format % str(len_alive_threads)
-					elif len_alive_threads > 5: line3 = string1 % str(len_alive_threads)
-					else: line3 = string1 % ', '.join(alive_threads).upper()
+					if not self.threads_completed: line3 = remain_str % unfinshed_import_format % str(len_alive_threads)
+					elif len_alive_threads > 5: line3 = remain_str % str(len_alive_threads)
+					else: line3 = remain_str % ', '.join(alive_threads).upper()
 					current_time = time.time()
 					current_progress = max((current_time - start_time), 0)
 					percent = (current_progress/float(self.timeout))*100

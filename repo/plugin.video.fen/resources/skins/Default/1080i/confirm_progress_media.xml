@@ -568,11 +568,11 @@
                     </control>
                 </control>
                 <control type="textbox" id="2001">
-                    <left>185</left>
+                    <left>150</left>
                     <top>90</top>
-                    <width>740</width>
+                    <width>810</width>
                     <height>180</height>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font13</font> <!-- FEN_30 -->
                     <align>center</align>
                     <textcolor>FFB7B4BB</textcolor>
                 </control>

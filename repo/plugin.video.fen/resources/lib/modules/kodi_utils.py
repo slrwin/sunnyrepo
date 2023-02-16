@@ -29,7 +29,7 @@ empty_poster, item_jump, item_next = img_url % icons.box_office, img_url % icons
 tmdb_default_api, fanarttv_default_api = 'b370b60447737762ca38457bd77579b3', 'fa836e1c874ba95ab08a14ee88e05565'
 custom_skins_version_path = 'https://github.com/Tikipeter/custom_skins/raw/main/version.txt'
 custom_xml_path = 'special://profile/addon_data/plugin.video.fen/custom_skins/%s/resources/skins/Default/1080i/%s'
-custom_skin_path = 'special://profile/addon_data/plugin.video.fen/custom_skins/%s'
+custom_skin_path = 'special://profile/addon_data/plugin.video.fen/custom_skins/'
 default_skin_path = 'special://home/addons/plugin.video.fen'
 database_path_raw = 'special://profile/addon_data/plugin.video.fen/databases/%s'
 current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'views.db', 'traktcache4.db', 'maincache.db', 'metacache2.db', 'debridcache.db', 'providerscache2.db')
@@ -37,7 +37,7 @@ fen_settings_str, menu_cache_prop, highlight_prop, meta_filter_prop = 'fen_setti
 view_type_prop, props_made_prop, pause_settings_prop, build_content_prop = 'fen.view_type_%s', 'fen.window_properties_made', 'fen.pause_settings', 'fen.build_content'
 custom_context_main_menu_prop, custom_context_prop, custom_info_prop = 'fen.custom_main_menu_context', 'fen.custom_context_menu', 'fen.custom_info_dialog'
 current_skin_prop, use_skin_fonts_prop = 'fen.current_skin', 'fen.use_skin_fonts'
-int_window_prop, pause_services_prop = 'fen.internal_results.%s', 'fen.pause_services'
+int_window_prop, pause_services_prop, suppress_sett_dict_prop = 'fen.internal_results.%s', 'fen.pause_services', 'fen.suppress_settings_dict'
 userdata_path = translatePath('special://profile/addon_data/plugin.video.fen/')
 addon_settings = translatePath('special://home/addons/plugin.video.fen/resources/settings.xml')
 user_settings = translatePath('special://profile/addon_data/plugin.video.fen/settings.xml')
@@ -54,7 +54,7 @@ maincache_db = translatePath(database_path_raw % current_dbs[5])
 metacache_db = translatePath(database_path_raw % current_dbs[6])
 debridcache_db = translatePath(database_path_raw % current_dbs[7])
 external_db = translatePath(database_path_raw % current_dbs[8])
-myvideos_db_paths = {19: '119', 20: '121'}
+myvideos_db_paths = {19: '119', 20: '121', 21: '121'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
 playlist_type_dict = {'music': 0, 'video': 1}
 extras_button_label_values = {'movie': {'movies_play': 32174, 'show_trailers': 32606, 'show_keywords': 32092, 'show_images': 32798,  'show_extrainfo': 32605,
@@ -439,12 +439,14 @@ def volume_checker():
 		if int(100 - (float(string_alphanum_to_num(get_infolabel('Player.Volume').split('.')[0]))/60)*100) > max_volume: execute_builtin('SetVolume(%d)' % max_volume)
 	except: pass
 
-def focus_index(index, sleep_time=100):
+def focus_index(index, sleep_time=1000):
+	show_busy_dialog()
 	sleep(sleep_time)
 	current_window = current_window_id()
 	focus_id = current_window.getFocusId()
 	try: current_window.getControl(focus_id).selectItem(index)
 	except: pass
+	hide_busy_dialog()
 
 def clear_settings_window_properties():
 	clear_property('fen_settings')
@@ -554,11 +556,14 @@ def set_setting(setting_id, value):
 
 def get_setting(setting_id, fallback=None):
 	try: settings_dict = json.loads(get_property(fen_settings_str))
-	except: settings_dict = make_settings_dict()
+	except:
+		if get_property('fen.suppress_settings_dict'): return Addon().getSetting(setting_id)
+		settings_dict = make_settings_dict()
 	if settings_dict is None or setting_id not in settings_dict:
 		settings_dict = get_setting_fallback(setting_id)
-		make_settings_dict()
-		make_window_properties()
+		if not get_property(suppress_sett_dict_prop) == 'true':
+			make_settings_dict()
+			make_window_properties()
 	value = settings_dict.get(setting_id, '')
 	if value == '':
 		if fallback is None: return value
@@ -572,19 +577,22 @@ def make_settings_dict():
 	from xml.dom.minidom import parse as mdParse
 	settings_dict = None
 	clear_property(fen_settings_str)
-	try:
-		if not path_exists(userdata_path): make_directories(userdata_path)
-		settings_dict = {}
-		dict_update = settings_dict.update
-		for item in mdParse(user_settings).getElementsByTagName('setting'):
-			setting_id = item.getAttribute('id')
-			try: setting_value = item.firstChild.data
-			except: setting_value = None
-			if setting_value is None: setting_value = ''
-			dict_item = {setting_id: setting_value}
-			dict_update(dict_item)
-		set_property(fen_settings_str, json.dumps(settings_dict))
-	except Exception as e: logger('error in make_settings_dict', str(e))
+	if not get_property('fen.suppress_settings_dict'):
+		try:
+			if not path_exists(userdata_path): make_directories(userdata_path)
+			settings_dict = {}
+			dict_update = settings_dict.update
+			for item in mdParse(user_settings).getElementsByTagName('setting'):
+				setting_id = item.getAttribute('id')
+				try: setting_value = item.firstChild.data
+				except: setting_value = None
+				if setting_value is None: setting_value = ''
+				dict_item = {setting_id: setting_value}
+				dict_update(dict_item)
+			set_property(fen_settings_str, json.dumps(settings_dict))
+		except Exception as e:
+			set_property(suppress_sett_dict_prop, 'true')
+			logger('error in make_settings_dict', str(e))
 	return settings_dict
 
 def make_window_properties(override=False):

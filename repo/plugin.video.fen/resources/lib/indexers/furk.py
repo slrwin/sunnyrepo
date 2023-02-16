@@ -44,7 +44,7 @@ def furk_folder_browser(files, display_mode, handle):
 				cm_append = cm.append
 				name, size, info_hash = clean_file_name(item_get('name')).upper(), item_get('size'), item_get('info_hash')
 				item_id, url_dl, files_num_video, is_protected = item_get('id'), item_get('url_dl'), item_get('files_num_video'), item_get('is_protected')
-				try: thumb = item_get('ss_urls_tn')[0] or furk_icon
+				try: thumb = [i for i in item_get('ss_urls', []) if i][0]
 				except: thumb = furk_icon
 				display_size = str(round(float(size)/1048576000, 1))
 				duration = int(int(item['duration'])/60.0)

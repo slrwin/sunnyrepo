@@ -89,7 +89,6 @@ def build_season_list(params):
 					info_tag.setVotes(votes)
 					info_tag.setMpaa(mpaa)
 					info_tag.setDuration(episode_run_time)
-					info_tag.setPlaycount(playcount)
 					info_tag.setTrailer(trailer)
 					info_tag.setFirstAired(premiered)
 					info_tag.setStudios((studio or '',))
@@ -97,7 +96,7 @@ def build_season_list(params):
 					info_tag.setIMDBNumber(imdb_id)
 					info_tag.setGenres(genre.split(', '))
 					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
-					if is_widget: listitem.setInfo('video', {'overlay': overlay})# needs to stay until setPlaycount works
+					info_tag.setPlaycount(playcount)
 				else:
 					listitem.setCast(cast)
 					listitem.setUniqueIDs({'imdb': imdb_id, 'tmdb': str_tmdb_id, 'tvdb': str_tvdb_id})

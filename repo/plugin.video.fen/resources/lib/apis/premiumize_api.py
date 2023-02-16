@@ -31,7 +31,7 @@ class PremiumizeAPI:
 		response = self._post(url, data)
 		content = line % (ls(32517), ls(32700) % response.get('verification_uri'), ls(32701) % '[COLOR orangered]%s[/COLOR]' % response.get('user_code'))
 		current_highlight = set_temp_highlight('orangered')
-		progressDialog = progress_dialog('%s %s' % (ls(32061), ls(32057)), icon)
+		progressDialog = progress_dialog('%s %s' % (ls(32061), ls(32057)), get_icon('pm_qrcode'))
 		progressDialog.update(content, 0)
 		device_code = response['device_code']
 		expires_in = int(response['expires_in'])

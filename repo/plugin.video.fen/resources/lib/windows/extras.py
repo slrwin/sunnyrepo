@@ -12,7 +12,7 @@ from modules.utils import change_image_resolution, adjust_premiered_date, get_da
 from modules.meta_lists import networks
 from modules.metadata import movieset_meta, episodes_meta
 from modules.episode_tools import EpisodeTools
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 json, Thread, get_icon, close_all_dialog, ok_dialog = kodi_utils.json, kodi_utils.Thread, kodi_utils.get_icon, kodi_utils.close_all_dialog, kodi_utils.ok_dialog
 addon_icon, ls, get_icon, backup_cast_thumbnail = kodi_utils.addon_icon, kodi_utils.local_string, kodi_utils.get_icon, get_icon('genre_family')
@@ -94,7 +94,7 @@ class Extras(BaseDialog):
 				params = {'tmdb_id': chosen_var, 'media_type': self.media_type, 'is_widget': self.is_widget}
 				return extras_menu_choice(params)
 			elif self.control_id == cast_id:
-				return person_data_dialog({'query': chosen_var, 'is_widget': self.is_widget})
+				return person_data_dialog({'query': chosen_var, 'reference_tmdb_id': self.tmdb_id, 'is_widget': self.is_widget})
 			elif self.control_id == videos_id:
 				chosen = imdb_videos_choice(self.get_attribute(self, chosen_var)[self.get_position(self.control_id)]['videos'], self.poster)
 				if not chosen: return

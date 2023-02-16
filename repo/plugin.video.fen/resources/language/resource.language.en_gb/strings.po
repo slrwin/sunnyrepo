@@ -3699,7 +3699,15 @@ msgid "Custom skins automatically updated to version [B]%s[/B]"
 msgstr ""
 
 msgctxt "#33126"
-msgid ""
+msgid "Maximum Easynews Retries (0 for no retries)"
+msgstr ""
+
+msgctxt "#33127"
+msgid "[B]Initializing Scrapers[/B]"
+msgstr ""
+
+msgctxt "#33128"
+msgid "[B]Please Wait...[/B]"
 msgstr ""
 
 msgctxt "#40001"

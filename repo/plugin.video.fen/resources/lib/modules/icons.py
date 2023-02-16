@@ -60,6 +60,11 @@ tv = 'R3NEEJl'
 watched_1 = 'Ps93y86'
 watched_recent = 'SacesHf'
 
+rd_qrcode = 'hjZliTu'
+pm_qrcode = 'ARyznQq'
+ad_qrcode = 'jtIyMrl'
+trakt_qrcode = 'lMrS0mS'
+
 search_history = 'y1DEuvk'
 search_imdb = 'z4C3PAx'
 search_movie = 'u8jgyN3'

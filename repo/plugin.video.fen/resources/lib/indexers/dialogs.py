@@ -4,7 +4,7 @@ from windows import open_window
 from caches import refresh_cached_data
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.utils import get_datetime, title_key
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external_browse = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external_browse
 get_property, open_settings, set_property, get_icon, dialog = kodi_utils.get_property, kodi_utils.open_settings, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog
@@ -36,7 +36,7 @@ def custom_skins_choice(params):
 	currently_enabled = '32859' in get_setting('custom_skins.enable')
 	new_setting_value = '32860' if currently_enabled else '32859'
 	if not currently_enabled:
-		if path_exists(translate_path(custom_skin_path[:-2])) and current_version != '0.0.0': success = True
+		if path_exists(translate_path(custom_skin_path)) and current_version != '0.0.0': success = True
 		else:
 			show_busy_dialog()
 			from windows import download_custom_xmls, get_custom_xmls_version
@@ -410,12 +410,15 @@ def playback_choice(media_type, poster, meta, season, episode, window_xml):
 	kwargs = {'items': json.dumps(list_items), 'heading': ls(32174), 'window_xml': window_xml}
 	choice = select_dialog([i['function'] for i in items], **kwargs)
 	if choice == None: return notification(32736, 2500)
-	if choice == 'clear_and_rescrape':
+	def clear_caches():
+		from caches import clear_cache
 		from caches.providers_cache import ExternalProvidersCache
 		show_busy_dialog()
-		deleted = ExternalProvidersCache().delete_cache_single(media_type, str(meta['tmdb_id']))
+		clear_cache('internal_scrapers', silent=True)
+		ExternalProvidersCache().delete_cache_single(media_type, str(meta['tmdb_id']))
 		hide_busy_dialog()
-		if not deleted: return notification(32574)
+	if choice == 'clear_and_rescrape':
+		clear_caches()
 		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'autoplay': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'autoplay': 'false'}
 	elif choice == 'scrape_with_default':
@@ -450,19 +453,22 @@ def playback_choice(media_type, poster, meta, season, episode, window_xml):
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode,
 							'custom_title': custom_title, 'prescrape': 'false'}
 	else:
+		clear_caches()
 		default_title, default_year = meta['title'], str(meta['year'])
 		allscrapers_str, def_scrapers_str = '%s?' % ls(32006), '%s?' % ls(32185)
 		title_str, year_str, season_str, episode_str = ls(32228), ls(32543), ls(32537), ls(32203).lower().capitalize()
 		if media_type in ('movie', 'movies'): play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'prescrape': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false'}
 		if aliases:
+			if len(aliases) == 1: alias_title = aliases[0]
 			poster_main, poster_backup = get_art_provider()[0:2]
 			poster = meta.get('custom_poster') or meta.get(poster_main) or meta.get(poster_backup) or poster_empty
 			list_items = [{'line1': i, 'icon': poster} for i in aliases]
 			kwargs = {'items': json.dumps(list_items), 'window_xml': 'media_select.xml'}
 			alias_title = select_dialog(aliases, **kwargs)
-			if alias_title: default_title = alias_title
-		custom_title = dialog.input(title_str, defaultt=default_title)
+			if alias_title: custom_title = dialog.input(title_str, defaultt=alias_title)
+			else: return notification(32736, 2500)
+		else: custom_title = dialog.input(title_str, defaultt=default_title)
 		if not custom_title: return notification(32736, 2500)
 		def _process_params(default_value, custom_value, param_value):
 			if custom_value and custom_value != default_value: play_params[param_value] = custom_value
@@ -493,13 +499,14 @@ def playback_choice(media_type, poster, meta, season, episode, window_xml):
 
 def set_quality_choice(params):
 	quality_setting = params.get('quality_setting')
+	icon = params.get('icon', None) or get_icon('fen')
 	include = ls(32188)
 	dl = ['%s SD' % include, '%s 720p' % include, '%s 1080p' % include, '%s 4K' % include]
 	fl = ['SD', '720p', '1080p', '4K']
 	try: preselect = [fl.index(i) for i in get_setting(quality_setting).split(', ')]
 	except: preselect = []
-	list_items = [{'line1': item} for item in dl]
-	kwargs = {'items': json.dumps(list_items), 'multi_choice': 'true', 'preselect': preselect}
+	list_items = [{'line1': item, 'icon': icon} for item in dl]
+	kwargs = {'items': json.dumps(list_items), 'multi_choice': 'true', 'preselect': preselect, 'window_xml': params.get('window_xml', 'select.xml')}
 	choice = select_dialog(fl, **kwargs)
 	if choice is None: return
 	if choice == []:
@@ -574,12 +581,13 @@ def easynews_server_choice(params={}):
 	clear_media_results_database()
 
 def enable_scrapers_choice(params={}):
+	icon = params.get('icon', None) or get_icon('fen')
 	scrapers = ['external', 'furk', 'easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'folders']
 	cloud_scrapers = {'rd_cloud': 'rd.enabled', 'pm_cloud': 'pm.enabled', 'ad_cloud': 'ad.enabled'}
 	scraper_names = [ls(32118).upper(), ls(32069).upper(), ls(32070).upper(), ls(32098).upper(), ls(32097).upper(), ls(32099).upper(), ls(32108).upper()]
 	preselect = [scrapers.index(i) for i in active_internal_scrapers()]
-	list_items = [{'line1': item} for item in scraper_names]
-	kwargs = {'items': json.dumps(list_items), 'multi_choice': 'true', 'preselect': preselect}
+	list_items = [{'line1': item, 'icon': icon} for item in scraper_names]
+	kwargs = {'items': json.dumps(list_items), 'multi_choice': 'true', 'preselect': preselect, 'window_xml': params.get('window_xml', 'select.xml')}
 	choice = select_dialog(scrapers, **kwargs)
 	if choice is None: return
 	for i in scrapers:
@@ -935,9 +943,10 @@ def options_menu_choice(params, meta=None):
 	elif choice == 'toggle_autoscrape_next':
 		set_setting('autoscrape_next_episode', autoscrape_next_toggle)
 	elif choice == 'set_quality':
-		set_quality_choice({'quality_setting': 'autoplay_quality_%s' % content if autoplay_status == on_str else 'results_quality_%s' % content})
+		set_quality_choice({'quality_setting': 'autoplay_quality_%s' % content if autoplay_status == on_str else 'results_quality_%s' % content,
+							'window_xml': window_xml, 'icon': poster})
 	elif choice == 'enable_scrapers':
-		enable_scrapers_choice()
+		enable_scrapers_choice({'window_xml': window_xml, 'icon': poster})
 	make_settings_dict()
 	make_window_properties(override=True)
 	options_menu_choice(params, meta=meta)

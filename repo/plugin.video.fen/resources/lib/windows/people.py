@@ -81,8 +81,22 @@ class People(BaseDialog):
 	def make_person_data(self):
 		show_busy_dialog()
 		if self.kwargs['query']:
-			try: self.person_id = tmdb_people_info(self.kwargs['query'])[0]['id']
-			except: self.person_id = None; notification(32760)
+			self.reference_tmdb_id = self.kwargs.get('reference_tmdb_id', None)
+			self.person_id = None
+			try:
+				data = tmdb_people_info(self.kwargs['query'])
+				if len(data) > 1 and self.reference_tmdb_id:
+					for item in data:
+						known_for = item.get('known_for', [])
+						if known_for:
+							known_for_tmdb_ids = [i['id'] for i in known_for]
+							if self.reference_tmdb_id in known_for_tmdb_ids:
+								self.person_id = item['id']
+								break
+				if not self.person_id:
+					try: self.person_id = data[0]['id']
+					except: pass
+			except: pass
 		else: self.person_id = self.kwargs['actor_id']
 		hide_busy_dialog()
 		if not self.person_id:

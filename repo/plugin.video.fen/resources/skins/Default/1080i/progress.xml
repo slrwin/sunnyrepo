@@ -60,7 +60,6 @@
                     <top>110</top>
                     <width>250</width>
                     <height>250</height>
-                    <aspectratio>scale</aspectratio>
                     <aspectratio aligny="top">stretch</aspectratio>
                 </control>
                 <control type="label" id="2000">

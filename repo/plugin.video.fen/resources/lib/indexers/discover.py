@@ -9,7 +9,7 @@ from modules.utils import safe_string, remove_accents
 
 sys, json, translate_path, database, get_icon = kodi_utils.sys, kodi_utils.json, kodi_utils.translate_path, kodi_utils.database, kodi_utils.get_icon
 get_property, dialog, notification, select_dialog, run_plugin = kodi_utils.get_property, kodi_utils.dialog, kodi_utils.notification, kodi_utils.select_dialog, kodi_utils.run_plugin
-add_items, show_text, kodi_refresh, focus_index, add_item = kodi_utils.add_items, kodi_utils.show_text, kodi_utils.kodi_refresh, kodi_utils.focus_index, kodi_utils.add_item
+add_items, show_text, container_refresh, focus_index, add_item = kodi_utils.add_items, kodi_utils.show_text, kodi_utils.container_refresh, kodi_utils.focus_index, kodi_utils.add_item
 ls, build_url, make_listitem, set_property, set_content = kodi_utils.local_string, kodi_utils.build_url, kodi_utils.make_listitem, kodi_utils.set_property, kodi_utils.set_content
 end_directory, external_browse, set_view_mode, maincache_db = kodi_utils.end_directory, kodi_utils.external_browse, kodi_utils.set_view_mode, kodi_utils.maincache_db
 clear_property, confirm_dialog, numeric_input, kodi_version = kodi_utils.clear_property, kodi_utils.confirm_dialog, kodi_utils.numeric_input, kodi_utils.kodi_version
@@ -418,13 +418,13 @@ class Discover:
 		self._build_string()
 		self._build_name()
 		self._set_property()
-		kodi_refresh()
-		if index: focus_index(index, 500)
+		container_refresh()
+		if index: focus_index(index)
 
 	def _clear_property(self):
 		clear_property(self.window_prop)
 		self.discover_params = {}
-		kodi_refresh()
+		container_refresh()
 
 	def _set_property(self):
 		return set_property(self.window_prop, json.dumps(self.discover_params))
@@ -532,7 +532,7 @@ class Discover:
 		dbcur.execute("DELETE FROM maincache WHERE id=?", (params['data_id'],))
 		dbcon.commit()
 		clear_property(params['data_id'])
-		kodi_refresh()
+		container_refresh()
 		if not params['silent'] == 'true': notification(32576)
 
 	def remove_all_history(self):

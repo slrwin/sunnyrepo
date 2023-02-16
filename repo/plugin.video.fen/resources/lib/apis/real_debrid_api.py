@@ -40,7 +40,7 @@ class RealDebridAPI:
 		user_code = response['user_code']
 		content = line % (ls(32517), ls(32700) % 'https://real-debrid.com/device', ls(32701) % '[COLOR seagreen]%s[/COLOR]' % user_code)
 		current_highlight = set_temp_highlight('seagreen')
-		progressDialog = progress_dialog('%s %s' % (ls(32054), ls(32057)), icon)
+		progressDialog = progress_dialog('%s %s' % (ls(32054), ls(32057)), get_icon('rd_qrcode'))
 		progressDialog.update(content, 0)
 		expires_in = int(response['expires_in'])
 		sleep_interval = int(response['interval'])

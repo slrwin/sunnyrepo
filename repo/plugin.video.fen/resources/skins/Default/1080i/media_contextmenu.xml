@@ -12,13 +12,13 @@
             </animation>
         </control>
         <control type="group">
-            <left>310</left>
+            <left>260</left>
             <top>100</top>
             <animation type="WindowOpen" reversible="false">
                 <effect type="zoom" start="50" end="100" time="200" center="910,440" tween="quadratic" easing="out" />
             </animation>
             <control type="group">
-                <width>1300</width>
+                <width>1400</width>
                 <control type="image">
                     <height>885</height>
                     <texture colordiffuse="FF4a4347">common/white.png</texture>
@@ -38,7 +38,7 @@
                     <texture colordiffuse="FFCCCCCC">common/fen.png</texture>
                 </control>
                 <control type="label">
-                    <width max="1100">auto</width>
+                    <width max="1200">auto</width>
                     <top>35</top>
                     <left>110</left>
                     <height>20</height>
@@ -50,7 +50,7 @@
                 <control type="group">
                     <visible>!String.IsEqual(Container(2025).ListItem.Property(default_icon),true)</visible>
                     <control type="image">
-                        <left>770</left>
+                        <left>870</left>
                         <top>135</top>
                         <aligny>left</aligny>
                         <height>720</height>
@@ -58,24 +58,12 @@
                         <aspectratio aligny="top">keep</aspectratio>
                         <texture>$INFO[Container(2025).ListItem.Property(icon)]</texture>
                         <fadetime>100</fadetime>
-                        <visible>String.IsEqual(Window().Property(multi_choice),false)</visible>
-                    </control>
-                    <control type="image">
-                        <left>770</left>
-                        <top>355</top>
-                        <aligny>left</aligny>
-                        <height>500</height>
-                        <width>500</width>
-                        <aspectratio aligny="top">keep</aspectratio>
-                        <texture>$INFO[Container(2025).ListItem.Property(icon)]</texture>
-                        <fadetime>100</fadetime>
-                        <visible>String.IsEqual(Window().Property(multi_choice),true)</visible>
                     </control>
                 </control>
                 <control type="group">
                     <visible>String.IsEqual(Container(2025).ListItem.Property(default_icon),true)</visible>
                     <control type="image">
-                        <left>770</left>
+                        <left>870</left>
                         <top>355</top>
                         <aligny>left</aligny>
                         <height>500</height>
@@ -86,13 +74,10 @@
                 </control>
             </control>
             <control type="fixedlist" id="2025">
-                <animation effect="slide" end="0,-270" time="0" condition="Integer.IsEqual(Container(2025).NumItems,1) | Integer.IsEqual(Container(2025).NumItems,2)">Conditional</animation>
-                <animation effect="slide" end="0,-180" time="0" condition="Integer.IsEqual(Container(2025).NumItems,3) | Integer.IsEqual(Container(2025).NumItems,4)">Conditional</animation>
-                <animation effect="slide" end="0,-90" time="0" condition="Integer.IsEqual(Container(2025).NumItems,5) | Integer.IsEqual(Container(2025).NumItems,6)">Conditional</animation>
                 <pagecontrol>2065</pagecontrol>
                 <left>0</left>
                 <top>135</top>
-                <width>700</width>
+                <width>800</width>
                 <height>720</height>
                 <onup>2025</onup>
                 <ondown>2025</ondown>
@@ -102,11 +87,11 @@
                 <focusposition>3</focusposition>
                 <movement>4</movement>
                 <scrolltime tween="sine">200</scrolltime>
-                <itemlayout height="90" width="700">
+                <itemlayout height="90" width="800">
                     <control type="label">
                         <description>Only Line1</description>
                         <visible>String.IsEqual(Window().Property(multi_line),false)</visible>
-                        <width max="640">auto</width>
+                        <width max="740">auto</width>
                         <left>40</left>
                         <top>45</top>
                         <height>5</height>
@@ -118,7 +103,7 @@
                     <control type="group">
                         <description>Line1 and Line2</description>
                         <visible>String.IsEqual(Window().Property(multi_line),true)</visible>
-                        <width max="640">auto</width>
+                        <width max="740">auto</width>
                         <left>40</left>
                         <control type="label">
                             <top>25</top>
@@ -126,7 +111,7 @@
                             <font>font12</font> <!-- FEN_26 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <aligny>center</aligny>
-                            <label>[UPPERCASE][B]$INFO[ListItem.Property(line1)][/B][/UPPERCASE]</label>
+                            <label>[UPPERCASE]$INFO[ListItem.Property(line1)][/UPPERCASE]</label>
                         </control>
                         <control type="label">
                             <top>60</top>
@@ -137,18 +122,8 @@
                             <label>[UPPERCASE][I]$INFO[ListItem.Property(line2)][/I][/UPPERCASE]</label>
                         </control>
                     </control>
-                    <control type="image">
-                        <top>0</top>
-                        <left>3</left>
-                        <width>25</width>
-                        <align>left</align>
-                        <aligny>center</aligny>
-                        <aspectratio>keep</aspectratio>
-                        <texture>common/overlay_selected.png</texture>
-                        <visible>!String.IsEmpty(ListItem.Property(check_status))</visible>
-                    </control>
                 </itemlayout>
-                <focusedlayout height="90" width="700">
+                <focusedlayout height="90" width="800">
                     <control type="image">
                         <width>1200</width>
                         <height>90</height>
@@ -169,7 +144,7 @@
                         <left>40</left>
                         <top>45</top>
                         <height>5</height>
-                        <width max="640">auto</width>
+                        <width max="740">auto</width>
                         <font>font12</font> <!-- FEN_26 -->
                         <textcolor>FF4a4347</textcolor>
                         <aligny>center</aligny>
@@ -178,7 +153,7 @@
                     <control type="group">
                         <description>Line1 and Line2</description>
                         <visible>String.IsEqual(Window().Property(multi_line),true)</visible>
-                        <width max="640">auto</width>
+                        <width max="740">auto</width>
                         <left>40</left>
                         <control type="label">
                             <top>25</top>
@@ -197,59 +172,11 @@
                             <label>[UPPERCASE][I]$INFO[ListItem.Property(line2)][/I][/UPPERCASE]</label>
                         </control>
                     </control>
-                    <control type="image">
-                        <top>0</top>
-                        <left>3</left>
-                        <width>25</width>
-                        <align>left</align>
-                        <aligny>center</aligny>
-                        <aspectratio>keep</aspectratio>
-                        <texture>common/overlay_selected.png</texture>
-                        <visible>!String.IsEmpty(ListItem.Property(check_status))</visible>
-                    </control>
                 </focusedlayout>
-            </control>
-            <control type="group">
-                <visible>String.IsEqual(Window().Property(multi_choice),true)</visible>
-                <top>130</top>
-                <left>850</left>
-                <control type="button" id="10">
-                    <description>True</description>
-                    <width>340</width>
-                    <height>85</height>
-                    <onup>11</onup>
-                    <ondown>11</ondown>
-                    <onleft>2025</onleft>
-                    <onright>2025</onright>
-                    <label>[B]$ADDON[plugin.video.fen 32839][/B]</label>
-                    <font>font14</font> <!-- FEN_33 -->
-                    <textcolor>FFB7B4BB</textcolor>
-                    <focusedcolor>$INFO[Window(10000).Property(fen.highlight)]</focusedcolor>
-                    <texturefocus colordiffuse="FFCCCCCC">common/white.png</texturefocus>
-                    <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
-                    <align>center</align>
-                </control>
-                <control type="button" id="11">
-                    <description>False</description>
-                    <top>105</top>
-                    <width>340</width>
-                    <height>85</height>
-                    <onup>10</onup>
-                    <ondown>10</ondown>
-                    <onleft>2025</onleft>
-                    <onright>2025</onright>
-                    <label>[B]$ADDON[plugin.video.fen 32840][/B]</label>
-                    <font>font14</font> <!-- FEN_33 -->
-                    <textcolor>FFB7B4BB</textcolor>
-                    <focusedcolor>$INFO[Window(10000).Property(fen.highlight)]</focusedcolor>
-                    <texturefocus colordiffuse="FFCCCCCC">common/white.png</texturefocus>
-                    <texturenofocus colordiffuse="FF302F2F">common/white.png</texturenofocus>
-                    <align>center</align>
-                </control>
             </control>
             <control type="scrollbar" id="2065">
                 <top>135</top>
-                <left>730</left>
+                <left>830</left>
                 <width>20</width>
                 <height>720</height>
                 <texturesliderbackground colordiffuse="FF302F2F">common/white.png</texturesliderbackground>

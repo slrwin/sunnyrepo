@@ -26,6 +26,7 @@ class FenPlayer(xbmc_player):
 
 	def run(self, url=None, obj=None):
 		hide_busy_dialog()
+		self.clear_playback_properties()
 		if not url: return self.run_error()
 		try: return self.play_video(url, obj)
 		except: return self.run_error()
@@ -45,23 +46,32 @@ class FenPlayer(xbmc_player):
 					self.autoplay_nextep = self.sources_object.autoplay_nextep
 					self.autoscrape_nextep = self.sources_object.autoscrape_nextep
 			else: play_random_continual, self.autoplay_nextep, self.autoscrape_nextep = False, False, False
-			if not self.sources_object.monitor_playback:
+			if not self.monitor_playback:
 				current_time = time.time()
-				end_time = current_time + 20
+				end_time = current_time + 28
 				while current_time < end_time and not self.isPlayingVideo():
 					current_time = time.time()
 					sleep(500)
 			hide_busy_dialog()
 			sleep(1000)
+			count = 0
 			while self.isPlayingVideo():
 				try:
-					if not ensure_dialog_dead:
-						ensure_dialog_dead = True
-						self.kill_dialog()
-						sleep(200)
-						close_all_dialog()
 					sleep(1000)
+					if self.monitor_playback:
+						if self.playback_successful is None:
+							count += 1
+							if count == 5:
+								self.playback_successful = False
+								return self.stop()
 					self.total_time, self.curr_time = self.getTotalTime(), self.getTime()
+					if self.monitor_playback:
+						self.playback_successful = True
+						if not ensure_dialog_dead:
+							ensure_dialog_dead = True
+							self.kill_dialog()
+							sleep(200)
+							close_all_dialog()
 					if not bookmark_set and self.total_time:
 						bookmark_set = True
 						if self.media_type == 'episode' and any((play_random_continual, play_random)): bookmark = 0
@@ -82,6 +92,7 @@ class FenPlayer(xbmc_player):
 			self.set_build_content('true')
 			if not self.media_marked: self.media_watched_marker()
 			clear_local_bookmarks()
+			self.clear_playback_properties()
 		except: self.kill_dialog()
 
 	def make_listing(self):
@@ -125,7 +136,8 @@ class FenPlayer(xbmc_player):
 					info_tag.setMediaType('movie')
 					info_tag.setTitle(self.title)
 					info_tag.setOriginalTitle(self.meta_get('original_title'))
-					info_tag.setPlot(plot)
+					# info_tag.setPlot(plot)
+					info_tag.setPlot('booo!!!')
 					info_tag.setYear(int(self.year))
 					info_tag.setRating(rating)
 					info_tag.setVotes(votes)
@@ -175,6 +187,7 @@ class FenPlayer(xbmc_player):
 					info_tag.setWriters(writer.split(', '))
 					info_tag.setDirectors(director.split(', '))
 					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
+					info_tag.setFilenameAndPath(self.url)
 				else:
 					listitem.setInfo('video', {'mediatype': 'episode', 'trailer': trailer, 'title': self.meta_get('ep_name'), 'imdbnumber': self.imdb_id,
 						'tvshowtitle': self.title, 'size': '0', 'plot': plot, 'year': self.year, 'votes': votes, 'premiered': premiered, 'studio': studio, 'genre': genre,
@@ -182,12 +195,7 @@ class FenPlayer(xbmc_player):
 					listitem.setCast(cast)
 					listitem.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id), 'tvdb': str(self.tvdb_id)})
 			# listitem.setProperty('StartPercent', str('15'))
-			try:
-				clear_property('script.trakt.ids')
-				trakt_ids = {'tmdb': self.tmdb_id, 'imdb': self.imdb_id, 'slug': make_trakt_slug(self.title)}
-				if self.media_type == 'episode': trakt_ids['tvdb'] = self.tvdb_id
-				set_property('script.trakt.ids', json.dumps(trakt_ids))
-			except: pass
+			self.set_playback_properties()
 		return listitem
 
 	def play_video(self, url, obj):
@@ -196,8 +204,7 @@ class FenPlayer(xbmc_player):
 		volume_checker()
 		self.play(self.url, self.make_listing())
 		if not self.is_generic:
-			self.playback_successful = self.check_playback_start()
-			if self.playback_successful: self.start_monitor()
+			if self.check_playback_start(): self.start_monitor()
 			else:
 				self.set_build_content('true')
 				self.stop()
@@ -243,11 +250,8 @@ class FenPlayer(xbmc_player):
 		except: pass
 
 	def check_playback_start(self):
-		if not self.sources_object.monitor_playback: return True
-		current_time = time.time()
-		end_time = current_time + 20
-		while current_time < end_time:
-			current_time = time.time()
+		if not self.monitor_playback: return True
+		while self.playback_successful is None:
 			hide_busy_dialog()
 			if self.isPlayingVideo(): return True
 			if not self.sources_object.progress_dialog: return False
@@ -257,6 +261,7 @@ class FenPlayer(xbmc_player):
 				execute_builtin("SendClick(okdialog, 11)")
 				return False
 			sleep(20)
+		self.playback_successful = False
 		self.set_build_content('true')
 		return False
 
@@ -317,17 +322,44 @@ class FenPlayer(xbmc_player):
 		self.is_generic = self.sources_object == 'video'
 		if not self.is_generic:
 			self.meta = self.sources_object.meta
+			self.monitor_playback = self.sources_object.monitor_playback
+			self.playing_filename = self.sources_object.playing_filename
 			self.meta_get = self.meta.get
 			self.kodi_monitor = ku.monitor
 			self.media_marked, self.subs_searched, self.nextep_info_gathered = False, False, False
 			self.nextep_started, self.random_continual_started = False, False
 			self.set_resume, self.set_watched = int(get_setting('playback.resume_percent', '5')), int(get_setting('playback.watched_percent', '90'))
 
+	def set_playback_properties(self):
+		try:
+			trakt_ids = {'tmdb': self.tmdb_id, 'imdb': self.imdb_id, 'slug': make_trakt_slug(self.title)}
+			if self.media_type == 'episode': trakt_ids['tvdb'] = self.tvdb_id
+			set_property('script.trakt.ids', json.dumps(trakt_ids))
+			if self.playing_filename: set_property('asf.player_filename', self.playing_filename)
+		except: pass
+
+	def clear_playback_properties(self):
+		clear_property('script.trakt.ids')
+		clear_property('asf.player_filename')
+
 	def run_error(self):
 		self.playback_successful = False
 		self.set_build_content('true')
+		self.clear_playback_properties()
 		notification(32121, 3500)
 		return False
+
+	def onAVStarted(self):
+		if self.monitor_playback: self.playback_successful = True
+
+	def onPlayBackStopped(self):
+		if self.monitor_playback: self.playback_successful = False
+
+	def onPlayBackEnded(self):
+		if self.monitor_playback: self.playback_successful = False
+
+	def onPlayBackError(self):
+		if self.monitor_playback: self.playback_successful = False
 
 class Subtitles(xbmc_player):
 	def __init__(self):

@@ -10,7 +10,7 @@ build_url, execute_builtin, set_property, get_property = kodi_utils.build_url, k
 translate_path, get_infolabel, list_dirs, current_skin = kodi_utils.translate_path, kodi_utils.get_infolabel, kodi_utils.list_dirs, kodi_utils.current_skin
 current_skin_prop, use_skin_fonts_prop, addon_installed = kodi_utils.current_skin_prop, kodi_utils.use_skin_fonts_prop, kodi_utils.addon_installed
 left_action, right_action, info_action = kodi_utils.window_xml_left_action, kodi_utils.window_xml_right_action, kodi_utils.window_xml_info_action
-window_xml_dialog, logger, player, notification = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.player, kodi_utils.notification
+window_xml_dialog, logger, player, notification, delete_folder = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.player, kodi_utils.notification, kodi_utils.delete_folder
 make_listitem, sleep, open_file, path_exists, confirm_dialog = kodi_utils.make_listitem, kodi_utils.sleep, kodi_utils.open_file, kodi_utils.path_exists, kodi_utils.confirm_dialog
 requests, get_setting, custom_skins_version_path, custom_skin_path = kodi_utils.requests, kodi_utils.get_setting, kodi_utils.custom_skins_version_path, kodi_utils.custom_skin_path
 extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
@@ -51,9 +51,14 @@ def get_custom_xmls_version():
 def download_custom_xmls():
 	try:
 		from modules.utils import download_github_zip
-		success = download_github_zip('custom_skins', translate_path(custom_skin_path[:-2]))
+		remove_custom_xmls()
+		success = download_github_zip('custom_skins', translate_path(custom_skin_path))
 		return success
 	except: return False
+
+def remove_custom_xmls():
+	try: delete_folder(translate_path(custom_skin_path), force=True)
+	except: pass
 
 class BaseDialog(window_xml_dialog):
 	def __init__(self, *args):

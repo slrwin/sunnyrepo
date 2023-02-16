@@ -25,9 +25,9 @@ resolution_tuple = (
 	{'poster': 'original', 'fanart': 'original', 'still': 'original', 'profile': 'original', 'clearlogo': 'original'})
 
 def skin_location(skin_xml):
-	if '32860' in get_setting('custom_skins.enable'): return translate_path(default_skin_path)
 	user_skin = current_skin()
-	if path_exists(translate_path(custom_xml_path % (user_skin, skin_xml))): return translate_path(custom_skin_path % user_skin)
+	if '32860' in get_setting('custom_skins.enable'): return translate_path(default_skin_path)
+	if path_exists(translate_path(custom_xml_path % (user_skin, skin_xml))): return translate_path(custom_skin_path + user_skin)
 	return translate_path(default_skin_path)
 
 def use_skin_fonts():
@@ -67,6 +67,9 @@ def disable_content_lookup():
 def widget_load_empty():
 	return get_setting('playback.widget_load_empty', 'true') == 'true'
 
+def easynews_max_retries():
+	return int(get_setting('playback.easynews_max_retries', '1'))
+
 def display_sleep_time():
 	return 100
 
@@ -77,8 +80,7 @@ def show_unaired_watchlist():
 	return get_setting('show_unaired_watchlist', 'false') == 'true'
 
 def include_year_in_title(media_type):
-	setting = int(get_setting('include_year_in_title', '0'))
-	return setting in year_in_title_dict[media_type]
+	return int(get_setting('include_year_in_title', '0')) in year_in_title_dict[media_type]
 	
 def movies_directory():
 	return translate_path(get_setting('movies_directory'))
