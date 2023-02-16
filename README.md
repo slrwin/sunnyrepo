@@ -11,9 +11,9 @@ Instructions for adding this repo:
   <ul>
     <li>Go to the Kodi file manager.</li>
     <li>Click on "Add source"</li>
-    <li>The path for the source is <code>https://slrwin.github.io/sunnyrepo</code> (Give it the name "Addons4Kodi").</li>
+    <li>The path for the source is <code>https://slrwin.github.io/sunnyrepo</code> (Give it the name "Sunny Repo").</li>
     <li>Go to "Kodi Settings>Addons"</li>
-    <li>In Addons, install an addon from zip.  When it asks for the location, select "Addons4Kodi", and install <a href="repository.sunnyrepo-1.0.3.zip">repository.sunnyrepo-1.0.3.zip</a>.</li>
+    <li>In Addons, install an addon from zip.  When it asks for the location, select "Sunny Repo", and install <a href="repository.sunnyrepo-1.0.3.zip">repository.sunnyrepo-1.0.3.zip</a>.</li>
     <li>Go back to Addons install, but this time, select "Install from repository"</li>
     <li>Select the "Sunny Repo"</li>
     <li>Install the addons you need from the Sunny Repository</li>    
