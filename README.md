@@ -1,4 +1,5 @@
 # Sunny Repo
+
 ## Current Version: 1.0.3
 
 ## Repository addon
@@ -17,7 +18,31 @@ Instructions for adding this repo:
     <li>Go back to Addons install, but this time, select "Install from repository"</li>
     <li>Select the "Sunny Repo"</li>
     <li>Install the addons you need from the Sunny Repository</li>    
+    <li>For Desi Build Install DesiWizard from Program Addons and follow the steps from Addon</li>
+    <li><a href="https://www.dropbox.com/s/gdevpul9ff3xgzk/Desi%20Build%20Installation.mp4?dl=0">Steps Video</a></li>
+    <li><a href="https://www.dropbox.com/s/ju3egpfdnhv976m/Desi%20Build%20Installation.pdf?dl=0">Steps PDF</a></li>
   </ul>
+</p>
+
+About the Desi Build Addons:
+
+<p>
+<ul>
+ <li>9 Lives : Addon to watch Free Movies and TV Shows.</li>
+<li>Scrubs v2 : Addon to watch Free Movies and TV Shows.</li>
+<li>Mad Titan Sports: Addon for watching live tv and sports.</li>
+<li>Swift TV: Addon for watching live tv and sports.</li>
+<li>Einthusan: Addon for Indian Movies.</li>
+<li>Deccan Delight: Addon for Indian Movies and Series.</li>
+<li></li>
+<li></li>
+<li>For watched progress add trakt account via settings of addon.</li>
+<li>For better quality links and uninterupted streaming RealDebrid is needed with majority of Kodi addons.</li>
+<li>If you plan to get RealDebrid then install the Umbrella or Seren or Fen addons from Addon repository in the Kodi. These 3 addons RealDebrid only addons with better support from developers.</li>
+<li>If you plan to continue with Free Links please use a VPN to annonymize your IP.</li>
+<li><a href="http://real-debrid.com/?id=3069892">Real Debrid</a> is a Premium Downloader</li>
+<li><a href="https://trakt.tv/">Trakt</a> will help in tracking the watched Progess and creating collections, Lists of users favourite shows</li>
+</ul>
 </p>
 
 ## Enjoy!
