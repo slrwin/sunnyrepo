@@ -19,8 +19,8 @@ Instructions for adding this repo:
     <li>Select the "Sunny Repo"</li>
     <li>Install the addons you need from the Sunny Repository</li>    
     <li>For Desi Build Install DesiWizard from Program Addons and follow the steps from Addon</li>
-    <li><a href="https://www.dropbox.com/s/gdevpul9ff3xgzk/Desi%20Build%20Installation.mp4?dl=0">Steps Video</a></li>
-    <li><a href="https://www.dropbox.com/s/ju3egpfdnhv976m/Desi%20Build%20Installation.pdf?dl=0">Steps PDF</a></li>
+    <li><a href="https://www.dropbox.com/s/gdevpul9ff3xgzk/Desi%20Build%20Installation.mp4?dl=0" target="_blank" rel="noopener noreferrer">Steps Video</a></li>
+    <li><a href="https://www.dropbox.com/s/ju3egpfdnhv976m/Desi%20Build%20Installation.pdf?dl=0" target="_blank" rel="noopener noreferrer">Steps PDF</a></li>
   </ul>
 </p>
 
@@ -37,11 +37,11 @@ About the Desi Build Addons:
 <li></li>
 <li></li>
 <li>For watched progress add trakt account via settings of addon.</li>
-<li>For better quality links and uninterupted streaming RealDebrid is needed with majority of Kodi addons.</li>
+<li>For better quality links and uninterrupted streaming RealDebrid is needed with majority of Kodi addons.</li>
 <li>If you plan to get RealDebrid then install the Umbrella or Seren or Fen addons from Addon repository in the Kodi. These 3 addons RealDebrid only addons with better support from developers.</li>
-<li>If you plan to continue with Free Links please use a VPN to annonymize your IP.</li>
-<li><a href="http://real-debrid.com/?id=3069892">Real Debrid</a> is a Premium Downloader</li>
-<li><a href="https://trakt.tv/">Trakt</a> will help in tracking the watched Progess and creating collections, Lists of users favourite shows</li>
+<li>If you plan to continue with Free Links please use a VPN to anonymize your IP.</li>
+<li><a href="http://real-debrid.com/?id=3069892" target="_blank" rel="noopener noreferrer">Real Debrid</a> is a Premium Downloader</li>
+<li><a href="https://trakt.tv/" target="_blank" rel="noopener noreferrer">Trakt</a> will help in tracking the watched Progress and creating collections, Lists of users favorite shows</li>
 </ul>
 </p>
 
