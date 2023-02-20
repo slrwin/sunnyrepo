@@ -1,7 +1,3 @@
-[submodule "repo/plugin.program.desiwizard"]
-	path = repo/plugin.program.desiwizard
-	url = https://github.com/slrwin/plugin.program.desiwizard.git
-	branch = master
 [submodule "repo/plugin.video.themoviedb.helper"]
 	path = repo/plugin.video.themoviedb.helper
 	url = https://github.com/jurialmunkey/plugin.video.themoviedb.helper
