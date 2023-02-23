@@ -73,6 +73,13 @@ search_people = 'F1EZyWz'
 search_tmdb = 'r0ITv0C'
 search_tv = 'xYTdX3O'
 
+results_4k = 'QFq6rGN'
+results_1080p = 'nk4JCtK'
+results_720p = 'U4mz652'
+results_sd = '6uusJvX'
+results_total = '42ohbcY'
+results_remaining = 'WnDSKUH'
+
 flag_4k = 'x5FjOZy'
 flag_1080p = '2ptXKKa'
 flag_720p = '8ssOa9n'

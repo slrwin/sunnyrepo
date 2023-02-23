@@ -21,15 +21,12 @@
             <control type="group">
                 <left>5</left>
                 <top>5</top>
-                <control type="label">
-                    <top>-40</top>
+                <control type="image">
+                    <top>-35</top>
                     <left>0</left>
-                    <width>1035</width>
-                    <height>5</height>
-                    <font>font10</font> <!-- FEN_21 -->
-                    <align>left</align>
-                    <aligny>bottom</aligny>
-                    <label>[COLOR B3CCCCCC][B]$ADDON[plugin.video.fen 33061][/B][/COLOR]</label>
+                    <height>25</height>
+                    <width>400</width>
+                    <texture colordiffuse="B3CCCCCC">common/press_back_label.png</texture>
                 </control>
                 <control type="image">
                     <left>-5</left>

@@ -354,7 +354,6 @@ def url_strip(url):
 	except: return None
 
 def get_file_info(name_info=None, url=None, default_quality='SD'):
-	# thanks 123Venom and gaiaaaiaai, whom I knicked most of this code from. :)
 	title = None
 	if name_info: title = name_info
 	elif url: title = url_strip(url)
@@ -367,12 +366,13 @@ def get_release_quality(release_info):
 	if any(i in release_info for i in SCR): return 'SCR'
 	if any(i in release_info for i in CAM): return 'CAM'
 	if any(i in release_info for i in TELE): return 'TELE'
-	if any(i in release_info for i in RES_4K): return '4K'
-	if any(i in release_info for i in RES_1080): return '1080p'
 	if any(i in release_info for i in RES_720): return '720p'
+	if any(i in release_info for i in RES_1080): return '1080p'
+	if any(i in release_info for i in RES_4K): return '4K'
 	return None
 	
 def get_info(title):
+	# thanks 123Venom and gaiaaaiaai, whom I knicked most of this code from. :)
 	info = []
 	info_append = info.append
 	if any(i in title for i in VIDEO_3D):  info_append('[B]3D[/B]')

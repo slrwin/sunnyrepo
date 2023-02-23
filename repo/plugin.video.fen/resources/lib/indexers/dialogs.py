@@ -692,14 +692,6 @@ def favorites_choice(params):
 		notification(32576, 3500)
 	else: notification(32574, 3500)
 
-def scraper_dialog_color_choice(params):
-	setting = params.get('setting')
-	default_setting = get_setting(setting)
-	chosen_color = color_choice({'default_setting': default_setting})
-	if chosen_color:
-		set_setting('%s_dialog_highlight' % setting, chosen_color)
-		set_setting('%s_dialog_highlight_name' % setting, '[COLOR=%s]%s[/COLOR]' % (chosen_color, chosen_color))
-
 def scraper_quality_color_choice(params):
 	setting = params.get('setting')
 	default_setting = get_setting(setting)

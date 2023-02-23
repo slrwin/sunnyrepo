@@ -369,7 +369,7 @@ class Discover:
 
 	def help(self):
 		text_file = translate_path('special://home/addons/plugin.video.fen/resources/text/tips/135. Discover.txt')
-		return show_text(heading_base % ls(32487), file=text_file)
+		return show_text(heading_base % ls(32487), file=text_file, font_size='large')
 
 	def _set_default_params(self):
 		if not 'media_type' in self.discover_params:

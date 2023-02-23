@@ -49,7 +49,6 @@ folder_info = (('folder1', ls(32110)), ('folder2', ls(32111)), ('folder3', ls(32
 fen_clogpath = tp(log_path % 'plugin.video.fen/resources/text')
 coco_clogpath = tp(log_path % 'script.module.cocoscrapers')
 kl_loc, klo_loc = tp('special://logpath/kodi.log'), tp('special://logpath/kodi.old.log')
-non_folder_items = ('get_search_term', 'build_popular_people')
 fen_clearlogo = k.addon_clearlogo
 
 class Navigator:
@@ -68,7 +67,7 @@ class Navigator:
 		self.add({'mode': 'discover.tvshow', 'media_type': 'tvshow'}, discover_main_ins % tv_str, 'discover')
 		self.add({'mode': 'discover.history', 'media_type': 'movie'}, discover_main_ins % movh_str, 'discover')
 		self.add({'mode': 'discover.history', 'media_type': 'tvshow'}, discover_main_ins % tvh_str, 'discover')
-		self.add({'mode': 'discover.help'}, discover_main_ins % help_str, 'information', False)
+		self.add({'mode': 'discover.help', 'isFolder': 'false'}, discover_main_ins % help_str, 'information')
 		self.end_directory()
 
 	def premium(self):
@@ -84,29 +83,29 @@ class Navigator:
 	def furk(self):
 		self.add({'mode': 'history.search', 'action': 'furk_video'}, furk_ins % (se_str, ''), 'search')
 		self.add({'mode': 'furk.my_furk_files'}, furk_ins % (vid_str, fl_str), 'furk')
-		self.add({'mode': 'furk.account_info'}, furk_ins % (acc_str, ''), 'furk', False)
+		self.add({'mode': 'furk.account_info', 'isFolder': 'false'}, furk_ins % (acc_str, ''), 'furk')
 		self.end_directory()
 
 	def easynews(self):
 		self.add({'mode': 'history.search', 'action': 'easynews_video'}, easynews_ins % se_str, 'search')
-		self.add({'mode': 'easynews.account_info'}, easynews_ins % acc_str, 'easynews', False)
+		self.add({'mode': 'easynews.account_info', 'isFolder': 'false'}, easynews_ins % acc_str, 'easynews')
 		self.end_directory()
 
 	def real_debrid(self):
 		self.add({'mode': 'real_debrid.rd_torrent_cloud'}, real_debrid_ins % cloud_str, 'realdebrid')
 		self.add({'mode': 'real_debrid.rd_downloads'}, real_debrid_ins % history_str, 'realdebrid')
-		self.add({'mode': 'real_debrid.rd_account_info'}, real_debrid_ins % acc_str, 'realdebrid', False)
+		self.add({'mode': 'real_debrid.rd_account_info', 'isFolder': 'false'}, real_debrid_ins % acc_str, 'realdebrid')
 		self.end_directory()
 
 	def premiumize(self):
 		self.add({'mode': 'premiumize.pm_torrent_cloud'}, premiumize_ins % cloud_str, 'premiumize')
 		self.add({'mode': 'premiumize.pm_transfers'}, premiumize_ins % history_str, 'premiumize')
-		self.add({'mode': 'premiumize.pm_account_info'}, premiumize_ins % acc_str, 'premiumize', False)
+		self.add({'mode': 'premiumize.pm_account_info', 'isFolder': 'false'}, premiumize_ins % acc_str, 'premiumize')
 		self.end_directory()
 
 	def alldebrid(self):
 		self.add({'mode': 'alldebrid.ad_torrent_cloud'}, alldebrid_ins % cloud_str, 'alldebrid')
-		self.add({'mode': 'alldebrid.ad_account_info'}, alldebrid_ins % acc_str, 'alldebrid', False)
+		self.add({'mode': 'alldebrid.ad_account_info', 'isFolder': 'false'}, alldebrid_ins % acc_str, 'alldebrid')
 		self.end_directory()
 
 	def favorites(self):
@@ -153,7 +152,7 @@ class Navigator:
 		self.add({'mode': 'build_my_calendar'}, trakt_lists_ins % cal_str, 'trakt')
 		self.add({'mode': 'trakt.list.get_trakt_trending_popular_lists', 'list_type': 'trending'}, trakt_lists_ins % tu_str, 'trakt')
 		self.add({'mode': 'trakt.list.get_trakt_trending_popular_lists', 'list_type': 'popular'}, trakt_lists_ins % pu_str, 'trakt')
-		self.add({'mode': 'get_search_term', 'search_type': 'trakt_lists'}, trakt_lists_ins % sea_str, 'trakt', False)
+		self.add({'mode': 'get_search_term', 'search_type': 'trakt_lists', 'isFolder': 'false'}, trakt_lists_ins % sea_str, 'trakt')
 		self.end_directory()
 
 	def trakt_recommendations(self):
@@ -184,62 +183,62 @@ class Navigator:
 		self.add({'mode': 'download_manager', 'folder_type': 'movie'}, downloads_ins % mov_str, 'movies')
 		self.add({'mode': 'download_manager', 'folder_type': 'episode'}, downloads_ins % tv_str, 'tv')
 		self.add({'mode': 'download_manager', 'folder_type': 'premium'}, downloads_ins % premium_files_str, 'premium')
-		self.add({'mode': 'browser_image', 'folder_path': download_directory('image')}, downloads_ins % images_str, 'people', False)
+		self.add({'mode': 'browser_image', 'folder_path': download_directory('image'), 'isFolder': 'false'}, downloads_ins % images_str, 'people')
 		self.end_directory()
 
 	def tools(self):
-		self.add({'mode': 'open_settings'}, settings_ins % fen_str, 'settings', False)
-		self.add({'mode': 'open_settings', 'addon': 'script.module.cocoscrapers'}, settings_ins % coco_str, 'settings', False)
+		self.add({'mode': 'open_settings', 'isFolder': 'false'}, settings_ins % fen_str, 'settings')
+		self.add({'mode': 'open_settings', 'addon': 'script.module.cocoscrapers', 'isFolder': 'false'}, settings_ins % coco_str, 'settings')
 		self.add({'mode': 'navigator.changelog'}, tools_ins % changelog_str, 'settings2')
 		self.add({'mode': 'navigator.log_utils'}, tools_ins % log_utils_str, 'settings2')
 		self.add({'mode': 'navigator.tips'}, tools_ins % tips_use_str, 'settings2')
 		self.add({'mode': 'navigator.set_view_modes'}, tools_ins % views_str, 'settings2')
-		self.add({'mode': 'default_highlight_colors_choice'}, tools_ins % res_hc, 'settings2', False)
+		self.add({'mode': 'default_highlight_colors_choice', 'isFolder': 'false'}, tools_ins % res_hc, 'settings2')
 		self.add({'mode': 'navigator.maintenance'}, tools_ins % cl_dbs_str, 'settings2')
 		self.add({'mode': 'navigator.shortcut_folders'}, tools_ins % shortcut_manager_str, 'settings2')
-		self.add({'mode': 'toggle_language_invoker'}, tools_ins % langinv_str, 'settings2', False)
+		self.add({'mode': 'toggle_language_invoker', 'isFolder': 'false'}, tools_ins % langinv_str, 'settings2')
 		self.end_directory()
 
 	def maintenance(self):
-		self.add({'mode': 'clean_settings'}, clean_all_str, 'settings2', False)
-		self.add({'mode': 'clear_settings_window_properties'}, clean_set_cache_str, 'settings2', False)
-		self.add({'mode': 'clean_databases_cache'}, clear_info_ins % clean_databases_str, 'settings2', False)
-		self.add({'mode': 'check_corrupt_databases_cache'}, clear_info_ins % corrupt_databases_str, 'settings2', False)
-		self.add({'mode': 'clear_all_cache'}, clear_all, 'settings2', False)
-		self.add({'mode': 'clear_favorites_choice'}, clear_info_ins % clear_fav_str, 'settings2', False)
-		self.add({'mode': 'history.clear_search'}, clear_info_ins % clear_search_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'meta'}, clear_info_ins % clear_meta_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'list'}, clear_info_ins % clear_list_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'trakt'}, clear_info_ins % clear_trakt_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'imdb'}, clear_info_ins % clear_imdb_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'internal_scrapers'}, clear_info_ins % clint_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'external_scrapers'}, clear_info_ins % clext_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'rd_cloud'}, clear_info_ins % clear_rd_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'pm_cloud'}, clear_info_ins % clear_pm_str, 'settings2', False)
-		self.add({'mode': 'clear_cache', 'cache': 'ad_cloud'}, clear_info_ins % clear_ad_str, 'settings2', False)
+		self.add({'mode': 'clean_settings', 'isFolder': 'false'}, clean_all_str, 'settings2')
+		self.add({'mode': 'clear_settings_window_properties', 'isFolder': 'false'}, clean_set_cache_str, 'settings2')
+		self.add({'mode': 'clean_databases_cache', 'isFolder': 'false'}, clear_info_ins % clean_databases_str, 'settings2')
+		self.add({'mode': 'check_corrupt_databases_cache', 'isFolder': 'false'}, clear_info_ins % corrupt_databases_str, 'settings2')
+		self.add({'mode': 'clear_all_cache', 'isFolder': 'false'}, clear_all, 'settings2')
+		self.add({'mode': 'clear_favorites_choice', 'isFolder': 'false'}, clear_info_ins % clear_fav_str, 'settings2')
+		self.add({'mode': 'history.clear_search', 'isFolder': 'false'}, clear_info_ins % clear_search_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'meta', 'isFolder': 'false'}, clear_info_ins % clear_meta_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'list', 'isFolder': 'false'}, clear_info_ins % clear_list_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'trakt', 'isFolder': 'false'}, clear_info_ins % clear_trakt_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'imdb', 'isFolder': 'false'}, clear_info_ins % clear_imdb_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'internal_scrapers', 'isFolder': 'false'}, clear_info_ins % clint_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'external_scrapers', 'isFolder': 'false'}, clear_info_ins % clext_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'rd_cloud', 'isFolder': 'false'}, clear_info_ins % clear_rd_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'pm_cloud', 'isFolder': 'false'}, clear_info_ins % clear_pm_str, 'settings2')
+		self.add({'mode': 'clear_cache', 'cache': 'ad_cloud', 'isFolder': 'false'}, clear_info_ins % clear_ad_str, 'settings2')
 		self.end_directory()
 
 	def set_view_modes(self):
-		self.add({'mode': 'choose_view', 'view_type': 'view.main', 'content': ''},set_view_modes_ins % root_str, 'settings', contextmenu_edit=False)
-		self.add({'mode': 'choose_view', 'view_type': 'view.movies', 'content': 'movies'},set_view_modes_ins % mov_str, 'settings', contextmenu_edit=False)
-		self.add({'mode': 'choose_view', 'view_type': 'view.tvshows', 'content': 'tvshows'},set_view_modes_ins % tv_str, 'settings', contextmenu_edit=False)
-		self.add({'mode': 'choose_view', 'view_type': 'view.seasons', 'content': 'seasons'},set_view_modes_ins % season_str, 'settings', contextmenu_edit=False)
-		self.add({'mode': 'choose_view', 'view_type': 'view.episodes', 'content': 'episodes'},set_view_modes_ins % episodes_str, 'settings', contextmenu_edit=False)
-		self.add({'mode': 'choose_view', 'view_type': 'view.episode_lists', 'content': 'episodes'},set_view_modes_ins % ep_lists_str, 'settings', contextmenu_edit=False)
-		self.add({'mode': 'choose_view', 'view_type': 'view.premium', 'content': 'files'},set_view_modes_ins % premium_files_str, 'settings', contextmenu_edit=False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.main', 'content': ''},set_view_modes_ins % root_str, 'settings', False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.movies', 'content': 'movies'},set_view_modes_ins % mov_str, 'settings', False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.tvshows', 'content': 'tvshows'},set_view_modes_ins % tv_str, 'settings', False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.seasons', 'content': 'seasons'},set_view_modes_ins % season_str, 'settings', False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.episodes', 'content': 'episodes'},set_view_modes_ins % episodes_str, 'settings', False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.episode_lists', 'content': 'episodes'},set_view_modes_ins % ep_lists_str, 'settings', False)
+		self.add({'mode': 'choose_view', 'view_type': 'view.premium', 'content': 'files'},set_view_modes_ins % premium_files_str, 'settings', False)
 		self.end_directory()
 
 	def changelog(self):
 		mh_str = '[B]%s[/B]: %s  [I](v.%s)[/I]' % (changelog_str.upper(), fen_str, addon().getAddonInfo('version'))
 		co_str = '[B]%s[/B]: %s  [I](v.%s)[/I]' % (changelog_str.upper(), coco_str, addon('script.module.cocoscrapers').getAddonInfo('version'))
-		self.add({'mode': 'show_text', 'heading': mh_str, 'file': fen_clogpath, 'font_size': 'large'}, mh_str, 'lists', False, False)
-		self.add({'mode': 'show_text', 'heading': co_str, 'file': coco_clogpath, 'font_size': 'large'}, co_str, 'lists', False, False)
+		self.add({'mode': 'show_text', 'heading': mh_str, 'file': fen_clogpath, 'font_size': 'large', 'isFolder': 'false'}, mh_str, 'lists', False)
+		self.add({'mode': 'show_text', 'heading': co_str, 'file': coco_clogpath, 'font_size': 'large', 'isFolder': 'false'}, co_str, 'lists', False)
 		self.end_directory()
 
 	def log_utils(self):
-		self.add({'mode': 'show_text', 'heading': klv_h_str, 'file': kl_loc, 'kodi_log': 'true'}, klv_h_str, 'lists', False, False)
-		self.add({'mode': 'show_text', 'heading': klvo_h_str, 'file': klo_loc, 'kodi_log': 'true'}, klvo_h_str, 'lists', False, False)
-		self.add({'mode': 'upload_logfile'}, klu_h_str, 'lists', False, False)
+		self.add({'mode': 'show_text', 'heading': klv_h_str, 'file': kl_loc, 'kodi_log': 'true', 'isFolder': 'false'}, klv_h_str, 'lists', False)
+		self.add({'mode': 'show_text', 'heading': klvo_h_str, 'file': klo_loc, 'kodi_log': 'true', 'isFolder': 'false'}, klvo_h_str, 'lists', False)
+		self.add({'mode': 'upload_logfile', 'isFolder': 'false'}, klu_h_str, 'lists', False)
 		self.end_directory()
 
 	def certifications(self):
@@ -274,7 +273,7 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': genre_list, mode, action = ml.movie_genres, 'build_movie_list', 'tmdb_movies_genres'
 		else: genre_list, mode, action = ml.tvshow_genres, 'build_tvshow_list', 'tmdb_tv_genres'
-		self.add({'mode': 'navigator.multiselect_genres', 'genre_list': json.dumps(genre_list), 'menu_type': menu_type}, multi_str, 'genres', False, False)
+		self.add({'mode': 'navigator.multiselect_genres', 'genre_list': json.dumps(genre_list), 'menu_type': menu_type, 'isFolder': 'false'}, multi_str, 'genres', False)
 		for genre, value in sorted(genre_list.items()): self.add({'mode': mode, 'action': action, 'genre_id': value[0]}, genre, value[1])
 		self.end_directory()
 
@@ -393,7 +392,8 @@ class Navigator:
 					cm = []
 					name = i[0]
 					listitem = make_listitem()
-					url = build_url({'mode': 'navigator.build_shortcut_folder_list', 'name': name, 'iconImage': 'folder', 'shortcut_folder': 'True', 'external_list_item': 'True'})
+					url = build_url({'mode': 'navigator.build_shortcut_folder_list', 'name': name, 'iconImage': 'folder', 'shortcut_folder': 'True',
+									'external_list_item': 'True'})
 					cm.append((delete_str, run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_delete'})))
 					listitem.addContextMenuItems(cm)
 					listitem.setLabel('[B]%s : [/B] %s ' % (short_str.upper(), name))
@@ -425,10 +425,10 @@ class Navigator:
 			elif '!!SPOTLIGHT!!' in tip: tip, sort_order = tip.replace('!!SPOTLIGHT!!', '[COLOR orange]%s![/COLOR] ' % spot_str), 2
 			else: sort_order = 3
 			tip_name = tips_ins % tip
-			action = {'mode': 'show_text', 'heading': tip, 'file': tp(tips_location % item), 'font_size': 'large'}
+			action = {'mode': 'show_text', 'heading': tip, 'file': tp(tips_location % item), 'font_size': 'large', 'isFolder': 'false'}
 			tips_append((action, tip_name, sort_order))
 		item_list = sorted(tips_list, key=lambda x: x[2])
-		for c, i in enumerate(item_list, 1): self.add(i[0], '[B]%02d. [/B]%s' % (c, i[1]), 'information', False, False)
+		for c, i in enumerate(item_list, 1): self.add(i[0], '[B]%02d. [/B]%s' % (c, i[1]), 'information', False)
 		self.end_directory()
 
 	def because_you_watched(self):
@@ -438,7 +438,7 @@ class Navigator:
 		for item in recently_watched:
 			if media_type == 'movie': name, tmdb_id = because_str % item['title'], item['media_id']
 			else: name, tmdb_id = because_str % '%s - %sx%s' % (item['title'], str(item['season']), str(item['episode'])), item['media_ids']['tmdb']
-			self.add({'mode': mode, 'action': action, 'tmdb_id': tmdb_id}, name, 'because_you_watched', contextmenu_edit=False)
+			self.add({'mode': mode, 'action': action, 'tmdb_id': tmdb_id}, name, 'because_you_watched', False)
 		self.end_directory()
 
 	def build_shortcut_folder_list(self):
@@ -463,7 +463,8 @@ class Navigator:
 					else: listitem.setInfo('video', {'plot': ' '})
 					listitem.addContextMenuItems(cm)
 					listitem.setProperty('fen.context_main_menu_params', menu_editor_url)
-					yield (build_url(item), listitem, item_get('mode', '') not in non_folder_items)
+					isFolder = item.get('isFolder', 'true') == 'true'
+					yield (build_url(item), listitem, isFolder)
 				except: pass
 		handle = int(sys.argv[1])
 		list_name = self.params_get('name')
@@ -490,10 +491,11 @@ class Navigator:
 				else: listitem.setInfo('video', {'plot': ' '})
 				listitem.addContextMenuItems(cm)
 				listitem.setProperty('fen.context_main_menu_params', menu_editor_url)
-				yield (build_url(item), listitem, item_get('mode', '') not in non_folder_items)
+				isFolder = item.get('isFolder', 'true') == 'true'
+				yield (build_url(item), listitem, isFolder)
 			except: pass
 
-	def add(self, url_params, list_name, iconImage='folder', isFolder=True, contextmenu_edit=True):
+	def add(self, url_params, list_name, iconImage='folder', contextmenu_edit=True):
 		icon = get_icon(iconImage)
 		url_params['iconImage'] = icon
 		url = build_url(url_params)
@@ -512,6 +514,7 @@ class Navigator:
 			cm_append((s_folder_str, run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_add_item', 'name': list_name, 'iconImage': iconImage})))
 			listitem.addContextMenuItems(cm)
 			listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': list_name, 'iconImage': iconImage}))
+		isFolder = url_params.get('isFolder', 'true') == 'true'
 		add_item(int(sys.argv[1]), url, listitem, isFolder)
 
 	def end_directory(self, handle=None):

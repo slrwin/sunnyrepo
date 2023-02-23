@@ -136,8 +136,7 @@ class FenPlayer(xbmc_player):
 					info_tag.setMediaType('movie')
 					info_tag.setTitle(self.title)
 					info_tag.setOriginalTitle(self.meta_get('original_title'))
-					# info_tag.setPlot(plot)
-					info_tag.setPlot('booo!!!')
+					info_tag.setPlot(plot)
 					info_tag.setYear(int(self.year))
 					info_tag.setRating(rating)
 					info_tag.setVotes(votes)
@@ -335,12 +334,12 @@ class FenPlayer(xbmc_player):
 			trakt_ids = {'tmdb': self.tmdb_id, 'imdb': self.imdb_id, 'slug': make_trakt_slug(self.title)}
 			if self.media_type == 'episode': trakt_ids['tvdb'] = self.tvdb_id
 			set_property('script.trakt.ids', json.dumps(trakt_ids))
-			if self.playing_filename: set_property('asf.player_filename', self.playing_filename)
+			if self.playing_filename: set_property('subs.player_filename', self.playing_filename)
 		except: pass
 
 	def clear_playback_properties(self):
 		clear_property('script.trakt.ids')
-		clear_property('asf.player_filename')
+		clear_property('subs.player_filename')
 
 	def run_error(self):
 		self.playback_successful = False

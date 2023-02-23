@@ -88,8 +88,7 @@ image_extensions = ('jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'dib', 'p
 default_highlights = (('hoster.identify', 'FF005C99'), ('torrent.identify', 'FFFF00FE'), ('provider.rd_colour', 'FF3C9900'), ('provider.pm_colour', 'FFFF3300'),
 					('provider.ad_colour', 'FFE6B800'), ('provider.furk_colour', 'FFE6002E'), ('provider.easynews_colour', 'FF00B3B2'),
 					('provider.debrid_cloud_colour', 'FF7A01CC'), ('provider.folders_colour', 'FFB36B00'), ('scraper_4k_highlight', 'FFFF00FE'),
-					('scraper_1080p_highlight', 'FFE6B800'), ('scraper_720p_highlight', 'FF3C9900'), ('scraper_SD_highlight', 'FF0166FF'),
-					('int_dialog_highlight', 'FFAFAFAF'), ('ext_dialog_highlight', 'FFAFAFAF'), ('fen.highlight', 'FF0166FF'))
+					('scraper_1080p_highlight', 'FFE6B800'), ('scraper_720p_highlight', 'FF3C9900'), ('scraper_SD_highlight', 'FF0166FF'), ('fen.highlight', 'FF0166FF'))
 
 def get_icon(image_name):
 	return img_url % getattr(icons, image_name, 'I1JJhji')
@@ -339,17 +338,19 @@ def select_dialog(function_list, **kwargs):
 	if kwargs.get('multi_choice', 'false') == 'true': return [function_list[i] for i in selection]
 	return function_list[selection]
 
-def confirm_progress_media(meta, text='', enable_fullscreen=False, enable_buttons=False, true_button=32824, false_button=32828, focus_button=11, percent=0):
+def confirm_progress_media(meta, text='', enable_fullscreen=False, enable_buttons=False, true_button=32824, false_button=32828, focus_button=11, percent=0, flags_direction=0):
 	if enable_buttons:
 		from windows import open_window
 		if isinstance(text, int): text = local_string(text)
 		if isinstance(true_button, int): true_button = local_string(true_button)
 		if isinstance(false_button, int): false_button = local_string(false_button)
 		return open_window(('windows.confirm_progress_media', 'ConfirmProgressMedia'), 'confirm_progress_media.xml',
-							meta=meta, text=text, enable_buttons=enable_buttons, true_button=true_button, false_button=false_button, focus_button=focus_button, percent=percent)
+							meta=meta, text=text, enable_buttons=enable_buttons, true_button=true_button, false_button=false_button,
+							focus_button=focus_button, percent=percent)
 	else:
 		from windows import create_window
-		progress_dialog = create_window(('windows.confirm_progress_media', 'ConfirmProgressMedia'), 'confirm_progress_media.xml', meta=meta, enable_fullscreen=enable_fullscreen)
+		progress_dialog = create_window(('windows.confirm_progress_media', 'ConfirmProgressMedia'), 'confirm_progress_media.xml',
+										meta=meta, enable_fullscreen=enable_fullscreen, flags_direction=flags_direction)
 		Thread(target=progress_dialog.run).start()
 		return progress_dialog
 

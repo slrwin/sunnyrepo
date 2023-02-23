@@ -19,15 +19,12 @@
                 <aspectratio aligny="top">keep</aspectratio>
                 <texture colordiffuse="B3CCCCCC">common/fen.png</texture>
             </control>
-            <control type="group">
+            <control type="image">
+                <top>15</top>
                 <left>70</left>
-                <top>13</top>
-                <control type="label">
-                    <width max="1160">auto</width>
-                    <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
-                    <label>[COLOR B3CCCCCC][B]$ADDON[plugin.video.fen 33061][/B][/COLOR]</label>
-                </control>
+                <height>25</height>
+                <width>400</width>
+                <texture colordiffuse="B3CCCCCC">common/press_back_label.png</texture>
             </control>
         </control>
         <control type="progress" id="5000">

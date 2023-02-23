@@ -2,6 +2,14 @@
 
 [B]Please utilize Fen Tips (Tools->Tips for Fen Use) to catch up on any important new features. New features will be highlighted with a [COLOR chartreuse]NEW!!![/COLOR] label.[/B]
 
+[COLOR dodgerblue][B]Version 3.0.44[/B][/COLOR]
+- New scraping progress dialog format.
+- New setting Results->Display->"Progress Results Quality Direction". Use this to switch the reporting of progress of the scrape from SD-4K to 4K-SD.
+- Partial re-write of external scrapers code.
+- Some more notification warnings regarding when scrapers/debrid providers are enabled/disabled. Hopefully will make it more clear why no source results are being fetched.
+- "Popular People" in the Root menu will stop working after this update. If you use that item, you will need to "Restore Root Menu to Default" in the "Edit" section of the context menu.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 3.0.43[/B][/COLOR]
 - Added QR Codes for RD, PM, AD, Trakt Auths. I can't test them, so if they don't work correctly they will be removed.
 - Added option to set retry attempts for Easynews sources. Found in Settings->Playback->Playback Utilities->"Maximum Easynews Retries".

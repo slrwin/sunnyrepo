@@ -35,16 +35,6 @@
                 <control type="group">
                     <left>5</left>
                     <top>5</top>
-                    <control type="label">
-                        <top>-40</top>
-                        <left>0</left>
-                        <width>1035</width>
-                        <height>5</height>
-                        <font>font10</font> <!-- FEN_21 -->
-                        <align>left</align>
-                        <aligny>bottom</aligny>
-                        <label>[COLOR B3CCCCCC][B]$ADDON[plugin.video.fen 33061][/B][/COLOR]</label>
-                    </control>
                     <control type="image">
                         <height>390</height>
                         <width>775</width>
@@ -61,6 +51,13 @@
                         <aligny>top</aligny>
                         <aspectratio aligny="top">keep</aspectratio>
                         <texture colordiffuse="B3CCCCCC">common/fen.png</texture>
+                    </control>
+                    <control type="image">
+                        <top>-35</top>
+                        <left>0</left>
+                        <height>25</height>
+                        <width>400</width>
+                        <texture colordiffuse="B3CCCCCC">common/press_back_label.png</texture>
                     </control>
                     <control type="image">
                         <left>780</left>
@@ -170,22 +167,21 @@
                     <aspectratio aligny="top">keep</aspectratio>
                     <texture>common/fen.png</texture>
                 </control>
-                <control type="label">
+                <control type="image">
+                    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+                    <top>20</top>
                     <left>70</left>
-                    <top>18</top>
-                    <width max="1160">auto</width>
-                    <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
-                    <label>[COLOR B3CCCCCC][B]$ADDON[plugin.video.fen 33061][/B][/COLOR]</label>
-                    <visible>!String.IsEqual(Window.Property(enable_resolver),true)</visible>
+                    <height>25</height>
+                    <width>400</width>
+                    <texture colordiffuse="B3CCCCCC">common/press_back_label.png</texture>
                 </control>
-                <control type="label">
-                    <left>70</left>
-                    <top>18</top>
-                    <width max="1160">auto</width>
-                    <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
-                    <label>[COLOR B3CCCCCC][B]$ADDON[plugin.video.fen 33061][/B][/COLOR] | [COLOR B3CCCCCC][B]$ADDON[plugin.video.fen 33050][/B][/COLOR]</label>
+                <control type="image">
+                    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+                    <top>20</top>
+                    <left>280</left>
+                    <height>25</height>
+                    <width>400</width>
+                    <texture colordiffuse="B3CCCCCC">common/press_right_label.png</texture>
                     <visible>String.IsEqual(Window.Property(enable_resolver),true)</visible>
                 </control>
             </control>
@@ -223,358 +219,295 @@
                 <visible>!String.IsEqual(Window.Property(enable_resolver),true)</visible>
                 <animation type="WindowOpen" reversible="false">
                     <effect type="fade" start="0" end="100" time="200" tween="sine" easing="in" />
-                    <effect type="slide" start="0,500" end="0" time="200" center="auto" tween="quadratic" easing="out" />
+                    <effect type="slide" start="0,550" end="0" time="200" center="auto" tween="quadratic" easing="out" />
                 </animation>
-                <top>520</top>
-                <left>405</left>
+                <top>410</top>
+                <left>390</left>
                 <control type="group">
+                    <top>45</top>
+                    <left>170</left>
                     <control type="group">
-                        <top>40</top>
                         <control type="image">
+                            <top>5</top>
+                            <width>150</width>
+                            <aspectratio aligny="top">keep</aspectratio>
+                            <texture colordiffuse="FF7C7C7C">$INFO[Window.Property(flag_0)]</texture>
+                        </control>
+                        <control type="label">
+                            <top>80</top>
                             <left>20</left>
-                            <width>20</width>
+                            <width>110</width>
                             <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),100)</visible>
-                            <colordiffuse>FFFF0000</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>45</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),95)</visible>
-                            <colordiffuse>FFFF3F3F</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>70</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),90)</visible>
-                            <colordiffuse>FFFF3F3F</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>95</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),85)</visible>
-                            <colordiffuse>FFFF6969</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>120</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),80)</visible>
-                            <colordiffuse>FFFF6969</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>145</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),75)</visible>
-                            <colordiffuse>FFFF8D8D</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>170</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),70)</visible>
-                            <colordiffuse>FFFF8D8D</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>195</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),65)</visible>
-                            <colordiffuse>FFFFAFAF</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>220</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),60)</visible>
-                            <colordiffuse>FFFFAFAF</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>245</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),55)</visible>
-                            <colordiffuse>FFFFD0D0</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>270</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),50)</visible>
-                            <colordiffuse>FFFFD0D0</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>295</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),45)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>320</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),40)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>345</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),35)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>370</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),30)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>395</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),25)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>420</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),20)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>445</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),15)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>470</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),10)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>495</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),5)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <align>center</align>
+                            <aligny>top</aligny>
+                            <font>font37</font> <!-- FEN_38 -->
+                            <label>[COLOR FFFFFFFF][B]$INFO[Window.Property(results_0)][/B][/COLOR]</label>
                         </control>
                     </control>
-                    <control type="label">
-                        <left>305</left>
-                        <top>30</top>
-                        <width max="495">auto</width>
-                        <height>20</height>
-                        <font>font12</font> <!-- FEN_26 -->
-                        <align>center</align>
-                        <aligny>bottom</aligny>
-                        <textcolor>FFCCCCCC</textcolor>
-                        <label>$INFO[Window.Property(percent_label)]</label>
+                    <control type="group">
+                        <left>150</left>
+                        <control type="image">
+                            <top>5</top>
+                            <width>150</width>
+                            <aspectratio aligny="top">keep</aspectratio>
+                            <texture colordiffuse="FF7C7C7C">$INFO[Window.Property(flag_1)]</texture>
+                        </control>
+                        <control type="label">
+                            <top>80</top>
+                            <left>20</left>
+                            <width>110</width>
+                            <height>20</height>
+                            <align>center</align>
+                            <aligny>top</aligny>
+                            <font>font37</font> <!-- FEN_38 -->
+                            <label>[COLOR FFFFFFFF][B]$INFO[Window.Property(results_1)][/B][/COLOR]</label>
+                        </control>
                     </control>
                     <control type="group">
-                        <left>570</left>
-                        <top>40</top>
+                        <left>300</left>
                         <control type="image">
+                            <top>5</top>
+                            <width>150</width>
+                            <aspectratio aligny="top">keep</aspectratio>
+                            <texture colordiffuse="FF7C7C7C">$INFO[Window.Property(flag_2)]</texture>
+                        </control>
+                        <control type="label">
+                            <top>80</top>
                             <left>20</left>
-                            <width>20</width>
+                            <width>110</width>
                             <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),5)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <align>center</align>
+                            <aligny>top</aligny>
+                            <font>font37</font> <!-- FEN_38 -->
+                            <label>[COLOR FFFFFFFF][B]$INFO[Window.Property(results_2)][/B][/COLOR]</label>
                         </control>
+                    </control>
+                    <control type="group">
+                        <left>450</left>
                         <control type="image">
-                            <left>45</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),10)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <top>5</top>
+                            <width>150</width>
+                            <aspectratio aligny="top">keep</aspectratio>
+                            <texture colordiffuse="FF7C7C7C">$INFO[Window.Property(flag_3)]</texture>
                         </control>
-                        <control type="image">
-                            <left>70</left>
-                            <width>20</width>
+                        <control type="label">
+                            <top>80</top>
+                            <left>20</left>
+                            <width>110</width>
                             <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),15)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <align>center</align>
+                            <aligny>top</aligny>
+                            <font>font37</font> <!-- FEN_38 -->
+                            <label>[COLOR FFFFFFFF][B]$INFO[Window.Property(results_3)][/B][/COLOR]</label>
                         </control>
+                    </control>
+                    <control type="group">
+                        <left>600</left>
                         <control type="image">
-                            <left>95</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),20)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <top>5</top>
+                            <width>150</width>
+                            <aspectratio aligny="top">keep</aspectratio>
+                            <texture colordiffuse="FF7C7C7C">$INFO[Window.Property(flag_total)]</texture>
                         </control>
-                        <control type="image">
-                            <left>120</left>
-                            <width>20</width>
+                        <control type="label">
+                            <top>80</top>
+                            <left>20</left>
+                            <width>110</width>
                             <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),25)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>145</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),30)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>170</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),35)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>195</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),40)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>220</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),45)</visible>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>245</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),50)</visible>
-                            <colordiffuse>FFFFD0D0</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>270</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),55)</visible>
-                            <colordiffuse>FFFFD0D0</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>295</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),60)</visible>
-                            <colordiffuse>FFFFAFAF</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>320</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),65)</visible>
-                            <colordiffuse>FFFFAFAF</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>345</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),70)</visible>
-                            <colordiffuse>FFFF8D8D</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>370</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),75)</visible>
-                            <colordiffuse>FFFF8D8D</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>395</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),80)</visible>
-                            <colordiffuse>FFFF6969</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>420</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),85)</visible>
-                            <colordiffuse>FFFF6969</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>445</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),90)</visible>
-                            <colordiffuse>FFFF3F3F</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>470</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),95)</visible>
-                            <colordiffuse>FFFF3F3F</colordiffuse>
-                        </control>
-                        <control type="image">
-                            <left>495</left>
-                            <width>20</width>
-                            <height>20</height>
-                            <texture>common/white_elipse.png</texture>
-                            <visible>Integer.IsGreaterOrEqual(Window().Property(percent),100)</visible>
-                            <colordiffuse>FFFF0000</colordiffuse>
+                            <align>center</align>
+                            <aligny>top</aligny>
+                            <font>font37</font> <!-- FEN_38 -->
+                            <label>[COLOR FFFFFFFF][B]$INFO[Window.Property(results_total)][/B][/COLOR]</label>
                         </control>
                     </control>
                 </control>
-                <control type="textbox" id="2001">
-                    <left>150</left>
-                    <top>90</top>
-                    <width>810</width>
-                    <height>180</height>
-                    <font>font13</font> <!-- FEN_30 -->
-                    <align>center</align>
-                    <textcolor>FFB7B4BB</textcolor>
+                <control type="group">
+                    <visible>String.IsEqual(Window.Property(show_remaining),true)</visible>
+                    <top>220</top>
+                    <left>20</left>
+                    <control type="group">
+                        <top>12</top>
+                        <control type="group">
+                            <control type="image">
+                                <left>400</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),10)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>370</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),20)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>340</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),30)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>310</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),40)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>280</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),50)</visible>
+                                <colordiffuse>FF4F4F4F</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>250</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),60)</visible>
+                                <colordiffuse>FF4F4F4F</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>220</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),70)</visible>
+                                <colordiffuse>FF4F4F4F</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>190</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),80)</visible>
+                                <colordiffuse>FF373737</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>160</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),90)</visible>
+                                <colordiffuse>FF373737</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>130</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),99)</visible>
+                                <colordiffuse>FF373737</colordiffuse>
+                            </control>
+                        </control>
+                        <control type="group">
+                            <control type="image">
+                                <left>670</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),10)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>700</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),20)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>730</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),30)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>760</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),40)</visible>
+                                <colordiffuse>FF7C7C7C</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>790</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),50)</visible>
+                                <colordiffuse>FF4F4F4F</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>820</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),60)</visible>
+                                <colordiffuse>FF4F4F4F</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>850</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),70)</visible>
+                                <colordiffuse>FF4F4F4F</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>880</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),80)</visible>
+                                <colordiffuse>FF373737</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>910</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),90)</visible>
+                                <colordiffuse>FF373737</colordiffuse>
+                            </control>
+                            <control type="image">
+                                <left>940</left>
+                                <width>20</width>
+                                <height>20</height>
+                                <texture>common/white_elipse.png</texture>
+                                <visible>Integer.IsGreaterOrEqual(Window().Property(percent),99)</visible>
+                                <colordiffuse>FF373737</colordiffuse>
+                            </control>
+                        </control>
+                    </control>
+                    <control type="image">
+                        <top>-53</top>
+                        <left>395</left>
+                        <width>300</width>
+                        <height>150</height>
+                        <texture colordiffuse="FF7C7C7C">$INFO[Window.Property(flag_remaining)]</texture>
+                    </control>
+                    <control type="textbox" id="2001">
+                        <top>60</top>
+                        <left>170</left>
+                        <width>750</width>
+                        <height>210</height>
+                        <font>font13</font> <!-- FEN_30 -->
+                        <textcolor>FFFFFFFF</textcolor>
+                        <align>center</align>
+                    </control>
                 </control>
             </control>
             <control type="group">

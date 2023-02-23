@@ -153,6 +153,9 @@ def auto_nextep_settings():
 	default_action = default_action_dict[int(get_setting('autoplay_default_action', '1'))] if alert_method == 0 else 'cancel'
 	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'alert_method': alert_method, 'default_action': default_action}
 
+def progress_flags_direction():
+	return int(get_setting('results.progress_flags_direction', '0'))
+
 def filter_status(filter_type):
 	return int(get_setting('filter_%s' % filter_type, '0'))
 
@@ -337,6 +340,9 @@ def fanarttv_client_key():
 
 def tmdb_api_key():
 	return get_setting('tmdb_api', tmdb_default_api)
+
+def omdb_api_key():
+	return get_setting('omdb_api', '')
 
 def fanarttv_default():
 	return get_setting('fanarttv.default', 'false') == 'true'

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from xbmc import getInfoLabel
-from urllib.parse import parse_qsl
+from modules.kodi_utils import external_browse, parse_qsl, get_property
 # from modules.kodi_utils import logger
 
-def external():
-	return 'fen' not in getInfoLabel('Container.PluginName')
+def exit_system_check():
+	if external_browse(): return get_property('fen.check_sysexit') == 'true'
 
 def routing(sys):
 	params = dict(parse_qsl(sys.argv[2][1:], keep_blank_values=True))
@@ -224,21 +223,21 @@ def routing(sys):
 	elif mode == 'person_data_dialog':
 		from indexers.people import person_data_dialog
 		return person_data_dialog(params)
-	elif mode == 'downloader':
-		from modules.downloader import runner
-		return runner(params)
 	elif mode == 'download_manager':
 		from modules.downloader import download_manager
 		return download_manager(params)
 	elif mode == 'manual_add_magnet_to_cloud':
 		from modules.debrid import manual_add_magnet_to_cloud
 		return manual_add_magnet_to_cloud(params)
-	elif mode == 'debrid.browse_packs':
-		from modules.sources import Sources
-		return Sources().debridPacks(_get('provider'), _get('name'), _get('magnet_url'), _get('info_hash'))
 	elif mode == 'upload_logfile':
 		from modules.kodi_utils import upload_logfile
 		return upload_logfile()
 	elif mode == 'toggle_language_invoker':
 		from modules.kodi_utils import toggle_language_invoker
 		return toggle_language_invoker()
+	elif mode == 'downloader':
+		from modules.downloader import runner
+		return runner(params)
+	elif mode == 'debrid.browse_packs':
+		from modules.sources import Sources
+		return Sources().debridPacks(_get('provider'), _get('name'), _get('magnet_url'), _get('info_hash'))

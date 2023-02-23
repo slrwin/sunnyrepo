@@ -671,11 +671,11 @@ msgid "Original"
 msgstr ""
 
 msgctxt "#32167"
-msgid "Internal Scrapers Color"
+msgid "SD - 4K"
 msgstr ""
 
 msgctxt "#32168"
-msgid "External Scrapers Color"
+msgid "4K - SD"
 msgstr ""
 
 msgctxt "#32169"
@@ -839,7 +839,7 @@ msgid "All Debrid Color"
 msgstr ""
 
 msgctxt "#32209"
-msgid "Progress Color Highlights"
+msgid "Progress Results Quality Direction"
 msgstr ""
 
 msgctxt "#32210"
@@ -1507,11 +1507,11 @@ msgid "[B]Please Wait..[/B]"
 msgstr ""
 
 msgctxt "#32578"
-msgid "[B]Checking Debrid Providers[/B]"
+msgid "OMDb"
 msgstr ""
 
 msgctxt "#32579"
-msgid "[B]Remaining Debrid Checks:[/B] %s"
+msgid "API Key"
 msgstr ""
 
 msgctxt "#32580"
@@ -1899,11 +1899,7 @@ msgid "%s seconds"
 msgstr ""
 
 msgctxt "#32676"
-msgid "[B]Remaining providers:[/B] %s"
-msgstr ""
-
-msgctxt "#32677"
-msgid "Total"
+msgid "Remaining"
 msgstr ""
 
 msgctxt "#32678"
@@ -2507,14 +2503,6 @@ msgstr ""
 
 msgctxt "#32828"
 msgid "No"
-msgstr ""
-
-msgctxt "#32829"
-msgid "Pre-Scrape"
-msgstr ""
-
-msgctxt "#32830"
-msgid "Sources"
 msgstr ""
 
 msgctxt "#32831"
@@ -3393,10 +3381,6 @@ msgctxt "#33049"
 msgid "Watched Progress"
 msgstr ""
 
-msgctxt "#33050"
-msgid "Press RIGHT to Skip"
-msgstr ""
-
 msgctxt "#33051"
 msgid "Slideshow"
 msgstr ""
@@ -3435,10 +3419,6 @@ msgstr ""
 
 msgctxt "#33060"
 msgid "Production Status"
-msgstr ""
-
-msgctxt "#33061"
-msgid "Press BACK to Exit"
 msgstr ""
 
 msgctxt "#33062"
@@ -3655,7 +3635,7 @@ msgid "Monitor For Successful Playback"
 msgstr ""
 
 msgctxt "#33115"
-msgid "Play Next Episode"
+msgid "Play Next"
 msgstr ""
 
 msgctxt "#33116"

@@ -12,6 +12,7 @@ class FenMonitor(xbmc_monitor):
 		self.startUpServices()
 	
 	def startUpServices(self):
+		Thread(target=service_functions.SysExitPause().run).start()
 		try: service_functions.SetKodiVersion().run()
 		except: pass
 		try: service_functions.InitializeDatabases().run()
