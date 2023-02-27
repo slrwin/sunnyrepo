@@ -1,4 +1,0 @@
-
-[COLOR dodgerblue][B]Next Episode Manager[/B][/COLOR]
-
-In Fen there is a manager for Next Episodes which will allow you to hide/unhide shows from the Next Episode display if using Trakt for your watched history. This is easier than going to the Trakt website to hide/unhide shows from progress. This can be accessed from the context menu when in the Next Epsiodes section.
