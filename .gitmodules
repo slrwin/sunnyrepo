@@ -1,9 +1,6 @@
 [submodule "repo/plugin.program.desiwizard"]
 	path = repo/plugin.program.desiwizard
 	url = https://github.com/slrwin/plugin.program.desiwizard
-[submodule "repo/plugin.video.DesiCast"]
-	path = repo/plugin.video.DesiCast
-	url = https://github.com/slrwin/plugin.video.DesiCast
 [submodule "repo/script.module.beautifulsoup4"]
 	path = repo/script.module.beautifulsoup4
 	url = https://github.com/slrwin/script.module.beautifulsoup4
