@@ -36,6 +36,7 @@ About the Desi Build Addons:
 <li>Scrubs v2 : Addon to watch Free Movies and TV Shows.</li>
 <li>Mad Titan Sports: Addon for watching live tv and sports.</li>
 <li>Swift TV: Addon for watching live tv and sports.</li>
+<li>DaddyLive: Addon for watching live tv and sports.</li>
 <li>Einthusan: Addon for Indian Movies.</li>
 <li>Deccan Delight: Addon for Indian Movies and Series.</li>
 <li></li>
