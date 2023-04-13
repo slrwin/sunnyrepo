@@ -29,6 +29,33 @@
             <fanart>fanart.png</fanart>
         </assets>
     </extension>
+</addon><addon id="plugin.video.DesiCast" name="DesiCast" version="2.0.0" provider-name="Sunny">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0" />
+        
+        
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.png</fanart>
+        </assets>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <language />
+        <platform>all</platform>
+        <license>GNU GENERAL PUBLIC LICENSE</license>
+        <summary lang="en">App for Desi Content</summary>
+        <description lang="en">Watch full live and recorded streaming of India TV Channels and movies and sports.</description>
+        <forum />
+        <source />
+        <email>slrwin@outlook.com</email>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.png</fanart>
+        </assets>
+    </extension>
 </addon><addon id="repository.sunnyrepo" name="Sunny Repo" version="2.0.0" provider-name="slrwin">
     <extension point="xbmc.addon.repository" name="sunnyrepo">
         <dir>
@@ -187,6 +214,23 @@
     <assets>
 	    <icon>icon.png</icon>
 	    <fanart>fanart.png</fanart>
+    </assets>
+  </extension>
+</addon><addon id="script.module.beautifulsoup4" name="BeautifulSoup4" version="4.9.3+matrix.1" provider-name="Leonard Richardson (leonardr@segfault.org)">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0" />
+    <import addon="script.module.soupsieve" version="2.0.0+matrix.1" />
+  </requires>
+  <extension point="xbmc.python.module" library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Screen-scraping library</summary>
+    <description lang="en_GB">Beautiful Soup is a library that makes it easy to scrape information from web pages. It sits atop an HTML or XML parser, providing Pythonic idioms for iterating, searching, and modifying the parse tree.</description>
+    <license>MIT</license>
+    <platform>all</platform>
+    <website>https://www.crummy.com/software/BeautifulSoup/</website>
+	<source>https://code.launchpad.net/beautifulsoup</source>
+    <assets>
+      <icon>icon.png</icon>
     </assets>
   </extension>
 </addon></addons>
