@@ -45,7 +45,7 @@ About the Desi Build Addons:
 <li>For better quality links and uninterrupted streaming RealDebrid is needed with majority of Kodi addons.</li>
 <li>If you plan to get RealDebrid then install the Umbrella or Seren or Fen addons from Addon repository in the Kodi. These 3 addons RealDebrid only addons with better support from developers.</li>
 <li>If you plan to continue with Free Links please use a VPN to anonymize your IP.</li>
-<li><a href="http://real-debrid.com/?id=3069892" target="_blank" rel="noopener noreferrer">Real Debrid</a> is a Premium Downloader</li>
+<li><a href="http://real-debrid.com/?id=9074891" target="_blank" rel="noopener noreferrer">Real Debrid</a> is a Premium Downloader</li>
 <li><a href="https://trakt.tv/" target="_blank" rel="noopener noreferrer">Trakt</a> will help in tracking the watched Progress and creating collections, Lists of users favorite shows</li>
 </ul>
 </p>
