@@ -1,11 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<addons><addon id="plugin.program.desiwizard" name="[COLOR limegreen]Desi[/COLOR]Wizard" version="1.0.7" provider-name="drinfernoo, slamious">
+<addons><addon id="plugin.program.desiwizard" name="[COLOR limegreen]Desi[/COLOR]Wizard" version="1.0.8" provider-name="slrwin">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" />
         <import addon="script.module.six" />
-        <import addon="script.kodi.android.update" optional="true" version="1.1.7" />
-        <import addon="script.speedtester" optional="true" version="1.1.2" />
     </requires>
     
     <extension point="xbmc.python.pluginsource" library="default.py">
