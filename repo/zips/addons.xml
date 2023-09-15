@@ -46,29 +46,9 @@
             <checksum>https://raw.githubusercontent.com/Gujal00/smrzips/master/addons.xml.md5</checksum>
             <datadir zip="true">https://raw.githubusercontent.com/Gujal00/smrzips/master/zips/</datadir>
         </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
-        </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/dobbelina/repository.dobbelina/master/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/dobbelina/repository.dobbelina/master/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/dobbelina/repository.dobbelina/master/</datadir>
-        </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/a4k-openproject/repository.openscrapers/master/zips/</datadir>
-        </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/therealatreides/housetools/master/code/_housefiles/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/therealatreides/housetools/master/code/_housefiles/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/therealatreides/housetools/master/code/_housefiles/</datadir>
-        </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/Tikipeter/repository.tikipeter/master/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/Tikipeter/repository.tikipeter/master/zips/addons.xml.md5</checksum>
+        <dir minversion="20.0">
+            <info compressed="false">https://raw.githubusercontent.com/Tikipeter/repository.tikipeter/master/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/Tikipeter/repository.tikipeter/master/addons.xml.md5</checksum>
             <datadir zip="true">https://raw.githubusercontent.com/Tikipeter/repository.tikipeter/master/zips</datadir>
         </dir>
         <dir minversion="18.9.701">
@@ -91,32 +71,7 @@
             <checksum>https://raw.githubusercontent.com/drinfernoo/plugin.program.autowidget/devrepo/zips/addons.xml.md5</checksum>
             <datadir zip="true">https://raw.githubusercontent.com/drinfernoo/plugin.program.autowidget/devrepo/zips/</datadir>
         </dir>
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/drinfernoo/repository.opendevtools/master/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/drinfernoo/repository.opendevtools/master/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/drinfernoo/repository.opendevtools/master/zips/</datadir>
-        </dir>
-                <dir>
-            <info compressed="false">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/repo/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/repo/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/repo/zips/</datadir>
-        </dir>
-        <dir minversion="18.0.0" maxversion="18.9.9">
-            <info compressed="false">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/leia/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/leia/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/leia/zips/</datadir>
-        </dir>
-        <dir minversion="19.0.0">
-            <info compressed="false">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/matrix/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/matrix/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/matrix/zips/</datadir>
-        </dir>
-        <dir minversion="20.0.0">
-            <info compressed="false">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/nexus/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/nexus/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/Goldenfreddy0703/repository.hooty/master/nexus/zips/</datadir>
-        </dir>
-        		<dir minversion="18.0">
+        <dir minversion="18.0">
 			<info compressed="false">https://raw.githubusercontent.com/nixgates/nixgates/master/repo/zips/addons.xml</info>
 			<checksum>https://raw.githubusercontent.com/nixgates/nixgates/master/repo/zips/addons.xml.md5</checksum>
 			<datadir zip="true">https://raw.githubusercontent.com/nixgates/nixgates/master/repo/zips/</datadir>
