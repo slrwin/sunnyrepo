@@ -2,7 +2,7 @@
 
 # <a href="https://unlinked.link/" target="_blank" rel="noopener noreferrer">Unlinked</a> - Code : 9D6A05AC
 
-# Sunny Repo
+# Sunny Repo - Omega DesiBuild
 
 ## Current Version: 2.0.0
 
@@ -35,8 +35,7 @@ About the Desi Build Addons:
  <li>9 Lives : Addon to watch Free Movies and TV Shows.</li>
 <li>Scrubs v2 : Addon to watch Free Movies and TV Shows.</li>
 <li>Mad Titan Sports: Addon for watching live tv and sports.</li>
-<li>Swift TV: Addon for watching live tv and sports.</li>
-<li>DaddyLive: Addon for watching live tv and sports.</li>
+<li>tvOne112: Addon for watching live tv and sports.</li>
 <li>Einthusan: Addon for Indian Movies.</li>
 <li>Deccan Delight: Addon for Indian Movies and Series.</li>
 <li></li>
@@ -45,7 +44,7 @@ About the Desi Build Addons:
 <li>For better quality links and uninterrupted streaming RealDebrid is needed with majority of Kodi addons.</li>
 <li>If you plan to get RealDebrid then install the Umbrella or Seren or Fen addons from Addon repository in the Kodi. These 3 addons RealDebrid only addons with better support from developers.</li>
 <li>If you plan to continue with Free Links please use a VPN to anonymize your IP.</li>
-<li><a href="http://real-debrid.com/?id=9074891" target="_blank" rel="noopener noreferrer">Real Debrid</a> is a Premium Downloader</li>
+<li><a href="http://real-debrid.com/?id=3069892" target="_blank" rel="noopener noreferrer">Real Debrid</a> is a Premium Downloader</li>
 <li><a href="https://trakt.tv/" target="_blank" rel="noopener noreferrer">Trakt</a> will help in tracking the watched Progress and creating collections, Lists of users favorite shows</li>
 </ul>
 </p>
