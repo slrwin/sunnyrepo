@@ -1,1 +1,11 @@
-{"image":"mcr.microsoft.com/devcontainers/universal:2"}
+{
+    "customizations": {
+      "codespaces": {
+        "repositories": {
+          "slrwin/plugin.program.desiwizard": {
+            "permissions": "write-all"
+          }
+        }
+      }
+    }
+  }

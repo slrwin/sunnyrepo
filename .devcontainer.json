@@ -2,7 +2,7 @@
     "customizations": {
       "codespaces": {
         "repositories": {
-          "slrwin/plugin.program.desiwizard": {
+          "https://github.com/slrwin/plugin.program.desiwizard": {
             "permissions": "write-all"
           }
         }
