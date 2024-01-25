@@ -7,3 +7,6 @@
 [submodule "repo/plugin.video.jiotv"]
 	path = repo/plugin.video.jiotv
 	url = https://github.com/krreet/plugin.video.jiotv
+[submodule "repo/a4kSubtitles"]
+	path = repo/a4kSubtitles
+	url = https://github.com/a4k-openproject/a4kSubtitles
