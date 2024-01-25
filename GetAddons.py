@@ -35,6 +35,7 @@ def download_zip_files(url, download_folder, extract_folder):
         if href.endswith('.zip'):
             # Join the URL to get the absolute path
             absolute_url = urljoin(url, href)
+            print(absolute_url)
             download_and_extract_zip(absolute_url, download_folder, extract_folder)
 
 if __name__ == "__main__":
