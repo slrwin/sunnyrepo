@@ -4,7 +4,7 @@
         "repositories": {
           "slrwin/plugin.program.desiwizard": {
             "permissions": {
-              "issues": "write"
+              "issues": "write-all"
             }
           }
         }
