@@ -31,7 +31,7 @@ jobs:
       - name: execute repo generator script # run main.py
         # env:
         #   SOME_SECRET: ${{ secrets.MY_SECRET }}
-        run: python _repo_generator.py.py
+        run: python _repo_generator.py
           
       - name: commit files
         run: |
