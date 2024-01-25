@@ -7,6 +7,3 @@
 [submodule "repo/a4kSubtitles"]
 	path = repo/a4kSubtitles
 	url = https://github.com/a4k-openproject/a4kSubtitles
-[submodule "repo/plugin.program.desiwizard"]
-	path = repo/plugin.program.desiwizard
-	url = https://github.com/slrwin/plugin.program.desiwizard
