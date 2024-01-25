@@ -1,8 +1,9 @@
 name: run GetAddons.py
 
 on:
-  schedule:
-    - cron: '0 8 * * *' # At 00:00 on Monday
+  workflow_dispatch
+  # schedule:
+  #   - cron: '0 8 * * *' # At 00:00 on Monday
 
 jobs:
   build:
