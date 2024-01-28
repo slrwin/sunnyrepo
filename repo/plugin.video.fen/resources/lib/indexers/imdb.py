@@ -22,7 +22,7 @@ def imdb_build_user_lists(params):
 				listitem.setLabel(title)
 				listitem.setArt({'icon': default_imdb_icon, 'poster': default_imdb_icon, 'thumb': default_imdb_icon, 'fanart': fanart, 'banner': default_imdb_icon})
 				info_tag = listitem.getVideoInfoTag()
-				info_tag.setMediaType('video')
+				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': title, 'iconImage': 'imdb'}))
 				yield (url, listitem, True)
@@ -54,7 +54,7 @@ def imdb_build_keyword_results(params):
 				listitem.setLabel('%02d | %s' % (count, keyword.upper()))
 				listitem.setArt({'icon': default_imdb_icon, 'poster': default_imdb_icon, 'thumb': default_imdb_icon, 'fanart': fanart, 'banner': default_imdb_icon})
 				info_tag = listitem.getVideoInfoTag()
-				info_tag.setMediaType('video')
+				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				yield (url, listitem, True)
 			except: pass

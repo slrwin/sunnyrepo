@@ -341,7 +341,7 @@ class Discover:
 					listitem.setLabel(display)
 					listitem.setArt({'icon': default_icon, 'poster': default_icon, 'thumb': default_icon, 'fanart': fanart, 'banner': default_icon})
 					info_tag = listitem.getVideoInfoTag()
-					info_tag.setMediaType('video')
+					# info_tag.setMediaType('video')
 					info_tag.setPlot(' ')
 					cm_append(('[B]%s[/B]' % remove_str,'RunPlugin(%s)'% build_url(remove_single_params)))
 					cm_append(('[B]%s[/B]' % clear_str,'RunPlugin(%s)'% build_url(remove_all_params)))
@@ -440,7 +440,7 @@ class Discover:
 		listitem.setLabel(list_name)
 		listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon})
 		info_tag = listitem.getVideoInfoTag()
-		info_tag.setMediaType('video')
+		# info_tag.setMediaType('video')
 		info_tag.setPlot(' ')
 		add_item(handle, url, listitem, isFolder)
 

@@ -12,8 +12,7 @@ resume_dict = {10: 'resume', 11: 'start_over', 12: 'cancel'}
 info_icons_dict = {'furk': get_icon('provider_furk'), 'easynews': get_icon('provider_easynews'), 'alldebrid': get_icon('provider_alldebrid'),
 				'real-debrid': get_icon('provider_realdebrid'), 'premiumize': get_icon('provider_premiumize'), 'ad_cloud': get_icon('provider_alldebrid'),
 				'rd_cloud': get_icon('provider_realdebrid'), 'pm_cloud': get_icon('provider_premiumize')}
-info_quality_dict = {'4k': get_icon('flag_4k'), '1080p': get_icon('flag_1080p'), '720p': get_icon('flag_720p'), 'sd': get_icon('flag_sd'),
-					'cam': get_icon('flag_sd'), 'tele': get_icon('flag_sd'), 'scr': get_icon('flag_sd')}
+info_quality_dict = {'4k': get_icon('flag_4k'), '1080p': get_icon('flag_1080p'), '720p': get_icon('flag_720p'), 'sd': get_icon('flag_sd')}
 extra_info_choices = (('PACK', 'PACK'), ('DOLBY VISION', 'D/VISION'), ('HIGH DYNAMIC RANGE (HDR)', 'HDR'), ('HYBRID', 'HYBRID'), ('AV1', 'AV1'),
 					('HEVC (X265)', 'HEVC'), ('REMUX', 'REMUX'), ('BLURAY', 'BLURAY'), ('SDR', 'SDR'), ('3D', '3D'), ('DOLBY ATMOS', 'ATMOS'), ('DOLBY TRUEHD', 'TRUEHD'),
 					('DOLBY DIGITAL EX', 'DD-EX'), ('DOLBY DIGITAL PLUS', 'DD+'), ('DOLBY DIGITAL', 'DD'), ('DTS-HD MASTER AUDIO', 'DTS-HD MA'), ('DTS-X', 'DTS-X'),
@@ -65,13 +64,12 @@ class SourcesResults(BaseDialog):
 		return self.selected
 
 	def get_provider_and_path(self, provider):
-		try: icon_path = info_icons_dict[provider]
-		except: provider, icon_path = 'folders', get_icon('provider_folder')
-		return provider, icon_path
+		try: return provider, info_icons_dict[provider]
+		except: return 'folders', get_icon('provider_folder')
 
 	def get_quality_and_path(self, quality):
-		icon_path = info_quality_dict[quality]
-		return quality, icon_path
+		try: return quality, info_quality_dict[quality]
+		except: return 'sd', get_icon('flag_sd')
 
 	def filter_action(self, action):
 		if action == self.right_action or action in self.closing_actions:

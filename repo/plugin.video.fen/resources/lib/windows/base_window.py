@@ -13,8 +13,9 @@ show_busy_dialog, hide_busy_dialog, addon_enabled, getSkinDir = kodi_utils.show_
 up_action, down_action, get_setting = kodi_utils.window_xml_up_action, kodi_utils.window_xml_down_action, kodi_utils.get_setting
 build_url, execute_builtin, set_property, get_property = kodi_utils.build_url, kodi_utils.execute_builtin, kodi_utils.set_property, kodi_utils.get_property
 translate_path, get_infolabel, list_dirs, current_skin = kodi_utils.translate_path, kodi_utils.get_infolabel, kodi_utils.list_dirs, kodi_utils.current_skin
-current_skin_prop, use_skin_fonts_prop, addon_installed = kodi_utils.current_skin_prop, kodi_utils.use_skin_fonts_prop, kodi_utils.addon_installed
+use_skin_fonts_prop, addon_installed, get_system_setting = kodi_utils.use_skin_fonts_prop, kodi_utils.addon_installed, kodi_utils.jsonrpc_get_system_setting
 left_action, right_action, info_action = kodi_utils.window_xml_left_action, kodi_utils.window_xml_right_action, kodi_utils.window_xml_info_action
+current_skin_prop, current_font_prop = kodi_utils.current_skin_prop, kodi_utils.current_font_prop
 extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
 needed_font_values = ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60'))
 addon_skins_folder = 'special://home/addons/plugin.video.fen/resources/skins/Default/1080i/'
@@ -269,7 +270,7 @@ class FontUtils:
 		else: self.skin_font_info = self.default_font_info()
 		for item in needed_font_values: replacement_values_append(self.match_font(*item))
 		for item in list_dirs(translate_path(addon_skins_folder))[1]: self.replace_font(item, replacement_values)
-		for item in ((current_skin_prop, self.current_skin), (use_skin_fonts_prop, self.use_skin_fonts)): set_property(*item)
+		for item in ((current_skin_prop, self.current_skin), (current_font_prop, self.current_font), (use_skin_fonts_prop, self.use_skin_fonts)): set_property(*item)
 
 	def get_skin_folder(self):
 		skin_folder = None
@@ -280,9 +281,9 @@ class FontUtils:
 		return skin_folder
 
 	def skin_change_check(self):
-		self.current_skin, self.use_skin_fonts = current_skin(), use_skin_fonts()
-		if self.current_skin != get_property(current_skin_prop): return True
-		if self.use_skin_fonts != get_property(use_skin_fonts_prop): return True
+		self.current_skin, self.current_font, self.use_skin_fonts = current_skin(), get_system_setting('lookandfeel.font', 'Default'), use_skin_fonts()
+		if self.current_skin != get_property(current_skin_prop) or self.current_font != get_property(current_font_prop) or self.use_skin_fonts != get_property(use_skin_fonts_prop):
+			return True
 		return False
 
 	def match_font(self, size, bold, fallback):

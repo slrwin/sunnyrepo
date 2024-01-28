@@ -121,7 +121,7 @@ def build_next_episode_manager():
 			listitem.setLabel(display)
 			listitem.setArt({'poster': icon, 'fanart': addon_fanart, 'icon': icon})
 			info_tag = listitem.getVideoInfoTag()
-			info_tag.setMediaType('video')
+			# info_tag.setMediaType('video')
 			info_tag.setPlot(' ')
 			append({'listitem': (url, listitem, False), 'sort_title': title})
 		except: pass

@@ -35,7 +35,7 @@ def search_history(params):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon})
 				info_tag = listitem.getVideoInfoTag()
-				info_tag.setMediaType('video')
+				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external'}))
 				yield (url, listitem, False)

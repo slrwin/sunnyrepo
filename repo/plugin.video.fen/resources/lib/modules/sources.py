@@ -45,7 +45,7 @@ class Sources():
 		self.sources_total = self.sources_4k = self.sources_1080p = self.sources_720p = self.sources_sd = 0
 		self.prescrape, self.disabled_ext_ignored, self.default_ext_only = 'true', 'false', 'false'
 		self.ext_name, self.ext_folder, self.ext_default_providers, self.ext_sources = '', '', None, None
-		self.progress_dialog = None
+		self.progress_dialog, self.progress_thread = None, None
 		self.playing_filename = ''
 		self.monitor_playback = monitor_playback()
 		self.easynews_max_retries = easynews_max_retries()
@@ -506,7 +506,8 @@ class Sources():
 
 	def _make_progress_dialog(self):
 		self.progress_dialog = create_window(('windows.sources', 'SourcesPlayback'), 'sources_playback.xml', meta=self.meta)
-		Thread(target=self.progress_dialog.run).start()
+		self.progress_thread = Thread(target=self.progress_dialog.run)
+		self.progress_thread.start()
 
 	def _make_resolve_dialog(self):
 		self.resolve_dialog_made = True
@@ -525,11 +526,19 @@ class Sources():
 		return action
 
 	def _kill_progress_dialog(self):
-		try: self.progress_dialog.close()
-		except: close_all_dialog()
-		try: del self.progress_dialog
+		success = 0
+		try:
+			self.progress_dialog.close()
+			success += 1
 		except: pass
-		self.progress_dialog = None
+		try:
+			self.progress_thread.join()
+			success += 1
+		except: pass
+		if not success == 2: close_all_dialog()
+		del self.progress_dialog
+		del self.progress_thread
+		self.progress_dialog, self.progress_thread = None, None
 
 	def furkPacks(self, name, file_id, download=False):
 		from apis.furk_api import FurkAPI

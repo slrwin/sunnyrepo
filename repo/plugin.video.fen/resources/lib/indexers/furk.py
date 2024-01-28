@@ -67,7 +67,7 @@ def furk_folder_browser(files, display_mode, handle):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb, 'fanart': fanart, 'banner': furk_icon})
 				info_tag = listitem.getVideoInfoTag()
-				info_tag.setMediaType('video')
+				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': furk_icon,
 									'action': 'archive', 'display_mode': display_mode, 'is_protected': is_protected}))
@@ -96,7 +96,7 @@ def furk_t_file_browser(params):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': furk_icon, 'poster': furk_icon, 'thumb': furk_icon, 'fanart': fanart, 'banner': furk_icon})
 				info_tag = listitem.getVideoInfoTag()
-				info_tag.setMediaType('video')
+				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': furk_icon,
 									'action': 'cloud.furk_direct'}))
