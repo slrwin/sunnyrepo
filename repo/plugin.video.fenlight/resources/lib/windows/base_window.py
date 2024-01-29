@@ -6,15 +6,16 @@ from caches.settings_cache import get_setting
 from modules.utils import manual_function_import
 
 window_xml_dialog, logger, player, notification, delete_folder = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.player, kodi_utils.notification, kodi_utils.delete_folder
+left_action, right_action, info_action, addon_path = kodi_utils.window_xml_left_action, kodi_utils.window_xml_right_action, kodi_utils.window_xml_info_action, kodi_utils.addon_path
 make_listitem, sleep, open_file, path_exists, confirm_dialog = kodi_utils.make_listitem, kodi_utils.sleep, kodi_utils.open_file, kodi_utils.path_exists, kodi_utils.confirm_dialog
 closing_actions, selection_actions, context_actions = kodi_utils.window_xml_closing_actions, kodi_utils.window_xml_selection_actions, kodi_utils.window_xml_context_actions
 json, clear_property, run_plugin, Thread, get_visibility = kodi_utils.json, kodi_utils.clear_property, kodi_utils.run_plugin, kodi_utils.Thread, kodi_utils.get_visibility
 show_busy_dialog, hide_busy_dialog, addon_enabled, getSkinDir = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.addon_enabled, kodi_utils.getSkinDir
-up_action, down_action, addon_path = kodi_utils.window_xml_up_action, kodi_utils.window_xml_down_action, kodi_utils.addon_path
+current_skin_prop, current_font_prop, addon_installed = kodi_utils.current_skin_prop, kodi_utils.current_font_prop, kodi_utils.addon_installed
 build_url, execute_builtin, set_property, get_property = kodi_utils.build_url, kodi_utils.execute_builtin, kodi_utils.set_property, kodi_utils.get_property
 translate_path, get_infolabel, list_dirs, current_skin = kodi_utils.translate_path, kodi_utils.get_infolabel, kodi_utils.list_dirs, kodi_utils.current_skin
-current_skin_prop, addon_installed, select_dialog, ok_dialog = kodi_utils.current_skin_prop, kodi_utils.addon_installed, kodi_utils.select_dialog, kodi_utils.ok_dialog
-left_action, right_action, info_action = kodi_utils.window_xml_left_action, kodi_utils.window_xml_right_action, kodi_utils.window_xml_info_action
+up_action, down_action, get_system_setting = kodi_utils.window_xml_up_action, kodi_utils.window_xml_down_action, kodi_utils.jsonrpc_get_system_setting
+select_dialog, ok_dialog = kodi_utils.select_dialog, kodi_utils.ok_dialog
 extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
 needed_font_values = ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60'))
 addon_skins_folder = 'special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/'
@@ -257,6 +258,7 @@ class FontUtils:
 		for item in needed_font_values: replacement_values_append(self.match_font(*item))
 		for item in list_dirs(translate_path(addon_skins_folder))[1]: self.replace_font(item, replacement_values)
 		set_property(current_skin_prop, self.current_skin)
+		set_property(current_font_prop, self.current_font)
 
 	def get_skin_folder(self):
 		skin_folder = None
@@ -267,8 +269,8 @@ class FontUtils:
 		return skin_folder
 
 	def skin_change_check(self):
-		self.current_skin = current_skin()
-		if self.current_skin != get_property(current_skin_prop): return True
+		self.current_skin, self.current_font = current_skin(), get_system_setting('lookandfeel.font', 'Default')
+		if self.current_skin != get_property(current_skin_prop) or self.current_font != get_property(current_font_prop): return True
 		return False
 
 	def match_font(self, size, bold, fallback):
@@ -289,7 +291,7 @@ class FontUtils:
 		results_append = results.append
 		try:
 			all_fonts = mdParse(skin_font_xml).getElementsByTagName('fontset')
-			try: fontset = [i for i in all_fonts if i.getAttribute('id').lower() == 'default'][0]
+			try: fontset = [i for i in all_fonts if i.getAttribute('id').lower() == self.current_font.lower()][0]
 			except: fontset = all_fonts[0]
 			for item in fontset.getElementsByTagName('font'):
 				try: name = item.getElementsByTagName('name')[0].firstChild.data

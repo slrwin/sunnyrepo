@@ -36,7 +36,7 @@ empty_poster, item_jump, nextpage = img_url % icons.box_office, img_url % icons.
 nextpage_landscape, item_jump_landscape = img_url % icons.nextpage_landscape, img_url % icons.item_jump_landscape
 tmdb_default_api = 'b370b60447737762ca38457bd77579b3'
 int_window_prop, pause_services_prop, firstrun_update_prop = 'fenlight.internal_results.%s', 'fenlight.pause_services', 'firstrun_update'
-current_skin_prop = 'fenlight.current_skin'
+current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
 playlist_type_dict = {'music': 0, 'video': 1}
@@ -313,6 +313,12 @@ def jsonrpc_get_addons(_type, properties=['thumbnail', 'name']):
 	command = {'jsonrpc': '2.0', 'method': 'Addons.GetAddons','params':{'type':_type, 'properties': properties}, 'id': '1'}
 	results = get_jsonrpc(command).get('addons')
 	return results
+
+def jsonrpc_get_system_setting(setting_id, setting_value=''):
+	command = {'jsonrpc': '2.0', 'id': 1, 'method': 'Settings.GetSettingValue', 'params': {'setting': setting_id}}
+	try: result = get_jsonrpc(command)['value']
+	except: result = setting_value
+	return result
 
 def open_settings():
 	from windows.base_window import open_window

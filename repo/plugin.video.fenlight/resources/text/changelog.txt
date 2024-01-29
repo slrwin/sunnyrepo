@@ -1,5 +1,14 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.22[/B][/COLOR]
+- Added "Most Favorited" to Movies and TV Shows menu. Invoke context menu on Movie & TV Show menu item and select "Check for New Menu Items" and then place where desired. Alternately, select "Restore Menu" to reload the default menu items, which will now include the new menu item.
+- Quick fix for CAM, TELE, SCR results not showing when result highlights are based on quality.
+- Other changes/fixes.
+
+[COLOR dodgerblue][B]Version 1.0.21[/B][/COLOR]
+- Added detection of when user changes skin font, so custom xmls can be remade.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.20[/B][/COLOR]
 - Added "Trakt Favorites" to My Lists. Trakt gives users the ability to mark media as a "favorite" on their website. Trakt claims that the media that has been marked as favorites from other Trakt users that you follow will determine the Recommendations they supply to you. So for Trakt Recommendations to work correctly you need to follow other Trakt users that have a similar taste in media to you, and have also set a decent amount of their own favorites.
 - Adjustments to Trakt sync values due to looking into the Trakt favorites lists.

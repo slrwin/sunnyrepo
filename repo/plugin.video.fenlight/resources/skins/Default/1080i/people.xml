@@ -265,7 +265,7 @@
                                 <control type="image">
                                     <left>8</left>
                                     <top>8</top>
-                                    <height max="334">auto</height>
+                                    <height max="344">auto</height>
                                     <width max="220">auto</width>
                                     <aspectratio>scale</aspectratio>
                                     <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
@@ -289,7 +289,7 @@
                                     <control type="image">
                                         <left>8</left>
                                         <top>8</top>
-                                        <height max="334">auto</height>
+                                        <height max="344">auto</height>
                                         <width max="220">auto</width>
                                         <aspectratio>scale</aspectratio>
                                         <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>

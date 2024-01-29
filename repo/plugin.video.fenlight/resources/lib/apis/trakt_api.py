@@ -176,7 +176,12 @@ def trakt_movies_top10_boxoffice(page_no):
 
 def trakt_movies_most_watched(page_no):
 	string = 'trakt_movies_most_watched_%s' % page_no
-	params = {'path': 'movies/watched/weekly/%s', 'params': {'limit': 20}, 'page_no': page_no}
+	params = {'path': 'movies/watched/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params, False, 48)
+
+def trakt_movies_most_favorited(page_no):
+	string = 'trakt_movies_most_favorited%s' % page_no
+	params = {'path': 'movies/favorited/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
 	return lists_cache_object(get_trakt, string, params, False, 48)
 
 def trakt_recommendations(media_type):
@@ -199,7 +204,12 @@ def trakt_tv_trending_recent(page_no):
 
 def trakt_tv_most_watched(page_no):
 	string = 'trakt_tv_most_watched_%s' % page_no
-	params = {'path': 'shows/watched/weekly/%s', 'params': {'limit': 20}, 'page_no': page_no}
+	params = {'path': 'shows/watched/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params, False, 48)
+
+def trakt_tv_most_favorited(page_no):
+	string = 'trakt_tv_most_favorited_%s' % page_no
+	params = {'path': 'shows/favorited/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
 	return lists_cache_object(get_trakt, string, params, False, 48)
 
 def trakt_tv_certifications(certification, page_no):

@@ -4,7 +4,7 @@ from apis import tmdb_api
 from caches.discover_cache import discover_cache
 from modules import kodi_utils, meta_lists
 from modules.utils import safe_string, remove_accents
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 json, dialog, select_dialog, ok_dialog, get_icon = kodi_utils.json, kodi_utils.dialog, kodi_utils.select_dialog, kodi_utils.ok_dialog, kodi_utils.get_icon
 sleep, container_refresh, tmdb_api_key = kodi_utils.sleep, kodi_utils.container_refresh, kodi_utils.tmdb_default_api
@@ -18,6 +18,7 @@ filter_list_id = 2100
 button_ids = (10, 11)
 button_actions = {10: 'Save and Exit', 11: 'Exit'}
 default_key_values = ('key', 'display_key')
+discover_icon = get_icon('discover')
 
 class Discover(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -229,5 +230,6 @@ class Discover(BaseDialog):
 
 	def set_starting_constants(self, kwargs):
 		self.position, self.remake, self.chosen_item, self.media_type, self.active_attributes,  self.label, self.url = 0, False, None, kwargs['media_type'], [], '', ''
+		self.setProperty('discover_icon', discover_icon)
 		for key, values in discover_items.items():
 			for key_value in default_key_values: self.set_attribute(self, values[key_value], '')

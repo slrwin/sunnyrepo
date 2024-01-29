@@ -52,6 +52,15 @@
                 <align>center</align>
                 <label>[UPPERCASE][B]DISCOVER[/B][/UPPERCASE]</label>
             </control>
+            <control type="image">
+                <left>770</left>
+                <top>105</top>
+                <height>720</height>
+                <width>500</width>
+                <aspectratio aligny="bottom">keep</aspectratio>
+                <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Window.Property(discover_icon)]</texture>
+                <fadetime>100</fadetime>
+            </control>
             <!-- Filter List -->
             <control type="fixedlist" id="2100">
                 <pagecontrol>4100</pagecontrol>
