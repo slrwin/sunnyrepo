@@ -27,7 +27,7 @@
                     <top>13</top>
                     <width max="1160">auto</width>
                     <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
+                    <font>font_tiny</font> <!-- FEN_21 -->
                     <textcolor>B3CCCCCC</textcolor>
                     <label>[UPPERCASE]$ADDON[plugin.video.fen 33138][/UPPERCASE]</label>
                 </control>
@@ -39,7 +39,7 @@
                     <left>30</left>
                     <width>1820</width>
                     <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
+                    <font>font_tiny</font> <!-- FEN_21 -->
                     <align>center</align>
                     <label>[COLOR B3CCCCCC][B]$INFO[Player.Time(hh:mm:ss)] / $INFO[Player.Duration(hh:mm:ss)][/B][/COLOR]</label>
                 </control>

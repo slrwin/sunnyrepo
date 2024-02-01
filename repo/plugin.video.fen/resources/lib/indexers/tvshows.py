@@ -13,6 +13,7 @@ make_listitem, build_url, remove_keys, dict_removals = kodi_utils.make_listitem,
 metadata_user_info, watched_indicators, jump_to_enabled, paginate = settings.metadata_user_info, settings.watched_indicators, settings.jump_to_enabled, settings.paginate
 extras_open_action, get_art_provider, default_all_episodes, page_limit = settings.extras_open_action, settings.get_art_provider, settings.default_all_episodes, settings.page_limit
 poster_empty, fanart_empty, include_year_in_title, set_property = kodi_utils.empty_poster, kodi_utils.addon_fanart, settings.include_year_in_title, kodi_utils.set_property
+nextpage_landscape = kodi_utils.nextpage_landscape
 max_threads, widget_hide_next_page = settings.max_threads, settings.widget_hide_next_page
 fen_str, trakt_str, watched_str, unwatched_str, exit_str, nextpage_str, browse_str, jump2_str = ls(32036), ls(32037), ls(32642), ls(32643), ls(32650), ls(32799), ls(33137), ls(32964)
 extras_str, options_str, refr_widg_str = ls(32645), ls(32646), '[B]%s[/B]' % ls(32611)
@@ -114,7 +115,7 @@ class TVShows:
 							'jump_to_enabled': jump_to, 'paginate_start': self.paginate_start, 'url_params': url_params}, jump2_str, handle, 'item_jump', isFolder=False)
 			if self.new_page and not self.widget_hide_next_page:
 						self.new_page.update({'mode': mode, 'action': self.action, 'category_name': self.category_name})
-						add_dir(self.new_page, nextpage_str % self.new_page['new_page'], handle, 'item_next')
+						add_dir(self.new_page, nextpage_str % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
 		except: pass
 		set_content(handle, content_type)
 		set_category(handle, ls(self.category_name))

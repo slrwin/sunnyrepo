@@ -42,6 +42,7 @@ def build_episode_list(params):
 				item_get = item.get
 				season, episode, ep_name = item_get('season'), item_get('episode'), item_get('title')
 				episode_date, premiered = adjust_premiered_date_function(item_get('premiered'), adjust_hours)
+				episode_type = item_get('episode_type') or ''
 				playcount, overlay = get_watched_status(watched_info, string(tmdb_id), season, episode)
 				progress = get_progress_percent(bookmarks, tmdb_id, season, episode)
 				tmdb_thumb = item_get('thumb', None)
@@ -119,7 +120,7 @@ def build_episode_list(params):
 								'clearlogo': show_clearlogo, 'landscape': show_landscape, 'season.poster': season_poster, 'tvshow.poster': show_poster,
 								'tvshow.clearart': show_clearart, 'tvshow.clearlogo': show_clearlogo, 'tvshow.landscape': show_landscape, 'tvshow.banner': show_banner})
 				set_properties({'fen.extras_params': extras_params, 'fen.options_params': options_params, 'fen.unwatched_params': unwatched_params,
-								'fen.watched_params': watched_params, 'fen.clearprog_params': clearprog_params})
+								'fen.watched_params': watched_params, 'fen.clearprog_params': clearprog_params, 'episode_type': episode_type})
 				yield (url_params, listitem, False)
 			except: pass
 	handle, is_external, category_name = int(sys.argv[1]), external(), episodes_str
@@ -199,6 +200,7 @@ def build_single_episode(list_type, params={}):
 			item_get = item.get
 			season, episode, ep_name = item_get('season'), item_get('episode'), item_get('title')
 			episode_date, premiered = adjust_premiered_date_function(item_get('premiered'), adjust_hours)
+			episode_type = item_get('episode_type') or ''
 			if not episode_date or current_date < episode_date:
 				if list_type_starts_with('next_'):
 					if not episode_date: return
@@ -318,7 +320,7 @@ def build_single_episode(list_type, params={}):
 							'landscape': show_landscape, 'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearart': show_clearart,
 							'tvshow.clearlogo': show_clearlogo, 'tvshow.landscape': show_landscape, 'tvshow.banner': show_banner})
 			set_properties({'fen.extras_params': extras_params, 'fen.options_params': options_params, 'fen.unwatched_params': unwatched_params,
-							'fen.watched_params': watched_params, 'fen.clearprog_params': clearprog_params})
+							'fen.watched_params': watched_params, 'fen.clearprog_params': clearprog_params, 'episode_type': episode_type})
 			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
 							'unaired': unaired, 'last_played': ep_data_get('last_played', resinsert), 'sort_order': string(_position)})
 		except: pass

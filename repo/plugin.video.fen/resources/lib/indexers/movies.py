@@ -6,13 +6,13 @@ from modules.utils import manual_function_import, get_datetime, make_thread_list
 from modules.watched_status import get_watched_info_movie, get_watched_status_movie, get_bookmarks, get_progress_percent
 # logger = kodi_utils.logger
 
-meta_function, get_datetime_function, add_item, home = movie_meta, get_datetime, kodi_utils.add_item, kodi_utils.home
+meta_function, get_datetime_function, add_item, home, item_jump_landscape = movie_meta, get_datetime, kodi_utils.add_item, kodi_utils.home, kodi_utils.item_jump_landscape
 progress_percent_function, get_watched_function, get_watched_info_function = get_progress_percent, get_watched_status_movie, get_watched_info_movie
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
 string, ls, sys, external, add_items, add_dir = str, kodi_utils.local_string, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir
 make_listitem, build_url, remove_keys, dict_removals = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.remove_keys, kodi_utils.movie_dict_removals
-poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.set_property
+poster_empty, fanart_empty, set_property, nextpage_landscape = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.set_property, kodi_utils.nextpage_landscape
 metadata_user_info, watched_indicators, jump_to_enabled, date_offset = settings.metadata_user_info, settings.watched_indicators, settings.jump_to_enabled, settings.date_offset
 extras_open_action, get_art_provider, get_resolution, page_limit = settings.extras_open_action, settings.get_art_provider, settings.get_resolution, settings.page_limit
 max_threads, widget_hide_next_page, include_year_in_title, paginate = settings.max_threads, settings.widget_hide_next_page, settings.include_year_in_title, settings.paginate
@@ -118,11 +118,11 @@ class Movies:
 				if jump_to != 3:
 					url_params = json.dumps({**self.new_page, **{'mode': mode, 'action': self.action, 'category_name': self.category_name}})
 					add_dir({'mode': 'navigate_to_page_choice', 'current_page': page_no, 'total_pages': self.total_pages, 'all_pages': all_pages,
-							'jump_to_enabled': jump_to, 'paginate_start': self.paginate_start, 'url_params': url_params}, jump2_str, handle, 'item_jump',
+							'jump_to_enabled': jump_to, 'paginate_start': self.paginate_start, 'url_params': url_params}, jump2_str, handle, 'item_jump', item_jump_landscape,
 							isFolder=False)
 			if self.new_page and not self.widget_hide_next_page:
 				self.new_page.update({'mode': mode, 'action': self.action, 'category_name': self.category_name})
-				add_dir(self.new_page, nextpage_str % self.new_page['new_page'], handle, 'item_next')
+				add_dir(self.new_page, nextpage_str % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
 		except: pass
 		set_content(handle, content_type)
 		set_category(handle, ls(self.category_name))

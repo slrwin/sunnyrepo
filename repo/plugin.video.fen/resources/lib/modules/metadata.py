@@ -377,11 +377,25 @@ def movieset_meta(media_id, user_info, current_time=None):
 
 def episodes_meta(season, meta, user_info):
 	def _process():
+		midseason_premiere = False
 		for ep_data in details:
 			writer, director, guest_stars = '', '', []
 			ep_data_get = ep_data.get
 			title, plot, premiered = ep_data_get('name'), ep_data_get('overview'), ep_data_get('air_date')
 			season, episode = ep_data_get('season_number'), ep_data_get('episode_number')
+			try:
+				if episode == 1:
+					if 'premiere' in season_type: episode_type = 'series_premiere'
+					else: episode_type = 'season_premiere'
+				elif midseason_premiere: episode_type, midseason_premiere = 'mid_season_premiere', False
+				else:
+					episode_type = ep_data_get('episode_type')
+					if episode_type == 'mid_season': episode_type, midseason_premiere = 'mid_season_finale', True
+					elif episode_type == 'finale':
+						if 'finale' in season_type: episode_type = 'series_finale'
+						else: episode_type = 'season_finale'
+					else: episode_type = ''
+			except: episode_type = ''
 			try: duration = ep_data_get('runtime')*60
 			except: duration = 30*60
 			rating, votes, still_path = ep_data_get('vote_average'), ep_data_get('vote_count'), ep_data_get('still_path', None)
@@ -399,14 +413,18 @@ def episodes_meta(season, meta, user_info):
 				try: director = [i['name'] for i in crew if i['job'] == 'Director'][0]
 				except: pass
 			yield {'writer': writer, 'director': director, 'guest_stars': guest_stars, 'mediatype': 'episode', 'title': title, 'plot': plot, 'duration': duration,
-					'premiered': premiered, 'season': season, 'episode': episode, 'rating': rating, 'votes': votes, 'thumb': thumb}
+					'premiered': premiered, 'season': season, 'episode': episode, 'rating': rating, 'votes': votes, 'thumb': thumb, 'episode_type': episode_type}
 	media_id, data = meta['tmdb_id'], None
 	prop_string = '%s_%s' % (media_id, season)
 	data = metacache_get_season(prop_string)
 	if data: return data
 	try:
-		if meta['status'] in finished_show_check or meta['total_seasons'] > int(season): expiration = EXPIRES_182_DAYS
+		season, tvshow_status, total_seasons = int(season), meta['status'], meta['total_seasons']
+		if season == 1: season_type = 'premiere_finale' if (total_seasons == season and tvshow_status in finished_show_check) else 'premiere'
+		else: season_type = 'finale' if (total_seasons == season and tvshow_status in finished_show_check) else ''
+		if tvshow_status in finished_show_check or total_seasons > int(season): expiration = EXPIRES_182_DAYS
 		else: expiration = EXPIRES_4_DAYS
+		
 		image_resolution = user_info.get('image_resolution', backup_resolutions)
 		still_resolution, profile_resolution = image_resolution['still'], image_resolution['profile']
 		details = season_episodes_details(media_id, season, user_info['language'], user_info['tmdb_api'])['episodes']

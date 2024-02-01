@@ -47,7 +47,7 @@
                     <left>5</left>
                     <width max="1650">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                     <aligny>center</aligny>
@@ -161,7 +161,7 @@
                     <onleft>2000</onleft>
                     <onright>2000</onright>
                     <label>$ADDON[plugin.video.fen 32839]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -178,7 +178,7 @@
                     <onleft>2000</onleft>
                     <onright>2000</onright>
                     <label>$ADDON[plugin.video.fen 32840]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -193,7 +193,7 @@
                     <aligny>bottom</aligny>
                     <textcolor>white</textcolor>
                     <shadowcolor>black</shadowcolor>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <label>[B]$ADDON[plugin.video.fen 33156][/B]</label>
                 </control>
                 <control type="button" id="12">
@@ -206,7 +206,7 @@
                     <onleft>2000</onleft>
                     <onright>2000</onright>
                     <label>[COLOR=$INFO[Container(2000).ListItem.Property(label)]]$INFO[Container(2000).ListItem.Property(label)][/COLOR]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
                     <texturenofocus colordiffuse="FF4a4347" border="30">fen_common/circle.png</texturenofocus>
                     <align>center</align>
@@ -227,7 +227,7 @@
                     <aligny>bottom</aligny>
                     <textcolor>white</textcolor>
                     <shadowcolor>black</shadowcolor>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <label>[B]$ADDON[plugin.video.fen 33157][/B]</label>
                 </control>
                 <control type="button" id="13">
@@ -240,7 +240,7 @@
                     <onleft>2000</onleft>
                     <onright>2000</onright>
                     <label>$INFO[Window.Property(current_palette_name)]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -273,7 +273,7 @@
                 <aligny>center</aligny>
                 <textcolor>white</textcolor>
                 <shadowcolor>black</shadowcolor>
-                <font>font14</font> <!-- FEN_33 -->
+                <font>font_midi</font> <!-- FEN_33 -->
                 <label>[B]$ADDON[plugin.video.fen 33110][/B]</label>
             </control>
         </control>

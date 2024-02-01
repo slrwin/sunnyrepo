@@ -15,6 +15,7 @@ set_category, home, folder_path = kodi_utils.set_category, kodi_utils.home, kodi
 trakt_fetch_collection_watchlist, get_trakt_list_contents = trakt_api.trakt_fetch_collection_watchlist, trakt_api.get_trakt_list_contents
 trakt_trending_popular_lists, trakt_get_lists = trakt_api.trakt_trending_popular_lists, trakt_api.trakt_get_lists
 trakt_search_lists, trakt_fetch_movie_sets = trakt_api.trakt_search_lists, trakt_api.trakt_fetch_movie_sets
+nextpage_landscape = kodi_utils.nextpage_landscape
 add2menu_str, add2folder_str, likelist_str, unlikelist_str = ls(32730), ls(32731), ls(32776), ls(32783)
 newlist_str, deletelist_str, nextpage_str, jump2_str = ls(32780), ls(32781), ls(32799), ls(32964)
 
@@ -58,7 +59,7 @@ def search_trakt_lists(params):
 		add_items(handle, list(_builder()))
 		if pages > page:
 			new_page = str(int(page) + 1)
-			add_dir({'mode': mode, 'query': search_title, 'new_page': new_page}, nextpage_str % new_page, handle, 'item_next')
+			add_dir({'mode': mode, 'query': search_title, 'new_page': new_page}, nextpage_str % new_page, handle, 'nextpage', nextpage_landscape)
 	except: pass
 	set_content(handle, 'files')
 	set_category(handle, search_title.capitalize())
@@ -147,7 +148,8 @@ def get_trakt_trending_popular_lists(params):
 		list_type = params['list_type']
 		lists = trakt_trending_popular_lists(list_type, page)
 		add_items(handle, list(_process()))
-		add_dir({'mode': 'trakt.list.get_trakt_trending_popular_lists', 'list_type': 'trending', 'new_page': new_page}, nextpage_str % new_page, handle, 'item_next')
+		add_dir({'mode': 'trakt.list.get_trakt_trending_popular_lists', 'list_type': 'trending', 'new_page': new_page}, nextpage_str % new_page,
+					handle, 'nextpage', nextpage_landscape)
 	except: pass
 	set_content(handle, 'files')
 	set_category(handle, params.get('category_name', 'Trakt Lists'))
@@ -196,7 +198,7 @@ def build_trakt_list(params):
 		if total_pages > page_no:
 			new_page = str(page_no + 1)
 			new_params['new_page'] = new_page
-			add_dir(new_params, nextpage_str % new_page, handle, 'item_next')
+			add_dir(new_params, nextpage_str % new_page, handle, 'nextpage', nextpage_landscape)
 	except: pass
 	set_content(handle, content)
 	set_category(handle, list_name)

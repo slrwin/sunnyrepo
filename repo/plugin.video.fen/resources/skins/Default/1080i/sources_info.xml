@@ -67,7 +67,7 @@
                 <control type="label">
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -77,7 +77,7 @@
                     <top>50</top>
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -87,7 +87,7 @@
                     <top>100</top>
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -97,7 +97,7 @@
                     <top>150</top>
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -107,7 +107,7 @@
                     <top>200</top>
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -117,7 +117,7 @@
                     <top>250</top>
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -127,7 +127,7 @@
                     <top>300</top>
                     <width max="1275">auto</width>
                     <height>20</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -138,7 +138,7 @@
                     <left>0</left>
                     <width max="1275">auto</width>
                     <height>140</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>left</align>
                     <aligny>top</aligny>

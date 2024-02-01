@@ -66,7 +66,7 @@
                     <top>10</top>
                     <left>110</left>
                     <height>20</height>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>$INFO[Window(10000).Property(fen.main_highlight)]</textcolor>
                     <shadowcolor>FF000000</shadowcolor>
                     <align>center</align>
@@ -78,7 +78,7 @@
                     <top>10</top>
                     <left>110</left>
                     <height>20</height>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>$INFO[Window(10000).Property(fen.main_highlight)]</textcolor>
                     <shadowcolor>FF000000</shadowcolor>
                     <align>center</align>
@@ -131,7 +131,7 @@
                         <left>70</left>
                         <top>45</top>
                         <height>5</height>
-                        <font>font12</font> <!-- FEN_26 -->
+                        <font>font_mini</font> <!-- FEN_26 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <aligny>center</aligny>
                         <label>[UPPERCASE]$INFO[ListItem.Property(line1)][/UPPERCASE]</label>
@@ -144,7 +144,7 @@
                         <control type="label">
                             <top>25</top>
                             <height>5</height>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][B]$INFO[ListItem.Property(line1)][/B][/UPPERCASE]</label>
@@ -152,7 +152,7 @@
                         <control type="label">
                             <top>60</top>
                             <height>5</height>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <textcolor>FFA9A8A8</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][I]$INFO[ListItem.Property(line2)][/I][/UPPERCASE]</label>
@@ -188,7 +188,7 @@
                         <top>45</top>
                         <height>5</height>
                         <width max="610">auto</width>
-                        <font>font12</font> <!-- FEN_26 -->
+                        <font>font_mini</font> <!-- FEN_26 -->
                         <textcolor>FF4a4347</textcolor>
                         <aligny>center</aligny>
                         <label>[UPPERCASE]$INFO[ListItem.Property(line1)][/UPPERCASE]</label>
@@ -201,7 +201,7 @@
                         <control type="label">
                             <top>25</top>
                             <height>5</height>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <textcolor>FF4a4347</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][B]$INFO[ListItem.Property(line1)][/B][/UPPERCASE]</label>
@@ -209,7 +209,7 @@
                         <control type="label">
                             <top>60</top>
                             <height>5</height>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <textcolor>FF5B5B5B</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][I]$INFO[ListItem.Property(line2)][/I][/UPPERCASE]</label>
@@ -240,7 +240,7 @@
                     <onleft>2025</onleft>
                     <onright>2025</onright>
                     <label>$ADDON[plugin.video.fen 32839]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -257,7 +257,7 @@
                     <onleft>2025</onleft>
                     <onright>2025</onright>
                     <label>$ADDON[plugin.video.fen 32840]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -274,7 +274,7 @@
                     <onleft>2025</onleft>
                     <onright>2025</onright>
                     <label>$ADDON[plugin.video.fen 33149]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
@@ -293,7 +293,7 @@
                     <onleft>2025</onleft>
                     <onright>2025</onright>
                     <label>$ADDON[plugin.video.fen 33150]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>

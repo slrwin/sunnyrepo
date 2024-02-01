@@ -47,7 +47,7 @@
                     <top>22</top>
                     <left>0</left>
                     <height>20</height>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                     <aligny>center</aligny>
@@ -73,7 +73,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -83,7 +83,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -183,7 +183,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -193,7 +193,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -289,7 +289,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -299,7 +299,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -401,7 +401,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -411,7 +411,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -507,7 +507,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -517,7 +517,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -621,7 +621,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -631,7 +631,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -727,7 +727,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -737,7 +737,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -837,7 +837,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>
@@ -847,7 +847,7 @@
                             <control type="label">
                                 <width max="1160">auto</width>
                                 <height>20</height>
-                                <font>font12</font> <!-- FEN_26 -->
+                                <font>font_mini</font> <!-- FEN_26 -->
                                 <textcolor>FFCCCCCC</textcolor>
                                 <align>left</align>
                                 <aligny>bottom</aligny>

@@ -54,7 +54,7 @@
                 <top>10</top>
                 <left>60</left>
                 <height>20</height>
-                <font>font12</font> <!-- FEN_26 -->
+                <font>font_mini</font> <!-- FEN_26 -->
                 <textcolor>$INFO[Window(10000).Property(fen.main_highlight)]</textcolor>
                 <shadowcolor>FF000000</shadowcolor>
                 <align>center</align>
@@ -78,7 +78,7 @@
                         <left>70</left>
                         <width max="440">auto</width>
                         <height>90</height>
-                        <font>font12</font> <!-- FEN_26 -->
+                        <font>font_mini</font> <!-- FEN_26 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <align>left</align>
                         <aligny>center</aligny>
@@ -102,7 +102,7 @@
                         <left>70</left>
                         <width max="440">auto</width>
                         <height>90</height>
-                        <font>font12</font> <!-- FEN_26 -->
+                        <font>font_mini</font> <!-- FEN_26 -->
                         <textcolor>FF4a4347</textcolor>
                         <align>left</align>
                         <aligny>center</aligny>

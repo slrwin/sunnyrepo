@@ -48,7 +48,8 @@ debridcache_db = translatePath(path_join(database_path_raw, 'debridcache.db'))
 external_db = translatePath(path_join(database_path_raw, 'providerscache2.db'))
 img_url = 'https://i.imgur.com/%s.png'
 invoker_switch_dict = {'true': 'false', 'false': 'true'}
-empty_poster, item_jump, item_next = img_url % icons.box_office, img_url % icons.item_jump, img_url % icons.item_next
+empty_poster, item_jump, nextpage = img_url % icons.box_office, img_url % icons.item_jump, img_url % icons.nextpage
+nextpage_landscape, item_jump_landscape = img_url % icons.nextpage_landscape, img_url % icons.item_jump_landscape
 tmdb_default_api, fanarttv_default_api = 'b370b60447737762ca38457bd77579b3', 'fa836e1c874ba95ab08a14ee88e05565'
 current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache4.db', 'maincache.db', 'metacache2.db', 'debridcache.db', 'providerscache2.db', 'settings.db')
 int_window_prop, pause_services_prop, suppress_sett_dict_prop, highlight_prop = 'fen.internal_results.%s', 'fen.pause_services', 'fen.suppress_settings_dict', 'fen.main_highlight'
@@ -116,7 +117,7 @@ def add_dir(url_params, list_name, handle, iconImage='folder', fanartImage=None,
 	url = build_url(url_params)
 	listitem = make_listitem()
 	listitem.setLabel(list_name)
-	listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon})
+	listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': fanart})
 	info_tag = listitem.getVideoInfoTag()
 	info_tag.setPlot(' ')
 	add_item(handle, url, listitem, isFolder)

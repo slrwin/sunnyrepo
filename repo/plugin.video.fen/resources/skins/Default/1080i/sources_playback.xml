@@ -33,7 +33,7 @@
                     <top>22</top>
                     <width max="1160">auto</width>
                     <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
+                    <font>font_tiny</font> <!-- FEN_21 -->
                     <textcolor>FFFFFFFF</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -45,7 +45,7 @@
                     <top>22</top>
                     <width max="1160">auto</width>
                     <height>20</height>
-                    <font>font10</font> <!-- FEN_21 -->
+                    <font>font_tiny</font> <!-- FEN_21 -->
                     <textcolor>FFFFFFFF</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
@@ -70,7 +70,7 @@
                     <top>400</top>
                     <width>1920</width>
                     <height>30</height>
-                    <font>font60</font> <!-- FEN_60_BOLD -->
+                    <font>font_huge_bold</font> <!-- FEN_60_BOLD -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                     <aligny>bottom</aligny>
@@ -81,7 +81,7 @@
                     <top>480</top>
                     <width>1920</width>
                     <height>25</height>
-                    <font>font14</font> <!-- FEN_33 -->
+                    <font>font_midi</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                     <aligny>bottom</aligny>
@@ -421,7 +421,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(flag_highlight)]][B]4K[/B][/COLOR]</label>
                         </control>
                         <control type="label">
@@ -431,7 +431,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(result_highlight)]][B]$INFO[Window.Property(results_4k)][/B][/COLOR]</label>
                         </control>
                     </control>
@@ -444,7 +444,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(flag_highlight)]][B]1080[/B][/COLOR]</label>
                         </control>
                         <control type="label">
@@ -454,7 +454,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(result_highlight)]][B]$INFO[Window.Property(results_1080p)][/B][/COLOR]</label>
                         </control>
                     </control>
@@ -467,7 +467,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(flag_highlight)]][B]720[/B][/COLOR]</label>
                         </control>
                         <control type="label">
@@ -477,7 +477,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(result_highlight)]][B]$INFO[Window.Property(results_720p)][/B][/COLOR]</label>
                         </control>
                     </control>
@@ -490,7 +490,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(flag_highlight)]][B]SD[/B][/COLOR]</label>
                         </control>
                         <control type="label">
@@ -500,7 +500,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(result_highlight)]][B]$INFO[Window.Property(results_sd)][/B][/COLOR]</label>
                         </control>
                     </control>
@@ -513,7 +513,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(flag_highlight)]][B]TOTAL[/B][/COLOR]</label>
                         </control>
                         <control type="label">
@@ -523,7 +523,7 @@
                             <height>0</height>
                             <align>center</align>
                             <aligny>center</aligny>
-                            <font>font12</font> <!-- FEN_26 -->
+                            <font>font_mini</font> <!-- FEN_26 -->
                             <label>[COLOR $INFO[Window.Property(result_highlight)]][B]$INFO[Window.Property(results_total)][/B][/COLOR]</label>
                         </control>
                     </control>
@@ -535,7 +535,7 @@
                     <height>310</height>
                     <align>center</align>
                     <aligny>bottom</aligny>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>$INFO[Window.Property(result_highlight)]</textcolor>
                 </control>
             </control>
@@ -547,7 +547,7 @@
                     <top>600</top>
                     <width>820</width>
                     <height>310</height>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <align>center</align>
                     <aligny>bottom</aligny>
                     <textcolor>FFB7B4BB</textcolor>
@@ -558,7 +558,7 @@
                     <left>360</left>
                     <width>1200</width>
                     <height>100</height>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <align>center</align>
                     <aligny>bottom</aligny>
                     <textcolor>FFB7B4BB</textcolor>
@@ -578,7 +578,7 @@
                     <onleft>12</onleft>
                     <onright>11</onright>
                     <label>$ADDON[plugin.video.fen 32832] $INFO[Window.Property(resume_percent)]%</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -592,7 +592,7 @@
                     <onleft>10</onleft>
                     <onright>12</onright>
                     <label>$ADDON[plugin.video.fen 32833]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
@@ -606,7 +606,7 @@
                     <onleft>11</onleft>
                     <onright>10</onright>
                     <label>$ADDON[plugin.video.fen 32840]</label>
-                    <font>font12</font> <!-- FEN_26 -->
+                    <font>font_mini</font> <!-- FEN_26 -->
                     <textcolor>FFB7B4BB</textcolor>
                     <focusedcolor>FF302F2F</focusedcolor>
                     <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
