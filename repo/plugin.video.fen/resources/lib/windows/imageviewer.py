@@ -3,10 +3,11 @@ from apis.tmdb_api import tmdb_popular_people
 from windows.base_window import BaseDialog, window_manager
 from indexers.people import person_data_dialog
 from modules.settings import download_directory
-from modules.kodi_utils import json, select_dialog, addon_fanart, item_next, local_string as ls
+from modules.kodi_utils import json, select_dialog, addon_fanart, get_icon, local_string as ls
 # from modules.kodi_utils import logger
 
 nextpage_str = ls(32799)
+nextpage_icon = get_icon('nextpage')
 
 class ThumbImageViewer(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -95,7 +96,7 @@ class ThumbImageViewer(BaseDialog):
 		try:
 			listitem = self.make_listitem()
 			listitem.setProperty('name', nextpage_str % str(self.current_page + 1))
-			listitem.setProperty('thumb', item_next)
+			listitem.setProperty('thumb', nextpage_icon)
 			listitem.setProperty('next_page_item', 'true')
 			self.list_items.append(listitem)
 		except: pass
