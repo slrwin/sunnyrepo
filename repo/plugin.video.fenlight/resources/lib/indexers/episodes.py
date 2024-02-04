@@ -38,6 +38,7 @@ def build_episode_list(params):
 				item_get = item.get
 				season, episode, ep_name = item_get('season'), item_get('episode'), item_get('title')
 				episode_date, premiered = adjust_premiered_date_function(item_get('premiered'), adjust_hours)
+				episode_type = item_get('episode_type') or ''
 				playcount = get_watched_status(watched_info, string(tmdb_id), season, episode)
 				progress = get_progress_percent(bookmarks, tmdb_id, season, episode)
 				thumb = item_get('thumb', None) or show_fanart
@@ -84,7 +85,7 @@ def build_episode_list(params):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'season.poster': season_poster,
 								'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
-				set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'IsPlayable': 'false'})
+				set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'IsPlayable': 'false', 'episode_type': episode_type})
 				yield (url_params, listitem, False)
 			except: pass
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Episodes'
@@ -156,6 +157,7 @@ def build_single_episode(list_type, params={}):
 			item_get = item.get
 			season, episode, ep_name = item_get('season'), item_get('episode'), item_get('title')
 			episode_date, premiered = adjust_premiered_date_function(item_get('premiered'), adjust_hours)
+			episode_type = item_get('episode_type') or ''
 			if not episode_date or current_date < episode_date:
 				if list_type_starts_with('next_'):
 					if episode_date and new_season and not date_difference_function(current_date, episode_date, 7): return
@@ -231,7 +233,7 @@ def build_single_episode(list_type, params={}):
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo,
 							'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
-			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'IsPlayable': 'false'})
+			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'IsPlayable': 'false', 'episode_type': episode_type})
 			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
 							'unaired': unaired, 'last_played': ep_data_get('last_played', resinsert), 'sort_order': string(_position), 'unwatched': ep_data_get('unwatched')})
 		except: pass

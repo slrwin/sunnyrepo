@@ -1,5 +1,11 @@
 ++
 
+[COLOR dodgerblue][B]Version 3.2.23[/B][/COLOR]
+- Fixed "Providers" menu for movies.
+- Added episode type support for Jurial skins. Currently only Arctic Fuse. Users should thank Jurial for adding this feature to his skin. He has a donation link where you can throw him some money and love. Users will need to clear metadata in Tools->Database & Cache Maintenance->Clear Meta Cache.
+- Added Media Images content for Fen Light Extras dialog. Just a list featuring the media's Poster, Fanart & Clearlogo. Will need to be enabled on current installs.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.22[/B][/COLOR]
 - Added "Most Favorited" to Movies and TV Shows menu. Invoke context menu on Movie & TV Show menu item and select "Check for New Menu Items" and then place where desired. Alternately, select "Restore Menu" to reload the default menu items, which will now include the new menu item.
 - Quick fix for CAM, TELE, SCR results not showing when result highlights are based on quality.

@@ -7,7 +7,7 @@ from modules import debrid, kodi_utils, settings, metadata, watched_status
 from modules.player import FenLightPlayer
 from modules.source_utils import get_cache_expiry, make_alias_dict
 from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import, manual_module_import
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 get_icon, notification, sleep, int_window_prop = kodi_utils.get_icon, kodi_utils.notification, kodi_utils.sleep, kodi_utils.int_window_prop
 select_dialog, confirm_dialog, close_all_dialog = kodi_utils.select_dialog, kodi_utils.confirm_dialog, kodi_utils.close_all_dialog
@@ -450,7 +450,8 @@ class Sources():
 			try:
 				episode_data = [i for i in episodes_data if i['episode'] == self.episode][0]
 				ep_thumb = episode_data.get('thumb', None) or self.meta.get('fanart') or ''
-				self.meta.update({'season': episode_data['season'], 'episode': episode_data['episode'], 'premiered': episode_data['premiered'],
+				episode_type = episode_data.get('episode_type', '')
+				self.meta.update({'season': episode_data['season'], 'episode': episode_data['episode'], 'premiered': episode_data['premiered'], 'episode_type': episode_type,
 								'ep_name': episode_data['title'], 'ep_thumb': ep_thumb, 'plot': episode_data['plot'], 'tvshow_plot': self.meta['plot'],
 								'custom_season': self.custom_season, 'custom_episode': self.custom_episode})
 			except: pass

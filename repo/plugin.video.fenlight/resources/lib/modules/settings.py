@@ -144,7 +144,7 @@ def extras_enable_scrollbars():
 	return get_setting('fenlight.extras.enable_scrollbars', 'true')
 
 def extras_enabled_menus():
-	setting = get_setting('fenlight.extras.enabled', '2000,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061')
+	setting = get_setting('fenlight.extras.enabled', '2000,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062')
 	if setting in ('', None, 'noop', []): return []
 	return [int(i) for i in setting.split(',')]
 

@@ -39,7 +39,7 @@ setting_base, label_base, ratings_icon_base = 'fenlight.extras.%s.button', 'butt
 separator = '[B]  •  [/B]'
 button_ids = (10, 11, 12, 13, 14, 15, 16, 17, 50)
 plot_id, cast_id, recommended_id, reviews_id, comments_id, trivia_id, blunders_id, parentsguide_id = 2000, 2050, 2051, 2052, 2053, 2054, 2055, 2056
-videos_id, year_id, genres_id, networks_id, collection_id = 2057, 2058, 2059, 2060, 2061
+videos_id, year_id, genres_id, networks_id, collection_id, media_images_id = 2057, 2058, 2059, 2060, 2061, 2062
 items_list_ids = (recommended_id, year_id, genres_id, networks_id, collection_id)
 text_list_ids = (reviews_id, trivia_id, blunders_id, parentsguide_id, comments_id)
 finished_tvshow = ('', 'Ended', 'Canceled')
@@ -47,6 +47,7 @@ parentsguide_icons = {'Sex & Nudity': get_icon('sex_nudity'), 'Violence & Gore':
 						'Alcohol, Drugs & Smoking': get_icon('drugs_alcohol'), 'Frightening & Intense Scenes': get_icon('genre_horror')}
 meta_ratings_values = (('metascore', 1), ('tomatometer', 2), ('tomatousermeter', 3), ('imdb', 4), ('tmdb', 5))
 ratings_null = ('', '%')
+missing_image_check = ('', None, empty_poster, addon_fanart)
 _images = Images().run
 
 class Extras(BaseDialog):
@@ -57,7 +58,7 @@ class Extras(BaseDialog):
 		self.set_properties()
 		self.tasks = (self.set_artwork, self.set_infoline1, self.set_infoline2, self.make_ratings, self.make_cast, self.make_recommended, self.make_reviews,
 					self.make_comments, self.make_trivia, self.make_blunders, self.make_parentsguide, self.make_videos, self.make_year, self.make_genres,
-					self.make_network, self.make_collection)
+					self.make_network, self.make_collection, self.make_media_images)
 
 	def onInit(self):
 		self.set_home_property('window_loaded', 'true')
@@ -107,6 +108,7 @@ class Extras(BaseDialog):
 		if action in self.selection_actions:
 			try: chosen_var = self.get_listitem(self.control_id).getProperty(self.item_action_dict[self.control_id])
 			except: return
+			position = self.get_position(self.control_id)
 			if self.control_id in items_list_ids:
 				self.set_current_params()
 				self.new_params = {'mode': 'extras_menu_choice', 'tmdb_id': chosen_var, 'media_type': self.media_type, 'is_external': self.is_external, 'stacked': 'true'}
@@ -116,18 +118,16 @@ class Extras(BaseDialog):
 				self.new_params = {'mode': 'person_data_dialog', 'key_id': chosen_var, 'reference_tmdb_id': self.tmdb_id, 'is_external': self.is_external, 'stacked': 'true'}
 				return window_manager(self)
 			elif self.control_id == videos_id:
-				chosen = imdb_videos_choice({'videos': self.get_attribute(self, chosen_var)[self.get_position(self.control_id)]['videos'], 'poster': self.poster})
+				chosen = imdb_videos_choice({'videos': self.get_attribute(self, chosen_var)[position]['videos'], 'poster': self.poster})
 				if not chosen: return
 				self.set_current_params()
 				self.window_player_url = chosen
 				return window_player(self)
+			elif self.control_id == media_images_id:
+				return self.select_item(self.control_id, _images({'mode': 'imageviewer','all_images': self.get_attribute(self, chosen_var), 'current_index': position}))
 			elif self.control_id in text_list_ids:
-				if self.control_id == parentsguide_id:
-					if not chosen_var: return
-					self.show_text_media(text=chosen_var)
-				else:
-					end_index = self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=self.get_position(self.control_id))
-					self.select_item(self.control_id, end_index)
+				if self.control_id == parentsguide_id: return self.show_text_media(text=chosen_var)
+				else: return self.select_item(self.control_id, self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=position))
 			else: return
 
 	def make_ratings(self, win_prop=4000):
@@ -350,6 +350,28 @@ class Extras(BaseDialog):
 			self.add_items(collection_id, item_list)
 		except: pass
 
+	def make_media_images(self):
+		if not media_images_id in self.enabled_lists: return
+		def builder():
+			for item in all_images:
+				try:
+					listitem = self.make_listitem()
+					listitem.setProperty('name', item[1])
+					listitem.setProperty('thumbnail', item[0])
+					listitem.setProperty('content_list', 'all_media_images')
+					yield listitem
+				except: pass
+		try:
+			all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i.capitalize())) for i in ('poster', 'fanart', 'clearlogo')]
+			all_images = [i for i in all_images if not i[0] in missing_image_check]
+			if not all_images: return
+			self.all_media_images = [(change_image_resolution(i[0], 'original'), i[1]) for i in all_images]
+			item_list = list(builder())
+			self.setProperty('media_images.number', count_insert % len(item_list))
+			self.item_action_dict[media_images_id] = 'content_list'
+			self.add_items(media_images_id, item_list)
+		except: pass
+
 	def get_extra_ratings(self):
 		if not self.display_extra_ratings: return None
 		data = self.meta_get('extra_ratings', None) or fetch_ratings_info(self.meta, self.omdb_api)
@@ -502,7 +524,9 @@ class Extras(BaseDialog):
 
 	def show_media_images(self):
 		all_images = [(change_image_resolution(self.get_attribute(self, i), 'original'), '%s %s' % (self.title, i)) for i in ('poster', 'fanart', 'clearlogo')]
-		return _images({'mode': 'tmdb_image_results', 'all_images': [i for i in all_images if i[0]]})
+		all_images = [i for i in all_images if i[0] not in missing_image_check]
+		if all_images: return _images({'mode': 'tmdb_image_results', 'all_images': all_images})
+		else: return self.notification('No Media Images to Display')
 
 	def show_extrainfo(self, media_type=None, meta=None, poster=None):
 		text = media_extra_info({'media_type': media_type or self.media_type, 'meta': meta or self.meta})

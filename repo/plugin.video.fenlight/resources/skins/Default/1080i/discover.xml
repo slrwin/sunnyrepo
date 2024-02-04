@@ -53,12 +53,11 @@
                 <label>[UPPERCASE][B]DISCOVER[/B][/UPPERCASE]</label>
             </control>
             <control type="image">
-                <left>770</left>
-                <top>105</top>
-                <height>720</height>
-                <width>500</width>
-                <aspectratio aligny="bottom">keep</aspectratio>
-                <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Window.Property(discover_icon)]</texture>
+                <left>810</left>
+                <top>360</top>
+                <width max="420">auto</width>
+                <aspectratio aligny="top">keep</aspectratio>
+                <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Container(2100).ListItem.Property(icon)]</texture>
                 <fadetime>100</fadetime>
             </control>
             <!-- Filter List -->

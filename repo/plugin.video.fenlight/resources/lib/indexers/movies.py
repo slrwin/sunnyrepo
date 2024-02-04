@@ -7,7 +7,7 @@ from modules.utils import manual_function_import, get_datetime, make_thread_list
 from modules.watched_status import get_watched_info_movie, get_watched_status_movie, get_bookmarks, get_progress_percent
 # logger = kodi_utils.logger
 
-make_listitem, build_url, nextpage_landscape, item_jump_landscape = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape, kodi_utils.item_jump_landscape
+make_listitem, build_url, nextpage_landscape = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape
 string, sys, external, add_items, add_dir = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 progress_percent_function, get_watched_function, get_watched_info_function, random = get_progress_percent, get_watched_status_movie, get_watched_info_movie, kodi_utils.random

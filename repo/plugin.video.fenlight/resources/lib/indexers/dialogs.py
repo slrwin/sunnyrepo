@@ -333,8 +333,8 @@ def extras_buttons_choice(params):
 def extras_lists_choice(params={}):
 	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('Reviews', 2052), ('Comments', 2053),
 				('Trivia', 2054), ('Blunders', 2055), ('Parental Guide', 2056), ('Videos', 2057),
-				('More from Year', 2058), ('More from Genres', 2059),
-				('More from Networks', 2060), ('More from Collection', 2061)]
+				('More from Year', 2058), ('More from Genres', 2059),	('More from Networks', 2060),
+				('More from Collection', 2061), ('Media Images', 2062)]
 	list_items = [{'line1': i[0]} for i in choices]
 	current_settings = extras_enabled_menus()
 	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]
