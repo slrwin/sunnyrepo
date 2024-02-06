@@ -1180,32 +1180,6 @@
 						<heading>32056</heading>
 					</control>
 				</setting>
-				<setting id="rd.torrent.enabled" type="boolean" label="33015" help="">
-					<level>0</level>
-					<default>true</default>
-					<dependencies>
-						<dependency type="visible">
-							<and>
-								<condition operator="!is" setting="rd.token"/>
-								<condition operator="is" setting="rd.enabled">true</condition>
-							</and>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
-				<setting id="rd.hoster.enabled" type="boolean" label="33016" help="">
-					<level>0</level>
-					<default>true</default>
-					<dependencies>
-						<dependency type="visible">
-							<and>
-								<condition operator="!is" setting="rd.token"/>
-								<condition operator="is" setting="rd.enabled">true</condition>
-							</and>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
 				<setting id="store_resolved_torrent.real-debrid" type="integer" label="32060" help="">
 					<level>0</level>
 					<default>0</default>
@@ -1365,32 +1339,6 @@
 						<heading>32056</heading>
 					</control>
 				</setting>
-				<setting id="pm.torrent.enabled" type="boolean" label="33015" help="">
-					<level>0</level>
-					<default>true</default>
-					<dependencies>
-						<dependency type="visible">
-							<and>
-								<condition operator="!is" setting="pm.token"/>
-								<condition operator="is" setting="pm.enabled">true</condition>
-							</and>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
-				<setting id="pm.hoster.enabled" type="boolean" label="33016" help="">
-					<level>0</level>
-					<default>true</default>
-					<dependencies>
-						<dependency type="visible">
-							<and>
-								<condition operator="!is" setting="pm.token"/>
-								<condition operator="is" setting="pm.enabled">true</condition>
-							</and>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
 				<setting id="store_resolved_torrent.premiumize.me" type="integer" label="32060" help="">
 					<level>0</level>
 					<default>0</default>
@@ -1549,32 +1497,6 @@
 					<control type="edit" format="string">
 						<heading>32056</heading>
 					</control>
-				</setting>
-				<setting id="ad.torrent.enabled" type="boolean" label="33015" help="">
-					<level>0</level>
-					<default>true</default>
-					<dependencies>
-						<dependency type="visible">
-							<and>
-								<condition operator="!is" setting="ad.token"/>
-								<condition operator="is" setting="ad.enabled">true</condition>
-							</and>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
-				</setting>
-				<setting id="ad.hoster.enabled" type="boolean" label="33016" help="">
-					<level>0</level>
-					<default>true</default>
-					<dependencies>
-						<dependency type="visible">
-							<and>
-								<condition operator="!is" setting="ad.token"/>
-								<condition operator="is" setting="ad.enabled">true</condition>
-							</and>
-						</dependency>
-					</dependencies>
-					<control type="toggle"/>
 				</setting>
 				<setting id="store_resolved_torrent.alldebrid" type="integer" label="32060" help="">
 					<level>0</level>

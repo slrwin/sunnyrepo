@@ -23,12 +23,12 @@
                     <top>-2</top>
                     <width>1362</width>
                     <height>982</height>
-                    <texture border="16" colordiffuse="Window(10000).Property(fen.main_highlight)">fen_common/dialog.png</texture>
+                    <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
                 </control>
                 <control type="image">
                     <width>1358</width>
                     <height>978</height>
-                    <texture border="16" colordiffuse="FF302F2F">fen_common/dialog.png</texture>
+                    <texture colordiffuse="FF1F2020" border="30">fen_common/circle.png</texture>
                 </control>
                 <control type="image">
                     <left>15</left>
@@ -45,8 +45,8 @@
                     <left>105</left>
                     <width max="1115">auto</width>
                     <height>20</height>
-                    <font>font_midi</font> <!-- FEN_33 -->
-                    <textcolor>$INFO[Window(10000).Property(fen.main_highlight)]</textcolor>
+                    <font>font14</font> <!-- FEN_33 -->
+                    <textcolor>FFCCCCCC</textcolor>
                     <shadowcolor>FF000000</shadowcolor>
                     <align>center</align>
                     <aligny>center</aligny>
@@ -58,7 +58,7 @@
                     <top>114</top>
                     <width>1254</width>
                     <height>816</height>
-                    <font>font_mini</font> <!-- FEN_26 -->
+                    <font>font12</font> <!-- FEN_26 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <label>$INFO[Window.Property(text)]</label>
                     <pagecontrol>2060</pagecontrol>
@@ -69,7 +69,7 @@
                     <top>114</top>
                     <width>1254</width>
                     <height>826</height>
-                    <font>font_midi</font> <!-- FEN_33 -->
+                    <font>font14</font> <!-- FEN_33 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <label>$INFO[Window.Property(text)]</label>
                     <pagecontrol>2061</pagecontrol>
@@ -79,10 +79,10 @@
                     <left>1335</left>
                     <top>110</top>
                     <width>10</width>
-                    <height>860</height>
-                    <texturesliderbackground colordiffuse="FF302F2F">fen_common/white.png</texturesliderbackground>
+                    <height>820</height>
+                    <texturesliderbackground colordiffuse="FF1F2020">fen_common/white.png</texturesliderbackground>
                     <texturesliderbar colordiffuse="FF555556">fen_common/white.png</texturesliderbar>
-                    <texturesliderbarfocus colordiffuse="$INFO[Window(10000).Property(fen.main_highlight)]">fen_common/white.png</texturesliderbarfocus>
+                    <texturesliderbarfocus colordiffuse="FFCCCCCC">fen_common/white.png</texturesliderbarfocus>
                     <onleft>2060</onleft>
                     <onright>2060</onright>
                     <showonepage>false</showonepage>
@@ -93,10 +93,10 @@
                     <left>1335</left>
                     <top>110</top>
                     <width>10</width>
-                    <height>860</height>
-                    <texturesliderbackground colordiffuse="FF302F2F">fen_common/white.png</texturesliderbackground>
+                    <height>820</height>
+                    <texturesliderbackground colordiffuse="FF1F2020">fen_common/white.png</texturesliderbackground>
                     <texturesliderbar colordiffuse="FF555556">fen_common/white.png</texturesliderbar>
-                    <texturesliderbarfocus colordiffuse="$INFO[Window(10000).Property(fen.main_highlight)]">fen_common/white.png</texturesliderbarfocus>
+                    <texturesliderbarfocus colordiffuse="FFCCCCCC">fen_common/white.png</texturesliderbarfocus>
                     <onleft>2061</onleft>
                     <onright>2061</onright>
                     <showonepage>false</showonepage>

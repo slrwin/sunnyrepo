@@ -195,16 +195,6 @@ class RealDebridAPI:
 		response = requests.delete(base_url + url, timeout=timeout)
 		return response
 
-	def get_hosts(self):
-		string = 'fen_rd_valid_hosts'
-		url = 'hosts/domains'
-		hosts_dict = {'Real-Debrid': []}
-		try:
-			result = cache_object(self._get, string, url, False, 48)
-			hosts_dict['Real-Debrid'] = result
-		except: pass
-		return hosts_dict
-
 	def resolve_magnet(self, magnet_url, info_hash, store_to_cloud, title, season, episode):
 		from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
 		try:

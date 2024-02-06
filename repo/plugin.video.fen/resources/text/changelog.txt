@@ -1,5 +1,12 @@
 [B]Please utilize Fen Tips (Tools->Tips for Fen Use) to catch up on any important new features. New features will be highlighted with a [COLOR chartreuse]NEW!!![/COLOR] label.[/B]
 
+
+[COLOR dodgerblue][B]Version 3.2.23/24[/B][/COLOR]
+- Updated look of custom windows to align more aesthetically with FENtastic skin.
+- Added "episode type" support to Next Episode window.
+- Removed some redundant settings.
+- Quick fixes.
+
 [COLOR dodgerblue][B]Version 3.2.22[/B][/COLOR]
 - Added episode type support for Jurial skins. Currently only Arctic Fuse. Users should thank Jurial for adding this feature to his skin. He has a donation link where you can throw him some money and love. Users will need to clear metadata in Tools->Clear Databases->Clear Meta Cache.
 - Other fixes.

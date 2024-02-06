@@ -76,7 +76,7 @@
                     <left>1590</left>
                     <width max="300">auto</width>
                     <height>20</height>
-                    <font>font_midi</font> <!-- FEN_38 -->
+                    <font>font37</font> <!-- FEN_38 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>right</align>
                     <aligny>center</aligny>
@@ -87,7 +87,7 @@
                     <left>1540</left>
                     <width max="350">auto</width>
                     <height>20</height>
-                    <font>font_tiny</font> <!-- FEN_21 -->
+                    <font>font10</font> <!-- FEN_21 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>right</align>
                     <aligny>center</aligny>
@@ -98,7 +98,7 @@
                     <top>32</top>
                     <width>1520</width>
                     <height>20</height>
-                    <font>font_tiny</font> <!-- FEN_21 -->
+                    <font>font10</font> <!-- FEN_21 -->
                     <textcolor>FFFFFFFF</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>

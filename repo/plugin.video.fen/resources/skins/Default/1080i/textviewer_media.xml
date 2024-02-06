@@ -22,12 +22,12 @@
                 <top>-2</top>
                 <height>812</height>
                 <width>1722</width>
-                <texture border="16" colordiffuse="Window(10000).Property(fen.main_highlight)">fen_common/dialog.png</texture>
+                <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
             </control>
             <control type="image">
                 <height>808</height>
                 <width>1718</width>
-                <texture border="16" colordiffuse="FF302F2F">fen_common/dialog.png</texture>
+                <texture colordiffuse="FF1F2020" border="30">fen_common/circle.png</texture>
             </control>
             <control type="group">
                 <control type="image">
@@ -48,17 +48,17 @@
                     <align>right</align>
                     <aligny>top</aligny>
                     <aspectratio aligny="top">keep</aspectratio>
-                    <texture colordiffuse="B3CCCCCC">fen_common/fen.png</texture>
+                    <texture colordiffuse="FFCCCCCC">fen_common/fen.png</texture>
                 </control>
                 <control type="textbox" id="2001">
                     <top>50</top>
                     <left>20</left>
                     <width>1100</width>
                     <height>690</height>
-                    <font>font_midi</font> <!-- FEN_33 -->
+                    <font>font14</font> <!-- FEN_33 -->
                     <align>center</align>
                     <aligny>center</aligny>
-                    <textcolor>FFB7B4BB</textcolor>
+                    <textcolor>FFCCCCCC</textcolor>
                     <pagecontrol>2061</pagecontrol>
                 </control>
                 <control type="scrollbar" id="2061">
@@ -66,9 +66,9 @@
                     <top>35</top>
                     <width>10</width>
                     <height>740</height>
-                    <texturesliderbackground colordiffuse="FF302F2F">fen_common/white.png</texturesliderbackground>
+                    <texturesliderbackground colordiffuse="FF1F2020">fen_common/white.png</texturesliderbackground>
                     <texturesliderbar colordiffuse="FF555556">fen_common/white.png</texturesliderbar>
-                    <texturesliderbarfocus colordiffuse="$INFO[Window(10000).Property(fen.main_highlight)]">fen_common/white.png</texturesliderbarfocus>
+                    <texturesliderbarfocus colordiffuse="FFCCCCCC">fen_common/white.png</texturesliderbarfocus>
                     <onleft>2061</onleft>
                     <onright>2061</onright>
                     <showonepage>false</showonepage>
@@ -81,16 +81,16 @@
                     <left>-70</left>
                     <width>50</width>
                     <height>50</height>
+                    <texture colordiffuse="FFCCCCCC" background="true">fen_common/arrow_left.png</texture>
                     <visible>String.IsEqual(Window.Property(previous_display),true)</visible>
-                    <texture colordiffuse="Window(10000).Property(fen.main_highlight)" background="true">fen_common/arrow_left.png</texture>
                 </control>
                 <control type="image">
                     <top>380</top>
                     <left>1740</left>
                     <width>50</width>
                     <height>50</height>
+                    <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fen_common/arrow_left.png</texture>
                     <visible>String.IsEqual(Window.Property(next_display),true)</visible>
-                    <texture colordiffuse="Window(10000).Property(fen.main_highlight)" background="true" flipx="true">fen_common/arrow_left.png</texture>
                 </control>
             </control>
         </control>

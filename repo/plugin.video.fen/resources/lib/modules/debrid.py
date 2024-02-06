@@ -19,19 +19,6 @@ def debrid_enabled():
 def debrid_authed():
 	return [i[0] for i in debrid_list if authorized_debrid_check(i[1])]
 
-def debrid_type_enabled(debrid_type, enabled_debrids):
-	return [i[0] for i in debrid_list if i[0] in enabled_debrids and get_setting('fen.%s.%s.enabled' % (i[1], debrid_type)) == 'true']
-
-def debrid_valid_hosts(enabled_debrids):
-	def _get_hosts(function):
-		debrid_hosts_append(function().get_hosts())
-	debrid_hosts = []
-	debrid_hosts_append = debrid_hosts.append
-	if enabled_debrids:
-		threads = list(make_thread_list(_get_hosts, [i[1] for i in debrid_list_modules if i[0] in enabled_debrids]))
-		[i.join() for i in threads]
-	return debrid_hosts
-
 def manual_add_magnet_to_cloud(params):
 	show_busy_dialog()
 	function = [i[1] for i in debrid_list_modules if i[0] == params['provider']][0]

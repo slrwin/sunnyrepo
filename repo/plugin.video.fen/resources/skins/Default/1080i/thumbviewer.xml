@@ -36,7 +36,7 @@
                     <left>1590</left>
                     <width max="300">auto</width>
                     <height>20</height>
-                    <font>font_midi</font> <!-- FEN_38 -->
+                    <font>font37</font> <!-- FEN_38 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>right</align>
                     <aligny>center</aligny>
@@ -47,7 +47,7 @@
                     <left>1540</left>
                     <width max="350">auto</width>
                     <height>20</height>
-                    <font>font_tiny</font> <!-- FEN_21 -->
+                    <font>font10</font> <!-- FEN_21 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>right</align>
                     <aligny>center</aligny>
@@ -58,11 +58,11 @@
                     <top>22</top>
                     <width>1520</width>
                     <height>20</height>
-                    <font>font_tiny</font> <!-- FEN_21 -->
+                    <font>font10</font> <!-- FENL21 -->
                     <textcolor>FFFFFFFF</textcolor>
                     <align>left</align>
                     <aligny>center</aligny>
-                    <label>[UPPERCASE]$ADDON[plugin.video.fen 32022] $INFO[Window.Property(page_no)][B][COLOR $INFO[Window(10000).Property(fen.main_highlight)]] | [/COLOR]$INFO[Container(2000).ListItem.Property(name)][/B][/UPPERCASE]</label>
+                    <label>[UPPERCASE]Page $INFO[Window.Property(page_no)][B] | $INFO[Container(2000).ListItem.Property(name)][/B][/UPPERCASE]</label>
                 </control>
             </control>
             <control type="panel" id="2000">
@@ -88,15 +88,17 @@
                 </itemlayout>
                 <focusedlayout height="320" width="320">
                     <control type="group">
-                        <animation effect="zoom" start="100" end="105" time="200" tween="sine" easing="inout" center="auto">Focus</animation>
-                        <animation effect="zoom" start="105" end="100" time="200" tween="sine" easing="inout" center="auto">UnFocus</animation>
                         <control type="image">
-                            <animation effect="fade" start="100" end="0" time="0">UnFocus</animation>
+                            <animation effect="fade" start="100" end="60" condition="Control.HasFocus(2060)">Conditional</animation>
+                            <animation type="Focus" reversible="false">
+                                <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
+                                <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
+                            </animation>
                             <left>0</left>
                             <top>0</top>
                             <width>320</width>
                             <height>320</height>
-                            <texture colordiffuse="FFB7B4BB" border="12">fen_common/panel-256-box.png</texture>
+                            <texture colordiffuse="FFCCCCCC" border="12">fen_common/panel-256-box.png</texture>
                         </control>
                         <control type="image">
                             <left>10</left>
@@ -116,9 +118,9 @@
                 <height>940</height>
                 <onleft>2000</onleft>
                 <onright>2000</onright>
-                <texturesliderbackground colordiffuse="FF302F2F">fen_common/white.png</texturesliderbackground>
+                <texturesliderbackground colordiffuse="FF1F2020">fen_common/white.png</texturesliderbackground>
                 <texturesliderbar colordiffuse="FF555556">fen_common/white.png</texturesliderbar>
-                <texturesliderbarfocus colordiffuse="$INFO[Window(10000).Property(fen.main_highlight)]">fen_common/white.png</texturesliderbarfocus>
+                <texturesliderbarfocus colordiffuse="FFCCCCCC">fen_common/white.png</texturesliderbarfocus>
                 <showonepage>false</showonepage>
                 <orientation>vertical</orientation>
                 <visible>Control.IsVisible(2000)</visible>

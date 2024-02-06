@@ -22,22 +22,22 @@
                 <top>-2</top>
                 <width>922</width>
                 <height>432</height>
-                <texture border="16" colordiffuse="Window(10000).Property(fen.main_highlight)">fen_common/dialog.png</texture>
+                <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
             </control>
             <control type="image">
                 <width>918</width>
                 <height>428</height>
-                <texture border="16" colordiffuse="FF302F2F">fen_common/dialog.png</texture>
+                <texture colordiffuse="FF1F2020" border="30">fen_common/circle.png</texture>
             </control>
             <control type="image">
-                <left>2</left>
-                <top>2</top>
+                <left>7</left>
+                <top>7</top>
                 <width>45</width>
                 <height>45</height>
                 <align>right</align>
                 <aligny>top</aligny>
                 <aspectratio aligny="top">keep</aspectratio>
-                <texture colordiffuse="B3CCCCCC">fen_common/fen.png</texture>
+                <texture colordiffuse="FFCCCCCC">fen_common/fen.png</texture>
             </control>
             <control type="group">
                 <left>5</left>
@@ -47,15 +47,15 @@
                     <left>0</left>
                     <width>1035</width>
                     <height>5</height>
-                    <font>font_tiny</font> <!-- FEN_21 -->
+                    <font>font10</font> <!-- FEN_21 -->
                     <align>left</align>
                     <aligny>bottom</aligny>
                     <textcolor>B3CCCCCC</textcolor>
-                    <label>[UPPERCASE]$ADDON[plugin.video.fen 33138][/UPPERCASE]</label>
+                    <label>[UPPERCASE]Press [B]BACK[/B] to Cancel[/UPPERCASE]</label>
                 </control>
                 <control type="image" id="200">
-                    <left>640</left>
-                    <top>70</top>
+                    <left>610</left>
+                    <top>40</top>
                     <width>280</width>
                     <height>300</height>
                     <aspectratio aligny="bottom">keep</aspectratio>
@@ -66,7 +66,7 @@
                     <left>5</left>
                     <height>20</height>
                     <align>center</align>
-                    <font>font_mini</font> <!-- FEN_26 -->
+                    <font>font12</font> <!-- FEN_26 -->
                     <textcolor>FFCCCCCC</textcolor>
                 </control>
                 <control type="textbox" id="2001">
@@ -81,9 +81,9 @@
                 </control>
                 <control type="progress" id="5000">
                     <description>Progressbar</description>
-                    <top>395</top>
-                    <left>0</left>
-                    <width>910</width>
+                    <top>385</top>
+                    <left>20</left>
+                    <width>870</width>
                     <height>25</height>
                     <reveal>true</reveal>
                 </control>

@@ -457,3 +457,14 @@ def upload_logfile(params):
 		else: ok_dialog(text='Error. Log Upload Failed')
 	except: ok_dialog(text='Error. Log Upload Failed')
 	hide_busy_dialog()
+
+def fetch_kodi_imagecache(image):
+	import sqlite3 as database
+	result = None
+	try:
+		dbcon = database.connect(translate_path('special://database/Textures13.db'), timeout=40.0)
+		dbcur = dbcon.cursor()
+		dbcur.execute("SELECT cachedurl FROM texture WHERE url = ?", (image,))
+		result = dbcur.fetchone()[0]
+	except: pass
+	return result

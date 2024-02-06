@@ -3,6 +3,7 @@ import time
 from windows.base_window import open_window, create_window
 from scrapers import external, folders
 from modules import debrid, kodi_utils, settings, metadata, watched_status
+from modules.debrid import debrid_enabled
 from modules.player import FenPlayer
 from modules.source_utils import get_cache_expiry, make_alias_dict
 from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import, manual_module_import
@@ -20,7 +21,6 @@ scraping_settings, include_prerelease_results, auto_rescrape_with_all = settings
 playback_attempt_pause, get_art_provider, external_scraper_info = settings.playback_attempt_pause, settings.get_art_provider, settings.external_scraper_info
 ignore_results_filter, results_sort_order, easynews_max_retries = settings.ignore_results_filter, settings.results_sort_order, settings.easynews_max_retries
 autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
-debrid_enabled, debrid_type_enabled = debrid.debrid_enabled, debrid.debrid_type_enabled
 erase_bookmark, clear_local_bookmarks = watched_status.erase_bookmark, watched_status.clear_local_bookmarks
 get_progress_percent, get_bookmarks = watched_status.get_progress_percent, watched_status.get_bookmarks
 internal_include_list = ['easynews', 'furk', 'pm_cloud', 'rd_cloud', 'ad_cloud']
@@ -131,7 +131,7 @@ class Sources():
 			[i.start() for i in self.threads]
 		if self.active_external or self.background:
 			if self.active_external:
-				self.external_args = (self.meta, self.external_providers, self.debrid_torrent_enabled, self.internal_scraper_names,
+				self.external_args = (self.meta, self.external_providers, self.debrid_enabled, self.internal_scraper_names,
 										self.prescrape_sources, self.progress_dialog, self.disabled_ext_ignored)
 				self.activate_providers('external', external, False)
 			if self.background: [i.join() for i in self.threads]
@@ -231,15 +231,14 @@ class Sources():
 
 	def activate_debrid_info(self):
 		self.debrid_enabled = debrid_enabled()
-		self.debrid_torrent_enabled = debrid_type_enabled('torrent', self.debrid_enabled)
 
 	def activate_external_providers(self):
-		if not self.debrid_torrent_enabled: return self.disable_external(32854)
+		if not self.debrid_enabled: return self.disable_external(32854)
 		self.ext_folder, self.ext_name = external_scraper_info()
 		if not self.ext_folder or not self.ext_name: return self.disable_external(33007)
 		if not self.import_external_scrapers(): return self.disable_external(33009)
 		exclude_list = []
-		if not self.debrid_torrent_enabled: exclude_list.extend(self.external_scraper_names('torrents'))
+		if not self.debrid_enabled: exclude_list.extend(self.external_scraper_names('torrents'))
 		self.external_providers = self.external_sources()
 		if not self.external_providers: self.disable_external(33008)
 		if exclude_list: self.external_providers = [i for i in self.external_providers if not i[0] in exclude_list]
@@ -486,11 +485,12 @@ class Sources():
 			episodes_data = metadata.episodes_meta(self.season, self.meta, meta_user_info)
 			try:
 				episode_data = [i for i in episodes_data if i['episode'] == self.episode][0]
+				episode_type = episode_data.get('episode_type', '')
 				art_providers = get_art_provider()
 				thumb = episode_data.get('thumb', None) or self.meta.get('custom_fanart') or self.meta.get(art_providers[2]) or self.meta.get(art_providers[3]) or ''
 				self.meta['tvshow_plot'] = self.meta['plot']
 				self.meta.update({'media_type': 'episode', 'season': episode_data['season'], 'episode': episode_data['episode'], 'premiered': episode_data['premiered'],
-								'ep_name': episode_data['title'], 'ep_thumb': episode_data.get('thumb', None), 'plot': episode_data['plot']})
+								'ep_name': episode_data['title'], 'ep_thumb': episode_data.get('thumb', None), 'plot': episode_data['plot'], 'episode_type': episode_type})
 			except: pass
 
 	def _get_module(self, module_type, function):

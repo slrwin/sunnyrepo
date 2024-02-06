@@ -250,20 +250,6 @@ class PremiumizeAPI:
 		args = [url, data]
 		return cache_object(self._post, string, args, False, 24)
 
-	def get_hosts(self):
-		string = 'fen_pm_valid_hosts'
-		url = 'services/list'
-		hosts_dict = {'Premiumize.me': []}
-		hosts = []
-		append = hosts.append
-		try:
-			result = cache_object(self._get, string, url, False, 168)
-			for x in result['directdl']:
-				for alias in result['aliases'][x]: append(alias)
-			hosts_dict['Premiumize.me'] = list(set(hosts))
-		except: pass
-		return hosts_dict
-
 	def add_headers_to_url(self, url):
 		return url + '|' + urlencode(self.headers())
 

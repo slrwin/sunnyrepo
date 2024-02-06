@@ -286,8 +286,8 @@ class PremiumizeAPI:
 		try:
 			from modules.kodi_utils import clear_property
 			from caches.debrid_cache import debrid_cache
-			from caches.main_cache import main_cache
-			dbcon = main_cache.dbcon
+			from caches.base_cache import connect_database
+			dbcon = connect_database('maincache_db')
 			user_cloud_success = False
 			# USER CLOUD
 			try:
@@ -309,12 +309,6 @@ class PremiumizeAPI:
 				clear_property("fenlight.pm_transfers_list")
 				download_links_success = True
 			except: download_links_success = False
-			# HOSTERS
-			try:
-				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('pm_valid_hosts',))
-				clear_property('fenlight.pm_valid_hosts')
-				hoster_links_success = True
-			except: hoster_links_success = False
 			# HASH CACHED STATUS
 			if clear_hashes:
 				try:
@@ -323,5 +317,5 @@ class PremiumizeAPI:
 				except: hash_cache_status_success = False
 			else: hash_cache_status_success = True
 		except: return False
-		if False in (user_cloud_success, download_links_success, hoster_links_success, hash_cache_status_success): return False
+		if False in (user_cloud_success, download_links_success, hash_cache_status_success): return False
 		return True

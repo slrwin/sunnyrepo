@@ -268,20 +268,14 @@ class AllDebridAPI:
 	def clear_cache(self, clear_hashes=True):
 		try:
 			from caches.debrid_cache import debrid_cache
-			from caches.main_cache import main_cache
-			dbcon = main_cache.dbcon
+			from caches.base_cache import connect_database
+			dbcon = connect_database('maincache_db')
 			# USER CLOUD
 			try:
 				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('ad_user_cloud',))
 				clear_property('ad_user_cloud')
 				user_cloud_success = True
 			except: user_cloud_success = False
-			# HOSTERS
-			try:
-				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('ad_valid_hosts',))
-				clear_property('ad_valid_hosts')
-				hoster_links_success = True
-			except: hoster_links_success = False
 			# HASH CACHED STATUS
 			if clear_hashes:
 				try:
@@ -290,5 +284,5 @@ class AllDebridAPI:
 				except: hash_cache_status_success = False
 			else: hash_cache_status_success = True
 		except: return False
-		if False in (user_cloud_success, hoster_links_success, hash_cache_status_success): return False
+		if False in (user_cloud_success, hash_cache_status_success): return False
 		return True

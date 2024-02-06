@@ -27,12 +27,12 @@
                         <top>-2</top>
                         <width>1302</width>
                         <height>807</height>
-                        <texture border="16" colordiffuse="Window(10000).Property(fen.main_highlight)">fen_common/dialog.png</texture>
+                        <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
                     </control>
                     <control type="image">
                         <width>1298</width>
                         <height>803</height>
-                        <texture border="16" colordiffuse="FF302F2F">fen_common/dialog.png</texture>
+                        <texture colordiffuse="FF1F2020" border="30">fen_common/circle.png</texture>
                     </control>
                 </control>
                 <control type="group">
@@ -42,12 +42,12 @@
                         <top>-2</top>
                         <width>782</width>
                         <height>807</height>
-                        <texture border="16" colordiffuse="Window(10000).Property(fen.main_highlight)">fen_common/dialog.png</texture>
+                        <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
                     </control>
                     <control type="image">
                         <width>778</width>
                         <height>803</height>
-                        <texture border="16" colordiffuse="FF302F2F">fen_common/dialog.png</texture>
+                        <texture colordiffuse="FF1F2020" border="30">fen_common/circle.png</texture>
                     </control>
                 </control>
                 <control type="image">
@@ -66,8 +66,8 @@
                     <top>10</top>
                     <left>110</left>
                     <height>20</height>
-                    <font>font_mini</font> <!-- FEN_26 -->
-                    <textcolor>$INFO[Window(10000).Property(fen.main_highlight)]</textcolor>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFCCCCCC</textcolor>
                     <shadowcolor>FF000000</shadowcolor>
                     <align>center</align>
                     <label>[UPPERCASE][B]$INFO[Window().Property(heading)][/B][/UPPERCASE]</label>
@@ -78,8 +78,8 @@
                     <top>10</top>
                     <left>110</left>
                     <height>20</height>
-                    <font>font_mini</font> <!-- FEN_26 -->
-                    <textcolor>$INFO[Window(10000).Property(fen.main_highlight)]</textcolor>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFCCCCCC</textcolor>
                     <shadowcolor>FF000000</shadowcolor>
                     <align>center</align>
                     <label>[UPPERCASE][B]$INFO[Window().Property(heading)][/B][/UPPERCASE]</label>
@@ -127,11 +127,11 @@
                     <control type="label">
                         <description>Only Line1</description>
                         <visible>String.IsEqual(Window().Property(multi_line),false)</visible>
-                        <width max="610">auto</width>
-                        <left>70</left>
+                        <width max="632">auto</width>
+                        <left>34</left>
                         <top>45</top>
                         <height>5</height>
-                        <font>font_mini</font> <!-- FEN_26 -->
+                        <font>font12</font> <!-- FEN_26 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <aligny>center</aligny>
                         <label>[UPPERCASE]$INFO[ListItem.Property(line1)][/UPPERCASE]</label>
@@ -139,12 +139,12 @@
                     <control type="group">
                         <description>Line1 and Line2</description>
                         <visible>String.IsEqual(Window().Property(multi_line),true)</visible>
-                        <width max="610">auto</width>
-                        <left>70</left>
+                        <width max="632">auto</width>
+                        <left>34</left>
                         <control type="label">
                             <top>25</top>
                             <height>5</height>
-                            <font>font_mini</font> <!-- FEN_26 -->
+                            <font>font12</font> <!-- FEN_26 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][B]$INFO[ListItem.Property(line1)][/B][/UPPERCASE]</label>
@@ -152,7 +152,7 @@
                         <control type="label">
                             <top>60</top>
                             <height>5</height>
-                            <font>font_mini</font> <!-- FEN_26 -->
+                            <font>font12</font> <!-- FEN_26 -->
                             <textcolor>FFA9A8A8</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][I]$INFO[ListItem.Property(line2)][/I][/UPPERCASE]</label>
@@ -160,69 +160,63 @@
                     </control>
                     <control type="image">
                         <top>0</top>
-                        <left>20</left>
-                        <width>25</width>
+                        <left>2</left>
+                        <width>30</width>
                         <align>left</align>
                         <aligny>center</aligny>
                         <aspectratio>keep</aspectratio>
-                        <texture>fen_common/overlay_selected.png</texture>
+                        <texture colordiffuse="red">fen_common/overlay_selected.png</texture>
                         <visible>!String.IsEmpty(ListItem.Property(check_status))</visible>
                     </control>
                 </itemlayout>
                 <focusedlayout height="90" width="700">
-                    <control type="group">
+                    <control type="image">
                         <animation effect="fade" start="100" end="50" time="0" condition="!Control.HasFocus(2025)">Conditional</animation>
-                        <control type="image">
-                            <width>700</width>
-                            <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
-                        </control>
-                        <control type="image">
-                            <width>60</width>
-                            <texture colordiffuse="$INFO[Window(10000).Property(fen.main_highlight)]" border="30">fen_common/left-circle.png</texture>
-                        </control>
+                        <width>700</width>
+                        <texture colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texture>
                     </control>
                     <control type="label">
                         <description>Only Line1</description>
                         <visible>String.IsEqual(Window().Property(multi_line),false)</visible>
-                        <left>70</left>
+                        <left>34</left>
                         <top>45</top>
                         <height>5</height>
-                        <width max="610">auto</width>
-                        <font>font_mini</font> <!-- FEN_26 -->
-                        <textcolor>FF4a4347</textcolor>
+                        <width max="632">auto</width>
+                        <font>font12</font> <!-- FEN_26 -->
+                        <textcolor>FF1F2020</textcolor>
                         <aligny>center</aligny>
                         <label>[UPPERCASE]$INFO[ListItem.Property(line1)][/UPPERCASE]</label>
                     </control>
                     <control type="group">
                         <description>Line1 and Line2</description>
                         <visible>String.IsEqual(Window().Property(multi_line),true)</visible>
-                        <width max="610">auto</width>
-                        <left>70</left>
+                        <width max="632">auto</width>
+                        <left>34</left>
                         <control type="label">
                             <top>25</top>
                             <height>5</height>
-                            <font>font_mini</font> <!-- FEN_26 -->
-                            <textcolor>FF4a4347</textcolor>
+                            <font>font12</font> <!-- FEN_26 -->
+                            <textcolor>FF1F2020</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][B]$INFO[ListItem.Property(line1)][/B][/UPPERCASE]</label>
                         </control>
                         <control type="label">
                             <top>60</top>
                             <height>5</height>
-                            <font>font_mini</font> <!-- FEN_26 -->
-                            <textcolor>FF5B5B5B</textcolor>
+                            <font>font12</font> <!-- FEN_26 -->
+                            <textcolor>FF4a4347</textcolor>
                             <aligny>center</aligny>
                             <label>[UPPERCASE][I]$INFO[ListItem.Property(line2)][/I][/UPPERCASE]</label>
                         </control>
                     </control>
                     <control type="image">
                         <top>0</top>
-                        <left>20</left>
-                        <width>25</width>
+                        <left>2</left>
+                        <width>30</width>
                         <align>left</align>
                         <aligny>center</aligny>
                         <aspectratio>keep</aspectratio>
-                        <texture>fen_common/overlay_selected.png</texture>
+                        <texture colordiffuse="red">fen_common/overlay_selected.png</texture>
                         <visible>!String.IsEmpty(ListItem.Property(check_status))</visible>
                     </control>
                 </focusedlayout>
@@ -239,11 +233,11 @@
                     <ondown>11</ondown>
                     <onleft>2025</onleft>
                     <onright>2025</onright>
-                    <label>$ADDON[plugin.video.fen 32839]</label>
-                    <font>font_mini</font> <!-- FEN_26 -->
-                    <textcolor>FFB7B4BB</textcolor>
-                    <focusedcolor>FF302F2F</focusedcolor>
-                    <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
+                    <label>OK</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFCCCCCC</textcolor>
+                    <focusedcolor>FF1F2020</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texturefocus>
                     <texturenofocus colordiffuse="FF4a4347" border="30">fen_common/circle.png</texturenofocus>
                     <align>center</align>
                 </control>
@@ -256,11 +250,11 @@
                     <ondown>12</ondown>
                     <onleft>2025</onleft>
                     <onright>2025</onright>
-                    <label>$ADDON[plugin.video.fen 32840]</label>
-                    <font>font_mini</font> <!-- FEN_26 -->
-                    <textcolor>FFB7B4BB</textcolor>
-                    <focusedcolor>FF302F2F</focusedcolor>
-                    <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
+                    <label>Cancel</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFCCCCCC</textcolor>
+                    <focusedcolor>FF1F2020</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texturefocus>
                     <texturenofocus colordiffuse="FF4a4347" border="30">fen_common/circle.png</texturenofocus>
                     <align>center</align>
                 </control>
@@ -273,12 +267,11 @@
                     <ondown>13</ondown>
                     <onleft>2025</onleft>
                     <onright>2025</onright>
-                    <label>$ADDON[plugin.video.fen 33149]</label>
-                    <font>font_mini</font> <!-- FEN_26 -->
-                    <textcolor>FFB7B4BB</textcolor>
-                    <textcolor>FFB7B4BB</textcolor>
-                    <focusedcolor>FF302F2F</focusedcolor>
-                    <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
+                    <label>Select All</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFCCCCCC</textcolor>
+                    <focusedcolor>FF1F2020</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texturefocus>
                     <texturenofocus colordiffuse="FF4a4347" border="30">fen_common/circle.png</texturenofocus>
                     <align>center</align>
                     <visible>String.IsEqual(Window().Property(select_button),select_all)</visible>
@@ -292,11 +285,11 @@
                     <ondown>10</ondown>
                     <onleft>2025</onleft>
                     <onright>2025</onright>
-                    <label>$ADDON[plugin.video.fen 33150]</label>
-                    <font>font_mini</font> <!-- FEN_26 -->
-                    <textcolor>FFB7B4BB</textcolor>
-                    <focusedcolor>FF302F2F</focusedcolor>
-                    <texturefocus colordiffuse="FFB7B4BB" border="30">fen_common/circle.png</texturefocus>
+                    <label>Deselect All</label>
+                    <font>font12</font> <!-- FEN_26 -->
+                    <textcolor>FFCCCCCC</textcolor>
+                    <focusedcolor>FF1F2020</focusedcolor>
+                    <texturefocus colordiffuse="FFCCCCCC" border="30">fen_common/circle.png</texturefocus>
                     <texturenofocus colordiffuse="FF4a4347" border="30">fen_common/circle.png</texturenofocus>
                     <align>center</align>
                     <visible>String.IsEqual(Window().Property(select_button),deselect_all)</visible>
@@ -307,9 +300,9 @@
                 <left>740</left>
                 <width>10</width>
                 <height>720</height>
-                <texturesliderbackground colordiffuse="FF302F2F">fen_common/white.png</texturesliderbackground>
+                <texturesliderbackground colordiffuse="FF1F2020">fen_common/white.png</texturesliderbackground>
                 <texturesliderbar colordiffuse="FF555556">fen_common/white.png</texturesliderbar>
-                <texturesliderbarfocus colordiffuse="$INFO[Window(10000).Property(fen.main_highlight)]">fen_common/white.png</texturesliderbarfocus>
+                <texturesliderbarfocus colordiffuse="FFCCCCCC">fen_common/white.png</texturesliderbarfocus>
                 <onleft>2025</onleft>
                 <onright>10</onright>
                 <showonepage>false</showonepage>

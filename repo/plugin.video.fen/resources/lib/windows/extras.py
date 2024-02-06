@@ -120,6 +120,7 @@ class Extras(BaseDialog):
 		if action in self.selection_actions:
 			try: chosen_var = self.get_listitem(self.control_id).getProperty(self.item_action_dict[self.control_id])
 			except: return
+			position = self.get_position(self.control_id)
 			if self.control_id in items_list_ids:
 				self.set_current_params()
 				self.new_params = {'mode': 'extras_menu_choice', 'tmdb_id': chosen_var, 'media_type': self.media_type, 'is_external': self.is_external, 'stacked': 'true'}
@@ -129,22 +130,17 @@ class Extras(BaseDialog):
 				self.new_params = {'mode': 'person_data_dialog', 'query': chosen_var, 'reference_tmdb_id': self.tmdb_id, 'is_external': self.is_external, 'stacked': 'true'}
 				return window_manager(self)
 			elif self.control_id == videos_id:
-				chosen = imdb_videos_choice(self.get_attribute(self, chosen_var)[self.get_position(self.control_id)]['videos'], self.poster)
+				chosen = imdb_videos_choice(self.get_attribute(self, chosen_var)[position]['videos'], self.poster)
 				if not chosen: return
 				if windowed_playback(): return self.open_window(('windows.videoplayer', 'VideoPlayer'), 'videoplayer.xml', meta=self.meta, video=chosen)
 				self.set_current_params()
 				self.window_player_url = chosen
 				return window_player(self)
 			elif self.control_id in text_list_ids:
-				if self.control_id == parentsguide_id:
-					if not chosen_var: return
-					self.show_text_media(text=chosen_var)
-				else:
-					end_index = self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=self.get_position(self.control_id))
-					self.select_item(self.control_id, end_index)
+				if self.control_id == parentsguide_id: return self.show_text_media(text=chosen_var)
+				else: return self.select_item(self.control_id, self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=position))
 			elif self.control_id in art_ids:
-				end_index = _images({'mode': 'imageviewer', 'all_images': self.get_attribute(self, chosen_var), 'current_index': self.get_position(self.control_id)})
-				self.select_item(self.control_id, end_index)
+				return self.select_item(self.control_id, _images({'mode': 'imageviewer', 'all_images': self.get_attribute(self, chosen_var), 'current_index': position}))
 			else: return
 
 	def make_ratings(self, win_prop=4000):

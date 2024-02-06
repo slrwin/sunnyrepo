@@ -29,7 +29,7 @@
             <fanart>fanart.png</fanart>
         </assets>
     </extension>
-</addon><addon id="plugin.video.fen" name="Fen" provider-name="Tikipeter" version="3.2.23">
+</addon><addon id="plugin.video.fen" name="Fen" provider-name="Tikipeter" version="3.2.24">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" version="2.19.1" />
@@ -52,7 +52,7 @@
         </assets>
         <news>INFO: For latest changes see Changelog within Tools of add-on.</news>
     </extension>
-</addon><addon id="plugin.video.fenlight" name="Fen Light" provider-name="Tikipeter" version="1.0.23">
+</addon><addon id="plugin.video.fenlight" name="Fen Light" provider-name="Tikipeter" version="1.0.24">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" version="2.19.1" />

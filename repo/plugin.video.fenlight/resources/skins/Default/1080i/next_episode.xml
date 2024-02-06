@@ -41,7 +41,7 @@
             </control>
             <!-- Episode Status -->
             <control type="group">
-                <visible>!String.IsEmpty(Window.Property(episode_status.text))</visible>
+                <visible>!String.IsEmpty(Window.Property(episode_status.highlight))</visible>
                 <control type="image">
                     <top>8</top>
                     <left>0</left>
@@ -49,16 +49,12 @@
                     <height>35</height>
                     <texture colordiffuse="Window.Property(episode_status.highlight)">fenlight_common/white.png</texture>
                 </control>
-                <control type="label">
+                <control type="image">
                     <top>8</top>
-                    <left>2</left>
-                    <width>280</width>
+                    <left>0</left>
+                    <width>284</width>
                     <height>35</height>
-                    <font>font10</font> <!-- FENLIGHT_21 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <label>[UPPERCASE][B]$INFO[Window.Property(episode_status.text)][/B][/UPPERCASE]</label>
-                    <align>center</align>
-                    <aligny>center</aligny>
+                    <texture>$INFO[Window.Property(episode_status.flag)]</texture>
                 </control>
             </control>
             <control type="group">

@@ -1,6 +1,11 @@
 ++
 
-[COLOR dodgerblue][B]Version 3.2.23[/B][/COLOR]
+[COLOR dodgerblue][B]Version 1.0.24[/B][/COLOR]
+- Fixed broken cache clearing of debrid accounts.
+- Added "episode type" support to Next Episode dialog.
+- Other changes/fixes.
+
+[COLOR dodgerblue][B]Version 1.0.23[/B][/COLOR]
 - Fixed "Providers" menu for movies.
 - Added episode type support for Jurial skins. Currently only Arctic Fuse. Users should thank Jurial for adding this feature to his skin. He has a donation link where you can throw him some money and love. Users will need to clear metadata in Tools->Database & Cache Maintenance->Clear Meta Cache.
 - Added Media Images content for Fen Light Extras dialog. Just a list featuring the media's Poster, Fanart & Clearlogo. Will need to be enabled on current installs.

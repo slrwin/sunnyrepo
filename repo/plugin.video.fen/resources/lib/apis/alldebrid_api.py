@@ -233,22 +233,6 @@ class AllDebridAPI:
 		hide_busy_dialog()
 		return True
 
-	def get_hosts(self):
-		string = 'fen_ad_valid_hosts'
-		url = 'hosts'
-		hosts_dict = {'AllDebrid': []}
-		hosts = []
-		try:
-			result = cache_object(self._get, string, url, False, 168)
-			result = result['hosts']
-			for k, v in result.items():
-				try: hosts.extend(v['domains'])
-				except: pass
-			hosts = list(set(hosts))
-			hosts_dict['AllDebrid'] = hosts
-		except: pass
-		return hosts_dict
-
 	def _get(self, url, url_append=''):
 		result = None
 		try:
