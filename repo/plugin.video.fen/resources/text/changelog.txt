@@ -1,6 +1,10 @@
 [B]Please utilize Fen Tips (Tools->Tips for Fen Use) to catch up on any important new features. New features will be highlighted with a [COLOR chartreuse]NEW!!![/COLOR] label.[/B]
 
 
+[COLOR dodgerblue][B]Version 3.2.25[/B][/COLOR]
+- Couple of quick fixes.
+
+
 [COLOR dodgerblue][B]Version 3.2.23/24[/B][/COLOR]
 - Updated look of custom windows to align more aesthetically with FENtastic skin.
 - Added "episode type" support to Next Episode window.

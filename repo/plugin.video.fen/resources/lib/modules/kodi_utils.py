@@ -550,6 +550,13 @@ def open_settings(query, addon='plugin.video.fen'):
 		except: execute_builtin('Addon.OpenSettings(%s)' % addon)
 	else: execute_builtin('Addon.OpenSettings(%s)' % addon)
 
+def external_scraper_settings():
+	try:
+		external = get_setting('fen.external_scraper.module', None)
+		if not external: return
+		execute_builtin('Addon.OpenSettings(%s)' % external)
+	except: pass
+
 def set_setting(setting_id, value):
 	addon_object.setSetting(setting_id, value)
 

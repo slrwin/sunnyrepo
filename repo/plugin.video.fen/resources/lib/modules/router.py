@@ -248,3 +248,6 @@ def routing(sys):
 	if mode == 'update_check':
 		from modules.updater import update_check
 		return update_check()
+	if mode == 'open_external_scraper_settings':
+		from modules.kodi_utils import external_scraper_settings
+		return external_scraper_settings()

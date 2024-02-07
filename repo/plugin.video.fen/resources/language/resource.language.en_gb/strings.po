@@ -3253,6 +3253,10 @@ msgctxt "#33014"
 msgid "Choose Files"
 msgstr ""
 
+msgctxt "#33015"
+msgid "Open External Scraper Settings"
+msgstr ""
+
 msgctxt "#33017"
 msgid "Set Language Invoker (ADVANCED!!)"
 msgstr ""
@@ -3956,10 +3960,6 @@ msgstr ""
 
 
 ###################################################################################################################################
-
-msgctxt "#33015"
-msgid ""
-msgstr ""
 
 msgctxt "#33016"
 msgid ""

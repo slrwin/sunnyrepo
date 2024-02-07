@@ -78,7 +78,7 @@ class EpisodeTools:
 			title, season, episode = self.meta['title'], int(chosen_episode['season']), int(chosen_episode['episode'])
 			query = title + ' S%.2dE%.2d' % (season, episode)
 			display_name = '%s - %dx%.2d' % (title, season, episode)
-			episode_type = ep_data.get('episode_type', '')
+			episode_type = chosen_episode.get('episode_type', '')
 			ep_name, plot = chosen_episode['title'], chosen_episode['plot']
 			ep_thumb = chosen_episode.get('thumb', None)
 			try: premiered = adjust_premiered_date(chosen_episode['premiered'], adjust_hours)[1]

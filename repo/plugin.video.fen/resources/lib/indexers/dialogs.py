@@ -19,7 +19,7 @@ numeric_input, container_update, activate_window = kodi_utils.numeric_input, kod
 poster_empty, fanart_empty, clear_property, highlight_prop = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.clear_property, kodi_utils.highlight_prop
 addon_icon, database, maincache_db, custom_context_prop = kodi_utils.addon_icon, kodi_utils.database, kodi_utils.maincache_db, kodi_utils.custom_context_prop
 movie_extras_buttons_defaults, tvshow_extras_buttons_defaults = kodi_utils.movie_extras_buttons_defaults, kodi_utils.tvshow_extras_buttons_defaults
-extras_button_label_values, jsonrpc_get_addons = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons
+extras_button_label_values, jsonrpc_get_addons, external_scraper_settings = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, kodi_utils.external_scraper_settings
 get_language, extras_enabled_menus, active_internal_scrapers, auto_play = settings.get_language, settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 extras_open_action, get_art_provider, fanarttv_default, ignore_articles = settings.extras_open_action, settings.get_art_provider, settings.fanarttv_default, settings.ignore_articles
 autoscrape_next_episode, audio_filters, extras_enabled_ratings = settings.autoscrape_next_episode, settings.audio_filters, settings.extras_enabled_ratings
@@ -863,6 +863,7 @@ def options_menu_choice(params, meta=None):
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append((ls(32637), '', 'clear_scrapers_cache'))
 	if in_progress_menu: listing_append((ls(32599), '', 'nextep_manager'))
 	if not from_extras: listing_append(('%s %s' % (ls(32641), ls(32456)), '', 'open_tools'))
+	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append((ls(33015), '', 'open_external_scraper_settings'))
 	listing_append(('%s %s' % (ls(32641), ls(32247)), '', 'open_settings'))
 	list_items = list(_builder())
 	heading = rootname or strip_bold(ls(32646))
@@ -898,11 +899,14 @@ def options_menu_choice(params, meta=None):
 		return media_artwork_choice(meta)
 	elif choice == 'clear_scrapers_cache':
 		return clear_scrapers_cache()
-	elif choice == 'open_settings':
-		return open_settings('0.0')
 	elif choice == 'open_tools':
 		close_all_dialog()
+	elif choice == 'open_settings':
+		return open_settings('0.0')
 		return window_function({'mode': 'navigator.tools'})
+	if choice == 'open_external_scraper_settings':
+		close_all_dialog()
+		return external_scraper_settings()
 	elif choice == 'playback_choice':
 		return playback_choice({'media_type': content, 'poster': poster, 'meta': meta, 'season': season, 'episode': episode})
 	elif choice == 'browse':
