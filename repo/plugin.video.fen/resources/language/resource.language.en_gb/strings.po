@@ -3254,7 +3254,7 @@ msgid "Choose Files"
 msgstr ""
 
 msgctxt "#33015"
-msgid "Open External Scraper Settings"
+msgid "External Scraper"
 msgstr ""
 
 msgctxt "#33017"

@@ -20,7 +20,7 @@ discover_str, history_str, help_str, furk_str, easy_str, rd_str, pm_str, ad_str 
 cloud_str, clca_str, trakt_str, imdb_str, coll_str, wlist_str, ls_str, fav_str = ls(32496), ls(32497), ls(32037), ls(32064), ls(32499), ls(32500), ls(32501), ls(32453)
 root_str, season_str, images_str, make_short_str, delete_str, mcol_str, res_hc, progman_str = ls(32457), ls(32537), ls(32798), ls(32702), ls(32703), ls(33080), ls(33107), ls(32599)
 _in_str, mov_str, tv_str, edit_str, add_menu_str, s_folder_str, mset_str, local_str = ls(32484), ls(32028), ls(32029), ls(32705), ls(32730), ls(32731), ls(33080), ls(33104)
-new_str, spot_str, tips_str, man_acc_str, rename_str, ext_set_open = ls(32857).upper(), ls(32858).upper(), ls(32546).upper(), ls(32805), '[B]%s[/B]' % ls(32137), ls(33015)
+new_str, spot_str, tips_str, man_acc_str, rename_str, ext_scr_str = ls(32857).upper(), ls(32858).upper(), ls(32546).upper(), ls(32805), '[B]%s[/B]' % ls(32137), ls(33015)
 changelog_utils_str, search_str = '%s & %s' % (changelog_str, log_utils_str), '%s %s' % (se_str, history_str)
 clear_all_str, clear_meta_str, clear_list_str, clear_trakt_str = clca_str % all_str, clca_str % ls(32527), clca_str % ls_str, clca_str % trakt_str
 sources_folders_str, downloads_ins, because_str = '[B]%s (%s): %s[/B]\n     [COLOR=%s][I]%s[/I][/COLOR]', _in_str % (dl_str.upper(), '%s'), '[I]%s[/I]  [B]%s[/B]' % (ls(32474), '%s')
@@ -200,7 +200,7 @@ class Navigator:
 	def tools(self):
 		self.add({'mode': 'open_settings', 'isFolder': 'false'}, settings_ins % fen_str, 'settings')
 		if get_setting('fen.external_scraper.module', None):
-			self.add({'mode': 'open_external_scraper_settings', 'isFolder': 'false'}, settings_ins % ext_set_open, 'settings')
+			self.add({'mode': 'open_external_scraper_settings', 'isFolder': 'false'}, settings_ins % ext_scr_str, 'settings')
 		self.add({'mode': 'navigator.tips'}, tools_ins % tips_use_str, 'settings2')
 		self.add({'mode': 'navigator.accounts_manager'}, tools_ins % man_acc_str, 'settings2')
 		self.add({'mode': 'build_next_episode_manager'}, tools_ins % progman_str, 'settings2')

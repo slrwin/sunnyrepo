@@ -185,14 +185,14 @@ def build_single_episode(list_type, params={}):
 			unwatched = ep_data_get('unwatched', False)
 			season_data = meta_get('season_data')
 			if list_type_starts_with('next_'):
-				if orig_episode == 0: orig_episode, new_season = 1, False
+				if orig_episode == 0: orig_episode = 1
 				else:
 					try:
 						episode_count = [i for i in season_data if i['season_number'] == orig_season][0]['episode_count']
 						if orig_episode >= episode_count:
-							orig_season, orig_episode, new_season = orig_season + 1, 1, True
+							orig_season, orig_episode = orig_season + 1, 1
 							if orig_season > meta_get('total_seasons'): return
-						else: orig_episode, new_season = orig_episode + 1, False
+						else: orig_episode = orig_episode + 1
 					except: return
 			episodes_data = episodes_meta_function(orig_season, meta, meta_user_info)
 			try: item = [i for i in episodes_data if i['episode'] == orig_episode][0]
@@ -205,7 +205,7 @@ def build_single_episode(list_type, params={}):
 				if list_type_starts_with('next_'):
 					if not episode_date: return
 					if not nextep_include_unaired: return
-					if episode_date and new_season and not date_difference_function(current_date, episode_date, 7): return
+					if episode_date and not date_difference_function(current_date, episode_date, 7): return
 				elif not show_unaired: return
 				unaired = True
 			else: unaired = False
