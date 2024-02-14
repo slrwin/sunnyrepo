@@ -142,14 +142,14 @@ def build_single_episode(list_type, params={}):
 			unwatched = ep_data_get('unwatched', False)
 			season_data = meta_get('season_data')
 			if list_type_starts_with('next_'):
-				if orig_episode == 0: orig_episode, new_season = 1, False
+				if orig_episode == 0: orig_episode = 1
 				else:
 					try:
 						episode_count = [i for i in season_data if i['season_number'] == orig_season][0]['episode_count']
 						if orig_episode >= episode_count:
-							orig_season, orig_episode, new_season = orig_season + 1, 1, True
+							orig_season, orig_episode = orig_season + 1, 1
 							if orig_season > meta_get('total_seasons'): return
-						else: orig_episode, new_season = orig_episode + 1, False
+						else: orig_episode = orig_episode + 1
 					except: return
 			episodes_data = episodes_meta_function(orig_season, meta)
 			try: item = [i for i in episodes_data if i['episode'] == orig_episode][0]
@@ -160,7 +160,8 @@ def build_single_episode(list_type, params={}):
 			episode_type = item_get('episode_type') or ''
 			if not episode_date or current_date < episode_date:
 				if list_type_starts_with('next_'):
-					if episode_date and new_season and not date_difference_function(current_date, episode_date, 7): return
+					if not include_unaired: return
+					if episode_date and not date_difference_function(current_date, episode_date, 7): return
 				unaired = True
 			else: unaired = False
 			tmdb_id, tvdb_id, imdb_id, title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'
@@ -186,7 +187,6 @@ def build_single_episode(list_type, params={}):
 				if playcount: return
 				if unwatched: display_premiered, highlight_start, highlight_end = '', '[COLOR darkgoldenrod]', '[/COLOR]'
 				elif unaired:
-					if not include_unaired: return
 					if episode_date: display_premiered = '[%s] ' % make_day_function(current_date, episode_date)
 					else: display_premiered = '[UNKNOWN] '
 					highlight_start, highlight_end = '[COLOR red]', '[/COLOR]'

@@ -162,7 +162,7 @@ def clear_cache(cache_type, silent=False):
 		from caches.external_cache import external_cache
 		from caches.debrid_cache import debrid_cache
 		data = external_cache.delete_cache(silent=silent)
-		clear_debrid_result = debrid_cache.clear_database()
+		clear_debrid_result = debrid_cache.clear_cache()
 		success = (data, clear_debrid_result) == ('success', 'success')
 	elif cache_type == 'trakt':
 		from caches.trakt_cache import clear_all_trakt_cache_data

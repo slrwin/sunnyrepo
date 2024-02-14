@@ -49,7 +49,7 @@ class DebridCache:
 			return True
 		except: return False
 	
-	def clear_database(self):
+	def clear_cache(self):
 		try:
 			dbcon = connect_database('debridcache_db')
 			dbcon.execute(CLEAR)

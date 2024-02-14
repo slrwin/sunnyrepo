@@ -527,7 +527,7 @@ def options_menu_choice(params, meta=None):
 	if in_progress_menu: listing_append(('TV Shows Progress Manager', '', 'nextep_manager'))
 	listing_append(('Open Download Manager', '', 'open_download_manager'))
 	listing_append(('Open Tools', '', 'open_tools'))
-	if menu_type in ('movie', 'episode'): listing_append(('Open External Scraper Settings', '', 'open_external_scraper_settings'))
+	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Open External Scraper Settings', '', 'open_external_scraper_settings'))
 	listing_append(('Open Settings', '', 'open_settings'))
 	list_items = list(_builder())
 	heading = rootname or 'Options...'

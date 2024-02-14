@@ -1,5 +1,8 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.25[/B][/COLOR]
+- Some changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.24[/B][/COLOR]
 - Fixed broken cache clearing of debrid accounts.
 - Added "episode type" support to Next Episode dialog.

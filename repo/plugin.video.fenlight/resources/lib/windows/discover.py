@@ -4,7 +4,7 @@ from apis import tmdb_api
 from caches.discover_cache import discover_cache
 from modules import kodi_utils, meta_lists
 from modules.utils import safe_string, remove_accents
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 json, dialog, select_dialog, ok_dialog, get_icon = kodi_utils.json, kodi_utils.dialog, kodi_utils.select_dialog, kodi_utils.ok_dialog, kodi_utils.get_icon
 sleep, container_refresh, tmdb_api_key = kodi_utils.sleep, kodi_utils.container_refresh, kodi_utils.tmdb_default_api
@@ -187,7 +187,6 @@ class Discover(BaseDialog):
 
 	def make_url(self, active_attributes):
 		self.url = base_url % (('movie' if self.media_type == 'movie' else 'tv'), tmdb_api_key, ''.join([self.get_attribute(self, i) for i in active_attributes]), '&page=%s')
-		logger('DISCOVER url', self.url)
 
 	def make_label(self, active_attributes):
 		label = '[B]%sS[/B]' % self.media_type.upper()

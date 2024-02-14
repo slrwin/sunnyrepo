@@ -239,7 +239,7 @@ def tmdb_tv_networks(network_id, page_no):
 
 def tmdb_tv_providers(provider, page_no):
 	string = 'tmdb_tv_providers_%s_%s' % (provider, page_no)
-	url = '%s/discover/tv/?api_key=%s&watch_region=US&with_watch_providers=%s&vote_count.gte=100&page=%s' % (base_url, tmdb_api_key, provider, page_no)
+	url = '%s/discover/tv?api_key=%s&watch_region=US&with_watch_providers=%s&vote_count.gte=100&page=%s' % (base_url, tmdb_api_key, provider, page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_year(year, page_no):

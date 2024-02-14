@@ -772,10 +772,10 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
-                        <label>Include Unaired Episodes When Available</label>
+                        <label>Include Unaired Episodes When Within 7 Days</label>
                         <property name="setting_type">boolean</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.include_unaired)]</property>
-                        <property name="setting_description">Enable this to include unaired episodes within Next Episodes. They will show with a RED highlight</property>
+                        <property name="setting_description">Enable this to include unaired episodes within Next Episodes. They will show with a RED highlight and become visible within 7 days of their airdate</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=nextep.include_unaired)</onclick>
                     </item>
             <!-- Widgets -->
@@ -866,6 +866,17 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.external_scraper.name)]</property>
                         <property name="setting_description">Choose the external scraper module to use within Fen Light. No support is provided when you choose to use external scrapers within Fen Light</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=external_scraper_choice)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.provider.external),true)</visible>
+                        <visible>!String.IsEqual(Window(10000).Property(fenlight.external_scraper.name),empty_setting)</visible>
+                        <label>Open External Scraper Settings</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">...</property>
+                        <property name="setting_description">Open the External Scraper settings. The settings of the module chosen above will be opened</property>
+                        <onclick>back</onclick>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=open_external_scraper_settings)</onclick>
                     </item>
             <!-- Real Debrid -->
                     <item>

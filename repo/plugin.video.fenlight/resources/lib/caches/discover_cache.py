@@ -24,9 +24,9 @@ class DiscoverCache:
 
 	def get_all(self, db_type):
 		dbcon = connect_database('discover_db')
-		return [{'id': i[0], 'data': i[2]} for i in dbcon.execute(SELECT_TYPE, (db_type,)).fetchall()]
+		return [{'id': i[0], 'data': i[2]} for i in reversed(dbcon.execute(SELECT_TYPE, (db_type,)).fetchall())]
 
-	def delete_all(self, db_type):
+	def clear_cache(self, db_type):
 		dbcon = connect_database('discover_db')
 		dbcon.execute(DELETE_TYPE, (db_type,))
 		dbcon.execute('VACUUM')
