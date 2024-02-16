@@ -9,7 +9,7 @@ from modules.watched_status import get_watched_info_movie, get_watched_status_mo
 meta_function, get_datetime_function, add_item, home, item_jump_landscape = movie_meta, get_datetime, kodi_utils.add_item, kodi_utils.home, kodi_utils.item_jump_landscape
 progress_percent_function, get_watched_function, get_watched_info_function = get_progress_percent, get_watched_status_movie, get_watched_info_movie
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
-sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
+sleep, xbmc_actor, set_category, json, get_playback_int = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json, kodi_utils.get_playback_int
 string, ls, sys, external, add_items, add_dir = str, kodi_utils.local_string, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir
 make_listitem, build_url, remove_keys, dict_removals = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.remove_keys, kodi_utils.movie_dict_removals
 poster_empty, fanart_empty, set_property, nextpage_landscape = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.set_property, kodi_utils.nextpage_landscape
@@ -158,7 +158,7 @@ class Movies:
 				watched_action, watchedstr = 'mark_as_unwatched', unwatched_str
 			else: watched_action, watchedstr = 'mark_as_watched', watched_str
 			watched_status_params = build_url({'mode': 'watched_status.mark_movie', 'action': watched_action, 'tmdb_id': tmdb_id, 'title': title, 'year': year})
-			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
+			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'playback_int': self.playback_int})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'movie', 'poster': poster, 'meta': tmdb_id})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'playcount': playcount,
@@ -221,6 +221,7 @@ class Movies:
 		self.open_extras, self.watched_title = extras_open_action('movie'), trakt_str if self.watched_indicators == 1 else fen_str
 		self.fanart_enabled, self.home_hide_watched = self.meta_user_info['extra_fanart_enabled'], self.is_home and self.meta_user_info['widget_hide_watched']
 		self.poster_main, self.poster_backup, self.fanart_main, self.fanart_backup, self.clearlogo_main, self.clearlogo_backup = get_art_provider()
+		self.playback_int = get_playback_int()
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_movie_content, self.list, self.max_threads))
 			[i.join() for i in threads]

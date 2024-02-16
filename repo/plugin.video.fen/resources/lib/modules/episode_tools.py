@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from random import choice
 from datetime import date
 from modules import kodi_utils, settings
 from modules.sources import Sources
@@ -10,7 +9,7 @@ from modules.utils import adjust_premiered_date, get_datetime, make_thread_list,
 
 Thread, get_property, set_property, add_dir, add_items = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.add_dir, kodi_utils.add_items
 make_listitem, set_content, end_directory, set_view_mode = kodi_utils.make_listitem, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
-get_icon, addon_fanart = kodi_utils.get_icon, kodi_utils.addon_fanart
+get_icon, addon_fanart, get_playback_int, random = kodi_utils.get_icon, kodi_utils.addon_fanart, kodi_utils.get_playback_int, kodi_utils.random
 ls, sys, build_url, json, notification = kodi_utils.local_string, kodi_utils.sys, kodi_utils.build_url, kodi_utils.json, kodi_utils.notification 
 watched_indicators, ignore_articles = settings.watched_indicators, settings.ignore_articles
 hidden_ind_str, hidden_str, heading, window_prop = ' [COLOR=red][B][%s][/B][/COLOR]', ls(32804).upper(), ls(32806), 'fen.random_episode_history'
@@ -45,8 +44,8 @@ class EpisodeTools:
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_data['title'], 'ep_thumb': ep_data.get('thumb', None),
 							'episode': episode, 'premiered': airdate, 'plot': ep_data['plot'], 'episode_type': episode_type})
 			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season,
-						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type, 'meta': json.dumps(self.meta)}
-			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
+						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type,
+						'meta': json.dumps(self.meta), 'playback_int': get_playback_int()}
 			if custom_title: url_params['custom_title'] = custom_title
 			if 'custom_year' in self.meta: url_params['custom_year'] = self.meta_get('custom_year')
 		except: url_params = 'error'
@@ -70,7 +69,7 @@ class EpisodeTools:
 				if not episodes_data:
 					set_property(window_prop, '')
 					return self.get_random_episode(continual=True)
-			chosen_episode = choice(episodes_data)
+			chosen_episode = random.choice(episodes_data)
 			if continual:
 				episode_list.append(chosen_episode)
 				episode_history = {str(tmdb_id): episode_list}

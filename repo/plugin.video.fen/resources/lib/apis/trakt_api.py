@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import time
-import random
 from caches import trakt_cache
 from caches.base_cache import check_databases
 from caches.main_cache import cache_object
@@ -15,7 +14,7 @@ dialog, unquote, addon_installed, addon_enabled, addon = kodi_utils.dialog, kodi
 path_check, get_icon, remove_keys, trakt_dict_removals = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.remove_keys, kodi_utils.trakt_dict_removals
 set_temp_highlight, restore_highlight, manage_settings_reset = kodi_utils.set_temp_highlight, kodi_utils.restore_highlight, kodi_utils.manage_settings_reset
 requests, execute_builtin, select_dialog, kodi_refresh = kodi_utils.requests, kodi_utils.execute_builtin, kodi_utils.select_dialog, kodi_utils.kodi_refresh
-progress_dialog, external = kodi_utils.progress_dialog, kodi_utils.external
+progress_dialog, external, random = kodi_utils.progress_dialog, kodi_utils.external, kodi_utils.random
 ignore_articles, lists_sort_order = settings.ignore_articles, settings.lists_sort_order
 show_unaired_watchlist, metadata_user_info = settings.show_unaired_watchlist, settings.metadata_user_info
 clear_all_trakt_cache_data, cache_trakt_object, clear_trakt_calendar = trakt_cache.clear_all_trakt_cache_data, trakt_cache.cache_trakt_object, trakt_cache.clear_trakt_calendar

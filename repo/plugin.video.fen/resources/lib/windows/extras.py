@@ -18,7 +18,7 @@ json, Thread, get_icon, close_all_dialog, ok_dialog = kodi_utils.json, kodi_util
 addon_icon, ls, get_icon, backup_cast_thumbnail = kodi_utils.addon_icon, kodi_utils.local_string, kodi_utils.get_icon, get_icon('genre_family')
 fetch_kodi_imagecache, addon_fanart, empty_poster = kodi_utils.fetch_kodi_imagecache, kodi_utils.addon_fanart, kodi_utils.empty_poster
 extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extras_button_label_values, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
-container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
+container_update, activate_window, clear_property, get_playback_int = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property, kodi_utils.get_playback_int
 extras_enable_scrollbars, get_resolution, omdb_api_key, date_offset = settings.extras_enable_scrollbars, settings.get_resolution, settings.omdb_api_key, settings.date_offset
 default_all_episodes, metadata_user_info, extras_enabled_menus = settings.default_all_episodes, settings.metadata_user_info, settings.extras_enabled_menus
 enable_extra_ratings, extras_enabled_ratings, windowed_playback = settings.extras_enable_extra_ratings, settings.extras_enabled_ratings, settings.extras_windowed_playback
@@ -572,7 +572,7 @@ class Extras(BaseDialog):
 		self.close()
 
 	def movies_play(self):
-		url_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': self.tmdb_id}
+		url_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': self.tmdb_id, 'playback_int': get_playback_int()}
 		Sources().playback_prep(url_params)
 
 	def show_plot(self):
@@ -606,7 +606,8 @@ class Extras(BaseDialog):
 
 	def play_nextep(self):
 		if self.nextep_season == None: return ok_dialog(text=33116)
-		url_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season, 'episode': self.nextep_episode}
+		url_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season,
+					'episode': self.nextep_episode, 'playback_int': get_playback_int()}
 		Sources().playback_prep(url_params)
 
 	def play_random_episode(self):

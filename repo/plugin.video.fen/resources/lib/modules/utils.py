@@ -4,12 +4,11 @@ import time
 import hashlib
 import _strptime
 import unicodedata
-from random import random
 from html import unescape
 from importlib import import_module, reload as rel_module
 from datetime import datetime, timedelta, date
 from modules.settings import max_threads
-from modules.kodi_utils import sys, translate_path, sleep, Thread, activeCount, json, get_setting, local_string as ls
+from modules.kodi_utils import random, sys, translate_path, sleep, Thread, activeCount, json, get_setting, local_string as ls
 # from modules.kodi_utils import logger
 
 days_translate = {'Monday': 32971, 'Tuesday': 32972, 'Wednesday': 32973, 'Thursday': 32974, 'Friday': 32975, 'Saturday': 32976, 'Sunday': 32977}
@@ -275,7 +274,7 @@ def sort_list(sort_key, sort_direction, list_data, ignore_articles):
 		if sort_key == 'popularity': return sorted(list_data, key=lambda x: x[x['type']].get('votes', 0), reverse=reverse)
 		if sort_key == 'percentage': return sorted(list_data, key=lambda x: x[x['type']].get('rating', 0), reverse=reverse)
 		if sort_key == 'votes': return sorted(list_data, key=lambda x: x[x['type']].get('votes', 0), reverse=reverse)
-		if sort_key == 'random': return sorted(list_data, key=lambda k: random())
+		if sort_key == 'random': return sorted(list_data, key=lambda k: random.random())
 		return list_data
 	except: return list_data
 

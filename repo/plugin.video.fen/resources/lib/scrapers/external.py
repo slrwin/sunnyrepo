@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import time
-from random import shuffle
 from caches.providers_cache import ExternalProvidersCache
 from modules import kodi_utils, source_utils
 from modules.debrid import RD_check, PM_check, AD_check, query_local_cache
@@ -10,7 +9,7 @@ from modules.utils import clean_file_name
 ls, sleep, monitor, get_property, set_property = kodi_utils.local_string, kodi_utils.sleep, kodi_utils.monitor, kodi_utils.get_property, kodi_utils.set_property
 json, Thread, notification, hide_busy_dialog = kodi_utils.json, kodi_utils.Thread, kodi_utils.notification, kodi_utils.hide_busy_dialog
 normalize, get_file_info, pack_enable_check, def_host_dict = source_utils.normalize, source_utils.get_file_info, source_utils.pack_enable_check, source_utils.def_host_dict
-int_window_prop, get_setting = kodi_utils.int_window_prop, kodi_utils.get_setting
+int_window_prop, get_setting, random = kodi_utils.int_window_prop, kodi_utils.get_setting, kodi_utils.random
 season_display, show_display, remain_str, pack_display = ls(32537), ls(32089), ls(32676), '%s (%s)'
 pack_check = (season_display, show_display)
 debrid_runners = {'Real-Debrid': ('Real-Debrid', RD_check), 'Premiumize.me': ('Premiumize.me', PM_check), 'AllDebrid': ('AllDebrid', AD_check)}
@@ -104,7 +103,7 @@ class source:
 				if pack_capable:
 					self.source_dict.extend([(i[0], i[1], ls(32537)) for i in pack_capable])
 					if self.show_packs: self.source_dict.extend([(i[0], i[1], ls(32089)) for i in pack_capable])
-					shuffle(self.source_dict)
+					random.shuffle(self.source_dict)
 			Thread(target=self.process_episode_threads).start()
 		if self.background: _background()
 		else: _scraperDialog()

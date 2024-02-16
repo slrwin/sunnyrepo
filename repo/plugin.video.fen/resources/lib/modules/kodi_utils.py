@@ -3,6 +3,7 @@
 import xbmc, xbmcgui, xbmcplugin, xbmcvfs, xbmcaddon
 import sys
 import json
+import random
 import requests
 import _strptime
 import sqlite3 as database
@@ -56,6 +57,7 @@ int_window_prop, pause_services_prop, suppress_sett_dict_prop, highlight_prop = 
 custom_context_main_menu_prop, custom_context_prop, sett_addoninfo_active_prop = 'fen.custom_context_main_menu', 'fen.custom_context_menu', 'fen.setting_addoninfo_active'
 pause_settings_prop, use_skin_fonts_prop, custom_info_prop = 'fen.pause_settings', 'fen.use_skin_fonts', 'fen.custom_info_dialog'
 current_skin_prop, current_font_prop = 'fen.current_skin', 'fen.current_font'
+playback_int_prop, playback_int_run_prop = 'fen.playback_int', 'fen.playback_int.run'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
 playlist_type_dict = {'music': 0, 'video': 1}
@@ -94,6 +96,25 @@ default_highlights = (('hoster.identify', 'FF0166FF'), ('torrent.identify', 'FFF
 					('provider.debrid_cloud_colour', 'FF7A01CC'), ('provider.folders_colour', 'FFB36B00'), ('scraper_4k_highlight', 'FFFF00FE'),
 					('scraper_1080p_highlight', 'FFE6B800'), ('scraper_720p_highlight', 'FF3C9900'), ('scraper_SD_highlight', 'FF0166FF'), ('scraper_single_highlight', 'FF008EB2'),
 					('highlight', 'FFC0C0C0'), ('scraper_flag_identify_colour', 'FF7C7C7C'), ('scraper_result_identify_colour', 'FFFFFFFF'))
+
+def get_playback_int():
+	count = 0
+	while not get_property(playback_int_run_prop) == 'true':
+		count += 20
+		if count == 10000:
+			set_playback_int()
+			break
+		sleep(20)
+	return get_property(playback_int_prop)
+
+def check_playback_int(url_playback_int):
+	if url_playback_int != get_playback_int(): return False
+	return True
+
+def set_playback_int():
+	if get_property(playback_int_run_prop) != 'true':
+		set_property(playback_int_prop, str(random.randint(1, 500)))
+		set_property(playback_int_run_prop, 'true')
 
 def get_icon(image_name):
 	return img_url % getattr(icons, image_name, 'I1JJhji')

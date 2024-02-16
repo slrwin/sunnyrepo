@@ -13,7 +13,7 @@ get_property, open_settings, set_property, get_icon, dialog = kodi_utils.get_pro
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
 img_url, sleep, manage_settings_reset, default_highlights = kodi_utils.img_url, kodi_utils.sleep, kodi_utils.manage_settings_reset, kodi_utils.default_highlights
 get_setting, set_setting, kodi_refresh, container_refresh_input = kodi_utils.get_setting, kodi_utils.set_setting, kodi_utils.kodi_refresh, kodi_utils.container_refresh_input
-json, ls, build_url, select_dialog = kodi_utils.json, kodi_utils.local_string, kodi_utils.build_url, kodi_utils.select_dialog
+json, ls, build_url, select_dialog, get_playback_int = kodi_utils.json, kodi_utils.local_string, kodi_utils.build_url, kodi_utils.select_dialog, kodi_utils.get_playback_int
 run_plugin, metadata_user_info, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.metadata_user_info, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window
 poster_empty, fanart_empty, clear_property, highlight_prop = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.clear_property, kodi_utils.highlight_prop
@@ -22,7 +22,7 @@ movie_extras_buttons_defaults, tvshow_extras_buttons_defaults = kodi_utils.movie
 extras_button_label_values, jsonrpc_get_addons, external_scraper_settings = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, kodi_utils.external_scraper_settings
 get_language, extras_enabled_menus, active_internal_scrapers, auto_play = settings.get_language, settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 extras_open_action, get_art_provider, fanarttv_default, ignore_articles = settings.extras_open_action, settings.get_art_provider, settings.fanarttv_default, settings.ignore_articles
-autoscrape_next_episode, audio_filters, extras_enabled_ratings = settings.autoscrape_next_episode, settings.audio_filters, settings.extras_enabled_ratings
+audio_filters, extras_enabled_ratings = settings.audio_filters, settings.extras_enabled_ratings
 quality_filter, watched_indicators, date_offset = settings.quality_filter, settings.watched_indicators, settings.date_offset
 single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_fen', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
 scraper_names = [ls(32118).upper(), ls(32069).upper(), ls(32070).upper(), ls(32098).upper(), ls(32097).upper(), ls(32099).upper(), ls(32108).upper()]
@@ -449,6 +449,7 @@ def playback_choice(params):
 			_process_params('', 'true', 'ignore_scrape_filters')
 			set_property('fs_filterless_search', 'true')
 	from modules.sources import Sources
+	play_params['playback_int'] = get_playback_int()
 	Sources().playback_prep(play_params)
 
 def set_quality_choice(params):
@@ -848,13 +849,9 @@ def options_menu_choice(params, meta=None):
 		current_scrapers_status = ', '.join([i for i in active_int_scrapers]) if len(active_int_scrapers) > 0 else 'N/A'
 		current_quality_status =  ', '.join(quality_filter(quality_setting))
 		listing_append((base_str1 % (ls(32175), ' (%s)' % content), base_str2 % autoplay_status, 'toggle_autoplay'))
-		if menu_type == 'episode' or menu_type in single_ep_list:
-			if autoplay_status == on_str:
-				autoplay_next_status, autoplay_next_toggle = (on_str, 'false') if autoplay_next_episode() else (off_str, 'true')
-				listing_append((base_str1 % (ls(32178), ''), base_str2 % autoplay_next_status, 'toggle_autoplay_next'))
-			else:
-				autoscrape_next_status, autoscrape_next_toggle = (on_str, 'false') if autoscrape_next_episode() else (off_str, 'true')
-				listing_append((base_str1 % (ls(33086), ''), base_str2 % autoscrape_next_status, 'toggle_autoscrape_next'))
+		if menu_type == 'episode' or menu_type in single_ep_list and autoplay_status == on_str:
+			autoplay_next_status, autoplay_next_toggle = (on_str, 'false') if autoplay_next_episode() else (off_str, 'true')
+			listing_append((base_str1 % (ls(32178), ''), base_str2 % autoplay_next_status, 'toggle_autoplay_next'))
 		listing_append((base_str1 % (ls(32105), ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
 		listing_append((base_str1 % ('', '%s %s' % (ls(32055), ls(32533))), base_str2 % current_scrapers_status, 'enable_scrapers'))
 	if menu_type in ('movie', 'tvshow') and not from_extras:
@@ -871,7 +868,7 @@ def options_menu_choice(params, meta=None):
 	choice = select_dialog([i[2] for i in listing], **kwargs)
 	if choice == None: return
 	if choice == 'playback':
-		return run_plugin({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
+		return run_plugin({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'playback_int': get_playback_int()})
 	elif choice == 'extras':
 		return extras_menu_choice({'tmdb_id': tmdb_id, 'media_type': content, 'is_external': str(is_external)})
 	elif choice == 'mark_movie':
@@ -932,8 +929,6 @@ def options_menu_choice(params, meta=None):
 		set_setting('auto_play_%s' % content, autoplay_toggle)
 	elif choice == 'toggle_autoplay_next':
 		set_setting('autoplay_next_episode', autoplay_next_toggle)
-	elif choice == 'toggle_autoscrape_next':
-		set_setting('autoscrape_next_episode', autoscrape_next_toggle)
 	elif choice == 'set_quality':
 		set_quality_choice({'quality_setting': 'autoplay_quality_%s' % content if autoplay_status == on_str else 'results_quality_%s' % content, 'icon': poster})
 	elif choice == 'enable_scrapers':

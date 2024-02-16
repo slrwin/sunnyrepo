@@ -23,11 +23,17 @@ get_property, set_property, clear_property, get_visibility = kodi_utils.get_prop
 trakt_sync_interval, trakt_sync_refresh_widgets, auto_start_fen = settings.trakt_sync_interval, settings.trakt_sync_refresh_widgets, settings.auto_start_fen
 kodi_refresh, list_dirs, delete_file = kodi_utils.kodi_refresh, kodi_utils.list_dirs, kodi_utils.delete_file
 current_skin_prop, use_skin_fonts_prop = kodi_utils.current_skin_prop, kodi_utils.use_skin_fonts_prop
-notification, ok_dialog = kodi_utils.notification, kodi_utils.ok_dialog
+notification, ok_dialog, set_playback_int = kodi_utils.notification, kodi_utils.ok_dialog, kodi_utils.set_playback_int
 pause_settings_prop, enabled_debrids_check = kodi_utils.pause_settings_prop, settings.enabled_debrids_check
 fen_str, window_top_str, listitem_property_str = ls(32036).upper(), 'Window.IsTopMost(%s)', 'ListItem.Property(%s)'
 movieinformation_str, contextmenu_str = 'movieinformation', 'contextmenu'
 media_windows = (10000, 10025, 11121)
+
+class PlaybackIntegerGenerator:
+	def run(self):
+		logger(fen_str, 'PlaybackIntegerGenerator Service Starting')
+		set_playback_int()
+		return logger(fen_str, 'PlaybackIntegerGenerator Service Finished')
 
 class InitializeDatabases:
 	def run(self):

@@ -295,7 +295,7 @@ msgid "Content and Sorting"
 msgstr ""
 
 msgctxt "#32073"
-msgid "Include Unaired Episodes When Available"
+msgid "Include Unaired Episodes When Available Within 7 Days"
 msgstr ""
 
 msgctxt "#32074"
@@ -3534,10 +3534,6 @@ msgctxt "#33085"
 msgid "Decades"
 msgstr ""
 
-msgctxt "#33086"
-msgid "Auto Scrape Next Episode"
-msgstr ""
-
 msgctxt "#33087"
 msgid "Notification"
 msgstr ""
@@ -3962,5 +3958,9 @@ msgstr ""
 ###################################################################################################################################
 
 msgctxt "#33016"
+msgid ""
+msgstr ""
+
+msgctxt "#33086"
 msgid ""
 msgstr ""

@@ -276,6 +276,7 @@ class Navigator:
 		setting_id, action_dict = search_mode_dict[self.list_name]
 		url_params = dict(action_dict)
 		data = main_cache.get(setting_id) or []
+		self.add(action_dict, '[B]NEW SEARCH...[/B]', 'search_new', False)
 		for i in data:
 			try:
 				key_id = unquote(i)
