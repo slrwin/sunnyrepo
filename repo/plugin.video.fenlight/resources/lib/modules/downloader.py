@@ -9,18 +9,18 @@ from modules.settings import download_directory
 from modules.utils import clean_file_name, clean_title, safe_string, remove_accents, normalize
 # logger = kodi_utils.logger
 
-player, confirm_dialog, ok_dialog, get_addon_fanart, build_url = kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.get_addon_fanart, kodi_utils.build_url
 video_extensions, image_extensions, get_icon, dialog, unquote = kodi_utils.video_extensions, kodi_utils.image_extensions, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.unquote
 add_items, set_sort_method, set_content, end_directory, sys = kodi_utils.add_items, kodi_utils.set_sort_method, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.sys
 show_busy_dialog, hide_busy_dialog, make_directory, open_file = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.make_directory, kodi_utils.open_file
 json, Thread, urlparse, parse_qsl, notification = kodi_utils.json, kodi_utils.Thread, kodi_utils.urlparse, kodi_utils.parse_qsl, kodi_utils.notification
 sleep, set_category, poster_empty, select_dialog = kodi_utils.sleep, kodi_utils.set_category, kodi_utils.empty_poster, kodi_utils.select_dialog
-set_view_mode, make_listitem, list_dirs = kodi_utils.set_view_mode, kodi_utils.make_listitem, kodi_utils.list_dirs
+player, confirm_dialog, ok_dialog, build_url = kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.build_url
 get_property, set_property, clear_property = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
+set_view_mode, make_listitem, list_dirs = kodi_utils.set_view_mode, kodi_utils.make_listitem, kodi_utils.list_dirs
 sources = Sources()
 ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 levels =['../../../..', '../../..', '../..', '..']
-fanart = get_addon_fanart()
+fanart = kodi_utils.get_addon_fanart()
 status_property_string = 'fenlight.download_status.%s'
 
 def runner(params):
@@ -378,7 +378,6 @@ def viewer(params):
 				listitem.setLabel(clean_file_name(normalize(path)))
 				listitem.setArt({'fanart': fanart})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('files')
 				info_tag.setPlot(' ')
 				yield (url, listitem, info[1])
 			except: pass

@@ -473,19 +473,18 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(10)</visible>
-                        <visible>String.EndsWith(Window(10000).Property(fenlight.addon_fanart),fenlight_fanart.jpg)</visible>
                         <label>Assign Addon Background Image</label>
                         <property name="setting_type">action</property>
-                        <property name="setting_value">...</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.default_addon_fanart)]</property>
                         <property name="setting_description">Choose any custom background you would like to use within Fen Light</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_path&amp;setting_id=addon_fanart)</onclick>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_path&amp;setting_id=default_addon_fanart)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(10)</visible>
-                        <visible>!String.EndsWith(Window(10000).Property(fenlight.addon_fanart),fenlight_fanart.jpg)</visible>
-                        <label>Restore Default Background Image</label>
+                        <visible>!String.EndsWith(Window(10000).Property(fenlight.default_addon_fanart),fenlight_fanart2.jpg)</visible>
+                        <label>    - Restore Default Background Image</label>
                         <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.addon_fanart)]</property>
+                        <property name="setting_value">...</property>
                         <property name="setting_description">Restore default Fen Light background</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=restore_addon_fanart_choice)</onclick>
                     </item>
@@ -746,6 +745,14 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.single_ep_display_widget_name)]</property>
                         <property name="setting_description">Choose the display format Fen Light uses when naming single episodes for widgets. Applicable for lists like Next Episodes, In Progress Episodes etc.</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=single_ep_display_widget)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Include Adult Results from Media Searches</label>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.meta_filter)]</property>
+                        <property name="setting_description">Enable this and Fen Light will attempt to filter out adult content from Movie, TV Show and People searches. Success is based purely on the accuracy of TMDb's database. Expect that some adult results may come through and plan accordingly</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=meta_filter)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
@@ -1702,33 +1709,6 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoplay_use_chapters)]</property>
                         <property name="setting_description">Enable this and Fen Light will attempt to use video file Chapter information to ascertain when to show the Next Episode alert. If unsuccessful, then the percentage of playback value will be used instead</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoplay_use_chapters)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false)</visible>
-                        <label>Auto Scrape Next Episode</label>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_next_episode)]</property>
-                        <property name="setting_description">Enable this and Fen Light will provide an opportunity for you to confirm you want the next episode sources scraped whilst still watching the current episode. As soon as playback ends, the source results from the scrape will be shown</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoscrape_next_episode)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false) + String.IsEqual(Window(10000).Property(fenlight.autoscrape_next_episode),true)</visible>
-                        <label>    - Show Alert After (%) Playback</label>
-                        <property name="setting_type">numeric</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_next_window_percentage)]</property>
-                        <property name="setting_description">Choose when Fen Light will show the Next Episode Scrape Alert</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=autoscrape_next_window_percentage)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false) + String.IsEqual(Window(10000).Property(fenlight.autoscrape_next_episode),true)</visible>
-                        <label>    - Use Chapter Info For Alert When Available</label>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_use_chapters)]</property>
-                        <property name="setting_description">Enable this and Fen Light will attempt to use video file Chapter information to ascertain when to show the Next Episode Scrape alert. If unsuccessful, then the percentage of playback value will be used instead</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoscrape_use_chapters)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>

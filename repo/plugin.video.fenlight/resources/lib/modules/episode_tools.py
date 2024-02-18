@@ -44,7 +44,6 @@ class EpisodeTools:
 							'episode': episode, 'premiered': airdate, 'plot': ep_data['plot']})
 			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season,
 						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type}
-			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
 			if custom_title: url_params['custom_title'] = custom_title
 			if 'custom_year' in self.meta: url_params['custom_year'] = self.meta_get('custom_year')
 		except: url_params = 'error'
@@ -119,7 +118,6 @@ def build_next_episode_manager():
 			listitem.setLabel(display)
 			listitem.setArt({'poster': icon, 'fanart': addon_fanart, 'icon': icon})
 			info_tag = listitem.getVideoInfoTag()
-			# info_tag.setMediaType('video')
 			info_tag.setPlot(' ')
 			append({'listitem': (url, listitem, False), 'sort_title': title})
 		except: pass

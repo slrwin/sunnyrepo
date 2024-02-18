@@ -4,6 +4,7 @@ from caches.main_cache import cache_object
 from caches.lists_cache import lists_cache_object
 from caches.meta_cache import cache_function
 from modules.meta_lists import oscar_winners
+from modules.settings import get_meta_filter
 from modules.kodi_utils import make_session, tmdb_dict_removals, remove_keys, tmdb_default_api as tmdb_api_key
 # from modules.kodi_utils import logger
 
@@ -166,8 +167,9 @@ def tmdb_movies_recommendations(tmdb_id, page_no):
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_movies_search(query, page_no):
-	string = 'tmdb_movies_search_%s_%s' % (query, page_no)
-	url = '%s/search/movie?api_key=%s&language=en-US&include_adult=true&query=%s&page=%s' % (base_url, tmdb_api_key, query, page_no)
+	meta_filter = get_meta_filter()
+	string = 'tmdb_movies_search_%s_%s_%s' % (query, meta_filter, page_no)
+	url = '%s/search/movie?api_key=%s&language=en-US&include_adult=%s&query=%s&page=%s' % (base_url, tmdb_api_key, meta_filter, query, page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_movies_companies(company_id, page_no):
@@ -262,8 +264,9 @@ def tmdb_tv_recommendations(tmdb_id, page_no):
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_search(query, page_no):
-	string = 'tmdb_tv_search_%s_%s' % (query, page_no)
-	url = '%s/search/tv?api_key=%s&language=en-US&include_adult=true&query=%s&page=%s' % (base_url, tmdb_api_key, query, page_no)
+	meta_filter = get_meta_filter()
+	string = 'tmdb_tv_search_%s_%s_%s' % (query, meta_filter, page_no)
+	url = '%s/search/tv?api_key=%s&language=en-US&include_adult=%s&query=%s&page=%s' % (base_url, tmdb_api_key, meta_filter, query, page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_reviews(tmdb_id, page_no):
@@ -291,8 +294,9 @@ def tmdb_people_full_info(actor_id):
 	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_people_info(query, page_no=1):
-	string = 'tmdb_people_info_%s_%s' % (query, page_no)
-	url = '%s/search/person?api_key=%s&language=en&include_adult=true&query=%s&page=%s' % (base_url, tmdb_api_key, query, page_no)
+	meta_filter = get_meta_filter()
+	string = 'tmdb_people_info_%s_%s_%s' % (query, meta_filter, page_no)
+	url = '%s/search/person?api_key=%s&language=en&include_adult=%s&query=%s&page=%s' % (base_url, tmdb_api_key, meta_filter, query, page_no)
 	return cache_object(get_tmdb, string, url, expiration=EXPIRY_4_HOURS)
 
 def movie_details(tmdb_id):

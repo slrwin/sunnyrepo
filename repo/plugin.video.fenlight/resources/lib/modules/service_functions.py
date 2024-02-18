@@ -137,6 +137,7 @@ class UpdateCheck:
 		except: pass
 		return logger('Fen Light', 'UpdateCheck Service Finished')
 
+
 class AutoStart:
 	def run(self):
 		logger('Fen Light', 'AutoStart Service Starting')

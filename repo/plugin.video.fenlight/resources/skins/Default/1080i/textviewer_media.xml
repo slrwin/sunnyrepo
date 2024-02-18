@@ -60,6 +60,7 @@
                     <aligny>center</aligny>
                     <textcolor>FFCCCCCC</textcolor>
                     <pagecontrol>2061</pagecontrol>
+                    <autoscroll>false</autoscroll>
                 </control>
                 <control type="scrollbar" id="2061">
                     <left>1140</left>

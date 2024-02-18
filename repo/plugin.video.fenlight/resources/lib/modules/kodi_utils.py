@@ -35,7 +35,7 @@ invoker_switch_dict = {'true': 'false', 'false': 'true'}
 empty_poster, nextpage = img_url % icons.box_office, img_url % icons.nextpage
 nextpage_landscape = img_url % icons.nextpage_landscape
 tmdb_default_api = 'b370b60447737762ca38457bd77579b3'
-int_window_prop, pause_services_prop, firstrun_update_prop = 'fenlight.internal_results.%s', 'fenlight.pause_services', 'firstrun_update'
+int_window_prop, pause_services_prop, firstrun_update_prop = 'fenlight.internal_results.%s', 'fenlight.pause_services', 'fenlight.firstrun_update'
 current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
@@ -73,7 +73,7 @@ def get_icon(image_name):
 	return img_url % getattr(icons, image_name, 'I1JJhji')
 
 def get_addon_fanart():
-	return get_property('fenlight.addon_fanart') or default_addon_fanart
+	return get_property('fenlight.default_addon_fanart') or default_addon_fanart
 
 def build_url(url_params):
 	return 'plugin://plugin.video.fenlight/?%s' % urlencode(url_params)

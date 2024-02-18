@@ -54,7 +54,6 @@ def easynews_file_browser(files, handle):
 				thumbnail = item_get('thumbnail', default_easynews_icon)
 				listitem.setArt({'icon': thumbnail, 'poster': thumbnail, 'thumb': thumbnail, 'fanart': fanart, 'banner': default_easynews_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				yield (url, listitem, False)
 			except: pass

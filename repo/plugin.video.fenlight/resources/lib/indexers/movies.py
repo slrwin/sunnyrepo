@@ -5,13 +5,13 @@ from modules.metadata import movie_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
 						get_current_timestamp, paginate_list, jsondate_to_datetime
 from modules.watched_status import get_watched_info_movie, get_watched_status_movie, get_bookmarks, get_progress_percent
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 make_listitem, build_url, nextpage_landscape = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape
-string, sys, external, add_items, add_dir = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir
+string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, kodi_utils.get_property
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 progress_percent_function, get_watched_function, get_watched_info_function, random = get_progress_percent, get_watched_status_movie, get_watched_info_movie, kodi_utils.random
-poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.get_addon_fanart(), kodi_utils.set_property
+poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.set_property
 sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
 meta_function, get_datetime_function, add_item, home = movie_meta, get_datetime, kodi_utils.add_item, kodi_utils.home
 jsondate_to_datetime_function = jsondate_to_datetime

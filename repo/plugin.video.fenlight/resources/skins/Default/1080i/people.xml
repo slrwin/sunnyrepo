@@ -222,7 +222,7 @@
                             <aligny>center</aligny>
                             <textcolor>FF1F2020</textcolor>
                             <label>$INFO[Window.Property(biography)]</label>
-                            <autoscroll time="2000" delay="12000" repeat="5000">true</autoscroll>
+                            <autoscroll>false</autoscroll>
                             <visible>Control.HasFocus(50)</visible>
                         </control>
                     </control>
@@ -489,6 +489,7 @@
                                     <aligny>top</aligny>
                                     <textcolor>FF1F2020</textcolor>
                                     <label>$INFO[ListItem.Property(text)]</label>
+                                    <autoscroll>false</autoscroll>
                                 </control>
                             </focusedlayout>
                         </control>

@@ -1,5 +1,11 @@
 ++
 
+
+[COLOR dodgerblue][B]Version 1.0.30[/B][/COLOR]
+- Added Settings->Navigation->"Include Adult Results from Media Searches". Defaults to DISABLED.
+- Removed "Autoscrape Next Episode".
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.25[/B][/COLOR]
 - Some changes/fixes.
 

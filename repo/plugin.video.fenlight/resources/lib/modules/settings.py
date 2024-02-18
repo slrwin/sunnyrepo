@@ -85,19 +85,14 @@ def autoplay_next_episode():
 	if auto_play('episode') and get_setting('fenlight.autoplay_next_episode', 'false') == 'true': return True
 	else: return False
 
-def autoscrape_next_episode():
-	if not auto_play('episode') and get_setting('fenlight.autoscrape_next_episode', 'false') == 'true': return True
-	else: return False
-
 def auto_rescrape_with_all():
 	return int(get_setting('fenlight.results.auto_rescrape_with_all', '0'))
 
-def auto_nextep_settings(play_type):
-	play_type = 'autoplay' if play_type == 'autoplay_nextep' else 'autoscrape'
-	window_percentage = 100 - int(get_setting('fenlight.%s_next_window_percentage' % play_type, '95'))
-	use_chapters = get_setting('fenlight.%s_use_chapters' % play_type, 'true') == 'true'
+def auto_nextep_settings():
+	window_percentage = 100 - int(get_setting('fenlight.autoplay_next_window_percentage', '95'))
+	use_chapters = get_setting('fenlight.autoplay_use_chapters', 'true') == 'true'
 	scraper_time = int(get_setting('fenlight.results.timeout', '60')) + 20
-	default_action = default_action_dict[get_setting('fenlight.autoplay_default_action', '1')] if play_type == 'autoplay' else ''
+	default_action = default_action_dict[get_setting('fenlight.autoplay_default_action', '1')]
 	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'default_action': default_action, 'use_chapters': use_chapters}
 
 def filter_status(filter_type):
@@ -231,6 +226,9 @@ def omdb_api_key():
 
 def default_all_episodes():
 	return int(get_setting('fenlight.default_all_episodes', '0'))
+
+def get_meta_filter():
+	return get_setting('fenlight.meta_filter', 'true')
 
 def widget_hide_next_page():
 	return get_setting('fenlight.widget_hide_next_page', 'false') == 'true'

@@ -12,6 +12,7 @@ add_items, set_content, set_sort_method, end_directory = kodi_utils.add_items, k
 date_offset_info, default_all_episodes, nextep_include_unwatched = settings.date_offset, settings.default_all_episodes, settings.nextep_include_unwatched
 nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep_include_unaired, settings.single_ep_display_format, settings.widget_hide_watched
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
+get_property = kodi_utils.get_property
 watched_indicators_info, use_minimal_media_info = settings.watched_indicators, settings.use_minimal_media_info
 tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
 adjust_premiered_date_function, jsondate_to_datetime_function = adjust_premiered_date, jsondate_to_datetime
@@ -19,7 +20,7 @@ make_day_function, title_key_function, get_datetime_function, date_difference_fu
 get_progress_percent, get_watched_status, get_watched_info, get_bookmarks = ws.get_progress_percent, ws.get_watched_status_episode, ws.get_watched_info_tv, ws.get_bookmarks
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
 string =  str
-poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.get_addon_fanart()
+poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.default_addon_fanart
 run_plugin, unaired_label, tmdb_poster = 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
 upper = string.upper
 content_type = 'episodes'

@@ -5,7 +5,7 @@ from modules import kodi_utils
 # logger = kodi_utils.logger
 
 json, Thread, dialog = kodi_utils.json, kodi_utils.Thread, kodi_utils.dialog
-hide_busy_dialog, addon_fanart, empty_poster = kodi_utils.hide_busy_dialog, kodi_utils.get_addon_fanart(), kodi_utils.empty_poster
+hide_busy_dialog, addon_fanart, empty_poster = kodi_utils.hide_busy_dialog, kodi_utils.default_addon_fanart, kodi_utils.empty_poster
 get_icon = kodi_utils.get_icon
 
 resume_dict = {10: 'resume', 11: 'start_over', 12: 'cancel'}

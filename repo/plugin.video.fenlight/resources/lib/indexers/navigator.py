@@ -423,7 +423,6 @@ class Navigator:
 		listitem.setLabel(list_name)
 		listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon, 'landscape': icon})
 		info_tag = listitem.getVideoInfoTag()
-		# info_tag.setMediaType('video')
 		info_tag.setPlot(' ')
 		if cm_items and not self.is_home: listitem.addContextMenuItems(cm_items)
 		add_item(int(sys.argv[1]), url, listitem, isFolder)

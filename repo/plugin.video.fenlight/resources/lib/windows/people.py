@@ -8,7 +8,7 @@ from modules import kodi_utils, settings
 from modules.utils import calculate_age, get_datetime
 # logger = kodi_utils.logger
 
-addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.get_addon_fanart(), kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
+addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.default_addon_fanart, kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
 notification, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.notification, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
 extras_enable_scrollbars = settings.extras_enable_scrollbars
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'

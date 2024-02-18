@@ -5,7 +5,7 @@ from modules.utils import adjust_premiered_date, get_datetime
 from modules.watched_status import get_watched_info_tv, get_watched_status_season
 # logger = kodi_utils.logger
 
-poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.get_addon_fanart(), kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
+poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
 sys, add_items, set_content, end_directory, set_view_mode = kodi_utils.sys, kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
 make_listitem, build_url, external, date_offset_info = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.external, settings.date_offset
 use_minimal_media_info, watched_indicators_info, widget_hide_watched = settings.use_minimal_media_info, settings.watched_indicators, settings.widget_hide_watched

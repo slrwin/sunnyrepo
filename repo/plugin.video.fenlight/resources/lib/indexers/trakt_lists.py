@@ -38,7 +38,6 @@ def search_trakt_lists(params):
 				listitem.setLabel(display)
 				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.addContextMenuItems(cm)
 				yield (url, listitem, True)
@@ -80,7 +79,6 @@ def get_trakt_lists(params):
 				listitem.setLabel(display)
 				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.addContextMenuItems(cm)
 				yield (url, listitem, True)
@@ -121,7 +119,6 @@ def get_trakt_trending_popular_lists(params):
 				listitem.setLabel(display)
 				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				yield (url, listitem, True)
 			except: pass

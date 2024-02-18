@@ -14,7 +14,7 @@ from modules.episode_tools import EpisodeTools
 
 Thread, get_icon, close_all_dialog = kodi_utils.Thread, kodi_utils.get_icon, kodi_utils.close_all_dialog
 backup_cast_thumbnail = get_icon('genre_family')
-addon_fanart, empty_poster = kodi_utils.get_addon_fanart(), kodi_utils.empty_poster
+addon_fanart, empty_poster = kodi_utils.default_addon_fanart, kodi_utils.empty_poster
 extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extras_button_label_values, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
 extras_enable_scrollbars, omdb_api_key, date_offset = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset
@@ -551,7 +551,8 @@ class Extras(BaseDialog):
 
 	def play_nextep(self):
 		if self.nextep_season == None: return ok_dialog(text='No Episodes Available')
-		url_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season, 'episode': self.nextep_episode}
+		url_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season,
+					'episode': self.nextep_episode}
 		Sources().playback_prep(url_params)
 
 	def play_random_episode(self):

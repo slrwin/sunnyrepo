@@ -733,6 +733,7 @@
                                     <aligny>top</aligny>
                                     <textcolor>FF1F2020</textcolor>
                                     <label>$INFO[ListItem.Property(text)]</label>
+                                    <autoscroll>false</autoscroll>
                                 </control>
                             </focusedlayout>
                         </control>
@@ -825,6 +826,7 @@
                                     <aligny>top</aligny>
                                     <textcolor>FF1F2020</textcolor>
                                     <label>$INFO[ListItem.Property(text)]</label>
+                                    <autoscroll>false</autoscroll>
                                 </control>
                             </focusedlayout>
                         </control>
@@ -917,6 +919,7 @@
                                     <aligny>top</aligny>
                                     <textcolor>FF1F2020</textcolor>
                                     <label>$INFO[ListItem.Property(text)]</label>
+                                    <autoscroll>false</autoscroll>
                                 </control>
                             </focusedlayout>
                         </control>
@@ -1009,6 +1012,7 @@
                                     <aligny>top</aligny>
                                     <textcolor>FF1F2020</textcolor>
                                     <label>$INFO[ListItem.Property(text)]</label>
+                                    <autoscroll>false</autoscroll>
                                 </control>
                             </focusedlayout>
                         </control>

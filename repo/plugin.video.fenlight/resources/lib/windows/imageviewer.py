@@ -2,10 +2,8 @@
 from windows.base_window import BaseDialog, window_manager, json, select_dialog
 from indexers.people import person_data_dialog
 from modules.settings import download_directory
-from modules.kodi_utils import get_addon_fanart, nextpage
+from modules.kodi_utils import default_addon_fanart, nextpage
 # from modules.kodi_utils import logger
-
-fanart = get_addon_fanart()
 
 class ThumbImageViewer(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -109,7 +107,7 @@ class ThumbImageViewer(BaseDialog):
 
 	def set_properties(self):
 		self.setProperty('page_no', str(self.current_page))
-		self.setProperty('fanart', fanart)
+		self.setProperty('fanart', default_addon_fanart)
 
 class ImageViewer(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -146,4 +144,4 @@ class ImageViewer(BaseDialog):
 		self.item_list = list(builder())
 
 	def set_properties(self):
-		self.setProperty('fanart', fanart)
+		self.setProperty('fanart', default_addon_fanart)

@@ -29,7 +29,6 @@ def ad_cloud(folder_id=None):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': default_ad_icon, 'poster': default_ad_icon, 'thumb': default_ad_icon, 'fanart': fanart, 'banner': default_ad_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				yield (url, listitem, True)
 			except: pass
@@ -61,7 +60,6 @@ def browse_ad_cloud(folder):
 				listitem.setArt({'icon': default_ad_icon, 'poster': default_ad_icon, 'thumb': default_ad_icon, 'fanart': fanart, 'banner': default_ad_icon})
 				info_tag = listitem.getVideoInfoTag()
 				info_tag.setPlot(' ')
-				# info_tag.setMediaType('video')
 				yield (url, listitem, False)
 			except: pass
 	try: links = [i for i in json.loads(folder) if i['filename'].lower().endswith(tuple(extensions))]
