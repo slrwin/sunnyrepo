@@ -75,7 +75,7 @@
         </assets>
         <news>INFO: For latest changes see Changelog within Tools of add-on.</news>
     </extension>
-</addon><addon id="repository.sunnyrepo" name="Sunny Repo" version="2.0.5" provider-name="slrwin">
+</addon><addon id="repository.sunnyrepo" name="Sunny Repo" version="2.0.6" provider-name="slrwin">
 	<extension point="xbmc.addon.repository" name="sunnyrepo">
 		<dir>
 			<info compressed="false">
@@ -278,28 +278,28 @@
 				https://raw.githubusercontent.com/Goldenfreddy0703/repository.otaku/master/repo/zips/
 			</datadir>
 		</dir>
-		</extension>
-		<extension point="xbmc.addon.metadata">
-			<summary>
-				sunnyrepo
-			</summary>
-			<description>
-				Sunny Repo - Un-official Kodi addons repository
-			</description>
-			<disclaimer>
-			</disclaimer>
-			<platform>
-				all
-			</platform>
-			<assets>
-				<icon>
-					icon.png
-				</icon>
-				<fanart>
-					fanart.jpg
-				</fanart>
-			</assets>
-		</extension>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>
+			sunnyrepo
+		</summary>
+		<description>
+			Sunny Repo - Un-official Kodi addons repository
+		</description>
+		<disclaimer>
+		</disclaimer>
+		<platform>
+			all
+		</platform>
+		<assets>
+			<icon>
+				icon.png
+			</icon>
+			<fanart>
+				fanart.jpg
+			</fanart>
+		</assets>
+	</extension>
 </addon><addon id="script.ezmaintenanceplus" name="EZ Maintenance+" version="2022.06.21" provider-name="aenema, peno">
   <requires>
     <import addon="script.module.requests" version="1.0.0" />
