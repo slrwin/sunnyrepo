@@ -108,6 +108,7 @@ class Extras(BaseDialog):
 		if action in self.selection_actions:
 			try: chosen_var = self.get_listitem(self.control_id).getProperty(self.item_action_dict[self.control_id])
 			except: return
+			if not chosen_var: return
 			position = self.get_position(self.control_id)
 			if self.control_id in items_list_ids:
 				self.set_current_params()

@@ -176,6 +176,13 @@ class Discover(BaseDialog):
 		choice = self.selection_dialog(self.chosen_item['label'], [{'name': i['name']} for i in sort_by_list], sort_by_list)
 		if choice != None: self.set_key_values(self.chosen_item['url_insert'] % choice['id'], choice['name'])
 
+	def released(self):
+		current_attribute_value = self.get_attribute(self, self.chosen_item['display_key'])
+		current_date = tmdb_api.get_current_date()
+		if not current_attribute_value or current_attribute_value == 'False': choice = {'name': 'True', 'id': current_date}
+		else: choice = {'name': 'False', 'id': current_date}
+		self.set_key_values(self.chosen_item['url_insert_%s' % self.media_type] % choice['id'], choice['name'])
+
 	def adult(self):
 		current_attribute_value = self.get_attribute(self, self.chosen_item['display_key'])
 		if not current_attribute_value or current_attribute_value == 'True': choice = {'name': 'False', 'id': 'false'}
@@ -203,6 +210,9 @@ class Discover(BaseDialog):
 			elif key == 'with_year_end':
 				if ignore_year_end: continue
 				label_extend = values['name_value'] % attribute_value
+			elif key == 'with_released':
+				if attribute_value == 'True': label_extend = values['name_value']
+				else: continue
 			elif key == 'with_adult':
 				if attribute_value == 'True': label_extend = values['name_value']
 				else: continue

@@ -27,6 +27,8 @@ API_ENDPOINT = 'https://api.trakt.tv/%s'
 timeout = 20
 
 def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, method=None, pagination=False, page_no=1):
+	logger('method', method)
+	logger('data', data)
 	def send_query():
 		resp = None
 		if with_auth:

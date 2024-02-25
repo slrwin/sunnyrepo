@@ -440,10 +440,6 @@ def color_choice(params):
 	return open_window(('windows.color', 'SelectColor'), 'color.xml', current_setting=params.get('current_setting', None))
 
 def options_menu_choice(params, meta=None):
-	def strip_bold(_str):
-		return _str.replace('[B]', '').replace('[/B]', '')
-	def _builder():
-		for item in listing: yield {'line1': item[0], 'line2': item[1] or item[0], 'icon': poster}
 	params_get = params.get
 	tmdb_id, content, poster, season_poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None), params_get('season_poster', None)
 	is_external, from_extras = params_get('is_external') in (True, 'True', 'true'), params_get('from_extras', 'false') == 'true'
@@ -524,7 +520,7 @@ def options_menu_choice(params, meta=None):
 	listing_append(('Open Tools', '', 'open_tools'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Open External Scraper Settings', '', 'open_external_scraper_settings'))
 	listing_append(('Open Settings', '', 'open_settings'))
-	list_items = list(_builder())
+	list_items = [{'line1': item[0], 'line2': item[1] or item[0], 'icon': poster} for item in listing]
 	heading = rootname or 'Options...'
 	kwargs = {'items': json.dumps(list_items), 'heading': heading, 'multi_line': 'true'}
 	choice = select_dialog([i[2] for i in listing], **kwargs)

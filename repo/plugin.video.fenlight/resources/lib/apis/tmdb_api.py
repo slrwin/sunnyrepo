@@ -200,7 +200,7 @@ def tmdb_tv_popular_today(page_no):
 def tmdb_tv_premieres(page_no):
 	current_date, previous_date = get_dates(31, reverse=True)
 	string = 'tmdb_tv_premieres_%s' % page_no
-	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&first_air_date.gte=%s&first_air_date.lte=%s&page=%s' \
+	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&first_air_date.gte=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, tmdb_api_key, previous_date, current_date, page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
@@ -223,25 +223,26 @@ def tmdb_tv_upcoming(page_no):
 
 def tmdb_tv_genres(genre_id, page_no):
 	string = 'tmdb_tv_genres_%s_%s' % (genre_id, page_no)
-	url = '%s/discover/tv?api_key=%s&with_genres=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&release_date.lte=%s&page=%s' \
+	url = '%s/discover/tv?api_key=%s&with_genres=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&first_air_date.lte=%s&page=%s' \
 							% (base_url, tmdb_api_key, genre_id, get_current_date(), page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_languages(language, page_no):
 	string = 'tmdb_tv_languages_%s_%s' % (language, page_no)
-	url = '%s/discover/tv?api_key=%s&language=en-US&include_null_first_air_dates=false&with_original_language=%s&release_date.lte=%s&page=%s' \
+	url = '%s/discover/tv?api_key=%s&language=en-US&include_null_first_air_dates=false&with_original_language=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, tmdb_api_key, language, get_current_date(), page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_networks(network_id, page_no):
 	string = 'tmdb_tv_networks_%s_%s' % (network_id, page_no)
-	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&with_networks=%s&release_date.lte=%s&page=%s' \
+	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&with_networks=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, tmdb_api_key, network_id, get_current_date(), page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_providers(provider, page_no):
 	string = 'tmdb_tv_providers_%s_%s' % (provider, page_no)
-	url = '%s/discover/tv?api_key=%s&watch_region=US&with_watch_providers=%s&vote_count.gte=100&page=%s' % (base_url, tmdb_api_key, provider, page_no)
+	url = '%s/discover/tv?api_key=%s&watch_region=US&with_watch_providers=%s&include_null_first_air_dates=false&vote_count.gte=100&first_air_date.lte=%s&page=%s' \
+				% (base_url, tmdb_api_key, provider, get_current_date(), page_no)
 	return lists_cache_object(get_data, string, url, json=False, expiration=EXPIRY_2_DAYS)
 
 def tmdb_tv_year(year, page_no):

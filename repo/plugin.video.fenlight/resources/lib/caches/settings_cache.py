@@ -162,6 +162,13 @@ def set_from_list(params):
 	setting_value = new_value[1]
 	set_setting(setting_id, setting_value)
 
+def set_source_folder_path(params):
+	setting_id = params['setting_id']
+	current_setting = get_setting('fenlight.%s' % setting_id)
+	if current_setting not in (None, 'None', ''):
+		if confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_setting(setting_id, 'None')
+	return set_path(params) 
+
 def default_setting_values(setting_id):
 	return [i for i in default_settings() if i['setting_id'] == setting_id][0]
 

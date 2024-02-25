@@ -10,7 +10,7 @@ from modules.utils import jsondate_to_datetime, datetime_workaround
 get_infolabel, run_plugin, external, run_addon = kodi_utils.get_infolabel, kodi_utils.run_plugin, kodi_utils.external, kodi_utils.run_addon
 pause_services_prop, xbmc_monitor, xbmc_player, userdata_path = kodi_utils.pause_services_prop, kodi_utils.xbmc_monitor, kodi_utils.xbmc_player, kodi_utils.userdata_path
 firstrun_update_prop, get_window_id, make_directories = kodi_utils.firstrun_update_prop, kodi_utils.get_window_id, kodi_utils.make_directories
-logger, close_dialog = kodi_utils.logger, kodi_utils.close_dialog
+logger, close_dialog, kodi_version, ok_dialog = kodi_utils.logger, kodi_utils.close_dialog, kodi_utils.kodi_version, kodi_utils.ok_dialog
 get_property, set_property, clear_property, get_visibility = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property, kodi_utils.get_visibility
 kodi_refresh, current_skin_prop, notification = kodi_utils.kodi_refresh, kodi_utils.current_skin_prop, kodi_utils.notification
 trakt_sync_interval, auto_start, update_action, update_delay = settings.trakt_sync_interval, settings.auto_start, settings.update_action, settings.update_delay
@@ -33,6 +33,18 @@ class CheckSettings:
 		logger('Fen Light', 'CheckSettingsFile Service Starting')
 		sync_settings()
 		return logger('Fen Light', 'CheckSettingsFile Service Finished')
+
+class RemoveOldDatabases:
+	def run(self):
+		logger('Fen Light', 'RemoveOldDatabases Service Starting')
+		remove_old_databases()
+		return logger('Fen Light', 'RemoveOldDatabases Service Finished')
+
+class CheckKodiVersion:
+	def run(self):
+		logger('Fen Light', 'CheckKodiVersion Service Starting')
+		if kodi_version() < 20: ok_dialog('Fen Light', 'Kodi 20 or above required[CR]Please update Kodi or uninstall Fen Light')
+		return logger('Fen Light', 'CheckKodiVersion Service Finished')
 
 class CustomActions:
 	def run(self):
@@ -87,12 +99,6 @@ class CustomFonts:
 		try: del player
 		except: pass
 		return logger('Fen Light', 'CustomFonts Service Finished')
-
-class RemoveOldDatabases:
-	def run(self):
-		logger('Fen Light', 'RemoveOldDatabases Service Starting')
-		remove_old_databases()
-		return logger('Fen Light', 'RemoveOldDatabases Service Finished')
 
 class TraktMonitor:
 	def run(self):

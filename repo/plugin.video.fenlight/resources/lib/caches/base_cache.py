@@ -9,7 +9,8 @@ delete_file, get_property, set_property, clear_property = kodi_utils.delete_file
 notification, confirm_dialog, ok_dialog, open_file = kodi_utils.notification, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.open_file
 path_exists, list_dirs, progress_dialog, make_directory = kodi_utils.path_exists, kodi_utils.list_dirs, kodi_utils.progress_dialog, kodi_utils.make_directory
 databases_path = path_join(userdata_path, 'databases/')
-current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db', 'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db')
+current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db',
+				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db')
 database_path_raw = path_join(userdata_path, 'databases')
 navigator_db = translatePath(path_join(database_path_raw, 'navigator.db'))
 watched_db = translatePath(path_join(database_path_raw, 'watched.db'))

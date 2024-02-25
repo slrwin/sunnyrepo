@@ -12,9 +12,10 @@ class FenLightMonitor(xbmc_monitor):
 	def startServices(self):
 		service_functions.MakeDatabases().run()
 		service_functions.CheckSettings().run()
+		service_functions.RemoveOldDatabases().run()
+		service_functions.CheckKodiVersion().run()
 		Thread(target=service_functions.CustomActions().run).start()
 		Thread(target=service_functions.CustomFonts().run).start()
-		service_functions.RemoveOldDatabases().run()
 		Thread(target=service_functions.TraktMonitor().run).start()
 		Thread(target=service_functions.UpdateCheck().run).start()
 		service_functions.AutoStart().run()

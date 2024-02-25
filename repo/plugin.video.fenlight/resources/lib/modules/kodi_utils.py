@@ -11,8 +11,10 @@ from threading import Thread, activeCount
 from urllib.parse import unquote, unquote_plus, urlencode, quote, parse_qsl, urlparse
 from modules import icons
 
+try: xbmc_actor = xbmc.Actor
+except: xbmc_actor = None
 addon_object = xbmcaddon.Addon('plugin.video.fenlight')
-player, xbmc_player, numeric_input, xbmc_monitor, translatePath, xbmc_actor = xbmc.Player(), xbmc.Player, 1, xbmc.Monitor, xbmcvfs.translatePath, xbmc.Actor
+player, xbmc_player, numeric_input, xbmc_monitor, translatePath = xbmc.Player(), xbmc.Player, 1, xbmc.Monitor, xbmcvfs.translatePath
 ListItem, getSkinDir, log, getCurrentWindowId, Window = xbmcgui.ListItem, xbmc.getSkinDir, xbmc.log, xbmcgui.getCurrentWindowId, xbmcgui.Window
 File, exists, copy, delete, rmdir, rename = xbmcvfs.File, xbmcvfs.exists, xbmcvfs.copy, xbmcvfs.delete, xbmcvfs.rmdir, xbmcvfs.rename
 get_infolabel, get_visibility, execute_JSON, window_xml_dialog = xbmc.getInfoLabel, xbmc.getCondVisibility, xbmc.executeJSONRPC, xbmcgui.WindowXMLDialog

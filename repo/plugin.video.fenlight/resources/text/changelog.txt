@@ -1,6 +1,12 @@
 ++
 
 
+[COLOR dodgerblue][B]Version 1.0.31[/B][/COLOR]
+- Added Kodi version check to startup services.
+- Added "Released Only" to Discover options for Movies/TV Shows.
+- Other changes/fixes.
+
+
 [COLOR dodgerblue][B]Version 1.0.30[/B][/COLOR]
 - Added Settings->Navigation->"Include Adult Results from Media Searches". Defaults to DISABLED.
 - Removed "Autoscrape Next Episode".
