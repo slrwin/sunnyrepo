@@ -252,6 +252,9 @@ def watched_indicators():
 def nextep_include_unwatched():
 	return int(get_setting('fenlight.nextep.include_unwatched', '0'))
 
+def nextep_airing_today():
+	return get_setting('fenlight.nextep.airing_today', 'false') == 'true'
+
 def nextep_include_unaired():
 	return get_setting('fenlight.nextep.include_unaired', 'false') == 'true'
 

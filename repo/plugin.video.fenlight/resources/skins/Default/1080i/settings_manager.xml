@@ -779,6 +779,14 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Sort Airing Today to Top</label>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.airing_today)]</property>
+                        <property name="setting_description">Enable this to sort episodes airing today to the top of the Next Episodes list.</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=nextep.airing_today)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
                         <label>Include Unaired Episodes When Within 7 Days</label>
                         <property name="setting_type">boolean</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.include_unaired)]</property>

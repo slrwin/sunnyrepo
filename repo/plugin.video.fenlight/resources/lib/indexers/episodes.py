@@ -5,11 +5,12 @@ from modules import kodi_utils, settings, watched_status as ws
 from modules.watched_status import get_hidden_progress_items
 from modules.metadata import tvshow_meta, episodes_meta, all_episodes_meta
 from modules.utils import jsondate_to_datetime, adjust_premiered_date, make_day, get_datetime, title_key, date_difference, make_thread_list_enumerate
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 set_view_mode, external, home, sys = kodi_utils.set_view_mode, kodi_utils.external, kodi_utils.home, kodi_utils.sys
 add_items, set_content, set_sort_method, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.set_sort_method, kodi_utils.end_directory
 date_offset_info, default_all_episodes, nextep_include_unwatched = settings.date_offset, settings.default_all_episodes, settings.nextep_include_unwatched
+nextep_airing_today = settings.nextep_airing_today
 nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep_include_unaired, settings.single_ep_display_format, settings.widget_hide_watched
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
 get_property = kodi_utils.get_property
@@ -86,7 +87,7 @@ def build_episode_list(params):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'season.poster': season_poster,
 								'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
-				set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'IsPlayable': 'false', 'episode_type': episode_type})
+				set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'episode_type': episode_type})
 				yield (url_params, listitem, False)
 			except: pass
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Episodes'
@@ -234,12 +235,12 @@ def build_single_episode(list_type, params={}):
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo,
 							'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
-			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'IsPlayable': 'false', 'episode_type': episode_type})
+			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'episode_type': episode_type})
 			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
 							'unaired': unaired, 'last_played': ep_data_get('last_played', resinsert), 'sort_order': string(_position), 'unwatched': ep_data_get('unwatched')})
 		except: pass
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Episodes'
-	item_list, unwatched = [], []
+	item_list, airing_today, unwatched = [], [], []
 	resinsert = ''
 	item_list_append = item_list.append
 	all_episodes, watched_indicators, use_minimal_media, display_format = default_all_episodes(), watched_indicators_info(), use_minimal_media_info(), ep_display_format(is_external)
@@ -285,12 +286,18 @@ def build_single_episode(list_type, params={}):
 	if list_type_starts_with('next_'):
 		try: item_list = sorted(item_list, key=lambda i: jsondate_to_datetime_function(i['last_played'], resformat), reverse=True)
 		except: pass
+		if nextep_airing_today():
+			try:
+				airing_today = [i for i in item_list
+								if date_difference_function(current_date, jsondate_to_datetime_function(i.get('first_aired', '2100-12-31'), '%Y-%m-%d').date(), 0)]
+				item_list = [i for i in item_list if not i in airing_today]
+			except: pass
 		if unwatched:
 			unwatched = [i for i in item_list if i['unwatched']]
 			item_list = [i for i in item_list if not i in unwatched]
 		unaired = [i for i in item_list if i['unaired']]
 		aired = [i for i in item_list if not i in unaired]
-		item_list = aired + unaired + unwatched
+		item_list = airing_today + aired + unaired + unwatched
 	else:
 		item_list.sort(key=lambda i: i['sort_order'])
 		if list_type_compare in ('trakt_calendar', 'trakt_recently_aired'):

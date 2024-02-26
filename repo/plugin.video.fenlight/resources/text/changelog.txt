@@ -1,6 +1,12 @@
 ++
 
 
+[COLOR dodgerblue][B]Version 1.0.32[/B][/COLOR]
+- Added Settings->Navigation->Next Episodes->"Sort Airing Today to Top" for Next Episodes list. Will sort any episodes airing that day to the top of the list.
+- Changed default focused button on Next Episode notification dialog to "Play".
+- Other changes/fixes.
+
+
 [COLOR dodgerblue][B]Version 1.0.31[/B][/COLOR]
 - Added Kodi version check to startup services.
 - Added "Released Only" to Discover options for Movies/TV Shows.
