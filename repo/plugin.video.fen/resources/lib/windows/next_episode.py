@@ -25,7 +25,7 @@ class NextEpisode(BaseDialog):
 		self.set_properties()
 
 	def onInit(self):
-		self.setFocusId(10)
+		self.setFocusId(11)
 		self.monitor()
 
 	def run(self):

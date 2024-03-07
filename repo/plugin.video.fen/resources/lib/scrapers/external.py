@@ -14,6 +14,7 @@ season_display, show_display, remain_str, pack_display = ls(32537), ls(32089), l
 pack_check = (season_display, show_display)
 debrid_runners = {'Real-Debrid': ('Real-Debrid', RD_check), 'Premiumize.me': ('Premiumize.me', PM_check), 'AllDebrid': ('AllDebrid', AD_check)}
 sd_check = ('SD', 'CAM', 'TELE', 'SYNC')
+correct_pack_sizes = ('torrentio', 'elfhosted', 'selfhosted')
 
 class source:
 	def __init__(self, meta, source_dict, debrid_torrents, internal_scrapers, prescrape_sources, progress_dialog, disabled_ext_ignored=False):
@@ -210,7 +211,7 @@ class source:
 					else: quality, extraInfo = get_file_info(url=i_get('url'))
 					try:
 						size = i_get('size')
-						if 'package' in i and provider != 'torrentio':
+						if 'package' in i and provider not in correct_pack_sizes:
 							if i_get('package') == 'season': divider = self.season_divider
 							else: divider = self.show_divider
 							size = float(size) / divider

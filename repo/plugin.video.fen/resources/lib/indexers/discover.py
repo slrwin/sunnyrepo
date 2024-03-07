@@ -341,7 +341,6 @@ class Discover:
 					listitem.setLabel(display)
 					listitem.setArt({'icon': default_icon, 'poster': default_icon, 'thumb': default_icon, 'fanart': fanart, 'banner': default_icon})
 					info_tag = listitem.getVideoInfoTag()
-					# info_tag.setMediaType('video')
 					info_tag.setPlot(' ')
 					cm_append(('[B]%s[/B]' % remove_str,'RunPlugin(%s)'% build_url(remove_single_params)))
 					cm_append(('[B]%s[/B]' % clear_str,'RunPlugin(%s)'% build_url(remove_all_params)))
@@ -440,7 +439,6 @@ class Discover:
 		listitem.setLabel(list_name)
 		listitem.setArt({'icon': icon, 'poster': icon, 'thumb': icon, 'fanart': fanart, 'banner': icon})
 		info_tag = listitem.getVideoInfoTag()
-		# info_tag.setMediaType('video')
 		info_tag.setPlot(' ')
 		add_item(handle, url, listitem, isFolder)
 
@@ -497,10 +495,10 @@ class Discover:
 			if 'rating_votes' in values: name += '(%s) ' % values['rating_votes']
 		elif 'rating_votes' in values: name += '| %s+ %s ' % (values['rating_votes'], ls(32623).lower())
 		if 'cast' in values: name += '| %s %s ' % (ls(32664).lower(), values['cast'])
-		if 'with_keywords' in values: name += '| %s %s: %s ' % (ls(32188).lower(), ls(32657).lower(), values['with_keywords'])
+		if 'with_keywords' in values: name += '| %s: %s ' % (inc_str.lower() % ls(32657).lower(), values['with_keywords'])
 		if 'without_keywords' in values: name += '| %s %s: %s ' % (ls(32189).lower(), ls(32657).lower(), values['without_keywords'])
 		if 'sort_by' in values: name += '| %s ' % values['sort_by']
-		if 'adult' in values and values['adult'] == ls(32859): name += '| %s %s ' % (ls(32188).lower(), ls(32665).lower())
+		if 'adult' in values and values['adult'] == ls(32859): name += '| %s ' % (inc_str.lower() % ls(32665).lower())
 		self.discover_params['name'] = name
 
 	def _position(self, key):

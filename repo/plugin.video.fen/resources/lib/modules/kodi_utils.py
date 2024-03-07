@@ -13,9 +13,11 @@ from threading import Thread, activeCount
 from urllib.parse import unquote, unquote_plus, urlencode, quote, parse_qsl, urlparse
 from modules import icons
 
+try: xbmc_actor = xbmc.Actor
+except: xbmc_actor = None
 addon_object = xbmcaddon.Addon('plugin.video.fen')
 getLocalizedString = addon_object.getLocalizedString
-player, xbmc_player, numeric_input, xbmc_monitor, translatePath, xbmc_actor = xbmc.Player(), xbmc.Player, 1, xbmc.Monitor, xbmcvfs.translatePath, xbmc.Actor
+player, xbmc_player, numeric_input, xbmc_monitor, translatePath = xbmc.Player(), xbmc.Player, 1, xbmc.Monitor, xbmcvfs.translatePath
 ListItem, getSkinDir, log, getCurrentWindowId, Window = xbmcgui.ListItem, xbmc.getSkinDir, xbmc.log, xbmcgui.getCurrentWindowId, xbmcgui.Window
 File, exists, copy, delete, rmdir, rename = xbmcvfs.File, xbmcvfs.exists, xbmcvfs.copy, xbmcvfs.delete, xbmcvfs.rmdir, xbmcvfs.rename
 get_infolabel, get_visibility, execute_JSON, window_xml_dialog = xbmc.getInfoLabel, xbmc.getCondVisibility, xbmc.executeJSONRPC, xbmcgui.WindowXMLDialog
@@ -57,7 +59,6 @@ int_window_prop, pause_services_prop, suppress_sett_dict_prop, highlight_prop = 
 custom_context_main_menu_prop, custom_context_prop, sett_addoninfo_active_prop = 'fen.custom_context_main_menu', 'fen.custom_context_menu', 'fen.setting_addoninfo_active'
 pause_settings_prop, use_skin_fonts_prop, custom_info_prop = 'fen.pause_settings', 'fen.use_skin_fonts', 'fen.custom_info_dialog'
 current_skin_prop, current_font_prop = 'fen.current_skin', 'fen.current_font'
-playback_int_prop, playback_int_run_prop = 'fen.playback_int', 'fen.playback_int.run'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
 playlist_type_dict = {'music': 0, 'video': 1}
@@ -96,25 +97,6 @@ default_highlights = (('hoster.identify', 'FF0166FF'), ('torrent.identify', 'FFF
 					('provider.debrid_cloud_colour', 'FF7A01CC'), ('provider.folders_colour', 'FFB36B00'), ('scraper_4k_highlight', 'FFFF00FE'),
 					('scraper_1080p_highlight', 'FFE6B800'), ('scraper_720p_highlight', 'FF3C9900'), ('scraper_SD_highlight', 'FF0166FF'), ('scraper_single_highlight', 'FF008EB2'),
 					('highlight', 'FFC0C0C0'), ('scraper_flag_identify_colour', 'FF7C7C7C'), ('scraper_result_identify_colour', 'FFFFFFFF'))
-
-def get_playback_int():
-	count = 0
-	while not get_property(playback_int_run_prop) == 'true':
-		count += 20
-		if count == 10000:
-			set_playback_int()
-			break
-		sleep(20)
-	return get_property(playback_int_prop)
-
-def check_playback_int(url_playback_int):
-	if url_playback_int != get_playback_int(): return False
-	return True
-
-def set_playback_int():
-	if get_property(playback_int_run_prop) != 'true':
-		set_property(playback_int_prop, str(random.randint(1, 500)))
-		set_property(playback_int_run_prop, 'true')
 
 def get_icon(image_name):
 	return img_url % getattr(icons, image_name, 'I1JJhji')
@@ -380,7 +362,7 @@ def make_global_list():
 	global global_list
 	global_list = []
 
-def progress_dialog(heading='', icon=addon_icon):
+def progress_dialog(heading=32036, icon=addon_icon):
 	from windows.base_window import create_window
 	if isinstance(heading, int): heading = local_string(heading)
 	progress_dialog = create_window(('windows.progress', 'Progress'), 'progress.xml', heading=heading, icon=icon)
@@ -394,7 +376,7 @@ def select_dialog(function_list, **kwargs):
 	if kwargs.get('multi_choice', 'false') == 'true': return [function_list[i] for i in selection]
 	return function_list[selection]
 
-def confirm_dialog(heading='', text=32580, ok_label=32839, cancel_label=32840, default_control=11):
+def confirm_dialog(heading=32036, text=32580, ok_label=32839, cancel_label=32840, default_control=11):
 	from windows.base_window import open_window
 	if isinstance(heading, int): heading = local_string(heading)
 	if isinstance(text, int): text = local_string(text)
@@ -403,7 +385,7 @@ def confirm_dialog(heading='', text=32580, ok_label=32839, cancel_label=32840, d
 	kwargs = {'heading': heading, 'text': text, 'ok_label': ok_label, 'cancel_label': cancel_label, 'default_control': default_control}
 	return open_window(('windows.default_dialogs', 'Confirm'), 'confirm.xml', **kwargs)
 
-def ok_dialog(heading='', text=32760, ok_label=32839):
+def ok_dialog(heading=32036, text=32760, ok_label=32839):
 	from windows.base_window import open_window
 	if isinstance(heading, int): heading = local_string(heading)
 	if isinstance(text, int): text = local_string(text)
@@ -411,7 +393,7 @@ def ok_dialog(heading='', text=32760, ok_label=32839):
 	kwargs = {'heading': heading, 'text': text, 'ok_label': ok_label}
 	return open_window(('windows.default_dialogs', 'OK'), 'ok.xml', **kwargs)
 
-def show_text(heading, text=None, file=None, font_size='small', kodi_log=False):
+def show_text(heading=32036, text=None, file=None, font_size='small', kodi_log=False):
 	from windows.base_window import open_window
 	if isinstance(heading, int): heading = local_string(heading)
 	if isinstance(text, int): text = local_string(text)

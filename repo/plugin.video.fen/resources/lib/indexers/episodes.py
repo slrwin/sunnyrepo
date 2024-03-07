@@ -10,7 +10,7 @@ from modules.utils import jsondate_to_datetime, adjust_premiered_date, make_day,
 remove_keys, set_view_mode, external, sys = kodi_utils.remove_keys, kodi_utils.set_view_mode, kodi_utils.external, kodi_utils.sys
 add_items, set_content, set_sort_method, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.set_sort_method, kodi_utils.end_directory
 ls, make_listitem, build_url, dict_removals, sys = kodi_utils.local_string, kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.episode_dict_removals, kodi_utils.sys
-xbmc_actor, set_category, get_property, get_playback_int = kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.get_property, kodi_utils.get_playback_int
+xbmc_actor, set_category, get_property = kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.get_property
 get_art_provider, show_specials, calendar_sort_order, ignore_articles = settings.get_art_provider, settings.show_specials, settings.calendar_sort_order, settings.ignore_articles
 metadata_user_info, watched_indicators_info, show_unaired_info = settings.metadata_user_info, settings.watched_indicators, settings.show_unaired
 nextep_content_settings, nextep_display_settings = settings.nextep_content_settings, settings.nextep_display_settings
@@ -57,7 +57,7 @@ def build_episode_list(params):
 											'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_external': is_external})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 				play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})
-				url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'playback_int': playback_int})
+				url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})
 				if not episode_date or current_date < episode_date:
 					if not show_unaired: continue
 					if season != 0:
@@ -129,7 +129,6 @@ def build_episode_list(params):
 	meta_user_info, watched_indicators, show_unaired, adjust_hours = metadata_user_info(), watched_indicators_info(), show_unaired_info(), date_offset_info()
 	current_date, watched_info, bookmarks = get_datetime_function(), get_watched_info(watched_indicators), get_bookmarks(watched_indicators, 'episode')
 	watched_title = trakt_str if watched_indicators == 1 else fen_str
-	playback_int = get_playback_int()
 	fanart_enabled, hide_watched = meta_user_info['extra_fanart_enabled'], is_external and meta_user_info['widget_hide_watched']
 	meta = tv_meta_function('tmdb_id', params.get('tmdb_id'), meta_user_info, current_date)
 	meta_get = meta.get
@@ -265,7 +264,7 @@ def build_single_episode(list_type, params={}):
 										'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_external': is_external, 'in_progress_menu': 'true'})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 			play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})
-			url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'playback_int': playback_int})
+			url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})
 			cm_append((extras_str, run_plugin % extras_params))
 			cm_append((options_str, run_plugin % options_params))
 			cm_append((play_options_str, run_plugin % play_options_params))
@@ -336,7 +335,6 @@ def build_single_episode(list_type, params={}):
 	fanart_enabled, hide_watched, show_all_episodes = meta_user_info['extra_fanart_enabled'], is_external and meta_user_info['widget_hide_watched'], all_episodes in (1, 2)
 	poster_main, poster_backup, fanart_main, fanart_backup, clearlogo_main, clearlogo_backup = art_keys
 	fanart_default = poster_main == 'poster2'
-	playback_int = get_playback_int()
 	category_name = _get_category_name()
 	if list_type == 'episode.next':
 		nextep_settings, nextep_disp_settings = nextep_content_settings(), nextep_display_settings()
@@ -387,7 +385,6 @@ def build_single_episode(list_type, params={}):
 			try:
 				airing_today = [i for i in item_list
 								if date_difference_function(current_date, jsondate_to_datetime_function(i.get('first_aired', '2100-12-31'), '%Y-%m-%d').date(), 0)]
-				airing_today = sorted(airing_today, key=lambda i: i.get('first_aired', '2100-12-31'))
 			except: pass
 			remainder = [i for i in item_list if not i in airing_today]
 			remainder = sorted(remainder, key=lambda i: func(i[sort_key]), reverse=sort_direction)

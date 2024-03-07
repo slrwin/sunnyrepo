@@ -13,7 +13,6 @@ ls, get_icon, notification, sleep, int_window_prop = kodi_utils.local_string, ko
 select_dialog, confirm_dialog, get_setting, close_all_dialog = kodi_utils.select_dialog, kodi_utils.confirm_dialog, kodi_utils.get_setting, kodi_utils.close_all_dialog
 json, show_busy_dialog, hide_busy_dialog, xbmc_player = kodi_utils.json, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.xbmc_player
 Thread, get_property, set_property, clear_property = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
-check_playback_int = kodi_utils.check_playback_int
 display_uncached_torrents, check_prescrape_sources, source_folders_directory = settings.display_uncached_torrents, settings.check_prescrape_sources, settings.source_folders_directory
 auto_play, active_internal_scrapers, provider_sort_ranks, audio_filters = settings.auto_play, settings.active_internal_scrapers, settings.provider_sort_ranks, settings.audio_filters
 results_format, results_style, results_xml_window_number, filter_status = settings.results_format, settings.results_style, settings.results_xml_window_number, settings.filter_status
@@ -60,7 +59,6 @@ class Sources():
 		params_get = self.params.get
 		self.play_type, self.background, self.prescrape = params_get('play_type', ''), params_get('background', 'false') == 'true', params_get('prescrape', self.prescrape) == 'true'
 		self.random, self.random_continual = params_get('random', 'false') == 'true', params_get('random_continual', 'false') == 'true'
-		# if not check_playback_int(params_get('playback_int')): return self._no_results()
 		if self.play_type:
 			if self.play_type == 'autoplay_nextep': self.autoplay_nextep = True
 			elif self.play_type == 'random_continual': self.autoplay_nextep = False

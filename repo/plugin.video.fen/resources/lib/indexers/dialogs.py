@@ -13,7 +13,7 @@ get_property, open_settings, set_property, get_icon, dialog = kodi_utils.get_pro
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
 img_url, sleep, manage_settings_reset, default_highlights = kodi_utils.img_url, kodi_utils.sleep, kodi_utils.manage_settings_reset, kodi_utils.default_highlights
 get_setting, set_setting, kodi_refresh, container_refresh_input = kodi_utils.get_setting, kodi_utils.set_setting, kodi_utils.kodi_refresh, kodi_utils.container_refresh_input
-json, ls, build_url, select_dialog, get_playback_int = kodi_utils.json, kodi_utils.local_string, kodi_utils.build_url, kodi_utils.select_dialog, kodi_utils.get_playback_int
+json, ls, build_url, select_dialog = kodi_utils.json, kodi_utils.local_string, kodi_utils.build_url, kodi_utils.select_dialog
 run_plugin, metadata_user_info, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.metadata_user_info, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window
 poster_empty, fanart_empty, clear_property, highlight_prop = kodi_utils.empty_poster, kodi_utils.addon_fanart, kodi_utils.clear_property, kodi_utils.highlight_prop
@@ -449,7 +449,6 @@ def playback_choice(params):
 			_process_params('', 'true', 'ignore_scrape_filters')
 			set_property('fs_filterless_search', 'true')
 	from modules.sources import Sources
-	play_params['playback_int'] = get_playback_int()
 	Sources().playback_prep(play_params)
 
 def set_quality_choice(params):
@@ -868,7 +867,7 @@ def options_menu_choice(params, meta=None):
 	choice = select_dialog([i[2] for i in listing], **kwargs)
 	if choice == None: return
 	if choice == 'playback':
-		return run_plugin({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'playback_int': get_playback_int()})
+		return run_plugin({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 	elif choice == 'extras':
 		return extras_menu_choice({'tmdb_id': tmdb_id, 'media_type': content, 'is_external': str(is_external)})
 	elif choice == 'mark_movie':

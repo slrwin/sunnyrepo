@@ -39,7 +39,6 @@ def person_direct_search(query):
 			listitem.setLabel(actor_name)
 			listitem.setArt({'icon': actor_image, 'poster': actor_image, 'thumb': actor_image, 'fanart': addon_fanart, 'banner': actor_image})
 			info_tag = listitem.getVideoInfoTag()
-			# info_tag.setMediaType('movie')
 			info_tag.setPlot(known_for)
 			yield (url, listitem, False)
 	query = unquote(query)

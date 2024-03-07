@@ -46,7 +46,6 @@ def pm_torrent_cloud(folder_id=None, folder_name=None):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': default_pm_icon, 'poster': default_pm_icon, 'thumb': default_pm_icon, 'fanart': fanart, 'banner': default_pm_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				yield (url, listitem, is_folder)
 			except: pass
@@ -93,7 +92,6 @@ def pm_transfers():
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': default_pm_icon, 'poster': default_pm_icon, 'thumb': default_pm_icon, 'fanart': fanart, 'banner': default_pm_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				yield (url, listitem, is_folder)
 			except: pass

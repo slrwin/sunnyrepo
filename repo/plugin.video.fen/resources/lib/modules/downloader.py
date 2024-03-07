@@ -350,7 +350,6 @@ def download_manager(params):
 				listitem.setLabel(clean_file_name(normalize(path)))
 				listitem.setArt({'fanart': addon_fanart})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('files')
 				info_tag.setPlot(' ')
 				yield (url, listitem, info[1])
 			except: pass

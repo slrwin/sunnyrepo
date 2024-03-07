@@ -38,7 +38,6 @@ def rd_torrent_cloud():
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': default_rd_icon, 'poster': default_rd_icon, 'thumb': default_rd_icon, 'fanart': fanart, 'banner': default_rd_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': clean_folder_name, 'iconImage': default_rd_icon,
 									'service': 'RD'}))
@@ -73,7 +72,6 @@ def rd_downloads():
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': default_rd_icon, 'poster': default_rd_icon, 'thumb': default_rd_icon, 'fanart': fanart, 'banner': default_rd_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': default_rd_icon,
 									'action': 'cloud.realdebrid_direct'}))
@@ -106,7 +104,6 @@ def browse_rd_cloud(folder_id):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'icon': default_rd_icon, 'poster': default_rd_icon, 'thumb': default_rd_icon, 'fanart': fanart, 'banner': default_rd_icon})
 				info_tag = listitem.getVideoInfoTag()
-				# info_tag.setMediaType('video')
 				info_tag.setPlot(' ')
 				listitem.setProperty('fen.context_main_menu_params', build_url({'mode': 'menu_editor.edit_menu_external', 'name': name, 'iconImage': default_rd_icon,
 									'action': 'cloud.realdebrid'}))

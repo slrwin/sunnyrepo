@@ -1,6 +1,11 @@
 [B]Please utilize Fen Tips (Tools->Tips for Fen Use) to catch up on any important new features. New features will be highlighted with a [COLOR chartreuse]NEW!!![/COLOR] label.[/B]
 
 
+
+[COLOR dodgerblue][B]Version 3.2.29[/B][/COLOR]
+- Added Kodi version check to startup services.
+- Fix incorrect episode size estimates on certain results.
+
 [COLOR dodgerblue][B]Version 3.2.28[/B][/COLOR]
 - Fix for Next Episode playback not honoring default action setting.
 
