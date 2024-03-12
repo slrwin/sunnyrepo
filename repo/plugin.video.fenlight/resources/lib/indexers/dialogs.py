@@ -607,7 +607,8 @@ def extras_menu_choice(params):
 															options_media_type=media_type, starting_position=params.get('starting_position', None))
 
 def media_extra_info_choice(params):
-	media_type, meta, extra_info, listings = params.get('media_type'), params.get('meta'), meta.get('extra_info', None), []
+	media_type, meta = params.get('media_type'), params.get('meta')
+	extra_info, listings = meta.get('extra_info', None), []
 	append = listings.append
 	try:
 		if media_type == 'movie':

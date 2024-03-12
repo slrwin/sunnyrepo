@@ -1,6 +1,9 @@
 ++
 
 
+[COLOR dodgerblue][B]Version 1.0.34[/B][/COLOR]
+- Quick fix for Extra Info in Extras window.
+
 [COLOR dodgerblue][B]Version 1.0.33[/B][/COLOR]
 - Added Kodi version check to startup services.
 - Added Choice of method for filtering results by size. Choose between Off, Line Speed or Max Filesize. You can also now set a minimum size.
