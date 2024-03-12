@@ -19,16 +19,22 @@ def build_season_list(params):
 		running_ep_count = total_aired_eps
 		for item in season_data:
 			try:
+				cm = []
+				cm_append = cm.append
 				listitem = make_listitem()
 				set_properties = listitem.setProperties
-				cm = []
-				cm_append, item_get = cm.append, item.get
+				item_get = item.get
 				overview, poster_path, air_date = item_get('overview'), item_get('poster_path'), item_get('air_date')
 				season_number, episode_count = item_get('season_number'), item_get('episode_count')
 				season_name = item_get('name', None)
 				title = item_get('name', None) or season_name_str % season_number
-				first_airdate, premiered = adjust_premiered_date_function(air_date, adjust_hours)
 				poster = tmdb_poster % poster_path if poster_path is not None else show_poster
+				try: year = air_date.split('-')[0]
+				except: year = show_year or '2050'
+				plot = overview or show_plot
+				first_airdate, premiered = adjust_premiered_date_function(air_date, adjust_hours)
+
+
 				if season_number == 0: unaired = False
 				elif episode_count == 0: unaired = True
 				elif season_number != total_seasons: unaired = False
@@ -40,9 +46,6 @@ def build_season_list(params):
 				elif not season_number == 0:
 					running_ep_count -= episode_count
 					if running_ep_count < 0: episode_count = running_ep_count + episode_count
-				try: year = air_date.split('-')[0]
-				except: year = show_year or '2050'
-				plot = overview or show_plot
 				if unaired: title = unaired_label % title
 				playcount, watched, unwatched = get_watched_status(watched_info, str_tmdb_id, season_number, episode_count)
 				try: progress = int((float(watched)/episode_count)*100)
@@ -56,8 +59,8 @@ def build_season_list(params):
 				if playcount:
 					if hide_watched: continue
 				elif not unaired:
-					cm_append(('[B]Mark Watched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_watched',
-														'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number})))
+						cm_append(('[B]Mark Watched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_watched',
+															'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number})))
 				if progress:
 					cm_append(('[B]Mark Unwatched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_unwatched',
 														'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number})))
@@ -81,7 +84,8 @@ def build_season_list(params):
 			except: pass
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Season'
 	watched_indicators, use_minimal_media, adjust_hours, hide_watched = watched_indicators_info(), use_minimal_media_info(), date_offset_info(), is_home and widget_hide_watched()
-	watched_info, current_date = get_watched_info(watched_indicators), get_datetime_function()
+	current_date = get_datetime_function()
+	watched_info, watched_title = get_watched_info(watched_indicators), 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'
@@ -89,12 +93,9 @@ def build_season_list(params):
 	str_tmdb_id, str_tvdb_id, rating, genre = string(tmdb_id), string(tvdb_id), meta_get('rating'), meta_get('genre')
 	cast, mpaa, votes, trailer, studio, country = meta_get('cast', []), meta_get('mpaa'), meta_get('votes'), string(meta_get('trailer')), meta_get('studio'), meta_get('country')
 	episode_run_time, season_data, total_seasons = meta_get('duration'), meta_get('season_data'), meta_get('total_seasons')
-	show_poster = meta_get('poster') or poster_empty
-	show_fanart = meta_get('fanart') or fanart_empty
-	show_clearlogo = meta_get('clearlogo') or ''
+	show_poster, show_fanart, show_clearlogo = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or ''
 	season_data = [i for i in season_data if not i['season_number'] == 0]
 	season_data.sort(key=lambda k: k['season_number'])
-	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	add_items(handle, list(_process()))
 	category_name = show_title
 	set_content(handle, content_type)

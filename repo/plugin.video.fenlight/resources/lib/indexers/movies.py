@@ -4,17 +4,15 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
 						get_current_timestamp, paginate_list, jsondate_to_datetime
-from modules.watched_status import get_watched_info_movie, get_watched_status_movie, get_bookmarks, get_progress_percent
+from modules.watched_status import get_watched_status_movie, get_progress_percent, get_media_info
 # logger = kodi_utils.logger
 
-make_listitem, build_url, nextpage_landscape = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape
+make_listitem, build_url, nextpage_landscape, random = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape, kodi_utils.random
 string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, kodi_utils.get_property
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
-progress_percent_function, get_watched_function, get_watched_info_function, random = get_progress_percent, get_watched_status_movie, get_watched_info_movie, kodi_utils.random
 poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.set_property
 sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
-meta_function, get_datetime_function, add_item, home = movie_meta, get_datetime, kodi_utils.add_item, kodi_utils.home
-jsondate_to_datetime_function = jsondate_to_datetime
+meta_function, add_item, home = movie_meta, kodi_utils.add_item, kodi_utils.home
 watched_indicators, use_minimal_media_info, widget_hide_next_page = settings.watched_indicators, settings.use_minimal_media_info, settings.widget_hide_next_page
 widget_hide_watched, extras_open_action, page_limit, paginate = settings.widget_hide_watched, settings.extras_open_action, settings.page_limit, settings.paginate
 run_plugin = 'RunPlugin(%s)'
@@ -113,21 +111,21 @@ class Movies:
 		try:
 			meta = meta_function(self.id_type, _id, self.current_date, self.current_time)
 			if not meta or 'blank_entry' in meta: return
-			meta_get = meta.get
-			premiered = meta_get('premiered')
-			first_airdate = jsondate_to_datetime_function(premiered, '%Y-%m-%d', True)
-			if not first_airdate or self.current_date < first_airdate: unaired = True
-			else: unaired = False
-			playcount = get_watched_function(self.watched_info, string(meta_get('tmdb_id')))
+			listitem = make_listitem()
 			cm = []
 			cm_append = cm.append
-			listitem = make_listitem()
 			set_properties = listitem.setProperties
 			clearprog_params, watched_status_params = '', ''
+			meta_get = meta.get
+			premiered = meta_get('premiered')
 			title, year = meta_get('title'), meta_get('year') or '2050'
 			tmdb_id, imdb_id = meta_get('tmdb_id'), meta_get('imdb_id')
 			poster, fanart, clearlogo = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or ''
-			progress = progress_percent_function(self.bookmarks, tmdb_id)
+			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
+			if not first_airdate or self.current_date < first_airdate: unaired = True
+			else: unaired = False
+			progress = get_progress_percent(self.bookmarks, tmdb_id)
+			playcount = get_watched_status_movie(self.watched_info, string(tmdb_id))
 			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'playcount': playcount,
@@ -172,9 +170,9 @@ class Movies:
 		except: pass
 
 	def worker(self):
-		self.current_date, self.current_time, self.watched_indicators = get_datetime_function(), get_current_timestamp(), watched_indicators()
-		self.watched_info, self.bookmarks = get_watched_info_function(self.watched_indicators), get_bookmarks(self.watched_indicators, 'movie')
-		self.open_extras, self.watched_title = extras_open_action('movie'), 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), watched_indicators()
+		(self.watched_info, self.bookmarks), self.watched_title = get_media_info(self.watched_indicators, 'movie'), 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		self.open_extras = extras_open_action('movie')
 		self.use_minimal_media = use_minimal_media_info()
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_movie_content, self.list))

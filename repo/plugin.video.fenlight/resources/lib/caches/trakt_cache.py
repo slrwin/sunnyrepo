@@ -10,6 +10,7 @@ WATCHED_INSERT = 'INSERT OR IGNORE INTO watched VALUES (?, ?, ?, ?, ?, ?)'
 WATCHED_DELETE = 'DELETE FROM watched WHERE db_type = ?'
 PROGRESS_INSERT = 'INSERT OR IGNORE INTO progress VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
 PROGRESS_DELETE = 'DELETE FROM progress WHERE db_type = ?'
+STATUS_INSERT = 'INSERT INTO watched_status VALUES (?, ?, ?)'
 BASE_DELETE = 'DELETE FROM %s'
 TC_BASE_GET = 'SELECT data FROM trakt_data WHERE id = ?'
 TC_BASE_SET = 'INSERT OR REPLACE INTO trakt_data (id, data) VALUES (?, ?)'
@@ -39,7 +40,7 @@ class TraktCache:
 
 trakt_cache = TraktCache()
 
-class TraktWatched():	
+class TraktWatched():
 	def set_bulk_movie_watched(self, insert_list):
 		self._delete(WATCHED_DELETE, ('movie',))
 		self._executemany(WATCHED_INSERT, insert_list)
@@ -55,6 +56,14 @@ class TraktWatched():
 	def set_bulk_tvshow_progress(self, insert_list):
 		self._delete(PROGRESS_DELETE, ('episode',))
 		self._executemany(PROGRESS_INSERT, insert_list)
+
+	def set_bulk_tvshow_status(self, insert_list):
+		# self._delete(BASE_DELETE % 'watched_status', ())
+		# self._execute(STATUS_INSERT, ('tvshow', '', insert_list))
+		dbcon = connect_database('trakt_db')
+		dbcon.execute(BASE_DELETE % 'watched_status')
+		dbcon.execute('VACUUM')
+		dbcon.execute(STATUS_INSERT, ('tvshow', 1, repr(insert_list)))
 
 	def _executemany(self, command, insert_list):
 		dbcon = connect_database('trakt_db')
@@ -156,7 +165,6 @@ def clear_all_trakt_cache_data(silent=False, refresh=True):
 	except: return False
 
 def default_activities():
-	'2020-01-01T00:00:01.000Z'
 	return {
 			'all': '2024-01-22T00:22:21.000Z',
 			'movies':

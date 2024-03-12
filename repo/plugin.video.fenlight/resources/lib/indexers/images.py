@@ -20,6 +20,7 @@ class Images():
 		elif self.mode == 'people_tagged_image_results': self.people_tagged_image_results()
 		elif self.mode == 'imdb_image_results': self.imdb_image_results()
 		elif self.mode == 'tmdb_image_results': self.tmdb_image_results()
+		elif self.mode == 'tmdb_media_image_results': self.tmdb_media_image_results()
 		elif self.mode == 'tmdb_people_image_results': self.tmdb_people_image_results()
 		elif self.mode == 'people_search_image_results': self.people_search_image_results()
 		elif self.mode == 'browser_image': self.browser_image(params['folder_path'])
@@ -114,6 +115,20 @@ class Images():
 					yield listitem
 				except: pass
 		all_images = self.params['all_images']
+		image_action = json.dumps({'mode': 'imageviewer', 'all_images': all_images})
+		self.list_items = list(builder())
+		self.next_page_params = {}
+
+	def tmdb_media_image_results(self):
+		def builder():
+			for item in image_info:
+				try:
+					listitem = make_listitem()
+					listitem.setProperties({'thumb': item[0], 'path': item[1], 'name': item[2], 'action': image_action})
+					yield listitem
+				except: pass
+		image_info = self.params['all_images']
+		all_images = [(i[1], i[2]) for i in image_info]
 		image_action = json.dumps({'mode': 'imageviewer', 'all_images': all_images})
 		self.list_items = list(builder())
 		self.next_page_params = {}

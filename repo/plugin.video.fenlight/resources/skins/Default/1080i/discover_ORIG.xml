@@ -15,20 +15,20 @@
         <!-- Filter Window -->
         <control type="group">
             <top>92</top>
-            <left>92</left>
+            <left>338</left>
             <animation type="WindowOpen" reversible="false">
                 <effect type="fade" end="100" time="200" />
             </animation>
             <control type="image">
                 <left>-2</left>
                 <top>-2</top>
-                <width>1736</width>
-                <height>907</height>
+                <width>1244</width>
+                <height>897</height>
                 <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
             </control>
             <control type="image">
-                <width>1732</width>
-                <height>903</height>
+                <width>1240</width>
+                <height>893</height>
                 <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
             </control>
             <control type="image">
@@ -53,7 +53,7 @@
                 <label>[UPPERCASE][B]DISCOVER[/B][/UPPERCASE]</label>
             </control>
             <control type="image">
-                <left>1302</left>
+                <left>810</left>
                 <top>360</top>
                 <width max="420">auto</width>
                 <aspectratio aligny="top">keep</aspectratio>
@@ -65,8 +65,8 @@
                 <pagecontrol>4100</pagecontrol>
                 <left>15</left>
                 <top>65</top>
-                <width>1242</width>
-                <height>720</height>
+                <width>750</width>
+                <height>810</height>
                 <onup>2100</onup>
                 <ondown>2100</ondown>
                 <onleft condition="String.IsEqual(Window.Property(active_attributes),true)">10</onleft>
@@ -74,10 +74,10 @@
                 <onright>4100</onright>
                 <scrolltime tween="sine">350</scrolltime>
                 <orientation>Vertical</orientation>
-                <focusposition>3</focusposition>
+                <focusposition>4</focusposition>
                 <movement>4</movement>
                 <scrolltime tween="sine">200</scrolltime>
-                <itemlayout height="90" width="1242">
+                <itemlayout height="90" width="750">
                     <control type="label">
                         <width max="360">auto</width>
                         <left>15</left>
@@ -90,8 +90,8 @@
                         <label>[UPPERCASE]$INFO[ListItem.Property(label1)][/UPPERCASE]</label>
                     </control>
                     <control type="label">
-                        <width max="782">auto</width>
-                        <left>440</left>
+                        <width max="345">auto</width>
+                        <left>380</left>
                         <top>45</top>
                         <height>5</height>
                         <font>font12</font> <!-- FENLIGHT_26 -->
@@ -101,10 +101,10 @@
                         <label>[UPPERCASE][I]$INFO[ListItem.Property(label2)][/I][/UPPERCASE]</label>
                     </control>
                 </itemlayout>
-                <focusedlayout height="90" width="1242">
+                <focusedlayout height="90" width="750">
                     <control type="image">
                         <animation effect="fade" start="100" end="50" time="0" condition="!Control.HasFocus(2100)">Conditional</animation>
-                        <width>1242</width>
+                        <width>750</width>
                         <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                     </control>
                     <control type="label">
@@ -120,8 +120,8 @@
                         <scroll>Control.HasFocus(2100)</scroll>
                     </control>
                     <control type="label">
-                        <width max="782">auto</width>
-                        <left>440</left>
+                        <width max="345">auto</width>
+                        <left>380</left>
                         <top>45</top>
                         <height>5</height>
                         <font>font12</font> <!-- FENLIGHT_26 -->
@@ -135,9 +135,9 @@
             </control>
             <control type="scrollbar" id="4100">
                 <top>65</top>
-                <left>1277</left>
+                <left>785</left>
                 <width>10</width>
-                <height>720</height>
+                <height>810</height>
                 <onleft>2100</onleft>
                 <onright condition="String.IsEqual(Window.Property(active_attributes),true)">10</onright>
                 <onright condition="!String.IsEqual(Window.Property(active_attributes),true)">11</onright>
@@ -148,59 +148,8 @@
                 <orientation>vertical</orientation>
             </control>
             <control type="group">
-                <top>850</top>
-                <left>15</left>
-                <control type="image">
-                    <left>-2</left>
-                    <top>-2</top>
-                    <width>1699</width>
-                    <height>84</height>
-                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
-                </control>
-                <control type="image">
-                    <width>1695</width>
-                    <height>80</height>
-                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
-                </control>
-                <control type="label">
-                    <top>30</top>
-                    <left>30</left>
-                    <width>1635</width>
-                    <height>20</height>
-                    <font>font12</font> <!-- FENLIGHT_26 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <label>[UPPERCASE]$INFO[Window.Property(list_label)][/UPPERCASE]</label>
-                    <align>center</align>
-                    <aligny>center</aligny>
-                </control>
-                <control type="group">
-                    <top>4</top>
-                    <left>115</left>
-                    <width>1530</width>
-                    <height>70</height>
-                    <control type="textbox">
-                        <font>font12</font> <!-- FENLIGHT_26 -->
-                        <align>left</align>
-                        <aligny>center</aligny>
-                        <textcolor>FFCCCCCC</textcolor>
-                        <label>$INFO[Container(2100).ListItem.Property(setting_description)]</label>
-                        <autoscroll time="7000" delay="15000" repeat="7000">true</autoscroll>
-                        <visible>Control.HasFocus(2100)</visible>
-                    </control>
-                    <control type="textbox">
-                        <font>font12</font> <!-- FENLIGHT_26 -->
-                        <align>left</align>
-                        <aligny>center</aligny>
-                        <textcolor>FFCCCCCC</textcolor>
-                        <label>$INFO[Container(2000).ListItem.Label,All settings related to [UPPERCASE][B],[/B][/UPPERCASE] settings]</label>
-                        <autoscroll time="7000" delay="15000" repeat="7000">true</autoscroll>
-                        <visible>Control.HasFocus(2000)</visible>
-                    </control>
-                </control>
-            </control>
-            <control type="group">
                 <top>65</top>
-                <left>1342</left>
+                <left>850</left>
                 <control type="button" id="10">
                     <description>Save and Exit</description>
                     <width>340</width>

@@ -524,10 +524,11 @@ class Extras(BaseDialog):
 		return _images({'mode': 'imdb_image_results', 'imdb_id': self.imdb_id, 'media_title': self.rootname, 'page_no': 1, 'rolling_count_list': [0]})
 
 	def show_media_images(self):
-		all_images = [(change_image_resolution(self.get_attribute(self, i), 'original'), '%s %s' % (self.title, i)) for i in ('poster', 'fanart', 'clearlogo')]
-		all_images = [i for i in all_images if i[0] not in missing_image_check]
-		if all_images: return _images({'mode': 'tmdb_image_results', 'all_images': all_images})
-		else: return self.notification('No Media Images to Display')
+		all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i)) for i in ('poster', 'fanart', 'clearlogo')]
+		all_images = [i for i in all_images if not i[0] in missing_image_check]
+		if not all_images: return self.notification('No Media Images to Display')
+		all_images = [(i[0], change_image_resolution(i[0], 'original'), i[1]) for i in all_images]
+		return _images({'mode': 'tmdb_media_image_results', 'all_images': all_images})
 
 	def show_extrainfo(self, media_type=None, meta=None, poster=None):
 		text = media_extra_info({'media_type': media_type or self.media_type, 'meta': meta or self.meta})

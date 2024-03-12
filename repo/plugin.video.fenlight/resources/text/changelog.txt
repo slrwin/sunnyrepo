@@ -1,17 +1,22 @@
 ++
 
 
+[COLOR dodgerblue][B]Version 1.0.33[/B][/COLOR]
+- Added Kodi version check to startup services.
+- Added Choice of method for filtering results by size. Choose between Off, Line Speed or Max Filesize. You can also now set a minimum size.
+- Added a history for Trakt list searches.
+- Fixed incorrect episode size estimates on certain results.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.32[/B][/COLOR]
 - Added Settings->Navigation->Next Episodes->"Sort Airing Today to Top" for Next Episodes list. Will sort any episodes airing that day to the top of the list.
 - Changed default focused button on Next Episode notification dialog to "Play".
 - Other changes/fixes.
 
-
 [COLOR dodgerblue][B]Version 1.0.31[/B][/COLOR]
 - Added Kodi version check to startup services.
 - Added "Released Only" to Discover options for Movies/TV Shows.
 - Other changes/fixes.
-
 
 [COLOR dodgerblue][B]Version 1.0.30[/B][/COLOR]
 - Added Settings->Navigation->"Include Adult Results from Media Searches". Defaults to DISABLED.

@@ -12,7 +12,8 @@ clear_history_list = [('Clear Movie Search History', 'movie_queries'),
 					('Clear People Search History', 'people_queries'),
 					('Clear Keywords Movie Search History', 'keyword_tmdb_movie_queries'),
 					('Clear Keywords TV Show Search History', 'keyword_tmdb_tvshow_queries'),
-					('Clear Easynews Search History', 'easynews_video_queries')]
+					('Clear Easynews Search History', 'easynews_video_queries'),
+					('Clear Trakt List Search History', 'trakt_list_queries')]
 
 def get_key_id(params):
 	close_all_dialog()
@@ -32,7 +33,7 @@ def get_key_id(params):
 	elif search_type == 'easynews_video':
 		url_params, string = {'mode': 'easynews.search_easynews'}, 'easynews_video_queries'
 	elif search_type == 'trakt_lists':
-		url_params, string = {'mode': 'trakt.list.search_trakt_lists'}, ''
+		url_params, string = {'mode': 'trakt.list.search_trakt_lists'}, 'trakt_list_queries'
 	if string: add_to_search(key_id, string)
 	if search_type == 'people': return person_search(key_id)
 	url_params.update({'query': key_id, 'key_id': key_id, 'name': 'Search Results for %s' % key_id})
@@ -65,7 +66,7 @@ def clear_search():
 		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
 		setting_id = select_dialog([item[1] for item in clear_history_list], **kwargs)
 		if setting_id == None: return
-		clear_all_history(setting_id)
+		clear_all(setting_id)
 	except: return
 
 def clear_all(setting_id, refresh='false'):

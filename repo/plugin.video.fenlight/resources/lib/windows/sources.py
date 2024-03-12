@@ -6,7 +6,7 @@ from modules import kodi_utils
 
 json, Thread, dialog = kodi_utils.json, kodi_utils.Thread, kodi_utils.dialog
 hide_busy_dialog, addon_fanart, empty_poster = kodi_utils.hide_busy_dialog, kodi_utils.default_addon_fanart, kodi_utils.empty_poster
-get_icon = kodi_utils.get_icon
+get_icon, img_url = kodi_utils.get_icon, kodi_utils.img_url
 
 resume_dict = {10: 'resume', 11: 'start_over', 12: 'cancel'}
 info_icons_dict = {'easynews': get_icon('provider_easynews'), 'alldebrid': get_icon('provider_alldebrid'),
@@ -21,6 +21,7 @@ extra_info_choices = (('PACK', 'PACK'), ('DOLBY VISION', 'D/VISION'), ('HIGH DYN
 quality_choices = ('4K', '1080P', '720P', 'SD', 'CAM/SCR/TELE')
 prerelease_values, prerelease_key = ('CAM', 'SCR', 'TELE'), 'CAM/SCR/TELE'
 poster_lists, pack_check = ('list', 'medialist'), ('true', 'show', 'season')
+xml_choices = [('List', img_url % 'rcgKRWk'), ('Rows', img_url % 'wHvaixs'), ('WideList', img_url % '4UwfSLy')]
 run_plugin_str = 'RunPlugin(%s)'
 string = str
 upper, lower = string.upper, string.lower
@@ -403,12 +404,11 @@ class SourcesChoice(BaseDialog):
 	def __init__(self, *args, **kwargs):
 		BaseDialog.__init__(self, *args)
 		self.window_id = 5001
-		self.xml_choices = kwargs.get('xml_choices')
-		self.xml_items = []
+		self.item_list = []
 		self.make_items()
 
 	def onInit(self):
-		self.add_items(self.window_id, self.xml_items)
+		self.add_items(self.window_id, self.item_list)
 		self.setFocusId(self.window_id)
 
 	def run(self):
@@ -425,8 +425,8 @@ class SourcesChoice(BaseDialog):
 			self.close()
 
 	def make_items(self):
-		append = self.xml_items.append
-		for item in self.xml_choices:
+		append = self.item_list.append
+		for item in xml_choices:
 			listitem = self.make_listitem()
 			listitem.setProperties({'name': item[0], 'image': item[1]})
 			append(listitem)

@@ -14,7 +14,7 @@ pack_display = '%s (%s)'
 pack_check = ('Season', 'Show')
 debrid_runners = {'Real-Debrid': ('Real-Debrid', RD_check), 'Premiumize.me': ('Premiumize.me', PM_check), 'AllDebrid': ('AllDebrid', AD_check)}
 sd_check = ('SD', 'CAM', 'TELE', 'SYNC')
-correct_pack_sizes = ('torrentio', 'elfhosted')
+correct_pack_sizes = ('torrentio', 'elfhosted', 'selfhosted')
 
 class source:
 	def __init__(self, meta, source_dict, active_debrid, internal_scrapers, prescrape_sources, progress_dialog, disabled_ext_ignored=False):

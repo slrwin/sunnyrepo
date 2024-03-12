@@ -67,7 +67,7 @@ class Sources():
 		self.disabled_ext_ignored = params_get('disabled_ext_ignored', self.disabled_ext_ignored) == 'true'
 		self.default_ext_only = params_get('default_ext_only', self.default_ext_only) == 'true'
 		self.folders_ignore_filters = get_setting('fenlight.results.folders_ignore_filters', 'false') == 'true'
-		self.filter_size = get_setting('fenlight.results.filter_size') == 'true'
+		self.filter_size_method = int(get_setting('fenlight.results.filter_size_method', '0'))
 		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')
 		self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
 		self.custom_season, self.custom_episode = params_get('custom_season', None), params_get('custom_episode', None)
@@ -87,7 +87,7 @@ class Sources():
 		self.audio_filter_key = audio_filters()
 		self.sort_function, self.quality_filter = results_sort_order(), self._quality_filter()
 		self.hybrid_allowed = self.filter_hdr in (0, 2)
-		self.include_unknown_size = get_setting('fenlight.results.include.unknown.size', 'false') == 'true'
+		self.include_unknown_size = get_setting('fenlight.results.size_unknown', 'false') == 'true'
 		self.include_3D_results = get_setting('fenlight.include_3d_results', 'true') == 'true'
 		self.make_search_info()
 		return self.get_sources()
@@ -182,10 +182,14 @@ class Sources():
 		else: folder_results = []
 		results = [i for i in results if i['quality'] in self.quality_filter]
 		if not self.include_3D_results: results = [i for i in results if not '3D' in i['extraInfo']]
-		if self.filter_size:
-			min_size = 0.00 if self.include_unknown_size else 0.02
-			duration = self.meta['duration'] or (5400 if self.media_type == 'movie' else 2400)
-			max_size = ((0.125 * (0.90 * string_to_float(get_setting('fenlight.results.line_speed', '20'), '20'))) * duration)/1000
+		if self.filter_size_method:
+			min_size = string_to_float(get_setting('fenlight.results.size_min', '0'), '0') / 1000
+			if min_size == 0.0 and not self.include_unknown_size: min_size = 0.02
+			if self.filter_size_method == 1:
+				duration = self.meta['duration'] or (5400 if self.media_type == 'movie' else 2400)
+				max_size = ((0.125 * (0.90 * string_to_float(get_setting('results.line_speed', '25'), '25'))) * duration)/1000
+			elif self.filter_size_method == 2:
+				max_size = string_to_float(get_setting('fenlight.results.size_max', '10000'), '10000') / 1000
 			results = [i for i in results if i['scrape_provider'] == 'folders' or min_size <= i['size'] <= max_size]
 		results += folder_results
 		return results
@@ -554,12 +558,12 @@ class Sources():
 				provider_text = provider.upper()
 				extra_info = '[B]%s[/B] | [B]%s[/B] | %s' %  (item['quality'], item['size_label'], item['extraInfo'])
 				display_name = item['display_name'].upper()
-				resolve_item['resolve_display'] = '%s[CR]%s[CR]%s' % ('%02d. [B]%s[/B]' % (count, provider_text), extra_info, display_name)
+				resolve_item['resolve_display'] = '%02d. [B]%s[/B][CR]%s[CR]%s' % (count, provider_text, extra_info, display_name)
 				processed_items_append(resolve_item)
 				if provider == 'easynews':
 					for retry in range(1, 2):
 						resolve_item = dict(item)
-						resolve_item['resolve_display'] = '%s[CR]%s[CR]%s' % ('%02d. [B]%s (RETRYx%s)[/B]' % (count, provider_text, retry), extra_info, display_name)
+						resolve_item['resolve_display'] = '%02d. [B]%s (RETRYx%s)[/B][CR]%s[CR]%s' % (count, provider_text, retry, extra_info, display_name)
 						processed_items_append(resolve_item)
 			items = list(processed_items)
 			if not self.continue_resolve_check(): return self._kill_progress_dialog()

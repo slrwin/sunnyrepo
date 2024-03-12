@@ -6,13 +6,21 @@ from caches.main_cache import main_cache
 from caches.trakt_cache import clear_trakt_collection_watchlist_data
 from modules import kodi_utils, settings, metadata
 from modules.utils import get_datetime, adjust_premiered_date, sort_for_article, make_thread_list
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
 watched_indicators_function, lists_sort_order, date_offset = settings.watched_indicators, settings.lists_sort_order, settings.date_offset
 notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
 progress_db_string = 'fenlight_hidden_progress_items'
 indicators_dict = {0: 'watched_db', 1: 'trakt_db'}
+
+def get_media_info(watched_indicators, media_type):
+	dbcon = get_database(watched_indicators)
+	try: watched_info = dbcon.execute("SELECT media_id, season, episode, title, last_played FROM watched WHERE db_type = ?", (media_type,)).fetchall()
+	except: watched_info = []
+	try: progress_info = dbcon.execute("SELECT media_id, resume_point, curr_time, season, episode, resume_id FROM progress WHERE db_type = ?", (media_type,)).fetchall()
+	except: progress_info = []
+	return watched_info, progress_info
 
 def get_hidden_progress_items(watched_indicators):
 	try:
@@ -65,9 +73,9 @@ def detect_bookmark(bookmarks, tmdb_id, season='', episode=''):
 def get_bookmarks(watched_indicators, media_type):
 	try:
 		dbcon = get_database(watched_indicators)
-		result = dbcon.execute("SELECT media_id, resume_point, curr_time, season, episode, resume_id FROM progress WHERE db_type = ?", (media_type,))
-		return result.fetchall()
-	except: pass
+		info = dbcon.execute("SELECT media_id, resume_point, curr_time, season, episode, resume_id FROM progress WHERE db_type = ?", (media_type,)).fetchall()
+	except: info = []
+	return info
 
 def erase_bookmark(media_type, tmdb_id, season='', episode='', refresh='false'):
 	try:
@@ -125,19 +133,17 @@ def set_bookmark(params):
 	except: pass
 
 def get_watched_info_movie(watched_indicators):
-	info = []
 	try:
 		dbcon = get_database(watched_indicators)
 		info = dbcon.execute("SELECT media_id, title, last_played FROM watched WHERE db_type = ?", ('movie',)).fetchall()
-	except: pass
+	except: info = []
 	return info
 
 def get_watched_info_tv(watched_indicators):
-	info = []
 	try:
 		dbcon = get_database(watched_indicators)
 		info = dbcon.execute("SELECT media_id, season, episode, title, last_played FROM watched WHERE db_type = ?", ('episode',)).fetchall()
-	except: pass
+	except: info = []
 	return info
 
 def get_in_progress_movies(dummy_arg, page_no):

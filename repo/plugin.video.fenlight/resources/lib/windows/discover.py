@@ -18,6 +18,7 @@ filter_list_id = 2100
 button_ids = (10, 11)
 button_actions = {10: 'Save and Exit', 11: 'Exit'}
 default_key_values = ('key', 'display_key')
+empty_list_label = '[B]***Set Properties to make List***[/B]'
 
 class Discover(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -218,7 +219,7 @@ class Discover(BaseDialog):
 				else: continue
 			else: label_extend = values['name_value'] % attribute_value
 			label += label_extend
-		self.label = label
+		self.label = label#.upper()
 
 	def set_key_values(self, key_content, display_key_content):
 		self.set_attribute(self, self.chosen_item['key'], key_content)
@@ -238,6 +239,7 @@ class Discover(BaseDialog):
 
 	def set_attributes_status(self, status='false'):
 		self.setProperty('active_attributes', status)
+		self.setProperty('list_label', self.label if status == 'true' else empty_list_label)
 
 	def set_starting_constants(self, kwargs):
 		self.position, self.remake, self.chosen_item, self.media_type, self.active_attributes,  self.label, self.url = 0, False, None, kwargs['media_type'], [], '', ''

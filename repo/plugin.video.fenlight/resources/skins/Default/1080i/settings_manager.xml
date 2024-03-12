@@ -25,12 +25,12 @@
                     <left>-2</left>
                     <top>-2</top>
                     <width>1724</width>
-                    <height>1034</height>
+                    <height>979</height>
                     <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                 </control>
                 <control type="image">
                     <width>1720</width>
-                    <height>1030</height>
+                    <height>975</height>
                     <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
                 </control>
                 <control type="image">
@@ -501,7 +501,7 @@
                         <label>Watched Status Provider</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.watched_indicators_name)]</property>
-                        <property name="setting_description">Choose the provider that keeps track of the Movies and Episodes you have watched within Fen Light. Options are the built in method of Fen Light or, if authorized, your Trakt account</property>
+                        <property name="setting_description">Choose the provider that keeps track of the Movies and Episodes you have watched within Fen Light. Options are the built in method of Fen Light or your Trakt account.</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=watched_indicators)</onclick>
                     </item>
             <!-- Trakt Cache -->
@@ -1396,14 +1396,14 @@
                     <item>
                         <visible>Container(2000).HasFocus(50)</visible>
                         <label>Filter Results by Size</label>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.filter_size)]</property>
-                        <property name="setting_description">Enable this and Fen Light will filter source results based on your internet speed. The higher your internet speed, the larger the results that will be allowed.</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=results.filter_size)</onclick>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.filter_size_method_name)]</property>
+                        <property name="setting_description">??????????????????????????????</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.filter_size_method)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(50)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.results.filter_size),true)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.results.filter_size_method),1)</visible>
                         <label>    - Internet Speed (Mbit/s)</label>
                         <property name="setting_type">numeric</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.line_speed)]</property>
@@ -1412,12 +1412,30 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(50)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.results.filter_size),true)</visible>
-                        <label>    - Include Results With Unknown Size</label>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.results.filter_size_method),2)</visible>
+                        <label>    - Maximum Size (MB)</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_max)]</property>
+                        <property name="setting_description">????????????????????????????</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=results.size_max)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(50)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.results.filter_size_method),1) | String.IsEqual(Window(10000).Property(fenlight.results.filter_size_method),2)</visible>
+                        <label>    - Minimum Size (MB)</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_min)]</property>
+                        <property name="setting_description">????????????????????????????</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=results.size_min)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(50)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.results.filter_size_method),1) | String.IsEqual(Window(10000).Property(fenlight.results.filter_size_method),2)</visible>
+                        <label>    - Include Results with Unknown Size</label>
                         <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.include.unknown.size)]</property>
-                        <property name="setting_description">Enable this and Fen Light will include any source results with an unknown size. Be aware this may allow very large files through the filter</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=results.include.unknown.size)</onclick>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_unknown)]</property>
+                        <property name="setting_description">???????????????????????</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=results.size_unknown)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(50)</visible>
@@ -1800,7 +1818,7 @@
                         <autoscroll time="7000" delay="15000" repeat="7000">true</autoscroll>
                         <visible>Control.HasFocus(2100)</visible>
                     </control>
-=                    <control type="textbox">
+                    <control type="textbox">
                         <font>font12</font> <!-- FENLIGHT_26 -->
                         <align>left</align>
                         <aligny>center</aligny>

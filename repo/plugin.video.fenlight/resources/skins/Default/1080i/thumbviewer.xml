@@ -67,16 +67,16 @@
             </control>
             <control type="panel" id="2000">
                 <pagecontrol>2060</pagecontrol>
-                <left>160</left>
-                <top>90</top>
-                <width>1600</width>
-                <height>960</height>
+                <left>135</left>
+                <top>80</top>
+                <width>1650</width>
+                <height>990</height>
                 <onup>2000</onup>
                 <ondown>2000</ondown>
                 <onleft>noop</onleft>
                 <onright>2060</onright>
                 <scrolltime tween="sine">350</scrolltime>
-                <itemlayout height="320" width="320">
+                <itemlayout height="330" width="330">
                     <control type="image">
                         <left>10</left>
                         <top>10</top>
@@ -86,7 +86,7 @@
                         <texture>$INFO[ListItem.Property(thumb)]</texture>
                     </control>
                 </itemlayout>
-                <focusedlayout height="320" width="320">
+                <focusedlayout height="330" width="330">
                     <control type="group">
                         <control type="image">
                             <animation effect="fade" start="100" end="60" condition="Control.HasFocus(2060)">Conditional</animation>
