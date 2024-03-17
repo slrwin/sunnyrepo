@@ -289,18 +289,16 @@ def build_single_episode(list_type, params={}):
 			if sort_key == 'name': return title_key(function)
 			elif sort_key == 'last_played': return jsondate_to_datetime(function, resformat)
 			else: return function
-		item_list = sorted(item_list, key=lambda i: func(i[sort_key]), reverse=sort_direction)
 		if nextep_airing_today():
-			try:
-				airing_today = [i for i in item_list if date_difference(current_date, jsondate_to_datetime(i.get('first_aired', '2100-12-31'), '%Y-%m-%d').date(), 0)]
-				item_list = [i for i in item_list if not i in airing_today]
-			except: pass
-		if unwatched:
-			unwatched = [i for i in item_list if i['unwatched']]
-			item_list = [i for i in item_list if not i in unwatched]
-		unaired = [i for i in item_list if i['unaired']]
-		aired = [i for i in item_list if not i in unaired]
-		item_list = airing_today + aired + unaired + unwatched
+			airing_today = sorted([i for i in item_list if date_difference(current_date, jsondate_to_datetime(i.get('first_aired', '2100-12-31'), '%Y-%m-%d').date(), 0)],
+									key=lambda i: func(i[sort_key]), reverse=sort_direction)
+			item_list = [i for i in item_list if not i in airing_today]
+		else: airing_today = []
+		if sort_key == 'last_played':
+			unwatched = sorted([i for i in item_list if i['unwatched']], key=lambda i: title_key(i['name']))
+			item_list = sorted([i for i in item_list if not i['unwatched']], key=lambda i: func(i[sort_key]), reverse=sort_direction) + unwatched
+		else: item_list = sorted(item_list, key=lambda i: func(i[sort_key]), reverse=sort_direction)
+		item_list = airing_today + item_list
 	else:
 		item_list.sort(key=lambda i: i['sort_order'])
 		if list_type_compare in ('trakt_calendar', 'trakt_recently_aired'):

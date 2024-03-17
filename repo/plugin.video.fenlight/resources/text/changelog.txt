@@ -1,7 +1,6 @@
 ++
 
-
-[COLOR dodgerblue][B]Version 1.0.36[/B][/COLOR]
+[COLOR dodgerblue][B]Version 1.0.36/37[/B][/COLOR]
 - Couple of quick fixes.
 
 [COLOR dodgerblue][B]Version 1.0.35[/B][/COLOR]
