@@ -157,8 +157,9 @@ def build_single_episode(list_type, params={}):
 			episode_type = item_get('episode_type') or ''
 			if not episode_date or current_date < episode_date:
 				if list_type_starts_with('next_'):
+					if not episode_date: return
 					if not include_unaired: return
-					if episode_date and not date_difference(current_date, episode_date, 7): return
+					if not date_difference(current_date, episode_date, 7): return
 				unaired = True
 			else: unaired = False
 			tmdb_id, tvdb_id, imdb_id, title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'

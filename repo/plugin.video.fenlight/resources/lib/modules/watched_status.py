@@ -6,7 +6,7 @@ from caches.main_cache import main_cache
 from caches.trakt_cache import clear_trakt_collection_watchlist_data
 from modules import kodi_utils, settings, metadata
 from modules.utils import get_datetime, adjust_premiered_date, sort_for_article, make_thread_list
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
 watched_indicators_function, lists_sort_order, date_offset = settings.watched_indicators, settings.lists_sort_order, settings.date_offset
@@ -52,7 +52,7 @@ def get_recently_watched(media_type, short_list=1, dummy1=None):
 	watched_indicators = watched_indicators_function()
 	watched_info = get_media_info(watched_indicators, media_type)[0]
 	if media_type == 'movie':
-		data = sorted([{'media_id': i[0], 'title': i[1], 'last_played': i[2]} for i in watched_info], key=lambda x: x['last_played'], reverse=True)
+		data = sorted([{'media_id': i[0], 'title': i[3], 'last_played': i[4]} for i in watched_info], key=lambda x: x['last_played'], reverse=True)
 	else:
 		if short_list:
 			data = sorted([{'media_ids': {'tmdb': int(i[0])}, 'season': int(i[1]), 'episode': int(i[2]), 'title': i[3], 'last_played': i[4]}
@@ -189,7 +189,7 @@ def get_watched_items(media_type, page_no):
 		[i.join() for i in threads]
 	else:
 		watched_info = get_media_info(watched_indicators, 'movie')[0]
-		data = [{'media_id': i[0], 'title': i[1], 'last_played': i[2]} for i in watched_info]
+		data = [{'media_id': i[0], 'title': i[3], 'last_played': i[4]} for i in watched_info]
 	if lists_sort_order('watched') == 0: data = sort_for_article(data, 'title')
 	else: data = sorted(data, key=lambda x: x['last_played'], reverse=True)
 	return data

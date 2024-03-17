@@ -1,6 +1,9 @@
 ++
 
 
+[COLOR dodgerblue][B]Version 1.0.36[/B][/COLOR]
+- Couple of quick fixes.
+
 [COLOR dodgerblue][B]Version 1.0.35[/B][/COLOR]
 - Added "Sort Type" and "Sort Order" and "Include Airdate in Title" to Next Episode settings.
 - Added "Next Episode Alert Method" setting to Autoplay Next Episode Settings. Choose between "Window" and "Notification".
