@@ -13,7 +13,7 @@ ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog,
 get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
 img_url, sleep, default_highlights, external_scraper_settings = kodi_utils.img_url, kodi_utils.sleep, kodi_utils.default_highlights, kodi_utils.external_scraper_settings
-kodi_refresh, container_refresh_input = kodi_utils.kodi_refresh, kodi_utils.container_refresh_input
+kodi_refresh, container_refresh_input, autoscrape_next_episode = kodi_utils.kodi_refresh, kodi_utils.container_refresh_input, settings.autoscrape_next_episode
 json, build_url, select_dialog, clear_property = kodi_utils.json, kodi_utils.build_url, kodi_utils.select_dialog, kodi_utils.clear_property
 run_plugin, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window, addon_fanart = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.default_addon_fanart
@@ -496,16 +496,20 @@ def options_menu_choice(params, meta=None):
 		listing_append(('Recommended', 'Based On %s' % rootname, 'recommended'))
 		if menu_type == 'tvshow': listing_append(('Play Random', 'Based On %s' % rootname, 'random'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list:
-		base_str1, base_str2, on_str = '%s%s', 'Currently: [B]%s[/B]', 'On'
+		base_str1, base_str2, on_str, off_str = '%s%s', 'Currently: [B]%s[/B]', 'On', 'Off'
 		if auto_play(content): autoplay_status, autoplay_toggle, quality_setting = on_str, 'false', 'autoplay_quality_%s' % content
-		else: autoplay_status, autoplay_toggle, quality_setting = 'Off', 'true', 'results_quality_%s' % content
+		else: autoplay_status, autoplay_toggle, quality_setting = off_str, 'true', 'results_quality_%s' % content
 		active_int_scrapers = [i.replace('_', '') for i in active_internal_scrapers()]
 		current_scrapers_status = ', '.join([i for i in active_int_scrapers]) if len(active_int_scrapers) > 0 else 'N/A'
 		current_quality_status =  ', '.join(quality_filter(quality_setting))
 		listing_append((base_str1 % ('Auto Play', ' (%s)' % content), base_str2 % autoplay_status, 'toggle_autoplay'))
-		if menu_type == 'episode' or menu_type in single_ep_list and autoplay_status == on_str:
-			autoplay_next_status, autoplay_next_toggle = (on_str, 'false') if autoplay_next_episode() else ('Off', 'true')
-			listing_append((base_str1 % ('Autoplay Next Episode', ''), base_str2 % autoplay_next_status, 'toggle_autoplay_next'))
+		if menu_type == 'episode' or menu_type in single_ep_list:
+			if autoplay_status == on_str:
+				autoplay_next_status, autoplay_next_toggle = (on_str, 'false') if autoplay_next_episode() else (off_str, 'true')
+				listing_append((base_str1 % ('Autoplay Next Episode', ''), base_str2 % autoplay_next_status, 'toggle_autoplay_next'))
+			else:
+				autoscrape_next_status, autoscrape_next_toggle = (on_str, 'false') if autoscrape_next_episode() else (off_str, 'true')
+				listing_append((base_str1 % ('Autoscrape Next Episode', ''), base_str2 % autoscrape_next_status, 'toggle_autoscrape_next'))
 		listing_append((base_str1 % ('Quality Limit', ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
 		listing_append((base_str1 % ('', 'Enable Scrapers'), base_str2 % current_scrapers_status, 'enable_scrapers'))
 	if menu_type in ('movie', 'tvshow'): listing_append(('RE-CACHE %s INFO' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
@@ -590,6 +594,8 @@ def options_menu_choice(params, meta=None):
 		set_setting('auto_play_%s' % content, autoplay_toggle)
 	elif choice == 'toggle_autoplay_next':
 		set_setting('autoplay_next_episode', autoplay_next_toggle)
+	elif choice == 'toggle_autoscrape_next':
+		set_setting('autoscrape_next_episode', autoscrape_next_toggle)
 	elif choice == 'set_quality':
 		set_quality_choice({'setting_id': 'autoplay_quality_%s' % content if autoplay_status == on_str else 'results_quality_%s' % content, 'icon': poster})
 	elif choice == 'enable_scrapers':

@@ -9,8 +9,6 @@ delete_file, get_property, set_property, clear_property = kodi_utils.delete_file
 notification, confirm_dialog, ok_dialog, open_file = kodi_utils.notification, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.open_file
 path_exists, list_dirs, progress_dialog, make_directory = kodi_utils.path_exists, kodi_utils.list_dirs, kodi_utils.progress_dialog, kodi_utils.make_directory
 databases_path = path_join(userdata_path, 'databases/')
-current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db',
-				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db')
 database_path_raw = path_join(userdata_path, 'databases')
 navigator_db = translatePath(path_join(database_path_raw, 'navigator.db'))
 watched_db = translatePath(path_join(database_path_raw, 'watched.db'))
@@ -23,10 +21,13 @@ metacache_db = translatePath(path_join(database_path_raw, 'metacache.db'))
 debridcache_db = translatePath(path_join(database_path_raw, 'debridcache.db'))
 external_db = translatePath(path_join(database_path_raw, 'external.db'))
 settings_db = translatePath(path_join(database_path_raw, 'settings.db'))
+resolved_db = translatePath(path_join(database_path_raw, 'resolved.db'))
 database_timeout = 20
+current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db',
+				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db', 'resolved.db')
 database_locations = {
 'navigator_db': navigator_db, 'watched_db': watched_db, 'favorites_db': favorites_db, 'settings_db': settings_db, 'trakt_db': trakt_db, 'maincache_db': maincache_db,
-'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db
+'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db, 'resolved_db': resolved_db
 		}
 integrity_check = {
 'settings_db': ('settings',),
@@ -39,9 +40,9 @@ integrity_check = {
 'lists_db': ('lists',),
 'discover_db': ('discover',),
 'debridcache_db': ('debrid_data',),
-'external_db': ('results_data',)
+'external_db': ('results_data',),
+'resolved_db': ('resolved',)
 		}
-
 table_creators = {
 'navigator_db': (
 'CREATE TABLE IF NOT EXISTS navigator (list_name text, list_type text, list_contents text, unique (list_name, list_type))',),
@@ -78,7 +79,9 @@ last_played text, resume_id integer, title text, unique (db_type, media_id, seas
 'CREATE TABLE IF NOT EXISTS results_data (provider text not null, db_type text not null, tmdb_id text not null, title text, year integer, season text, episode text, results text, \
 expires integer, unique (provider, db_type, tmdb_id, title, year, season, episode))',),
 'discover_db': (
-'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',)
+'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',),
+'resolved_db': (
+'CREATE TABLE IF NOT EXISTS resolved (media_type text not null, tmdb_id text not null, season text, episode text, data text)',)
 		}
 media_prop = 'fenlight.%s'
 BASE_GET = 'SELECT expires, data FROM %s WHERE id = ?'

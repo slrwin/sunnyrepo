@@ -21,9 +21,9 @@ extras_enable_scrollbars, omdb_api_key, date_offset = settings.extras_enable_scr
 default_all_episodes, extras_enabled_menus = settings.default_all_episodes, settings.extras_enabled_menus
 enable_extra_ratings, watched_indicators = settings.extras_enable_extra_ratings, settings.watched_indicators
 options_menu_choice, extras_menu_choice, imdb_videos_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice, dialogs.imdb_videos_choice
-get_progress_percent, get_bookmarks, get_watched_info_movie = watched_status.get_progress_percent, watched_status.get_bookmarks, watched_status.get_watched_info_movie
+get_progress_percent, get_media_info, get_bookmarks = watched_status.get_progress_percent, watched_status.get_media_info, watched_status.get_bookmarks
 trakt_manager_choice, random_choice, playback_choice, favorites_choice = dialogs.trakt_manager_choice, dialogs.random_choice, dialogs.playback_choice, dialogs.favorites_choice
-get_watched_status_movie, get_watched_info_tv, get_next_episodes = watched_status.get_watched_status_movie, watched_status.get_watched_info_tv, watched_status.get_next_episodes
+get_watched_status_movie, get_next_episodes = watched_status.get_watched_status_movie, watched_status.get_next_episodes
 trailer_choice, media_extra_info, genres_choice, random_choice = dialogs.trailer_choice, dialogs.media_extra_info_choice, dialogs.genres_choice, dialogs.random_choice
 keywords_choice = dialogs.keywords_choice
 person_search, person_data_dialog = people.person_search, people.person_data_dialog
@@ -633,9 +633,8 @@ class Extras(BaseDialog):
 		self.status_infoline_value = self.make_status_infoline()
 		self.make_plot_and_tagline()
 		indicators = watched_indicators()
-		if self.media_type == 'movie':
-			self.watched_info, self.percent_watched = get_watched_info_movie(indicators), get_progress_percent(get_bookmarks(indicators, 'movie'), self.tmdb_id)
-		else: self.watched_info, self.percent_watched = get_watched_info_tv(indicators), None
+		self.watched_info, bookmarks = get_media_info(indicators, 'movie' if self.media_type == 'movie' else 'episode')
+		self.percent_watched = get_progress_percent(get_bookmarks(indicators, 'movie'), self.tmdb_id) if self.media_type == 'movie' else None
 
 	def set_properties(self):
 		self.assign_buttons()

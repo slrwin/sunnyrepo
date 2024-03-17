@@ -4,7 +4,7 @@ from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
 						get_current_timestamp, paginate_list, jsondate_to_datetime
-from modules.watched_status import get_watched_info_tv, get_watched_status_tvshow
+from modules.watched_status import get_media_info, get_watched_status_tvshow
 # logger = kodi_utils.logger
 
 string, sys, external, add_items, add_dir, use_minimal_media_info = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, settings.use_minimal_media_info
@@ -188,7 +188,7 @@ class TVShows:
 		self.all_episodes, self.open_extras = default_all_episodes(), extras_open_action('tvshow')
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = watched_indicators()
-		self.watched_info, self.watched_title = get_watched_info_tv(self.watched_indicators), 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		self.watched_info, self.watched_title = get_media_info(self.watched_indicators, 'episode', include_progress=False), 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_tvshow_content, self.list))
 			[i.join() for i in threads]

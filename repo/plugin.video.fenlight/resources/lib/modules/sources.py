@@ -19,7 +19,7 @@ store_resolved_to_cloud, source_folders_directory, watched_indicators = settings
 quality_filter, sort_to_top = settings.quality_filter, settings.sort_to_top
 scraping_settings, include_prerelease_results, auto_rescrape_with_all = settings.scraping_settings, settings.include_prerelease_results, settings.auto_rescrape_with_all
 ignore_results_filter, results_sort_order, results_format, filter_status = settings.ignore_results_filter, settings.results_sort_order, settings.results_format, settings.filter_status
-autoplay_next_episode, limit_resolve = settings.autoplay_next_episode, settings.limit_resolve
+autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
 debrid_enabled = debrid.debrid_enabled
 erase_bookmark, clear_local_bookmarks = watched_status.erase_bookmark, watched_status.clear_local_bookmarks
 get_progress_percent, get_bookmarks = watched_status.get_progress_percent, watched_status.get_bookmarks
@@ -46,7 +46,7 @@ class Sources():
 		self.prescrape, self.disabled_ext_ignored, self.default_ext_only = 'true', 'false', 'false'
 		self.ext_name, self.ext_folder, self.provider_defaults, self.ext_sources = '', '', [], None
 		self.progress_dialog, self.progress_thread = None, None
-		self.playing_filename = ''
+		self.playing_filename, self.resolved_item = '', ''
 		self.count_tuple = (('sources_4k', '4K', self._quality_length), ('sources_1080p', '1080p', self._quality_length), ('sources_720p', '720p', self._quality_length),
 							('sources_sd', '', self._quality_length_sd), ('sources_total', '', self._quality_length_final))
 
@@ -57,10 +57,11 @@ class Sources():
 		self.play_type, self.background, self.prescrape = params_get('play_type', ''), params_get('background', 'false') == 'true', params_get('prescrape', self.prescrape) == 'true'
 		self.random, self.random_continual = params_get('random', 'false') == 'true', params_get('random_continual', 'false') == 'true'
 		if self.play_type:
-			if self.play_type == 'autoplay_nextep': self.autoplay_nextep = True
-			elif self.play_type == 'random_continual': self.autoplay_nextep = False
-			else: self.autoplay_nextep = False
-		else: self.autoplay_nextep = autoplay_next_episode()
+			if self.play_type == 'autoplay_nextep': self.autoplay_nextep, self.autoscrape_nextep = True, False
+			elif self.play_type == 'random_continual': self.autoplay_nextep, self.autoscrape_nextep = False, False
+			else: self.autoplay_nextep, self.autoscrape_nextep = False, True
+		else: self.autoplay_nextep, self.autoscrape_nextep = autoplay_next_episode(), autoscrape_next_episode()
+		self.autoscrape = self.autoscrape_nextep and self.background
 		self.auto_rescrape_with_all = auto_rescrape_with_all()
 		self.nextep_settings, self.disable_autoplay_next_episode = params_get('nextep_settings', {}), params_get('disable_autoplay_next_episode', 'false') == 'true'
 		self.ignore_scrape_filters = params_get('ignore_scrape_filters', 'false') == 'true'
@@ -90,7 +91,8 @@ class Sources():
 		self.include_unknown_size = get_setting('fenlight.results.size_unknown', 'false') == 'true'
 		self.include_3D_results = get_setting('fenlight.include_3d_results', 'true') == 'true'
 		self.make_search_info()
-		return self.get_sources()
+		if self.autoscrape: self.autoscrape_nextep_handler()
+		else: return self.get_sources()
 
 	def determine_scrapers_status(self):
 		self.active_internal_scrapers = active_internal_scrapers()
@@ -119,7 +121,8 @@ class Sources():
 			if not self.orig_results and not self.active_external: self._kill_progress_dialog()
 			results = self.process_results(self.orig_results)
 		if not results: return self._process_post_results()
-		return self.play_source(results)
+		if self.autoscrape: return results
+		else: return self.play_source(results)
 
 	def collect_results(self):
 		self.sources.extend(self.prescrape_sources)
@@ -417,11 +420,24 @@ class Sources():
 			sort_last = [i for i in results if not i in sort_first]
 			results = sort_first + sort_last
 		except: pass
+		# results = self._sort_resolved_to_top(results)
 		return results
 
 	def _sort_folder_to_top(self, provider):
 		if provider == 'folders': return 0
 		else: return 1
+
+	# def _sort_resolved_to_top(self, results):
+	# 	from caches.resolved_cache import resolved_cache
+	# 	previous_resolved = resolved_cache.get_one(self.media_type, self.tmdb_id, self.season, self.episode)
+	# 	if not previous_resolved: return results
+	# 	match = [i for i in results if i == kodi_utils.remove_keys(previous_resolved, ('resolve_display',))]
+	# 	if match:
+	# 		match = match[0]
+	# 		results = [i for i in results if i != match]
+	# 		match['previous_resolved'] = True
+	# 		results = [match] + results
+	# 	return results
 
 	def _sort_uncached_results(self, results):
 		uncached = [i for i in results if 'Uncached' in i.get('cache_provider', '')]
@@ -593,6 +609,7 @@ class Sources():
 						url = self.resolve_sources(item)
 						if url:
 							resolve_percent = 0
+							self.resolved_item = item
 							self.progress_dialog.busy_spinner('false')
 							self.progress_dialog.update_resolver(percent=resolve_percent)
 							sleep(200)
@@ -634,7 +651,7 @@ class Sources():
 
 	def continue_resolve_check(self):
 		try:
-			if not self.background: return True
+			if not self.background or self.autoscrape_nextep: return True
 			if self.autoplay_nextep: return self.autoplay_nextep_handler()
 			return self.random_continual_handler()
 		except: return False
@@ -651,8 +668,8 @@ class Sources():
 		player = xbmc_player()
 		if player.isPlayingVideo():
 			total_time = player.getTotalTime()
-			window_time, default_action = self.nextep_settings['window_time'], self.nextep_settings['default_action']
-			action = 'close'
+			use_window, window_time, default_action = self.nextep_settings['use_window'], self.nextep_settings['window_time'], self.nextep_settings['default_action']
+			action = None if use_window else 'close'
 			continue_nextep = False
 			while player.isPlayingVideo():
 				try:
@@ -663,7 +680,8 @@ class Sources():
 					sleep(100)
 				except: pass
 			if continue_nextep:
-				action = self._make_nextep_dialog(default_action=default_action)
+				if use_window: action = self._make_nextep_dialog(default_action=default_action)
+				else: notification('[B]Next Up:[/B] %s S%02dE%02d' % (self.meta.get('title'), self.meta.get('season'), self.meta.get('episode')), 6500, self.meta.get('poster'))
 				if not action: action = default_action
 				if action == 'cancel': return False
 				elif action == 'pause':
@@ -679,6 +697,17 @@ class Sources():
 					return True
 			else: return False
 		else: return False
+
+	def autoscrape_nextep_handler(self):
+		player = xbmc_player()
+		if player.isPlayingVideo():
+			results = self.get_sources()
+			if not results: return notification(33092, 3000)
+			else:
+				notification('[B]Next Episode Ready:[/B] %s S%02dE%02d' % (self.meta.get('title'), self.meta.get('season'), self.meta.get('episode')), 6500, self.meta.get('poster'))
+				while player.isPlayingVideo(): sleep(100)
+			self.display_results(results)
+		else: return
 
 	def debrid_importer(self, debrid_provider):
 		return manual_function_import(*debrids[debrid_provider])

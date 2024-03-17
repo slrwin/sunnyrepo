@@ -501,7 +501,7 @@
                         <label>Watched Status Provider</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.watched_indicators_name)]</property>
-                        <property name="setting_description">Choose the provider that keeps track of the Movies and Episodes you have watched within Fen Light. Options are the built in method of Fen Light or your Trakt account.</property>
+                        <property name="setting_description">Choose the provider that keeps track of the Movies and Episodes you have watched within Fen Light. Options are the built in method of Fen Light or your Trakt account</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=watched_indicators)</onclick>
                     </item>
             <!-- Trakt Cache -->
@@ -735,7 +735,7 @@
                         <label>Single Episode Display Format - Within Addon</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.single_ep_display_name)]</property>
-                        <property name="setting_description">Choose the display format Fen Light uses when naming single episodes within the addon. Applicable for lists like Next Episodes, In Progress Episodes etc.</property>
+                        <property name="setting_description">Choose the display format Fen Light uses when naming single episodes within the addon. Applicable for lists like Next Episodes, In Progress Episodes etc</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=single_ep_display)</onclick>
                     </item>
                     <item>
@@ -743,7 +743,7 @@
                         <label>Single Episode Display Format - Widgets</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.single_ep_display_widget_name)]</property>
-                        <property name="setting_description">Choose the display format Fen Light uses when naming single episodes for widgets. Applicable for lists like Next Episodes, In Progress Episodes etc.</property>
+                        <property name="setting_description">Choose the display format Fen Light uses when naming single episodes for widgets. Applicable for lists like Next Episodes, In Progress Episodes etc</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=single_ep_display_widget)</onclick>
                     </item>
                     <item>
@@ -771,6 +771,22 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Sort Type</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.sort_type_name)]</property>
+                        <property name="setting_description">Choose the sort type of Next Episodes list. Recently Watched, Airdate or Title</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=nextep.sort_type)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Sort Order</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.sort_order_name)]</property>
+                        <property name="setting_description">Choose the sort direction of Next Episodes list. Ascending or Descending</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=nextep.sort_order)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
                         <label>Include Trakt Watchlist/Fen Light Favorites</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.include_unwatched_name)]</property>
@@ -779,10 +795,18 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Include Airdate in Title</label>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.include_airdate)]</property>
+                        <property name="setting_description">Enable this to include the airdate at the beginning of the list item label</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=nextep.include_airdate)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
                         <label>Sort Airing Today to Top</label>
                         <property name="setting_type">boolean</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.airing_today)]</property>
-                        <property name="setting_description">Enable this to sort episodes airing today to the top of the Next Episodes list.</property>
+                        <property name="setting_description">Enable this to sort episodes airing today to the top of the Next Episodes list</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=nextep.airing_today)</onclick>
                     </item>
                     <item>
@@ -1283,7 +1307,7 @@
                         <label>Enable</label>
                         <property name="setting_type">boolean</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.provider.folders)]</property>
-                        <property name="setting_description">Enable the use of any local media folder locations i.e. NAS drives, HDD's etc.</property>
+                        <property name="setting_description">Enable the use of any local media folder locations i.e. NAS drives, HDD's etc</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=provider.folders)</onclick>
                     </item>
                     <item>
@@ -1398,7 +1422,7 @@
                         <label>Filter Results by Size</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.filter_size_method_name)]</property>
-                        <property name="setting_description">??????????????????????????????</property>
+                        <property name="setting_description">Choose the method used to filter results by their size. Either by internet speed, or actual size of the result</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.filter_size_method)</onclick>
                     </item>
                     <item>
@@ -1416,7 +1440,7 @@
                         <label>    - Maximum Size (MB)</label>
                         <property name="setting_type">numeric</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_max)]</property>
-                        <property name="setting_description">????????????????????????????</property>
+                        <property name="setting_description">Enter here the Maximum size allowed</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=results.size_max)</onclick>
                     </item>
                     <item>
@@ -1425,7 +1449,7 @@
                         <label>    - Minimum Size (MB)</label>
                         <property name="setting_type">numeric</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_min)]</property>
-                        <property name="setting_description">????????????????????????????</property>
+                        <property name="setting_description">Enter here the Minimum size allowed</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=results.size_min)</onclick>
                     </item>
                     <item>
@@ -1434,7 +1458,7 @@
                         <label>    - Include Results with Unknown Size</label>
                         <property name="setting_type">boolean</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_unknown)]</property>
-                        <property name="setting_description">???????????????????????</property>
+                        <property name="setting_description">Enable this and Fen Light will include results where the size of the file is unknown</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=results.size_unknown)</onclick>
                     </item>
                     <item>
@@ -1721,6 +1745,15 @@
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),true) + String.IsEqual(Window(10000).Property(fenlight.autoplay_next_episode),true)</visible>
+                        <label>    - Next Episode Alert Method</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoplay_alert_method_name)]</property>
+                        <property name="setting_description">Choose the alert method when Next Episode is ready to be played. Choose Window or Notification</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=autoplay_alert_method)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),true) + String.IsEqual(Window(10000).Property(fenlight.autoplay_next_episode),true)</visible>
                         <label>    - Show Alert After (%) Playback</label>
                         <property name="setting_type">numeric</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoplay_next_window_percentage)]</property>
@@ -1735,6 +1768,33 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoplay_use_chapters)]</property>
                         <property name="setting_description">Enable this and Fen Light will attempt to use video file Chapter information to ascertain when to show the Next Episode alert. If unsuccessful, then the percentage of playback value will be used instead</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoplay_use_chapters)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false)</visible>
+                        <label>Autoscrape Next Episode</label>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_next_episode)]</property>
+                        <property name="setting_description">Enable this and Fen Light will automatically search for sources for the next episode of a TV Show towards the end of the episode currently being watched</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoscrape_next_episode)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false) + String.IsEqual(Window(10000).Property(fenlight.autoscrape_next_episode),true)</visible>
+                        <label>    - Show Notification After (%) Playback</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_next_window_percentage)]</property>
+                        <property name="setting_description">Choose when Fen Light will show the Next Episode Alert</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=autoscrape_next_window_percentage)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false) + String.IsEqual(Window(10000).Property(fenlight.autoscrape_next_episode),true)</visible>
+                        <label>    - Use Chapter Info For Alert When Available</label>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_use_chapters)]</property>
+                        <property name="setting_description">Enable this and Fen Light will attempt to use video file Chapter information to ascertain when to show the Next Episode alert. If unsuccessful, then the percentage of playback value will be used instead</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoscrape_use_chapters)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>

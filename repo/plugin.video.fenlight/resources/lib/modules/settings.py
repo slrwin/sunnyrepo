@@ -11,6 +11,7 @@ results_window_numbers_dict = {'List': 2000, 'Rows': 2001, 'WideList': 2002}
 default_action_dict = {'0': 'play', '1': 'cancel', '2': 'pause'}
 extras_open_action_dict = {'movie': (1, 3), 'tvshow': (2, 3)}
 paginate_dict = {True: 'fenlight.paginate.limit_widgets', False: 'fenlight.paginate.limit_addon'}
+nextep_sort_key_dict = {0: 'last_played', 1: 'first_aired', 2: 'name'}
 prescrape_scrapers_tuple = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'folders')
 sort_to_top_dict = {'folders': 'fenlight.results.sort_folders_first', 'rd_cloud': 'fenlight.results.sort_rdcloud_first',
 					'pm_cloud': 'fenlight.results.sort_pmcloud_first', 'ad_cloud': 'fenlight.results.sort_adcloud_first'}
@@ -85,15 +86,23 @@ def autoplay_next_episode():
 	if auto_play('episode') and get_setting('fenlight.autoplay_next_episode', 'false') == 'true': return True
 	else: return False
 
+def autoscrape_next_episode():
+	if not auto_play('episode') and get_setting('fenlight.autoscrape_next_episode', 'false') == 'true': return True
+	else: return False
+
 def auto_rescrape_with_all():
 	return int(get_setting('fenlight.results.auto_rescrape_with_all', '0'))
 
-def auto_nextep_settings():
-	window_percentage = 100 - int(get_setting('fenlight.autoplay_next_window_percentage', '95'))
-	use_chapters = get_setting('fenlight.autoplay_use_chapters', 'true') == 'true'
+def auto_nextep_settings(play_type):
+	play_type = 'autoplay' if play_type == 'autoplay_nextep' else 'autoscrape'
+	window_percentage = 100 - int(get_setting('fenlight.%s_next_window_percentage' % play_type, '95'))
+	use_chapters = get_setting('fenlight.%s_use_chapters' % play_type, 'true') == 'true'
 	scraper_time = int(get_setting('fenlight.results.timeout', '60')) + 20
-	default_action = default_action_dict[get_setting('fenlight.autoplay_default_action', '1')]
-	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'default_action': default_action, 'use_chapters': use_chapters}
+	if play_type == 'autoplay':
+		alert_method = int(get_setting('fenlight.autoplay_alert_method', '0'))
+		default_action = default_action_dict[get_setting('fenlight.autoplay_default_action', '1')]
+	else: alert_method, default_action = '', ''
+	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'alert_method': alert_method, 'default_action': default_action, 'use_chapters': use_chapters}
 
 def filter_status(filter_type):
 	return int(get_setting('fenlight.filter_%s' % filter_type, '0'))
@@ -219,7 +228,7 @@ def scraping_settings():
 		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF')
 	return {'highlight_type': highlight_type,'real-debrid': rd_highlight, 'premiumize': pm_highlight, 'alldebrid': ad_highlight, 'rd_cloud': debrid_cloud_highlight,
 			'pm_cloud': debrid_cloud_highlight, 'ad_cloud': debrid_cloud_highlight, 'easynews': easynews_highlight, 'folders': folders_highlight,
-			'4k': highlight_4K, '1080p': highlight_1080P, '720p': highlight_720P, 'sd': highlight_SD}
+			'4k': highlight_4K, '1080p': highlight_1080P, '720p': highlight_720P, 'sd': highlight_SD, 'previous_resolved': 'FFD52703'}
 
 def omdb_api_key():
 	return get_setting('fenlight.omdb_api', 'empty_setting')
@@ -252,11 +261,20 @@ def watched_indicators():
 def nextep_include_unwatched():
 	return int(get_setting('fenlight.nextep.include_unwatched', '0'))
 
+def nextep_include_airdate():
+	return get_setting('fenlight.nextep.include_airdate', 'false') == 'true'
+
 def nextep_airing_today():
 	return get_setting('fenlight.nextep.airing_today', 'false') == 'true'
 
 def nextep_include_unaired():
 	return get_setting('fenlight.nextep.include_unaired', 'false') == 'true'
+
+def nextep_sort_key():
+	return nextep_sort_key_dict[int(get_setting('fenlight.nextep.sort_type', '0'))]
+
+def nextep_sort_direction():
+	return int(get_setting('fenlight.nextep.sort_order', '0')) == 0
 
 def update_delay():
 	return int(get_setting('fenlight.update.delay', '45'))

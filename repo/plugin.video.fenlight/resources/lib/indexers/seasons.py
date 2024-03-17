@@ -2,14 +2,14 @@
 from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
 from modules.utils import adjust_premiered_date, get_datetime
-from modules.watched_status import get_watched_info_tv, get_watched_status_season
+from modules.watched_status import get_media_info, get_watched_status_season
 # logger = kodi_utils.logger
 
 poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
 sys, add_items, set_content, end_directory, set_view_mode = kodi_utils.sys, kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
 make_listitem, build_url, external, date_offset_info = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.external, settings.date_offset
 use_minimal_media_info, watched_indicators_info, widget_hide_watched = settings.use_minimal_media_info, settings.watched_indicators, settings.widget_hide_watched
-adjust_premiered_date_function, get_datetime_function, get_watched_status, get_watched_info = adjust_premiered_date, get_datetime, get_watched_status_season, get_watched_info_tv
+adjust_premiered_date_function, get_datetime_function, get_watched_status, get_media_info_tv = adjust_premiered_date, get_datetime, get_watched_status_season, get_media_info
 string, run_plugin, unaired_label, tmdb_poster = str, 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
 view_mode, content_type = 'view.seasons', 'seasons'
 season_name_str = 'Season %s'
@@ -33,8 +33,6 @@ def build_season_list(params):
 				except: year = show_year or '2050'
 				plot = overview or show_plot
 				first_airdate, premiered = adjust_premiered_date_function(air_date, adjust_hours)
-
-
 				if season_number == 0: unaired = False
 				elif episode_count == 0: unaired = True
 				elif season_number != total_seasons: unaired = False
@@ -85,7 +83,7 @@ def build_season_list(params):
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Season'
 	watched_indicators, use_minimal_media, adjust_hours, hide_watched = watched_indicators_info(), use_minimal_media_info(), date_offset_info(), is_home and widget_hide_watched()
 	current_date = get_datetime_function()
-	watched_info, watched_title = get_watched_info(watched_indicators), 'Trakt' if watched_indicators == 1 else 'Fen Light'
+	watched_info, watched_title = get_media_info_tv(watched_indicators, 'episode', include_progress=False), 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'

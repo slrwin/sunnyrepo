@@ -520,6 +520,7 @@ def get_trakt_movie_id(item):
 def get_trakt_tvshow_id(item):
 	if item['tmdb']: return item['tmdb']
 	tmdb_id = None
+	logger('get_trakt_movie_id', item)
 	if item['imdb']:
 		try: 
 			meta = tvshow_meta_external_id('imdb_id', item['imdb'])
@@ -538,8 +539,22 @@ def trakt_indicators_movies():
 		movie = item['movie']
 		tmdb_id = get_trakt_movie_id(movie['ids'])
 		if not tmdb_id: return
-		obj = ('movie', tmdb_id, '', '', item['last_watched_at'], movie['title'])
-		insert_append(obj)
+		insert_append(('movie', tmdb_id, '', '', item['last_watched_at'], movie['title']))
+	insert_list = []
+	insert_append = insert_list.append
+	params = {'path': 'sync/watched/movies%s', 'with_auth': True, 'pagination': False}
+	result = get_trakt(params)
+	threads = list(make_thread_list(_process, result))
+	[i.join() for i in threads]
+	logger('insert_list', insert_list)
+	trakt_watched_cache.set_bulk_movie_watched(insert_list)
+
+def trakt_indicators_movies():
+	def _process(item):
+		movie = item['movie']
+		tmdb_id = get_trakt_movie_id(movie['ids'])
+		if not tmdb_id: return
+		insert_append(('movie', tmdb_id, '', '', item['last_watched_at'], movie['title']))
 	insert_list = []
 	insert_append = insert_list.append
 	params = {'path': 'sync/watched/movies%s', 'with_auth': True, 'pagination': False}
@@ -555,19 +570,14 @@ def trakt_indicators_tv():
 		show = item['show']
 		seasons = item['seasons']
 		title = show['title']
-		aired_episodes = show['aired_episodes']
 		tmdb_id = get_trakt_tvshow_id(show['ids'])
 		if not tmdb_id: return
-		total_watched = 0
 		for s in seasons:
-			total_watched_per_season = 0
 			season_no, episodes = s['number'], s['episodes']
 			for e in episodes:
 				last_watched_at = e['last_watched_at']
 				if reset_at and reset_at > js2date(last_watched_at, res_format): continue
 				insert_append(('episode', tmdb_id, season_no, e['number'], last_watched_at, title))
-				total_watched_per_season += 1
-			total_watched += total_watched_per_season
 	insert_list = []
 	insert_append = insert_list.append
 	params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
@@ -575,55 +585,65 @@ def trakt_indicators_tv():
 	threads = list(make_thread_list(_process, result))
 	[i.join() for i in threads]
 	trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
-		
-		# total_watched = 0
-		# all_seasons_dict = {}
-		# for s in seasons:
-		# 	total_watched_per_season = 0
-		# 	season_no, episodes = s['number'], s['episodes']
-		# 	watched_episodes_list = []
-		# 	for e in episodes:
-		# 		last_watched_at = e['last_watched_at']
-		# 		if reset_at and reset_at > js2date(last_watched_at, res_format): continue
-		# 		insert_append(('episode', tmdb_id, season_no, e['number'], last_watched_at, title))
-		# 		total_watched_per_season += 1
-		# 		watched_episodes_list.append(e['number'])
-			# season_dict = {'total_watched': total_watched_per_season, 'episodes_watched': watched_episodes_list}
-			# all_seasons_dict[season_no] = season_dict
-			# total_watched += total_watched_per_season
-		# status_dict[tmdb_id] = {'title': title, 'total_watched': total_watched, 'seasons': all_seasons_dict}
 
-	# insert_list = []
-	# insert_append = insert_list.append
-	# status_dict = {}
-	# params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
-	# result = get_trakt(params)
-	# threads = list(make_thread_list(_process, result))
-	# [i.join() for i in threads]
-	# trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
-	# trakt_watched_cache.set_bulk_tvshow_status(status_dict)
-	# logger('status_dict', status_dict)
-	# logger('status_dict', len(status_dict))
-	# test_info = status_dict[39416]
-	# logger('test_info', test_info)
-	# show_name = test_info['title']
-	# logger('show_name', show_name)
-	# seasons = test_info['seasons']
-	# logger('seasons', seasons)
-	# season_1_watched = seasons[1]['total_watched']
-	# logger('season_1_watched', season_1_watched)
-	# season_10_watched = seasons[10]['total_watched']
-	# logger('season_10_watched', season_10_watched)
-	# season_10_episodes_watched = seasons[10]['episodes_watched']
-	# logger('season_10_episodes_watched', season_10_episodes_watched)
-	# episode_4_watched = 4 in season_10_episodes_watched
-	# logger('episode_4_watched', episode_4_watched)
-	# season_3_fully_watched = seasons[3]['total_watched'] == 8
-	# logger('season_3_fully_watched', season_3_fully_watched)
-	# def get_watched_status_tv(watched_indicators):
-	# 	dbcon = get_database(watched_indicators)
-	# 	info = eval(dbcon.execute("SELECT status FROM watched_status WHERE db_type = ?", ('tvshow',)).fetchone()[0])
-	# 	return info
+# def trakt_indicators_tv():
+# 	def _process(item):
+# 		reset_at = item.get('reset_at', None)
+# 		if reset_at: reset_at = js2date(reset_at, res_format)
+# 		tvshow_last_watched_at = item['last_watched_at']
+# 		show = item['show']
+# 		seasons = item['seasons']
+# 		title = show['title']
+# 		tmdb_id = get_trakt_tvshow_id(show['ids'])
+# 		if not tmdb_id: return
+# 		total_watched = 0
+# 		all_seasons_dict = {}
+# 		seasons_list = []
+# 		seasons_list_append = seasons_list.append
+# 		for s in seasons:
+# 			total_watched_per_season = 0
+# 			season_no, episodes = s['number'], s['episodes']
+# 			watched_episodes_dict = {}
+# 			episodes_list = []
+# 			episodes_list_append = episodes_list.append
+# 			for e in episodes:
+# 				last_watched_at = e['last_watched_at']
+# 				if reset_at and reset_at > js2date(last_watched_at, res_format): continue
+# 				episode = e['number']
+# 				insert_append(('episode', tmdb_id, season_no, episode, last_watched_at, title))
+# 				total_watched_per_season += 1
+# 				episodes_list_append(episode)
+# 				watched_episodes_dict[episode] = last_watched_at
+# 			seasons_list.append(season_no)
+# 			episodes_list = sorted(episodes_list)
+# 			season_dict = {'total_watched': total_watched_per_season, 'episodes_watched': watched_episodes_dict, 'episodes_list': episodes_list}
+# 			all_seasons_dict[season_no] = season_dict
+# 			total_watched += total_watched_per_season
+# 		status_append(('tvshow', tmdb_id,
+# 		repr({'title': title, 'total_watched': total_watched, 'last_watched_at': tvshow_last_watched_at, 'seasons': all_seasons_dict, 'seasons_list': seasons_list})))
+# 	insert_list = []
+# 	insert_append = insert_list.append
+# 	status_list = []
+# 	status_append = status_list.append
+# 	params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
+# 	result = get_trakt(params)
+# 	threads = list(make_thread_list(_process, result))
+# 	[i.join() for i in threads]
+# 	trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
+# 	trakt_watched_cache.set_bulk_tvshow_status(status_list)
+# 	logger('status_list', status_list)
+# 	status_info = eval(status_list[0][2])
+# 	tvshow_total_episodes_watched = status_info['total_watched']
+# 	tvshow_last_episode_watched = status_info['last_watched_at']
+# 	logger('tvshow_total_episodes_watched', tvshow_total_episodes_watched)
+# 	logger('tvshow_last_episode_watched', tvshow_last_episode_watched)
+# 	season_info = status_info['seasons']
+# 	logger('season_info', season_info)
+# 	for season_no in status_info['seasons_list']:
+# 		logger(season_no, status_info['seasons'][season_no])
+	
+
+
 
 def trakt_playback_progress():
 	params = {'path': 'sync/playback%s', 'with_auth': True, 'pagination': False}

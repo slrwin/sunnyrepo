@@ -360,11 +360,11 @@ class Navigator:
 			results = discover_cache.get_all(media_type)
 			if media_type == 'movie': mode, action = 'build_movie_list', 'tmdb_movies_discover'
 			else: mode, action = 'build_tvshow_list', 'tmdb_tv_discover'
-			for count, item in enumerate(results, 1):
+			for item in results:
 				name = item['id']
 				cm_items = [('[B]Remove from history[/B]', 'RunPlugin(%s)' % build_url({'mode': 'navigator.discover_contents', 'action':'delete_one', 'name': name})),
 							('[B]Clear All History[/B]', 'RunPlugin(%s)' % build_url({'mode': 'navigator.discover_contents', 'action':'clear_cache', 'media_type': media_type}))]
-				self.add({'mode': mode, 'action': action, 'name': name, 'url': item['data']}, '%s. %s' % (count, name), 'discover', cm_items=cm_items)
+				self.add({'mode': mode, 'action': action, 'name': name, 'url': item['data']}, name, 'discover', cm_items=cm_items)
 			self.end_directory()
 		else:
 			if action == 'delete_one': discover_cache.delete_one(self.params_get('name'))
