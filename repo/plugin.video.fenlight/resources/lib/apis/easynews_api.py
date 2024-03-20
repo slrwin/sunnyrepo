@@ -200,10 +200,10 @@ class EasyNewsAPIv3(EasyNewsAPI):
 def clear_media_results_database():
 	dbcon = connect_database('maincache_db')
 	easynews_results = [str(i[0]) for i in dbcon.execute("SELECT id FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'").fetchall()]
-	if not easynews_results: return 'success'
+	if not easynews_results: return True
 	try:
 		dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'")
 		for i in easynews_results: clear_property(i)
-		return 'success'
-	except: return 'failed'
+		return True
+	except: return False
 

@@ -29,8 +29,7 @@ class PremiumizeAPI:
 		user_code = response['user_code']
 		try: copy2clip(user_code)
 		except: pass
-		content = line % ('Authorize Debrid Services', 'Navigate to: [B]%s[/B]' % response.get('verification_uri'),
-														'Enter the following code: [COLOR orangered][B]%s[/B][/COLOR]' % user_code)
+		content = 'Authorize Debrid Services[CR]Navigate to: [B]%s[/B][CR]Enter the following code: [B]%s[/B]' % (response.get('verification_uri'), user_code)
 		progressDialog = progress_dialog('Premiumize Authorize', get_icon('pm_qrcode'))
 		progressDialog.update(content, 0)
 		device_code = response['device_code']

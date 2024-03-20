@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from apis.trakt_api import make_trakt_slug
 from caches.settings_cache import get_setting
-# from caches.resolved_cache import resolved_cache
+from caches.resolved_cache import resolved_cache
 from modules import kodi_utils as ku, settings as st, watched_status as ws
 # logger = ku.logger
 
@@ -9,7 +9,7 @@ set_property, clear_property, get_visibility, hide_busy_dialog, xbmc_actor = ku.
 Thread, json, xbmc_player, execute_builtin, sleep = ku.Thread, ku.json, ku.xbmc_player, ku.execute_builtin, ku.sleep
 make_listitem, volume_checker, get_infolabel = ku.make_listitem, ku.volume_checker, ku.get_infolabel
 close_all_dialog, notification, poster_empty, fanart_empty = ku.close_all_dialog, ku.notification, ku.empty_poster, ku.get_addon_fanart()
-auto_resume, auto_nextep_settings = st.auto_resume, st.auto_nextep_settings
+auto_resume, auto_nextep_settings, remember_resolve = st.auto_resume, st.auto_nextep_settings, st.remember_resolve
 clear_local_bookmarks, set_bookmark, mark_movie, mark_episode = ws.clear_local_bookmarks, ws.set_bookmark, ws.mark_movie, ws.mark_episode
 total_time_errors = ('0.0', '', 0.0, None)
 set_resume, set_watched = 5, 90
@@ -33,7 +33,7 @@ class FenLightPlayer(xbmc_player):
 		if not self.is_generic:
 			self.check_playback_start()
 			if self.playback_successful:
-				# resolved_cache.insert_one(self.media_type, self.tmdb_id, self.season, self.episode, self.resolved_item)
+				if remember_resolve(): resolved_cache.insert_one(self.media_type, self.tmdb_id, self.resolved_item)
 				self.monitor()
 			else:
 				self.sources_object.playback_successful = self.playback_successful

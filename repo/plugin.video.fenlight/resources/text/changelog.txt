@@ -1,5 +1,11 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.38[/B][/COLOR]
+- Added settings for maximum size for Movies or Episodes. Changed from a single setting for both. Found at Results->Sorting & Filtering.
+- Added Playback->Utilities->"Remember Previous Successful Resolves". Enable this and Fen Light will remember the last successful resolve for a Movie or TV Show and sort it to the top of the results list. The highlight color can be set in Results->Results Color Highlights when the setting is enabled.
+- Neutralized activation code colors when authorizing debrid providers or Trakt so as to assist colorblind people in seeing the code.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.36/37[/B][/COLOR]
 - Couple of quick fixes.
 

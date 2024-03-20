@@ -54,22 +54,12 @@ extras_button_label_values = {
 					'play_nextep': 'Play Next', 'show_options': 'Options', 'show_media_images': 'Media Images', 'show_recommended': 'Recommended',
 					'show_trakt_manager': 'Trakt Manager', 'play_random_episode': 'Play Random', 'show_favorites_manager': 'Favorites Manager', 'show_plot': 'Plot',
 					'show_keywords': 'Keywords'}}
-movie_extras_buttons_defaults = [('extras.movie.button10', 'movies_play'), ('extras.movie.button11', 'show_trailers'), ('extras.movie.button12', 'show_keywords'),
-					('extras.movie.button13', 'show_images'), ('extras.movie.button14', 'show_extrainfo'), ('extras.movie.button15', 'show_genres'),
-					('extras.movie.button16', 'show_director'), ('extras.movie.button17', 'show_options')]
-tvshow_extras_buttons_defaults = [('extras.tvshow.button10', 'tvshow_browse'), ('extras.tvshow.button11', 'show_trailers'), ('extras.tvshow.button12', 'show_keywords'),
-					('extras.tvshow.button13', 'show_images'), ('extras.tvshow.button14', 'show_extrainfo'), ('extras.tvshow.button15', 'show_genres'),
-					('extras.tvshow.button16', 'play_nextep'), ('extras.tvshow.button17', 'show_options')]
-view_ids = ('view.main', 'view.movies', 'view.tvshows', 'view.seasons', 'view.episodes', 'view.episodes_single', 'view.premium')
 video_extensions = ('m4v', '3g2', '3gp', 'nsv', 'tp', 'ts', 'ty', 'pls', 'rm', 'rmvb', 'mpd', 'ifo', 'mov', 'qt', 'divx', 'xvid', 'bivx', 'vob', 'nrg', 'img', 'iso', 'udf', 'pva',
 					'wmv', 'asf', 'asx', 'ogm', 'm2v', 'avi', 'bin', 'dat', 'mpg', 'mpeg', 'mp4', 'mkv', 'mk3d', 'avc', 'vp3', 'svq3', 'nuv', 'viv', 'dv', 'fli', 'flv', 'wpl',
 					'xspf', 'vdr', 'dvr-ms', 'xsp', 'mts', 'm2t', 'm2ts', 'evo', 'ogv', 'sdp', 'avs', 'rec', 'url', 'pxml', 'vc1', 'h264', 'rcv', 'rss', 'mpls', 'mpl', 'webm',
 					'bdmv', 'bdm', 'wtv', 'trp', 'f4v', 'pvr', 'disc')
 image_extensions = ('jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'dib', 'png', 'gif', 'webp', 'tiff', 'tif',
 					'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2')
-default_highlights = {'provider.rd_highlight': 'FF3C9900', 'provider.pm_highlight': 'FFFF3300', 'provider.ad_highlight': 'FFE6B800', 'provider.easynews_highlight': 'FF00B3B2',
-					'provider.debrid_cloud_highlight': 'FF7A01CC', 'provider.folders_highlight': 'FFB36B00', 'scraper_4k_highlight': 'FFFF00FE',
-					'scraper_1080p_highlight': 'FFE6B800', 'scraper_720p_highlight': 'FF3C9900', 'scraper_SD_highlight': 'FF0166FF', 'scraper_single_highlight': 'FF008EB2'}
 
 def get_icon(image_name):
 	return img_url % getattr(icons, image_name, 'I1JJhji')

@@ -32,14 +32,12 @@ class RealDebridAPI:
 	def auth(self):
 		self.secret = ''
 		self.client_ID = 'X245A4XAIBGVM'
-		line = '%s[CR]%s[CR]%s'
 		url = auth_url + device_url % 'client_id=%s&new_credentials=yes' % self.client_ID
 		response = requests.get(url, timeout=timeout).json()
 		user_code = response['user_code']
 		try: copy2clip(user_code)
 		except: pass
-		content = line % ('Authorize Debrid Services', 'Navigate to: [B]%s[/B]' % 'https://real-debrid.com/device',
-														'Enter the following code: [COLOR seagreen][B]%s[/B][/COLOR]' % user_code)
+		content = 'Authorize Debrid Services[CR]Navigate to: [B]https://real-debrid.com/device[/B][CR]Enter the following code: [B]%s[/B]' % user_code
 		progressDialog = progress_dialog('Real Debrid Authorize', get_icon('rd_qrcode'))
 		progressDialog.update(content, 0)
 		expires_in = int(response['expires_in'])
@@ -494,16 +492,12 @@ class RealDebridAPI:
 						clear_property("fenlight.rd_user_cloud_info_%s" % i)
 					user_cloud_success = True
 			except: user_cloud_success = False
-			
-
 			# DOWNLOAD LINKS
 			try:
 				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('rd_downloads',))
 				clear_property("fenlight.rd_downloads")
 				download_links_success = True
 			except: download_links_success = False
-			
-
 			# HASH CACHED STATUS
 			if clear_hashes:
 				try:

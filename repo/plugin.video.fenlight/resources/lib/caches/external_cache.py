@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from caches.base_cache import connect_database, get_timestamp
-from modules.kodi_utils import confirm_dialog
 # from modules.kodi_utils import logger
 
 SELECT_RESULTS = 'SELECT results, expires FROM results_data WHERE provider = ? AND db_type = ? AND tmdb_id = ? AND title = ? AND year = ? AND season = ? AND episode = ?'
@@ -32,17 +31,16 @@ class ExternalCache(object):
 			self._execute(DELETE_RESULTS, (source, media_type, tmdb_id, title, season, episode))
 		except: return
 
-	def delete_cache(self, silent=False):
-		try:
-			if not silent and not confirm_dialog(): return 'cancelled'
-			self._execute(FULL_DELETE, ())
-			self._vacuum()
-			return 'success'
-		except: return 'failure'
-
 	def delete_cache_single(self, media_type, tmdb_id):
 		try:
 			self._execute(SINGLE_DELETE, (media_type, tmdb_id))
+			self._vacuum()
+			return True
+		except: return False
+
+	def clear_cache(self):
+		try:
+			self._execute(FULL_DELETE, ())
 			self._vacuum()
 			return True
 		except: return False

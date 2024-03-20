@@ -2,7 +2,7 @@
 import re
 from windows.base_window import open_window, create_window
 from caches.base_cache import refresh_cached_data
-from caches.settings_cache import get_setting, set_setting, set_default
+from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
 from modules.downloader import manager
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices
@@ -12,13 +12,12 @@ from modules.utils import get_datetime, title_key, adjust_premiered_date, append
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
 get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
-img_url, sleep, default_highlights, external_scraper_settings = kodi_utils.img_url, kodi_utils.sleep, kodi_utils.default_highlights, kodi_utils.external_scraper_settings
+img_url, sleep, external_scraper_settings = kodi_utils.img_url, kodi_utils.sleep, kodi_utils.external_scraper_settings
 kodi_refresh, container_refresh_input, autoscrape_next_episode = kodi_utils.kodi_refresh, kodi_utils.container_refresh_input, settings.autoscrape_next_episode
 json, build_url, select_dialog, clear_property = kodi_utils.json, kodi_utils.build_url, kodi_utils.select_dialog, kodi_utils.clear_property
 run_plugin, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window, addon_fanart = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.default_addon_fanart
 addon_icon, poster_empty = kodi_utils.addon_icon, kodi_utils.empty_poster
-movie_extras_buttons_defaults, tvshow_extras_buttons_defaults = kodi_utils.movie_extras_buttons_defaults, kodi_utils.tvshow_extras_buttons_defaults
 extras_button_label_values, jsonrpc_get_addons = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 audio_filters, extras_open_action = settings.audio_filters, settings.extras_open_action
@@ -307,10 +306,10 @@ def extras_buttons_choice(params):
 		if 'restore' in media_type:
 			restore_type = media_type.split('.')[1]
 			if restore_type in ('movie', 'both'):
-				for item in movie_extras_buttons_defaults:
+				for item in [(i, default_setting_values(i)['setting_default']) for i in ('extras.movie.button%s' % i for i in range(10,18))]:
 					set_setting(item[0], item[1])
 			if restore_type in ('tvshow', 'both'):
-				for item in tvshow_extras_buttons_defaults:
+				for item in [(i, default_setting_values(i)['setting_default']) for i in ('extras.tvshow.button%s' % i for i in range(10,18))]:
 					set_setting(item[0], item[1])
 			return ok_dialog(text='Success')
 	choices = [('[B]%s[/B]   |   %s' % (v['button_name'], v['button_label']), v['button_name'], v['button_label'], k) for k, v in button_dict.items() if media_type in k]
@@ -423,7 +422,7 @@ def favorites_choice(params):
 
 def scraper_color_choice(params):
 	setting = params.get('setting_id')
-	current_setting, original_highlight = get_setting('fenlight.%s' % setting), default_highlights[setting]
+	current_setting, original_highlight = get_setting('fenlight.%s' % setting), default_setting_values(setting)['setting_default']
 	if current_setting != original_highlight:
 		action = confirm_dialog(text='Set new Highlight or Restore Default Highlight?', ok_label='Set New', cancel_label='Restore Default', default_control=10)
 		if action == None: return

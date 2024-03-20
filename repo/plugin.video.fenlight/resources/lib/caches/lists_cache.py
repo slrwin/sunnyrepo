@@ -15,7 +15,8 @@ class ListsCache(BaseCache):
 			for i in dbcon.execute(GET_ALL): self.delete_memory_cache(str(i[0]))
 			dbcon.execute(DELETE_ALL)
 			dbcon.execute('VACUUM')
-		except: return
+			return True
+		except: return False
 
 lists_cache = ListsCache()
 

@@ -81,7 +81,8 @@ expires integer, unique (provider, db_type, tmdb_id, title, year, season, episod
 'discover_db': (
 'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',),
 'resolved_db': (
-'CREATE TABLE IF NOT EXISTS resolved (media_type text not null, tmdb_id text not null, season text, episode text, data text)',)
+'CREATE TABLE IF NOT EXISTS resolved (media_type text not null, tmdb_id text not null, provider text not null, name text not null, id integer not null, data text not null, \
+unique (media_type, tmdb_id))',)
 		}
 media_prop = 'fenlight.%s'
 BASE_GET = 'SELECT expires, data FROM %s WHERE id = ?'
@@ -153,21 +154,21 @@ def clear_cache(cache_type, silent=False):
 	def _confirm(): return silent or confirm_dialog()
 	success = True
 	if cache_type == 'meta':
-		from caches.trakt_cache import clear_trakt_movie_sets
 		from caches.meta_cache import delete_meta_cache
-		clear_trakt_movie_sets()
 		success = delete_meta_cache(silent=silent)
 	elif cache_type == 'internal_scrapers':
 		if not _confirm(): return
 		from apis import easynews_api
-		easynews_api.clear_media_results_database()
-		for item in ('pm_cloud', 'rd_cloud', 'ad_cloud', 'folders'): clear_cache(item, silent=True)
+		results = []
+		results.append(easynews_api.clear_media_results_database())
+		for item in ('pm_cloud', 'rd_cloud', 'ad_cloud', 'folders'): results.append(clear_cache(item, silent=True))
+		success = False not in results
 	elif cache_type == 'external_scrapers':
 		from caches.external_cache import external_cache
 		from caches.debrid_cache import debrid_cache
-		data = external_cache.delete_cache(silent=silent)
-		clear_debrid_result = debrid_cache.clear_cache()
-		success = (data, clear_debrid_result) == ('success', 'success')
+		results = []
+		for item in (external_cache, debrid_cache): results.append(item.clear_cache())
+		success = False not in results
 	elif cache_type == 'trakt':
 		from caches.trakt_cache import clear_all_trakt_cache_data
 		success = clear_all_trakt_cache_data(silent=silent)
@@ -188,17 +189,23 @@ def clear_cache(cache_type, silent=False):
 		from apis.alldebrid_api import AllDebridAPI
 		success = AllDebridAPI().clear_cache()
 	elif cache_type == 'folders':
+		if not _confirm(): return
 		from caches.main_cache import main_cache
-		main_cache.delete_all_folderscrapers()
+		success = main_cache.delete_all_folderscrapers()
 	elif cache_type == 'list':
 		if not _confirm(): return
 		from caches.lists_cache import lists_cache
-		lists_cache.delete_all_lists()
+		success = lists_cache.delete_all_lists()
+	elif cache_type == 'resolved':
+		if not _confirm(): return
+		from caches.resolved_cache import resolved_cache
+		success = resolved_cache.clear_cache()
 	else:# main
 		if not _confirm(): return
 		from caches.main_cache import main_cache
-		main_cache.delete_all()
+		success = main_cache.delete_all()
 	if not silent and success: notification('Success')
+	return success
 
 def clear_all_cache():
 	if not confirm_dialog(): return
@@ -206,7 +213,7 @@ def clear_all_cache():
 	line = 'Clearing....[CR]%s'
 	caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
 			('trakt', 'Trakt Cache'), ('imdb', 'IMDb Cache'), ('list', 'List Data Cache', ), ('main', 'Main Cache', ),
-			('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'))
+			('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'), ('resolved', 'Resolved Sources'))
 	for count, cache_type in enumerate(caches, 1):
 		try:
 			progressDialog.update(line % (cache_type[1]), int(float(count) / float(len(caches)) * 100))

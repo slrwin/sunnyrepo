@@ -18,17 +18,19 @@ class MainCache(BaseCache):
 			for i in dbcon.execute(GET_ALL): self.delete_memory_cache(str(i[0]))
 			dbcon.execute(DELETE_ALL)
 			dbcon.execute('VACUUM')
-		except: return
+			return True
+		except: return False
 
 	def delete_all_folderscrapers(self):
 		dbcon = self.manual_connect('maincache_db')
 		remove_list = [str(i[0]) for i in dbcon.execute(LIKE_SELECT % "'FOLDERSCRAPER_%'").fetchall()]
-		if not remove_list: return
+		if not remove_list: return True
 		try:
 			dbcon.execute(LIKE_DELETE % "'FOLDERSCRAPER_%'")
 			dbcon.execute('VACUUM')
 			for item in remove_list: self.delete_memory_cache(str(item))
-		except: pass
+			return True
+		except: return False
 
 	def clean_database(self):
 		try:

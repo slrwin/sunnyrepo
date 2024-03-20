@@ -102,7 +102,6 @@ def clear_trakt_collection_watchlist_data(list_type, media_type):
 	if media_type == 'movies': media_type = 'movie'
 	if media_type in ('tvshows', 'shows'): media_type = 'tvshow'
 	string = 'trakt_%s_%s' % (list_type, media_type)
-	if media_type == 'movie': clear_trakt_movie_sets()
 	try:
 		dbcon = connect_database('trakt_db')
 		dbcon.execute(DELETE, (string,))
@@ -139,13 +138,6 @@ def clear_trakt_favorites():
 		dbcon = connect_database('trakt_db')
 		dbcon.execute(DELETE_LIKE % 'trakt_favorites_%')
 	except: return
-
-def clear_trakt_movie_sets():
-	string = 'trakt_movie_sets'
-	try:
-		dbcon = connect_database('trakt_db')
-		dbcon.execute(DELETE, (string,))
-	except: pass
 
 def clear_all_trakt_cache_data(silent=False, refresh=True):
 	try:

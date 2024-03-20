@@ -2,38 +2,41 @@
 from caches.base_cache import connect_database
 # from modules.kodi_utils import logger
 
-INSERT_ONE = 'INSERT OR REPLACE INTO resolved VALUES (?, ?, ?, ?, ?)'
+INSERT_ONE = 'INSERT OR REPLACE INTO resolved VALUES (?, ?, ?, ?, ?, ?)'
 DELETE_ONE = 'DELETE FROM resolved where id=?'
-SELECT_ONE = 'SELECT data from resolved WHERE media_type=? AND tmdb_id=? AND season=? AND episode=?'
-DELETE_TYPE = 'DELETE FROM resolved WHERE media_type=?'
+SELECT_ONE = 'SELECT id from resolved WHERE media_type=? AND tmdb_id=?'
+SELECT_ALL = 'SELECT * from resolved'
+DELETE_ALL = 'DELETE FROM resolved'
 
 class ResolvedCache:
-	def insert_one(self, media_type, tmdb_id, season, episode, data):
+	def insert_one(self, media_type, tmdb_id, data):
+		provider, name, _id = data['scrape_provider'], data['name'] , data.get('hash') or data.get('id')
 		dbcon = connect_database('resolved_db')
-		dbcon.execute(INSERT_ONE, (media_type, tmdb_id, season, episode, repr(data)))
+		dbcon.execute(INSERT_ONE, (media_type, tmdb_id, provider, name, _id, repr(data)))
 
 	def delete_one(self, _id):
 		dbcon = connect_database('resolved_db')
 		dbcon.execute(DELETE_ONE, (_id,))
 		dbcon.execute('VACUUM')
 
-	def get_one(self, media_type, tmdb_id, season, episode):
+	def get_one(self, media_type, tmdb_id):
 		dbcon = connect_database('resolved_db')
-		try: result = dbcon.execute(SELECT_ONE, (media_type, tmdb_id, season, episode)).fetchone()[0]
-		except:
-			result = None
-			if media_type == 'episode':
-				try: result = dbcon.execute(SELECT_ONE, (media_type, tmdb_id, season, '')).fetchone()[0]
-				except: pass
-				if not result:
-					try: result = dbcon.execute(SELECT_ONE, (media_type, tmdb_id, '', '')).fetchone()[0]
-					except: return result
-			else: return result
-		return eval(result)
+		try: result = dbcon.execute(SELECT_ONE, (media_type, tmdb_id)).fetchone()[0]
+		except: result = []
+		return result
 
-	def clear_cache(self, media_type):
+	def get_all(self):
 		dbcon = connect_database('resolved_db')
-		dbcon.execute(DELETE_TYPE, (media_type,))
-		dbcon.execute('VACUUM')
+		try: result = dbcon.execute(SELECT_ALL).fetchall()
+		except: result = []
+		return result
+
+	def clear_cache(self):
+		try:
+			dbcon = connect_database('resolved_db')
+			dbcon.execute(DELETE_ALL)
+			dbcon.execute('VACUUM')
+			return True
+		except: return False
 
 resolved_cache = ResolvedCache()

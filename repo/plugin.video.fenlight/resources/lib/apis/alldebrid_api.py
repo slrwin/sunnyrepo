@@ -23,7 +23,6 @@ class AllDebridAPI:
 
 	def auth(self):
 		self.token = ''
-		line = '%s[CR]%s[CR]%s'
 		url = base_url + 'pin/get?agent=%s' % user_agent
 		response = requests.get(url, timeout=timeout).json()
 		response = response['data']
@@ -33,8 +32,7 @@ class AllDebridAPI:
 		try: copy2clip(user_code)
 		except: pass
 		sleep_interval = 5
-		content = line % ('Authorize Debrid Services', 'Navigate to: [B]%s[/B]' % response.get('base_url'),
-														'Enter the following code: [COLOR goldenrod][B]%s[/B][/COLOR]' % user_code)
+		content = 'Authorize Debrid Services[CR]Navigate to: [B]%s[/B][CR]Enter the following code: [B]%s[/B]' % (response.get('base_url'), user_code)
 		progressDialog = progress_dialog('All Debrid Authorize', get_icon('ad_qrcode'))
 		progressDialog.update(content, 0)
 		start, time_passed = time.time(), 0

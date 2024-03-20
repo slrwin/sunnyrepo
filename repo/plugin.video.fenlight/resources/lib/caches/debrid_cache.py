@@ -55,8 +55,8 @@ class DebridCache:
 			dbcon.execute(CLEAR)
 			dbcon.execute('VACUUM')
 			dbcon.close()
-			return 'success'
-		except: return 'failure'
+			return True
+		except: return False
 
 	def clean_database(self):
 		try:

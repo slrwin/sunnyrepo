@@ -94,7 +94,7 @@ def trakt_get_device_token(device_codes):
 		user_code = str(device_codes['user_code'])
 		try: copy2clip(user_code)
 		except: pass
-		content = '[CR]Navigate to: [B]%s[/B][CR]%s' % (str(device_codes['verification_url']), 'Enter the following code: [COLOR red][B]%s[/B][/COLOR]' % user_code)
+		content = '[CR]Navigate to: [B]%s[/B][CR]Enter the following code: [B]%s[/B]' % (str(device_codes['verification_url']), user_code)
 		progressDialog = progress_dialog('Trakt Authorize', get_icon('trakt_qrcode'))
 		progressDialog.update(content, 0)
 		try:
@@ -520,7 +520,6 @@ def get_trakt_movie_id(item):
 def get_trakt_tvshow_id(item):
 	if item['tmdb']: return item['tmdb']
 	tmdb_id = None
-	logger('get_trakt_movie_id', item)
 	if item['imdb']:
 		try: 
 			meta = tvshow_meta_external_id('imdb_id', item['imdb'])
@@ -546,7 +545,6 @@ def trakt_indicators_movies():
 	result = get_trakt(params)
 	threads = list(make_thread_list(_process, result))
 	[i.join() for i in threads]
-	logger('insert_list', insert_list)
 	trakt_watched_cache.set_bulk_movie_watched(insert_list)
 
 def trakt_indicators_movies():
