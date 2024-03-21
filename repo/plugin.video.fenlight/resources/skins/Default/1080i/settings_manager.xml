@@ -762,6 +762,37 @@
                         <property name="setting_description">Enable this and Fen Light will NOT assign certain properties to media it creates. Examples of suppressed properties would be ratings, casts, mpaa rating etc. Fen Light will provide Kodi only with the most basic and needed properties for the media</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=use_minimal_media_info)</onclick>
                     </item>
+            <!-- Trakt Calendar -->
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Trakt Calendar</label>
+                        <property name="setting_type">separator</property>
+                        <onclick>noop</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Sort Order</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.trakt.calendar_sort_order_name)]</property>
+                        <property name="setting_description">Choose the sort direction of the Trakt Calendar list. Ascending or Descending</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=trakt.calendar_sort_order)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Show Previous Days</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.trakt.calendar_previous_days)]</property>
+                        <property name="setting_description">Choose how many previous days will be shown within the Trakt Calendar</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=trakt.calendar_previous_days)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <label>Show Future Days</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.trakt.calendar_future_days)]</property>
+                        <property name="setting_description">Choose how many future days will be shown within the Trakt Calendar</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=trakt.calendar_future_days)</onclick>
+                    </item>
             <!-- Next Episodes -->
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>

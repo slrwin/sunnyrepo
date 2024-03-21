@@ -618,7 +618,7 @@ def trakt_indicators_tv():
 # 			all_seasons_dict[season_no] = season_dict
 # 			total_watched += total_watched_per_season
 # 		status_append(('tvshow', tmdb_id,
-# 		repr({'title': title, 'total_watched': total_watched, 'last_watched_at': tvshow_last_watched_at, 'seasons': all_seasons_dict, 'seasons_list': seasons_list})))
+# 			repr({'title': title, 'total_watched': total_watched, 'last_watched_at': tvshow_last_watched_at, 'seasons': all_seasons_dict, 'seasons_list': seasons_list})))
 # 	insert_list = []
 # 	insert_append = insert_list.append
 # 	status_list = []
@@ -739,7 +739,11 @@ def trakt_get_my_calendar(recently_aired, current_date):
 
 def trakt_calendar_days(recently_aired, current_date):
 	if recently_aired: start, finish = (current_date - timedelta(days=14)).strftime('%Y-%m-%d'), '14'
-	else: start, finish = (current_date - timedelta(days=5)).strftime('%Y-%m-%d'), '28'
+	else:
+		previous_days = int(get_setting('fenlight.trakt.calendar_previous_days', '0'))
+		future_days = int(get_setting('fenlight.trakt.calendar_future_days', '7'))
+		start = (current_date - timedelta(days=previous_days)).strftime('%Y-%m-%d')
+		finish = str(previous_days + future_days)
 	return start, finish
 
 def make_trakt_slug(name):

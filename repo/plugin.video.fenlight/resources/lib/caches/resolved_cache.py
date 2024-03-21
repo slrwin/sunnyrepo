@@ -10,14 +10,18 @@ DELETE_ALL = 'DELETE FROM resolved'
 
 class ResolvedCache:
 	def insert_one(self, media_type, tmdb_id, data):
-		provider, name, _id = data['scrape_provider'], data['name'] , data.get('hash') or data.get('id')
-		dbcon = connect_database('resolved_db')
-		dbcon.execute(INSERT_ONE, (media_type, tmdb_id, provider, name, _id, repr(data)))
+		try:
+			provider, name, _id = data['scrape_provider'], data['name'] , data.get('hash') or data.get('id')
+			dbcon = connect_database('resolved_db')
+			dbcon.execute(INSERT_ONE, (media_type, tmdb_id, provider, name, _id, repr(data)))
+		except: pass
 
 	def delete_one(self, _id):
-		dbcon = connect_database('resolved_db')
-		dbcon.execute(DELETE_ONE, (_id,))
-		dbcon.execute('VACUUM')
+		try:
+			dbcon = connect_database('resolved_db')
+			dbcon.execute(DELETE_ONE, (_id,))
+			dbcon.execute('VACUUM')
+		except: pass
 
 	def get_one(self, media_type, tmdb_id):
 		dbcon = connect_database('resolved_db')

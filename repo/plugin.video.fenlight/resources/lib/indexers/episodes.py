@@ -13,7 +13,7 @@ date_offset_info, default_all_episodes, nextep_include_unwatched = settings.date
 nextep_airing_today, nextep_sort_key, nextep_sort_direction = settings.nextep_airing_today, settings.nextep_sort_key, settings.nextep_sort_direction
 nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep_include_unaired, settings.single_ep_display_format, settings.widget_hide_watched
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
-get_property, nextep_include_airdate = kodi_utils.get_property, settings.nextep_include_airdate
+get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
 watched_indicators_info, use_minimal_media_info = settings.watched_indicators, settings.use_minimal_media_info
 tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
 get_progress_percent, get_watched_status, get_media_info = ws.get_progress_percent, ws.get_watched_status_episode, ws.get_media_info
@@ -302,12 +302,17 @@ def build_single_episode(list_type, params={}):
 	else:
 		item_list.sort(key=lambda i: i['sort_order'])
 		if list_type_compare in ('trakt_calendar', 'trakt_recently_aired'):
-			if list_type_compare == 'trakt_calendar': reverse = False
+			if list_type_compare == 'trakt_calendar': reverse = calendar_sort_order() == 0
 			else: reverse = True
 			try: item_list = sorted(item_list, key=lambda i: i.get('first_aired', '2100-12-31'), reverse=reverse)
 			except:
 				item_list = [i for i in item_list if i.get('first_aired') not in (None, 'None', '')]
 				item_list = sorted(item_list, key=lambda i: i.get('first_aired'), reverse=reverse)
+			if list_type_compare == 'trakt_calendar':
+				airing_today = sorted([i for i in item_list if date_difference(current_date, jsondate_to_datetime(i.get('first_aired', '2100-12-31'), '%Y-%m-%d').date(), 0)],
+										key=lambda i: i['first_aired'])
+				item_list = [i for i in item_list if not i in airing_today]
+				item_list = airing_today + item_list
 	add_items(handle, [i['list_items'] for i in item_list])
 	set_content(handle, content_type)
 	set_category(handle, category_name)

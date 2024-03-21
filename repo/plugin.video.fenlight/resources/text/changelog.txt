@@ -1,5 +1,8 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.39[/B][/COLOR]
+- Added settings for Trakt Calendar in Settings->Navigation. Choose previous/future days and sort order.
+
 [COLOR dodgerblue][B]Version 1.0.38[/B][/COLOR]
 - Added settings for maximum size for Movies or Episodes. Changed from a single setting for both. Found at Results->Sorting & Filtering.
 - Added Playback->Utilities->"Remember Previous Successful Resolves". Enable this and Fen Light will remember the last successful resolve for a Movie or TV Show and sort it to the top of the results list. The highlight color can be set in Results->Results Color Highlights when the setting is enabled.

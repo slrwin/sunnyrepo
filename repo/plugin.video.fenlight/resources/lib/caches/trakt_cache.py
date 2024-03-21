@@ -45,6 +45,7 @@ class TraktWatched():
 	def set_bulk_tvshow_status(self, insert_list):
 		self._delete(STATUS_DELETE, ())
 		self._executemany(STATUS_INSERT, insert_list)
+
 	def set_bulk_movie_watched(self, insert_list):
 		self._delete(WATCHED_DELETE, ('movie',))
 		self._executemany(WATCHED_INSERT, insert_list)
