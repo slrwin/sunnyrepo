@@ -5,7 +5,7 @@ from caches.settings_cache import get_setting
 from scrapers import external, folders
 from modules import debrid, kodi_utils, settings, metadata, watched_status
 from modules.player import FenLightPlayer
-from modules.source_utils import get_cache_expiry, make_alias_dict, sort_previously_resolved
+from modules.source_utils import get_cache_expiry, make_alias_dict
 from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import, manual_module_import
 # logger = kodi_utils.logger
 
@@ -16,7 +16,7 @@ Thread, get_property, set_property, clear_property = kodi_utils.Thread, kodi_uti
 auto_play, active_internal_scrapers, provider_sort_ranks, audio_filters = settings.auto_play, settings.active_internal_scrapers, settings.provider_sort_ranks, settings.audio_filters
 check_prescrape_sources, external_scraper_info, auto_resume = settings.check_prescrape_sources, settings.external_scraper_info, settings.auto_resume
 store_resolved_to_cloud, source_folders_directory, watched_indicators = settings.store_resolved_to_cloud, settings.source_folders_directory, settings.watched_indicators
-quality_filter, sort_to_top, remember_resolve = settings.quality_filter, settings.sort_to_top, settings.remember_resolve
+quality_filter, sort_to_top = settings.quality_filter, settings.sort_to_top
 scraping_settings, include_prerelease_results, auto_rescrape_with_all = settings.scraping_settings, settings.include_prerelease_results, settings.auto_rescrape_with_all
 ignore_results_filter, results_sort_order, results_format, filter_status = settings.ignore_results_filter, settings.results_sort_order, settings.results_format, settings.filter_status
 autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
@@ -46,7 +46,7 @@ class Sources():
 		self.prescrape, self.disabled_ext_ignored, self.default_ext_only = 'true', 'false', 'false'
 		self.ext_name, self.ext_folder, self.provider_defaults, self.ext_sources = '', '', [], None
 		self.progress_dialog, self.progress_thread = None, None
-		self.playing_filename, self.resolved_item = '', ''
+		self.playing_filename = ''
 		self.count_tuple = (('sources_4k', '4K', self._quality_length), ('sources_1080p', '1080p', self._quality_length), ('sources_720p', '720p', self._quality_length),
 							('sources_sd', '', self._quality_length_sd), ('sources_total', '', self._quality_length_final))
 
@@ -420,7 +420,6 @@ class Sources():
 			sort_last = [i for i in results if not i in sort_first]
 			results = sort_first + sort_last
 		except: pass
-		if remember_resolve(): results = sort_previously_resolved(self.media_type, self.tmdb_id, results)
 		return results
 
 	def _sort_folder_to_top(self, provider):
@@ -596,7 +595,6 @@ class Sources():
 						url = self.resolve_sources(item)
 						if url:
 							resolve_percent = 0
-							self.resolved_item = item
 							self.progress_dialog.busy_spinner('false')
 							self.progress_dialog.update_resolver(percent=resolve_percent)
 							sleep(200)

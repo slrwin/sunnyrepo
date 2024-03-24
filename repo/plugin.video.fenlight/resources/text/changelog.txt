@@ -1,5 +1,8 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.40[/B][/COLOR]
+- Removed Playback->Utilities->"Remember Previous Successful Resolves". Short-lived. Didn't seem to work for most people for some reason, and broke Fen Light when it didn't work. I wasn't that enamoured with the feature in the first place, so better to remove it. The same functionality can already be achieved with a couple of settings.
+
 [COLOR dodgerblue][B]Version 1.0.39[/B][/COLOR]
 - Added settings for Trakt Calendar in Settings->Navigation. Choose previous/future days and sort order.
 

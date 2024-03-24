@@ -136,13 +136,9 @@ class SourcesResults(BaseDialog):
 					scrape_provider, source, quality, name = get('scrape_provider'), get('source'), get('quality', 'SD'), get('display_name')
 					basic_quality, quality_icon = self.get_quality_and_path(lower(quality))
 					pack = get('package', 'false') in pack_check
-					previous_resolved = get('previous_resolved', False)
 					extraInfo = get('extraInfo', '')
 					extraInfo = extraInfo.rstrip('| ')
 					if pack: extraInfo = '[B]%s PACK[/B] | %s' % (get('package'), extraInfo)
-					if previous_resolved:
-						if not extraInfo: extraInfo = '[B]PREVIOUSLY RESOLVED[/B]'
-						else: extraInfo = '[B]PREVIOUSLY RESOLVED[/B] | %s' % extraInfo
 					elif not extraInfo: extraInfo = 'N/A'
 					if scrape_provider == 'external':
 						source_site = upper(get('provider'))
@@ -154,8 +150,7 @@ class SourcesResults(BaseDialog):
 							else: set_properties({'source_type': 'UNCACHED'})
 							set_properties({'highlight': 'FF7C7C7C'})
 						else:
-							if previous_resolved: key = 'previous_resolved'
-							elif highlight_type == 0: key = provider_lower
+							if highlight_type == 0: key = provider_lower
 							else: key = basic_quality
 							set_properties({'highlight': self.info_highlights_dict[key]})
 							if pack: set_properties({'source_type': 'CACHED [B]PACK[/B]'})
@@ -164,8 +159,7 @@ class SourcesResults(BaseDialog):
 					else:
 						source_site = upper(source)
 						provider, provider_icon = self.get_provider_and_path(lower(source))
-						if previous_resolved: key = 'previous_resolved'
-						elif highlight_type == 0: key = provider
+						if highlight_type == 0: key = provider
 						else: key = basic_quality
 						set_properties({'highlight': self.info_highlights_dict[key], 'source_type': 'DIRECT', 'provider': upper(provider)})
 					set_properties({'name': upper(name), 'source_site': source_site, 'provider_icon': provider_icon, 'quality_icon': quality_icon, 'count': '%02d.' % count,

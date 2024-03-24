@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from time import time
 from windows.base_window import FontUtils
 from caches.base_cache import make_databases, remove_old_databases
 from caches.settings_cache import get_setting, sync_settings
@@ -129,11 +130,12 @@ class UpdateCheck:
 	def run(self):
 		if get_property(firstrun_update_prop) == 'true': return
 		logger('Fen Light', 'UpdateCheck Service Starting')
+		end_pause = time() + update_delay()
 		monitor, player = xbmc_monitor(), xbmc_player()
 		wait_for_abort, is_playing = monitor.waitForAbort, player.isPlayingVideo
 		while not monitor.abortRequested():
-			wait_for_abort(update_delay())
-			while get_property(pause_services_prop) == 'true' or is_playing(): wait_for_abort(5)
+			while time() < end_pause: wait_for_abort(1)
+			while get_property(pause_services_prop) == 'true' or is_playing(): wait_for_abort(1)
 			update_check(update_action())
 			break
 		set_property(firstrun_update_prop, 'true')
@@ -142,7 +144,6 @@ class UpdateCheck:
 		try: del player
 		except: pass
 		return logger('Fen Light', 'UpdateCheck Service Finished')
-
 
 class AutoStart:
 	def run(self):

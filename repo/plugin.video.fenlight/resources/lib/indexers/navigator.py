@@ -194,7 +194,6 @@ class Navigator:
 		self.add({'mode': 'clear_cache', 'cache': 'rd_cloud', 'isFolder': 'false'}, 'Clear Real Debrid Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'pm_cloud', 'isFolder': 'false'}, 'Clear Premiumize Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'ad_cloud', 'isFolder': 'false'}, 'Clear All Debrid Cache', 'settings')
-		self.add({'mode': 'clear_cache', 'cache': 'resolved', 'isFolder': 'false'}, 'Clear Resolved Sources', 'settings')
 		self.end_directory()
 
 	def set_view_modes(self):

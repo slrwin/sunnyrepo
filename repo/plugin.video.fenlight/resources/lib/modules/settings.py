@@ -201,9 +201,6 @@ def provider_sort_ranks():
 def sort_to_top(provider):
 	return get_setting(sort_to_top_dict[provider]) == 'true'
 
-def remember_resolve():
-	return get_setting('fenlight.playback.remember_resolve') == 'true'
-
 def auto_resume(media_type):
 	auto_resume = get_setting('fenlight.auto_resume_%s' % media_type)
 	if auto_resume == '1': return True
@@ -212,10 +209,9 @@ def auto_resume(media_type):
 
 def scraping_settings():
 	highlight_type = int(get_setting('fenlight.highlight.type', '0'))
-	previous_resolved_highlight = get_setting('fenlight.provider.previous_resolved_highlight', 'FFB40047')
 	if highlight_type == 2:
 		highlight = get_setting('fenlight.scraper_single_highlight', 'FF008EB2')
-		return {'highlight_type': 1, '4k': highlight, '1080p': highlight, '720p': highlight, 'sd': highlight, 'previous_resolved': previous_resolved_highlight}
+		return {'highlight_type': 1, '4k': highlight, '1080p': highlight, '720p': highlight, 'sd': highlight}
 	easynews_highlight, debrid_cloud_highlight, folders_highlight = '', '', ''
 	rd_highlight, pm_highlight, ad_highlight, highlight_4K, highlight_1080P, highlight_720P, highlight_SD = '', '', '', '', '', '', ''
 	if highlight_type == 0:
@@ -232,7 +228,7 @@ def scraping_settings():
 		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF')
 	return {'highlight_type': highlight_type,'real-debrid': rd_highlight, 'premiumize': pm_highlight, 'alldebrid': ad_highlight, 'rd_cloud': debrid_cloud_highlight,
 			'pm_cloud': debrid_cloud_highlight, 'ad_cloud': debrid_cloud_highlight, 'easynews': easynews_highlight, 'folders': folders_highlight,
-			'4k': highlight_4K, '1080p': highlight_1080P, '720p': highlight_720P, 'sd': highlight_SD, 'previous_resolved': previous_resolved_highlight}
+			'4k': highlight_4K, '1080p': highlight_1080P, '720p': highlight_720P, 'sd': highlight_SD}
 
 def omdb_api_key():
 	return get_setting('fenlight.omdb_api', 'empty_setting')

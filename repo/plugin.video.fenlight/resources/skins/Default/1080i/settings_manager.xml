@@ -1592,15 +1592,6 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(50)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.playback.remember_resolve),true)</visible>
-                        <label>    - Previously Resolved Color</label>
-                        <property name="setting_type">action</property>
-                        <property name="setting_value">[COLOR $INFO[Window(10000).Property(fenlight.provider.previous_resolved_highlight)]]$INFO[Window(10000).Property(fenlight.provider.previous_resolved_highlight)][/COLOR]</property>
-                        <property name="setting_description">Choose Previously Resolved color</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=scraper_color_choice&amp;setting_id=provider.previous_resolved_highlight)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(50)</visible>
                         <visible>String.IsEqual(Window(10000).Property(fenlight.highlight.type),0)</visible>
                         <label>    - Real Debrid Color</label>
                         <property name="setting_type">action</property>

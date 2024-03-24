@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from caches.resolved_cache import resolved_cache
 from modules import kodi_utils
 from modules.metadata import episodes_meta
 from modules.settings import date_offset
@@ -79,16 +78,6 @@ def make_alias_dict(meta, title):
 
 def internal_results(provider, sources):
 	set_property(int_window_prop % provider, json.dumps(sources))
-
-def sort_previously_resolved(media_type, tmdb_id, results):
-	try:
-		previous_resolved = resolved_cache.get_one(media_type, tmdb_id)
-		match = [i for i in results if i.get('hash') == previous_resolved or i.get('id') == previous_resolved][0]
-		results = [i for i in results if i != match]
-		match['previous_resolved'] = True
-		results = [match] + results
-	except: pass
-	return results
 
 def normalize(title):
 	import unicodedata

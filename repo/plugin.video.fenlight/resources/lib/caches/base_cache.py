@@ -21,13 +21,12 @@ metacache_db = translatePath(path_join(database_path_raw, 'metacache.db'))
 debridcache_db = translatePath(path_join(database_path_raw, 'debridcache.db'))
 external_db = translatePath(path_join(database_path_raw, 'external.db'))
 settings_db = translatePath(path_join(database_path_raw, 'settings.db'))
-resolved_db = translatePath(path_join(database_path_raw, 'resolved.db'))
 database_timeout = 20
 current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db',
-				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db', 'resolved.db')
+				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db')
 database_locations = {
 'navigator_db': navigator_db, 'watched_db': watched_db, 'favorites_db': favorites_db, 'settings_db': settings_db, 'trakt_db': trakt_db, 'maincache_db': maincache_db,
-'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db, 'resolved_db': resolved_db
+'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db
 		}
 integrity_check = {
 'settings_db': ('settings',),
@@ -40,8 +39,7 @@ integrity_check = {
 'lists_db': ('lists',),
 'discover_db': ('discover',),
 'debridcache_db': ('debrid_data',),
-'external_db': ('results_data',),
-'resolved_db': ('resolved',)
+'external_db': ('results_data',)
 		}
 table_creators = {
 'navigator_db': (
@@ -79,10 +77,7 @@ last_played text, resume_id integer, title text, unique (db_type, media_id, seas
 'CREATE TABLE IF NOT EXISTS results_data (provider text not null, db_type text not null, tmdb_id text not null, title text, year integer, season text, episode text, results text, \
 expires integer, unique (provider, db_type, tmdb_id, title, year, season, episode))',),
 'discover_db': (
-'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',),
-'resolved_db': (
-'CREATE TABLE IF NOT EXISTS resolved (media_type text not null, tmdb_id text not null, provider text not null, name text not null, id integer not null, data text not null, \
-unique (media_type, tmdb_id))',)
+'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',)
 		}
 media_prop = 'fenlight.%s'
 BASE_GET = 'SELECT expires, data FROM %s WHERE id = ?'
@@ -196,10 +191,6 @@ def clear_cache(cache_type, silent=False):
 		if not _confirm(): return
 		from caches.lists_cache import lists_cache
 		success = lists_cache.delete_all_lists()
-	elif cache_type == 'resolved':
-		if not _confirm(): return
-		from caches.resolved_cache import resolved_cache
-		success = resolved_cache.clear_cache()
 	else:# main
 		if not _confirm(): return
 		from caches.main_cache import main_cache
@@ -213,7 +204,7 @@ def clear_all_cache():
 	line = 'Clearing....[CR]%s'
 	caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
 			('trakt', 'Trakt Cache'), ('imdb', 'IMDb Cache'), ('list', 'List Data Cache', ), ('main', 'Main Cache', ),
-			('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'), ('resolved', 'Resolved Sources'))
+			('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'))
 	for count, cache_type in enumerate(caches, 1):
 		try:
 			progressDialog.update(line % (cache_type[1]), int(float(count) / float(len(caches)) * 100))
