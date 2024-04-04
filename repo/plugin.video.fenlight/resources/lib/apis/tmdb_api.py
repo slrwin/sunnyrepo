@@ -302,13 +302,13 @@ def tmdb_people_info(query, page_no=1):
 
 def movie_details(tmdb_id):
 	try:
-		url = '%s/movie/%s?api_key=%s&language=en&append_to_response=%s' % (base_url, tmdb_id, tmdb_api_key, movies_append)
+		url = '%s/movie/%s?api_key=%s&language=en&append_to_response=%s&include_image_language=en' % (base_url, tmdb_id, tmdb_api_key, movies_append)
 		return get_tmdb(url).json()
 	except: return None
 
 def tvshow_details(tmdb_id):
 	try:
-		url = '%s/tv/%s?api_key=%s&language=en&append_to_response=%s' % (base_url, tmdb_id, tmdb_api_key, tvshows_append)
+		url = '%s/tv/%s?api_key=%s&language=en&append_to_response=%s&include_image_language=en' % (base_url, tmdb_id, tmdb_api_key, tvshows_append)
 		return get_tmdb(url).json()
 	except: return None
 

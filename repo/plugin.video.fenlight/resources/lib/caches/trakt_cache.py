@@ -46,6 +46,10 @@ class TraktWatched():
 		self._delete(STATUS_DELETE, ())
 		self._executemany(STATUS_INSERT, insert_list)
 
+	def set_tvshow_status(self, insert_dict):
+		dbcon = connect_database('trakt_db')
+		dbcon.execute('INSERT OR REPLACE INTO trakt_data (id, data) VALUES (?, ?)', ('trakt_tvshow_status', repr(insert_dict),))
+
 	def set_bulk_movie_watched(self, insert_list):
 		self._delete(WATCHED_DELETE, ('movie',))
 		self._executemany(WATCHED_INSERT, insert_list)

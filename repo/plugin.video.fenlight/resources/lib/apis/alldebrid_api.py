@@ -112,8 +112,7 @@ class AllDebridAPI:
 		url = 'magnet/delete'
 		url_append = '&id=%s' % transfer_id
 		result = self._get(url, url_append)
-		if result.get('success', False):
-			return True
+		return result.get('success', False) == True
 
 	def resolve_magnet(self, magnet_url, info_hash, store_to_cloud, title, season, episode):
 		from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS

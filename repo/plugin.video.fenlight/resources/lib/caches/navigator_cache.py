@@ -256,7 +256,7 @@ tvshow_list = [
 				'iconImage': 'watched_1',
 				'mode': 'build_tvshow_list',
 				'action': 'watched_tvshows'},
-				{'name': 'In Progress TV Shows',
+				{'name': 'In Progress',
 				'action': 'in_progress_tvshows',
 				'iconImage': 'in_progress_tvshow',
 				'mode': 'build_tvshow_list'},
@@ -357,6 +357,8 @@ class NavigatorCache:
 			{'mode': 'build_tvshow_list', 'action': 'trakt_collection_lists', 'new_page': 'random', 'name': 'Random Trakt TV Show Collection', 'iconImage': 'tv', 'random': 'true'},
 			{'mode': 'build_movie_list', 'action': 'trakt_watchlist_lists', 'new_page': 'random', 'name': 'Random Trakt Movie Watchlist', 'iconImage': 'movies', 'random': 'true'},
 			{'mode': 'build_tvshow_list', 'action': 'trakt_watchlist_lists', 'new_page': 'random', 'name': 'Random Trakt TV Show Watchlist', 'iconImage': 'tv', 'random': 'true'},
+			{'mode': 'build_movie_list', 'action': 'trakt_recommendations', 'new_page': 'movies', 'name': 'Random Recommended Movies', 'iconImage': 'movies', 'random': 'true'},
+			{'mode': 'build_tvshow_list', 'action': 'trakt_recommendations', 'new_page': 'shows', 'name': 'Random Recommended TV Shows', 'iconImage': 'tv', 'random': 'true'},
 			{'mode': 'trakt.get_trakt_random_lists', 'list_type': 'my_lists', 'name': 'Random Trakt My Lists', 'iconImage': 'lists', 'random': 'true'},
 			{'mode': 'trakt.get_trakt_random_lists', 'list_type': 'liked_lists', 'name': 'Random Trakt Liked Lists', 'iconImage': 'lists', 'random': 'true'}
 				]

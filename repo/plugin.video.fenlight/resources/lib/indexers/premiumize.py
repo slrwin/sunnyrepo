@@ -12,7 +12,7 @@ json, make_listitem, build_url, sys = kodi_utils.json, kodi_utils.make_listitem,
 add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory
 show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.show_text, kodi_utils.set_view_mode
 confirm_dialog, ok_dialog, kodi_refresh, dialog = kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.kodi_refresh, kodi_utils.dialog
-default_pm_icon, fanart = kodi_utils.get_icon('premiumize'), kodi_utils.get_addon_fanart()
+dialog, execute_builtin, default_pm_icon, fanart = kodi_utils.dialog, kodi_utils.execute_builtin, kodi_utils.get_icon('premiumize'), kodi_utils.get_addon_fanart()
 extensions = supported_video_extensions()
 Premiumize = PremiumizeAPI()
 
@@ -24,11 +24,14 @@ def pm_cloud(folder_id=None, folder_name=None):
 				cm_append = cm.append
 				file_type = item['type']
 				name = clean_file_name(item['name']).upper()
+				rename_params = {'mode': 'premiumize.rename', 'file_type': file_type, 'id': item['id'], 'name': item['name']}
+				delete_params = {'mode': 'premiumize.delete', 'id': item['id']}
 				listitem = make_listitem()
 				if file_type == 'folder':
 					is_folder = True
 					display = '%02d | [B]FOLDER[/B] | [I]%s [/I]' % (count, name)
 					url_params = {'mode': 'premiumize.pm_cloud', 'id': item['id'], 'folder_name': normalize(item['name']), 'name': item['name']}
+					delete_params['file_type'] = 'folder'
 				else:
 					is_folder = False
 					url_link, size = item['link'], item['size']
@@ -37,7 +40,10 @@ def pm_cloud(folder_id=None, folder_name=None):
 					display = '%02d | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, display_size, name)
 					url_params = {'mode': 'playback.video', 'url': url_link, 'obj': 'video'}
 					down_file_params = {'mode': 'downloader.runner', 'name': item['name'], 'url': url_link, 'action': 'cloud.premiumize', 'image': default_pm_icon}
+					delete_params['file_type'] = 'item'
 					cm_append(('[B]Download File[/B]', 'RunPlugin(%s)' % build_url(down_file_params)))
+				cm_append(('[B]Rename %s[/B]' % file_type.capitalize(),'RunPlugin(%s)' % build_url(rename_params)))
+				cm_append(('[B]Delete %s[/B]' % file_type.capitalize(),'RunPlugin(%s)' % build_url(delete_params)))
 				url = build_url(url_params)
 				listitem.setLabel(display)
 				listitem.addContextMenuItems(cm)
@@ -99,6 +105,25 @@ def pm_transfers():
 	set_content(handle, 'files')
 	end_directory(handle, cacheToDisc=False)
 	set_view_mode('view.premium')
+
+def pm_rename(file_type, file_id, current_name):
+	new_name = dialog.input('Fen', defaultt=current_name)
+	if not new_name: return
+	result = Premiumize.rename_cache_item(file_type, file_id, new_name)
+	if result == 'success':
+		Premiumize.clear_cache()
+		execute_builtin('Container.Refresh')
+	else:
+		return ok_dialog(text='Error')
+
+def pm_delete(file_type, file_id):
+	if not confirm_dialog(): return
+	result = Premiumize.delete_object(file_type, file_id)
+	if result == 'success':
+		Premiumize.clear_cache()
+		execute_builtin('Container.Refresh')
+	else:
+		return ok_dialog(text='Error')
 
 def pm_account_info():
 	try:

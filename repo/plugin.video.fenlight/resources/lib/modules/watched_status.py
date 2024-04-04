@@ -2,7 +2,7 @@
 from datetime import datetime
 from apis.trakt_api import trakt_watched_status_mark, trakt_official_status, trakt_progress, trakt_get_hidden_items
 from caches.base_cache import connect_database, database
-from caches.main_cache import main_cache
+from caches.main_cache import main_cache, cache_object
 from caches.trakt_cache import clear_trakt_collection_watchlist_data
 from modules import kodi_utils, settings, metadata
 from modules.utils import get_datetime, adjust_premiered_date, sort_for_article, make_thread_list

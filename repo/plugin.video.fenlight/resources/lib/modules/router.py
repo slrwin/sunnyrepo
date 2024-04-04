@@ -115,6 +115,9 @@ def routing(sys):
 		if mode == 'real_debrid.revoke_authentication':
 			from apis.real_debrid_api import RealDebridAPI
 			return RealDebridAPI().revoke()
+		if mode == 'real_debrid.delete':
+			from indexers.real_debrid import rd_delete
+			return rd_delete(params.get('id'), params.get('cache_type'))
 	if 'premiumize' in mode:
 		if mode == 'premiumize.pm_cloud':
 			from indexers.premiumize import pm_cloud
@@ -131,6 +134,12 @@ def routing(sys):
 		if mode == 'premiumize.revoke_authentication':
 			from apis.premiumize_api import PremiumizeAPI
 			return PremiumizeAPI().revoke()
+		if mode == 'premiumize.rename':
+			from indexers.premiumize import pm_rename
+			return pm_rename(params.get('file_type'), params.get('id'), params.get('name'))
+		if mode == 'premiumize.delete':
+			from indexers.premiumize import pm_delete
+			return pm_delete(params.get('file_type'), params.get('id'))
 	if 'alldebrid' in mode:
 		if mode == 'alldebrid.ad_cloud':
 			from indexers.alldebrid import ad_cloud
@@ -150,6 +159,9 @@ def routing(sys):
 		if mode == 'alldebrid.revoke_authentication':
 			from apis.alldebrid_api import AllDebridAPI
 			return AllDebridAPI().revoke()
+		if mode == 'real_debrid.delete':
+			from indexers.alldebrid import ad_delete
+			return ad_delete(params.get('id'))
 	if '_cache' in mode:
 		from caches import base_cache
 		if mode == 'clear_cache':
@@ -176,6 +188,9 @@ def routing(sys):
 	if 'downloader.' in mode:
 		from modules import downloader
 		return exec('downloader.%s(params)' % mode.split('.')[1])
+	if 'updater' in mode:
+		from modules import updater
+		return exec('updater.%s()' % mode.split('.')[1])
 	##EXTRA modes##
 	if mode == 'set_view':
 		from modules.kodi_utils import set_view
@@ -213,9 +228,6 @@ def routing(sys):
 	if mode == 'hide_unhide_progress_items':
 		from modules.watched_status import hide_unhide_progress_items
 		hide_unhide_progress_items(params)
-	if mode == 'update_check':
-		from modules.updater import update_check
-		return update_check()
 	if mode == 'open_external_scraper_settings':
 		from modules.kodi_utils import external_scraper_settings
 		return external_scraper_settings()

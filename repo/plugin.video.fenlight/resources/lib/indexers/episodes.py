@@ -2,7 +2,6 @@
 from apis.trakt_api import trakt_watchlist, trakt_get_my_calendar
 from caches.favorites_cache import favorites_cache
 from modules import kodi_utils, settings, watched_status as ws
-from modules.watched_status import get_hidden_progress_items
 from modules.metadata import tvshow_meta, episodes_meta, all_episodes_meta
 from modules.utils import jsondate_to_datetime, adjust_premiered_date, make_day, get_datetime, title_key, date_difference, make_thread_list_enumerate
 # logger = kodi_utils.logger
@@ -39,7 +38,7 @@ def build_episode_list(params):
 				season, episode, ep_name = item_get('season'), item_get('episode'), item_get('title')
 				episode_date, premiered = adjust_premiered_date(item_get('premiered'), adjust_hours)
 				episode_type = item_get('episode_type') or ''
-				thumb = item_get('thumb', None) or show_fanart
+				thumb = item_get('thumb', None) or show_landscape or show_fanart
 				try: year = premiered.split('-')[0]
 				except: year = show_year or '2050'
 				if not item_get('duration'): item['duration'] = show_duration
@@ -83,8 +82,8 @@ def build_episode_list(params):
 					set_properties({'WatchedProgress': progress})
 				listitem.setLabel(display)
 				listitem.addContextMenuItems(cm)
-				listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'season.poster': season_poster,
-								'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
+				listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'landscape': show_landscape,
+								'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
 				set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'episode_type': episode_type})
 				yield (url_params, listitem, False)
 			except: pass
@@ -93,7 +92,7 @@ def build_episode_list(params):
 	append = item_list.append
 	watched_indicators, adjust_hours, use_minimal_media = watched_indicators_info(), date_offset_info(), use_minimal_media_info()
 	current_date, hide_watched = get_datetime(), is_home and widget_hide_watched()
-	(watched_info, bookmarks), watched_title = get_media_info(watched_indicators, 'episode'), 'Trakt' if watched_indicators == 1 else 'Fen Light'
+	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	meta = tv_meta_function('tmdb_id', params.get('tmdb_id'), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, tvshow_plot, orig_title = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot'), meta_get('original_title')
@@ -103,6 +102,7 @@ def build_episode_list(params):
 	show_poster = meta_get('poster') or poster_empty
 	show_fanart = meta_get('fanart') or fanart_empty
 	show_clearlogo = meta_get('clearlogo') or ''
+	show_landscape = meta_get('landscape') or ''
 	if season == 'all':
 		episodes_data = all_episodes_meta_function(meta)
 		season_poster = show_poster
@@ -112,6 +112,7 @@ def build_episode_list(params):
 			poster_path = [i['poster_path'] for i in meta_get('season_data') if i['season_number'] == int(season)][0]
 			season_poster = tmdb_poster % poster_path if poster_path is not None else show_poster
 		except: season_poster = show_poster
+	(watched_info, bookmarks) = get_media_info(watched_indicators, 'episode', True)
 	add_items(handle, list(_process()))
 	set_sort_method(handle, content_type)
 	category_name = 'Season %s' % season
@@ -168,7 +169,8 @@ def build_single_episode(list_type, params={}):
 			show_poster = meta_get('poster') or poster_empty
 			show_fanart = meta_get('fanart') or fanart_empty
 			show_clearlogo = meta_get('clearlogo') or ''
-			thumb = item_get('thumb', None) or show_fanart
+			show_landscape = meta_get('landscape') or ''
+			thumb = item_get('thumb', None) or show_landscape or show_fanart
 			try: year = premiered.split('-')[0]
 			except: year = show_year or '2050'
 			try:
@@ -232,7 +234,7 @@ def build_single_episode(list_type, params={}):
 				set_properties({'WatchedProgress': progress})
 			listitem.setLabel(display)
 			listitem.addContextMenuItems(cm)
-			listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo,
+			listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'landscape': show_landscape,
 							'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
 			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'episode_type': episode_type})
 			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
@@ -244,7 +246,7 @@ def build_single_episode(list_type, params={}):
 	item_list_append = item_list.append
 	all_episodes, watched_indicators, use_minimal_media, display_format = default_all_episodes(), watched_indicators_info(), use_minimal_media_info(), ep_display_format(is_external)
 	current_date, adjust_hours, hide_watched = get_datetime(), date_offset_info(), is_home and widget_hide_watched()
-	(watched_info, bookmarks), watched_title = get_media_info(watched_indicators, 'episode'), 'Trakt' if watched_indicators == 1 else 'Fen Light'
+	(watched_info, bookmarks), watched_title = get_media_info(watched_indicators, 'episode', True), 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	show_all_episodes = all_episodes in (1, 2)
 	category_name = _get_category_name()
 	if list_type == 'episode.next':
@@ -252,20 +254,13 @@ def build_single_episode(list_type, params={}):
 		sort_key, sort_direction = nextep_sort_key(), nextep_sort_direction()
 		include_airdate = nextep_include_airdate()
 		data = get_next_episodes(watched_info)
-		if watched_indicators == 1:
-			resformat, resinsert = '%Y-%m-%dT%H:%M:%S.%fZ', '2000-01-01T00:00:00.000Z'
-			list_type = 'episode.next_trakt'
-		else:
-			resformat, resinsert = '%Y-%m-%d %H:%M:%S', '2000-01-01 00:00:00'
-			list_type = 'episode.next_fenlight'
-		hidden_data = get_hidden_progress_items(watched_indicators)
-		data = [i for i in data if not i['media_ids']['tmdb'] in hidden_data]
+		if watched_indicators == 1: resformat, resinsert, list_type = '%Y-%m-%dT%H:%M:%S.%fZ', '2000-01-01T00:00:00.000Z', 'episode.next_trakt'
+		else: resformat, resinsert, list_type = '%Y-%m-%d %H:%M:%S', '2000-01-01 00:00:00', 'episode.next_fenlight'
 		if include_unwatched != 0:
 			if include_unwatched in (1, 3):
 				try:
 					original_list = trakt_watchlist('watchlist', 'tvshow')
-					unwatched.extend([{'media_ids': i['media_ids'], 'season': 1, 'episode': 0, 'unwatched': True, 'title': i['title']} \
-								for i in original_list])
+					unwatched.extend([{'media_ids': i['media_ids'], 'season': 1, 'episode': 0, 'unwatched': True, 'title': i['title']} for i in original_list])
 				except: pass
 			if include_unwatched in (2, 3):
 				try: unwatched.extend([{'media_ids': {'tmdb': int(i['tmdb_id'])}, 'season': 1, 'episode': 0, 'unwatched': True, 'title': i['title']} \

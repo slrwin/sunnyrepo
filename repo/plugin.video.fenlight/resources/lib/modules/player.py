@@ -9,7 +9,7 @@ Thread, json, xbmc_player, execute_builtin, sleep = ku.Thread, ku.json, ku.xbmc_
 make_listitem, volume_checker, get_infolabel = ku.make_listitem, ku.volume_checker, ku.get_infolabel
 close_all_dialog, notification, poster_empty, fanart_empty = ku.close_all_dialog, ku.notification, ku.empty_poster, ku.get_addon_fanart()
 auto_resume, auto_nextep_settings = st.auto_resume, st.auto_nextep_settings
-clear_local_bookmarks, set_bookmark, mark_movie, mark_episode = ws.clear_local_bookmarks, ws.set_bookmark, ws.mark_movie, ws.mark_episode
+set_bookmark, mark_movie, mark_episode = ws.set_bookmark, ws.mark_movie, ws.mark_episode
 total_time_errors = ('0.0', '', 0.0, None)
 set_resume, set_watched = 5, 90
 video_fullscreen_check = 'Window.IsActive(fullscreenvideo)'
@@ -100,7 +100,6 @@ class FenLightPlayer(xbmc_player):
 			hide_busy_dialog()
 			if not self.media_marked: self.media_watched_marker()
 			self.clear_playback_properties()
-			clear_local_bookmarks()
 		except:
 			hide_busy_dialog()
 			self.sources_object.playback_successful = False

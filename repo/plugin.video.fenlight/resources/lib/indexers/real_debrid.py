@@ -9,6 +9,7 @@ from modules.utils import clean_file_name, normalize, jsondate_to_datetime
 
 show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.show_text, kodi_utils.set_view_mode
 add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory
+notification, execute_builtin, confirm_dialog = kodi_utils.notification, kodi_utils.execute_builtin, kodi_utils.confirm_dialog
 default_rd_icon, fanart = kodi_utils.get_icon('realdebrid'), kodi_utils.get_addon_fanart()
 sys, make_listitem, build_url = kodi_utils.sys, kodi_utils.make_listitem, kodi_utils.build_url
 extensions = supported_video_extensions()
@@ -24,6 +25,8 @@ def rd_cloud():
 				clean_folder_name = clean_file_name(normalize(folder_name)).upper()
 				display = '%02d | [B]FOLDER[/B] | [I]%s [/I]' % (count, clean_folder_name)
 				url_params = {'mode': 'real_debrid.browse_rd_cloud', 'id': folder_id}
+				delete_params = {'mode': 'real_debrid.delete', 'id': folder_id, 'cache_type': 'torrent'}
+				cm_append(('[B]Delete Folder[/B]','RunPlugin(%s)' % build_url(delete_params)))
 				url = build_url(url_params)
 				listitem = make_listitem()
 				listitem.setLabel(display)
@@ -54,7 +57,9 @@ def rd_downloads():
 				url_link = item['download']
 				url_params = {'mode': 'playback.video', 'url': url_link, 'obj': 'video'}
 				down_file_params = {'mode': 'downloader.runner', 'name': name, 'url': url_link, 'action': 'cloud.realdebrid_direct', 'image': default_rd_icon}
+				delete_params = {'mode': 'real_debrid.delete', 'id': item['id'], 'cache_type': 'download'}
 				cm_append(('[B]Download File[/B]','RunPlugin(%s)' % build_url(down_file_params)))
+				cm_append(('[B]Delete File[/B]','RunPlugin(%s)' % build_url(delete_params)))
 				url = build_url(url_params)
 				listitem = make_listitem()
 				listitem.setLabel(display)
@@ -103,6 +108,14 @@ def browse_rd_cloud(folder_id):
 	set_content(handle, 'files')
 	end_directory(handle, cacheToDisc=False)
 	set_view_mode('view.premium')
+
+def rd_delete(file_id, cache_type):
+	if not confirm_dialog(): return
+	if cache_type == 'torrent': result = RealDebrid.delete_torrent(file_id)
+	else: result = RealDebrid.delete_download(file_id) # cache_type: 'download'
+	if result.status_code in (401, 403, 404): return notification('Error')
+	RealDebrid.clear_cache()
+	execute_builtin('Container.Refresh')
 
 def resolve_rd(params):
 	url = params['url']

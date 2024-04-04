@@ -45,11 +45,18 @@ def movie_meta(id_type, media_id, current_date, current_time=None):
 		backdrop_path = data_get('backdrop_path', '')
 		if backdrop_path: fanart = tmdb_image_url % ('w1280', backdrop_path)
 		else: fanart = ''
-		try:
-			logo_path = data_get('images', {}).get('logos')[0].get('file_path')
-			if logo_path.endswith('png'): clearlogo = tmdb_image_url % ('original', logo_path)
-			else: clearlogo = tmdb_image_url % ('original', logo_path.replace(logo_path.split('.')[-1], 'png'))
-		except: clearlogo = ''
+		images = data_get('images', {})
+		if images:
+			try:
+				logo_path = images.get('logos')[0].get('file_path')
+				if logo_path.endswith('png'): clearlogo = tmdb_image_url % ('original', logo_path)
+				else: clearlogo = tmdb_image_url % ('original', logo_path.replace(logo_path.split('.')[-1], 'png'))
+			except: clearlogo = ''
+			try:
+				landscape_path = images.get('backdrops')[0].get('file_path')
+				landscape = tmdb_image_url % ('w1280', landscape_path)
+			except: landscape = ''
+		else: clearlogo, landscape = '', ''
 		title, original_title = data_get('title'), data_get('original_title')
 		try: english_title = [i['data']['title'] for i in data_get('translations')['translations'] if i['iso_639_1'] == 'en'][0]
 		except: english_title = None
@@ -111,7 +118,7 @@ def movie_meta(id_type, media_id, current_date, current_time=None):
 				'poster': poster, 'fanart': fanart, 'genre': genre, 'title': title, 'original_title': original_title, 'english_title': english_title, 'year': year, 'cast': cast,
 				'duration': duration, 'rootname': rootname, 'country': country, 'country_codes': country_codes, 'mpaa': mpaa,'writer': writer, 'all_trailers': all_trailers,
 				'director': director, 'alternative_titles': alternative_titles, 'plot': plot, 'studio': studio, 'extra_info': extra_info, 'mediatype': 'movie', 'tvdb_id': 'None',
-				'clearlogo': clearlogo}
+				'clearlogo': clearlogo, 'landscape': landscape}
 		metacache_set('movie', id_type, meta, movie_expiry(current_date, meta), current_time)
 	except: pass
 	return meta
@@ -152,11 +159,18 @@ def tvshow_meta(id_type, media_id, current_date, current_time=None):
 		backdrop_path = data_get('backdrop_path', '')
 		if backdrop_path: fanart = tmdb_image_url % ('w1280', backdrop_path)
 		else: fanart = ''
-		try:
-			logo_path = data_get('images', {}).get('logos')[0].get('file_path')
-			if logo_path.endswith('png'): clearlogo = tmdb_image_url % ('original', logo_path)
-			else: clearlogo = tmdb_image_url % ('original', logo_path.replace(logo_path.split('.')[-1], 'png'))
-		except: clearlogo = ''
+		images = data_get('images', {})
+		if images:
+			try:
+				logo_path = images.get('logos')[0].get('file_path')
+				if logo_path.endswith('png'): clearlogo = tmdb_image_url % ('original', logo_path)
+				else: clearlogo = tmdb_image_url % ('original', logo_path.replace(logo_path.split('.')[-1], 'png'))
+			except: clearlogo = ''
+			try:
+				landscape_path = images.get('backdrops')[0].get('file_path')
+				landscape = tmdb_image_url % ('w1280', landscape_path)
+			except: landscape = ''
+		else: clearlogo, landscape = '', ''
 		title, original_title = data_get('name'), data_get('original_name')
 		try: english_title = [i['data']['name'] for i in data_get('translations')['translations'] if i['iso_639_1'] == 'en'][0]
 		except: english_title = None
@@ -224,7 +238,8 @@ def tvshow_meta(id_type, media_id, current_date, current_time=None):
 				'poster': poster, 'fanart': fanart, 'genre': genre, 'title': title, 'original_title': original_title, 'english_title': english_title, 'season_data': season_data,
 				'alternative_titles': alternative_titles, 'duration': duration, 'rootname': rootname, 'imdbnumber': imdb_id, 'country': country, 'mpaa': mpaa, 'trailer': trailer,
 				'country_codes': country_codes, 'writer': writer, 'director': director, 'all_trailers': all_trailers, 'cast': cast, 'studio': studio, 'extra_info': extra_info,
-				'total_aired_eps': total_aired_eps, 'mediatype': 'tvshow', 'total_seasons': total_seasons, 'tvshowtitle': title, 'status': status, 'clearlogo': clearlogo}
+				'total_aired_eps': total_aired_eps, 'mediatype': 'tvshow', 'total_seasons': total_seasons, 'tvshowtitle': title, 'status': status, 'clearlogo': clearlogo,
+				'landscape': landscape}
 		metacache_set('tvshow', id_type, meta, tvshow_expiry(current_date, meta), current_time)
 	except: pass
 	return meta

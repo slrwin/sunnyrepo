@@ -184,6 +184,12 @@ class RealDebridAPI:
 		response = requests.delete(base_url + url, timeout=timeout)
 		return response
 
+	def delete_download(self, download_id):
+		if self.token in ('empty_setting', ''): return None
+		url = 'downloads/delete/%s&auth_token=%s' % (download_id, self.token)
+		response = requests.delete(base_url + url, timeout=timeout)
+		return response
+
 	def get_hosts(self):
 		string = 'rd_valid_hosts'
 		url = 'hosts/domains'

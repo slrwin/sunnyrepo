@@ -1,5 +1,12 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.41[/B][/COLOR]
+- Added "Rollback to a Previous Version" to Tools. Use this to "rollback" to any version still on the github. Useful if an update is causing issues. I will commit to having at least the previous version available on the github site moving forward.
+- Added assignment for "landscape" artwork. Metadata cache will need to be cleared to begin seeing the landscape artwork.
+- Added "Random Recommended Movies" and "Random Recommended TV Shows" to the Random Lists section.
+- Added context menu listing to delete items in debrid clouds when browsing through My Services.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.40[/B][/COLOR]
 - Removed Playback->Utilities->"Remember Previous Successful Resolves". Short-lived. Didn't seem to work for most people for some reason, and broke Fen Light when it didn't work. I wasn't that enamoured with the feature in the first place, so better to remove it. The same functionality can already be achieved with a couple of settings.
 

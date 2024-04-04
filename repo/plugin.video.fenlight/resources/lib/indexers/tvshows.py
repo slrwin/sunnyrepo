@@ -4,7 +4,7 @@ from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
 						get_current_timestamp, paginate_list, jsondate_to_datetime
-from modules.watched_status import get_media_info, get_watched_status_tvshow
+from modules.watched_status import get_media_info, get_watched_status_tvshow, get_database
 # logger = kodi_utils.logger
 
 string, sys, external, add_items, add_dir, use_minimal_media_info = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, settings.use_minimal_media_info
@@ -132,7 +132,7 @@ class TVShows:
 			premiered = meta_get('premiered')
 			trailer, title, year = meta_get('trailer'), meta_get('title'), meta_get('year') or '2050'
 			tvdb_id, imdb_id = meta_get('tvdb_id'), meta_get('imdb_id')
-			poster, fanart, clearlogo = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or ''
+			poster, fanart, clearlogo, landscape = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or '', meta_get('landscape') or ''
 			tmdb_id, total_seasons, total_aired_eps = meta_get('tmdb_id'), meta_get('total_seasons'), meta_get('total_aired_eps')
 			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
 			if not first_airdate or self.current_date < first_airdate: unaired = True
@@ -168,7 +168,8 @@ class TVShows:
 			else: cm_append(('[B]Exit TV Show List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)
-			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'tvshow.poster': poster, 'tvshow.clearlogo': clearlogo})
+			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape, 'icon': landscape,
+							'tvshow.poster': poster, 'tvshow.clearlogo': clearlogo})
 			info_tag = listitem.getVideoInfoTag()
 			info_tag.setMediaType('tvshow'), info_tag.setTitle(title), info_tag.setTvShowTitle(title), info_tag.setOriginalTitle(meta_get('original_title'))
 			info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id), 'tvdb': string(tvdb_id)}), info_tag.setIMDBNumber(imdb_id)
@@ -188,7 +189,8 @@ class TVShows:
 		self.all_episodes, self.open_extras = default_all_episodes(), extras_open_action('tvshow')
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = watched_indicators()
-		self.watched_info, self.watched_title = get_media_info(self.watched_indicators, 'episode', include_progress=False), 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		self.watched_info = get_media_info(self.watched_indicators, 'episode', include_progress=False)
+		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_tvshow_content, self.list))
 			[i.join() for i in threads]
@@ -203,7 +205,8 @@ class TVShows:
 		try:
 			random_results = []
 			if self.action in main: threads = list(make_thread_list(lambda x: random_results.extend(function(x)['results']), range(1, 6)))
-			elif self.action in trakt_main: threads = list(make_thread_list(lambda x: random_results.extend(function(x)), range(1, 6)))
+			elif self.action in trakt_main:
+				threads = list(make_thread_list(lambda x: random_results.extend(function(x)), ['shows',] if self.action == 'trakt_recommendations' else range(1, 6)))
 			else:
 				info = random.choice(meta_list_dict[self.action])
 				self.category_name = 'Random %s' % info['name']

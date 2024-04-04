@@ -173,7 +173,8 @@ class Navigator:
 		self.add({'mode': 'navigator.shortcut_folders'}, 'Shortcut Folders Manager', 'settings2')
 		self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
 		self.add({'mode': 'navigator.maintenance'}, 'Database & Cache Maintenance', 'settings2')
-		self.add({'mode': 'update_check', 'isFolder': 'false'}, 'Check For Updates', 'settings2')
+		self.add({'mode': 'updater.update_check', 'isFolder': 'false'}, 'Check For Updates', 'settings2')
+		self.add({'mode': 'updater.rollback_check', 'isFolder': 'false'}, 'Rollback to a Previous Version', 'settings2')
 		self.add({'mode': 'toggle_language_invoker', 'isFolder': 'false'}, 'Toggle Language Invoker (ADVANCED!!)', 'settings2')
 		self.end_directory()
 

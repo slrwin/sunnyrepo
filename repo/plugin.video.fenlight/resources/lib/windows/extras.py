@@ -633,7 +633,7 @@ class Extras(BaseDialog):
 		self.status_infoline_value = self.make_status_infoline()
 		self.make_plot_and_tagline()
 		indicators = watched_indicators()
-		self.watched_info, bookmarks = get_media_info(indicators, 'movie' if self.media_type == 'movie' else 'episode')
+		self.watched_info, bookmarks = get_media_info(indicators, 'movie' if self.media_type == 'movie' else 'episode', True)
 		self.percent_watched = get_progress_percent(get_bookmarks(indicators, 'movie'), self.tmdb_id) if self.media_type == 'movie' else None
 
 	def set_properties(self):

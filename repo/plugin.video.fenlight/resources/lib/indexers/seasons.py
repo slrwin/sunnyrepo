@@ -2,7 +2,7 @@
 from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
 from modules.utils import adjust_premiered_date, get_datetime
-from modules.watched_status import get_media_info, get_watched_status_season
+from modules.watched_status import get_media_info, get_watched_status_season, get_database
 # logger = kodi_utils.logger
 
 poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
@@ -75,15 +75,15 @@ def build_season_list(params):
 					info_tag.setRating(rating), info_tag.setVotes(votes), info_tag.setMpaa(mpaa), info_tag.setCountries(country), info_tag.setTrailer(trailer)
 					info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
 				listitem.setLabel(title)
-				listitem.setArt({'poster': poster, 'season.poster': poster, 'fanart': show_fanart, 'clearlogo': show_clearlogo,
-								'tvshow.poster': poster, 'tvshow.clearlogo': show_clearlogo})
+				listitem.setArt({'poster': poster, 'season.poster': poster, 'fanart': show_fanart, 'clearlogo': show_clearlogo, 'landscape': show_landscape, 'thumb': show_landscape,
+								'icon': show_landscape, 'tvshow.poster': poster, 'tvshow.clearlogo': show_clearlogo})
 				listitem.addContextMenuItems(cm)
 				yield (url_params, listitem, True)
 			except: pass
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Season'
 	watched_indicators, use_minimal_media, adjust_hours, hide_watched = watched_indicators_info(), use_minimal_media_info(), date_offset_info(), is_home and widget_hide_watched()
 	current_date = get_datetime_function()
-	watched_info, watched_title = get_media_info_tv(watched_indicators, 'episode', include_progress=False), 'Trakt' if watched_indicators == 1 else 'Fen Light'
+	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'
@@ -91,9 +91,11 @@ def build_season_list(params):
 	str_tmdb_id, str_tvdb_id, rating, genre = string(tmdb_id), string(tvdb_id), meta_get('rating'), meta_get('genre')
 	cast, mpaa, votes, trailer, studio, country = meta_get('cast', []), meta_get('mpaa'), meta_get('votes'), string(meta_get('trailer')), meta_get('studio'), meta_get('country')
 	episode_run_time, season_data, total_seasons = meta_get('duration'), meta_get('season_data'), meta_get('total_seasons')
-	show_poster, show_fanart, show_clearlogo = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or ''
+	show_poster, show_fanart = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty
+	show_clearlogo, show_landscape = meta_get('clearlogo') or '', meta_get('landscape') or ''
 	season_data = [i for i in season_data if not i['season_number'] == 0]
 	season_data.sort(key=lambda k: k['season_number'])
+	watched_info = get_media_info_tv(watched_indicators, 'episode', include_progress=False)
 	add_items(handle, list(_process()))
 	category_name = show_title
 	set_content(handle, content_type)

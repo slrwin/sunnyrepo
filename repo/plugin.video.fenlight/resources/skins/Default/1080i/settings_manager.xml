@@ -1861,14 +1861,6 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
-                        <label>Remember Previous Successful Resolves</label>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.playback.remember_resolve)]</property>
-                        <property name="setting_description">Enable this and Fen Light will remember the last successfully resolved result for a Movie or TV Show. If found, that result will be pushed to the top of results for playback.</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=playback.remember_resolve)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
                         <label>Check Volume Before Start of Playback</label>
                         <property name="setting_type">boolean</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.playback.volumecheck_enabled)]</property>

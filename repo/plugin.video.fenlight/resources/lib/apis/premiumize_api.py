@@ -213,6 +213,13 @@ class PremiumizeAPI:
 		url = 'item/listall'
 		return cache_object(self._get, string, url, False, 0.5)
 
+	def rename_cache_item(self, file_type, file_id, new_name):
+		if file_type == 'folder': url = 'folder/rename'
+		else: url = 'item/rename'
+		data = {'id': file_id , 'name': new_name}
+		response = self._post(url, data)
+		return response['status']
+
 	def transfers_list(self):
 		url = 'transfer/list'
 		return self._get(url)
