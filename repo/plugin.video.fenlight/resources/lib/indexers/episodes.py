@@ -17,6 +17,7 @@ watched_indicators_info, use_minimal_media_info = settings.watched_indicators, s
 tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
 get_progress_percent, get_watched_status, get_media_info = ws.get_progress_percent, ws.get_watched_status_episode, ws.get_media_info
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
+get_hidden_progress_items = ws.get_hidden_progress_items
 string =  str
 poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.default_addon_fanart
 run_plugin, unaired_label, tmdb_poster = 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
@@ -254,6 +255,8 @@ def build_single_episode(list_type, params={}):
 		sort_key, sort_direction = nextep_sort_key(), nextep_sort_direction()
 		include_airdate = nextep_include_airdate()
 		data = get_next_episodes(watched_info)
+		hidden_data = get_hidden_progress_items(watched_indicators)
+		data = [i for i in data if not i['media_ids']['tmdb'] in hidden_data]
 		if watched_indicators == 1: resformat, resinsert, list_type = '%Y-%m-%dT%H:%M:%S.%fZ', '2000-01-01T00:00:00.000Z', 'episode.next_trakt'
 		else: resformat, resinsert, list_type = '%Y-%m-%d %H:%M:%S', '2000-01-01 00:00:00', 'episode.next_fenlight'
 		if include_unwatched != 0:
