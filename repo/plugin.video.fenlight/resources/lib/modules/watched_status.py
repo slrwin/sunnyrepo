@@ -105,9 +105,9 @@ def get_progress_status_movie(bookmarks, media_id):
 def watched_info_tvshow(watched_db=None):
 	if not watched_db: watched_db = get_database()
 	try:
-		watched_info = watched_db.execute('SELECT media_id, season, episode, title, last_played, COUNT(*) AS COUNTER FROM watched WHERE db_type = ? GROUP BY media_id',
-							('episode',)).fetchall()
-		return dict([(i[0], {'media_id':i[0], 'season': i[1], 'episode': i[2], 'title': i[3], 'last_played': i[4], 'total_played': i[5]}) for i in watched_info])
+		data = watched_db.execute('SELECT media_id, season, episode, title, MAX(last_played), COUNT(*) AS COUNTER FROM watched WHERE db_type = ? GROUP BY media_id',
+								('episode',)).fetchall()
+		return dict([(i[0], {'media_id':i[0], 'season': i[1], 'episode': i[2], 'title': i[3], 'last_played': i[4], 'total_played': i[5]}) for i in data])
 	except: return {}
 
 def get_watched_status_tvshow(watched_info, aired_eps):
@@ -346,11 +346,13 @@ def batch_watched_status_mark(watched_indicators, insert_list, action):
 def get_next_episodes():	
 	def _process(dummy_arg):
 		seen = set()
+		seen_add = seen.add
 		watched_db = get_database()
 		data = watched_db.execute('SELECT media_id, season, episode, title, last_played FROM watched WHERE db_type == ?', ('episode',)).fetchall()
 		data.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
+		data.sort(key=lambda x: (x[4]), reverse=True)
 		return [{'media_ids': {'tmdb': int(i[0])}, 'season': int(i[1]), 'episode': int(i[2]), 'title': i[3], 'last_played': i[4]} for i in data
-				if not (i[0] in seen or seen.add(i[0]))]
+				if not (i[0] in seen or seen_add(i[0]))]
 	return cache_watched_tvshow_status(_process, 'next_episode')
 
 def get_in_progress_movies(dummy_arg, page_no):
@@ -394,8 +396,9 @@ def get_recently_watched(media_type, short_list=1):
 						for i in watched_info], key=lambda x: (x['last_played'], x['media_ids']['tmdb'], x['season'], x['episode']), reverse=True)
 		else:
 			seen = set()
+			seen_add = seen.add
 			data = sorted([{'media_ids': {'tmdb': int(i[0])}, 'season': int(i[1]), 'episode': int(i[2]), 'title': i[3], 'last_played': i[4]}
-						for i in sorted(watched_info, key=lambda x: (x[4], x[0], x[1], x[2]), reverse=True) if not (i[0] in seen or seen.add(i[0]))],
+						for i in sorted(watched_info, key=lambda x: (x[4], x[0], x[1], x[2]), reverse=True) if not (i[0] in seen or seen_add(i[0]))],
 						key=lambda x: (x['last_played'], x['media_ids']['tmdb'], x['season'], x['episode']), reverse=True)
 	if short_list: return data[0:20]
 	else: return data

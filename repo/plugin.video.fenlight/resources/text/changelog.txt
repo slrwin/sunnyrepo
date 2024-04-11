@@ -1,5 +1,9 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.44[/B][/COLOR]
+- Added "Limit Used Watched History" to Settings->Navigation->Next Episodes. Enable this and set a limit. If you set the limit to, for example, "20" that does NOT mean there will be 20 items in your Next Episode list. It means Fen Light will use the last watched episode of the last 20 shows watched in your history to make the Next Episodes list. Assuming some episodes in that 20 history will be the last aired of a series, or the last of a series, then the actual number of items in the Next Episodes list may be well under 20 items.
+- Fix for some sorting issues.
+
 [COLOR dodgerblue][B]Version 1.0.43[/B][/COLOR]
 - Re-write of watched progress handling. Should see some speed increase.
 - Other changes/fixes.

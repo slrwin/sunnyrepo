@@ -258,6 +258,12 @@ def watched_indicators():
 	if get_setting('fenlight.trakt.user') in ('empty_setting', ''): return 0
 	return int(get_setting('fenlight.watched_indicators', '0'))
 
+def nextep_limit_history():
+	return get_setting('fenlight.nextep.limit_history', 'false') == 'true'
+
+def nextep_limit():
+	return int(get_setting('fenlight.nextep.limit', '20'))
+
 def nextep_include_unwatched():
 	return int(get_setting('fenlight.nextep.include_unwatched', '0'))
 

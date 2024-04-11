@@ -14,6 +14,7 @@ nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
 get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
 watched_indicators_info, use_minimal_media_info = settings.watched_indicators, settings.use_minimal_media_info
+nextep_limit_history, nextep_limit = settings.nextep_limit_history, settings.nextep_limit
 tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
 get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode = ws.get_watched_status_episode, ws.get_bookmarks_episode, ws.get_progress_status_episode
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
@@ -259,6 +260,7 @@ def build_single_episode(list_type, params={}):
 		sort_key, sort_direction = nextep_sort_key(), nextep_sort_direction()
 		include_airdate = nextep_include_airdate()
 		data = get_next_episodes()
+		if nextep_limit_history(): data = data[:nextep_limit()]
 		hidden_data = get_hidden_progress_items(watched_indicators)
 		data = [i for i in data if not i['media_ids']['tmdb'] in hidden_data]
 		if watched_indicators == 1: resformat, resinsert, list_type = '%Y-%m-%dT%H:%M:%S.%fZ', '2000-01-01T00:00:00.000Z', 'episode.next_trakt'
