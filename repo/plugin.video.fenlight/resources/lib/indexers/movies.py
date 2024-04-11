@@ -4,7 +4,7 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
 						get_current_timestamp, paginate_list, jsondate_to_datetime
-from modules.watched_status import get_watched_status_movie, get_progress_percent, get_media_info
+from modules.watched_status import get_database, watched_info_movie, get_watched_status_movie, get_bookmarks_movie, get_progress_status_movie
 # logger = kodi_utils.logger
 
 make_listitem, build_url, nextpage_landscape, random = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape, kodi_utils.random
@@ -97,8 +97,8 @@ class Movies:
 				if data['total_pages'] > page_no: self.new_page = {'url': url, 'new_page': string(data['page'] + 1)}
 			add_items(handle, self.worker())
 			if self.new_page and not self.widget_hide_next_page:
-					self.new_page.update({'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name})
-					add_dir(self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
+						self.new_page.update({'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name})
+						add_dir(self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
 		except: pass
 		set_content(handle, content_type)
 		set_category(handle, self.category_name)
@@ -124,7 +124,7 @@ class Movies:
 			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
 			if not first_airdate or self.current_date < first_airdate: unaired = True
 			else: unaired = False
-			progress = get_progress_percent(self.bookmarks, tmdb_id)
+			progress = get_progress_status_movie(self.bookmarks, tmdb_id)
 			playcount = get_watched_status_movie(self.watched_info, string(tmdb_id))
 			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
@@ -171,7 +171,9 @@ class Movies:
 
 	def worker(self):
 		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), watched_indicators()
-		(self.watched_info, self.bookmarks), self.watched_title = get_media_info(self.watched_indicators, 'movie', True), 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		watched_db = get_database(self.watched_indicators)
+		self.watched_info, self.bookmarks = watched_info_movie(watched_db), get_bookmarks_movie(watched_db)
 		self.open_extras = extras_open_action('movie')
 		self.use_minimal_media = use_minimal_media_info()
 		if self.custom_order:

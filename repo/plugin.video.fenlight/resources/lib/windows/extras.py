@@ -19,11 +19,11 @@ extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extr
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
 extras_enable_scrollbars, omdb_api_key, date_offset = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset
 default_all_episodes, extras_enabled_menus = settings.default_all_episodes, settings.extras_enabled_menus
-enable_extra_ratings, watched_indicators = settings.extras_enable_extra_ratings, settings.watched_indicators
+enable_extra_ratings = settings.extras_enable_extra_ratings
 options_menu_choice, extras_menu_choice, imdb_videos_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice, dialogs.imdb_videos_choice
-get_progress_percent, get_media_info, get_bookmarks = watched_status.get_progress_percent, watched_status.get_media_info, watched_status.get_bookmarks
 trakt_manager_choice, random_choice, playback_choice, favorites_choice = dialogs.trakt_manager_choice, dialogs.random_choice, dialogs.playback_choice, dialogs.favorites_choice
-get_watched_status_movie, get_next_episodes = watched_status.get_watched_status_movie, watched_status.get_next_episodes
+get_next_episodes, get_watched_status_movie, watched_info_movie = watched_status.get_next_episodes, watched_status.get_watched_status_movie, watched_status.watched_info_movie
+get_progress_status_movie, get_bookmarks_movie = watched_status.get_progress_status_movie, watched_status.get_bookmarks_movie
 trailer_choice, media_extra_info, genres_choice, random_choice = dialogs.trailer_choice, dialogs.media_extra_info_choice, dialogs.genres_choice, dialogs.random_choice
 keywords_choice = dialogs.keywords_choice
 person_search, person_data_dialog = people.person_search, people.person_data_dialog
@@ -385,15 +385,18 @@ class Extras(BaseDialog):
 		except: pass
 		return release_data
 
-	def get_finish(self):
+	def get_progress(self, percent_watched):
+		return '%s%% Watched' % percent_watched
+
+	def get_finish(self, percent_watched):
 		finish_str = 'No Finish Time'
 		if self.duration_data:
-			label = 'Finish Rewatching' if self.percent_watched == '100' else 'Finish Watching'
+			label = 'Finish Rewatching' if percent_watched == '100' else 'Finish Watching'
 			kodi_clock = self.get_infolabel('System.Time')
 			if any(i in kodi_clock for i in ('AM', 'PM')): _format = '%I:%M %p'
 			else: _format = '%H:%M'
-			if self.percent_watched in ('0', '100'): remaining_time = self.duration_data
-			else: remaining_time = ((100 - int(self.percent_watched))/100) * self.duration_data
+			if percent_watched in ('0', '100'): remaining_time = self.duration_data
+			else: remaining_time = ((100 - int(percent_watched))/100) * self.duration_data
 			current_time = datetime.now()
 			finish_time = current_time + timedelta(minutes=remaining_time)
 			finished = finish_time.strftime(_format)
@@ -407,13 +410,6 @@ class Extras(BaseDialog):
 			if hour: time_str += '%dh' % hour
 			if minute: time_str += '%s%sm' % (' ' if hour else '', '%d' % minute if minute < 10 else '%02d' % minute)
 		return time_str
-
-	def get_progress(self):
-		if not self.percent_watched:
-			try: self.percent_watched = '100' if get_watched_status_movie(self.watched_info, str(self.tmdb_id)) == 1 else '0'
-			except: self.percent_watched = '0'
-		progress_status = '%s%% Watched' % self.percent_watched
-		return progress_status
 
 	def get_last_aired(self):
 		if self.extra_info_get('last_episode_to_air', False):
@@ -434,7 +430,7 @@ class Extras(BaseDialog):
 		self.nextep_season, self.nextep_episode = None, None
 		value, curr_season_data, episode_date = '', [], None
 		try:
-			ep_list = get_next_episodes(self.watched_info)
+			ep_list = get_next_episodes()
 			info = [i for i in ep_list if i['media_ids']['tmdb'] == self.tmdb_id][0]
 			current_season = info['season']
 			current_episode = info['episode']
@@ -632,9 +628,6 @@ class Extras(BaseDialog):
 		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(float(self.meta_get('duration'))/60)
 		self.status_infoline_value = self.make_status_infoline()
 		self.make_plot_and_tagline()
-		indicators = watched_indicators()
-		self.watched_info, bookmarks = get_media_info(indicators, 'movie' if self.media_type == 'movie' else 'episode', True)
-		self.percent_watched = get_progress_percent(get_bookmarks(indicators, 'movie'), self.tmdb_id) if self.media_type == 'movie' else None
 
 	def set_properties(self):
 		self.assign_buttons()
@@ -653,7 +646,13 @@ class Extras(BaseDialog):
 		self.set_label(2001, separator.join([i for i in (self.year, None if remove_rating else self.rating, self.mpaa, self.get_duration(), self.status_infoline_value) if i]))
 
 	def set_infoline2(self):
-		if self.media_type == 'movie': line2 = separator.join([self.get_progress(), self.get_finish()])
+		if self.media_type == 'movie':
+			percent_watched = get_progress_status_movie(get_bookmarks_movie(), self.tmdb_id)
+			if not percent_watched:
+				try: percent_watched = '100' if get_watched_status_movie(watched_info_movie(), str(self.tmdb_id)) == 1 else '0'
+				except: percent_watched = '0'
+				if not percent_watched: percent_watched = 0
+			line2 = separator.join([self.get_progress(percent_watched), self.get_finish(percent_watched)])
 		else: line2 = separator.join([i for i in (self.get_next_episode(), self.get_last_aired(), self.get_next_aired()) if i])
 		self.set_label(3001, line2)
 

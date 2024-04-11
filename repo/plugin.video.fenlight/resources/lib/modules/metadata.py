@@ -138,8 +138,7 @@ def tvshow_meta(id_type, media_id, current_date, current_time=None):
 			external_result = tvshow_external(id_type, media_id)
 			if not external_result: data = None
 			else: data = tvshow_data(external_result['id'])
-		if not data: return None
-		elif 'status_code' in data and data.get('status_code') in invalid_error_codes:
+		if not data or data.get('status_code', '') in invalid_error_codes:
 			if id_type == 'tmdb_id': meta = {'tmdb_id': media_id, 'imdb_id': 'tt0000000', 'tvdb_id': '0000000', 'blank_entry': True}
 			elif id_type == 'imdb_id': meta = {'tmdb_id': '0000000', 'imdb_id': media_id, 'tvdb_id': '0000000', 'blank_entry': True}
 			else: meta = {'tmdb_id': '0000000', 'imdb_id': 'tt0000000', 'tvdb_id': media_id, 'blank_entry': True}

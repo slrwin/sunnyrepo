@@ -1,5 +1,9 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.43[/B][/COLOR]
+- Re-write of watched progress handling. Should see some speed increase.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.41[/B][/COLOR]
 - Added "Rollback to a Previous Version" to Tools. Use this to "rollback" to any version still on the github. Useful if an update is causing issues. I will commit to having at least the previous version available on the github site moving forward.
 - Added assignment for "landscape" artwork. Metadata cache will need to be cleared to begin seeing the landscape artwork.

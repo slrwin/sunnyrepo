@@ -4,7 +4,7 @@ from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
 						get_current_timestamp, paginate_list, jsondate_to_datetime
-from modules.watched_status import get_media_info, get_watched_status_tvshow, get_database
+from modules.watched_status import get_database, watched_info_tvshow, get_watched_status_tvshow, get_progress_status_tvshow
 # logger = kodi_utils.logger
 
 string, sys, external, add_items, add_dir, use_minimal_media_info = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, settings.use_minimal_media_info
@@ -134,14 +134,12 @@ class TVShows:
 			tvdb_id, imdb_id = meta_get('tvdb_id'), meta_get('imdb_id')
 			poster, fanart, clearlogo, landscape = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or '', meta_get('landscape') or ''
 			tmdb_id, total_seasons, total_aired_eps = meta_get('tmdb_id'), meta_get('total_seasons'), meta_get('total_aired_eps')
-			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
-			if not first_airdate or self.current_date < first_airdate: unaired = True
-			else: unaired = False
-			playcount, total_watched, total_unwatched = get_watched_status_tvshow(self.watched_info, string(tmdb_id), total_aired_eps)
-			if total_watched:
-				try: progress = int((float(total_watched)/total_aired_eps)*100) or 1
-				except: progress = 1
-			else: progress = 0
+			unaired = total_aired_eps == 0
+			if unaired: progress, playcount, total_watched, total_unwatched = 0, 0, 0, total_aired_eps
+			else:
+				playcount, total_watched, total_unwatched = get_watched_status_tvshow(self.watched_info.get(string(tmdb_id), None), total_aired_eps)
+				if total_watched: progress = get_progress_status_tvshow(total_watched, total_aired_eps)
+				else: progress = 0
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'playcount': playcount,
 										'progress': progress, 'is_external': self.is_external, 'unaired': unaired, 'in_progress_menu': self.in_progress_menu})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external})
@@ -189,8 +187,8 @@ class TVShows:
 		self.all_episodes, self.open_extras = default_all_episodes(), extras_open_action('tvshow')
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = watched_indicators()
-		self.watched_info = get_media_info(self.watched_indicators, 'episode', include_progress=False)
 		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
+		self.watched_info = watched_info_tvshow(get_database(self.watched_indicators))
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_tvshow_content, self.list))
 			[i.join() for i in threads]

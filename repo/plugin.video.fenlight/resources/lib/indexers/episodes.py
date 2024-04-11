@@ -15,9 +15,9 @@ make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, k
 get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
 watched_indicators_info, use_minimal_media_info = settings.watched_indicators, settings.use_minimal_media_info
 tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
-get_progress_percent, get_watched_status, get_media_info = ws.get_progress_percent, ws.get_watched_status_episode, ws.get_media_info
+get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode = ws.get_watched_status_episode, ws.get_bookmarks_episode, ws.get_progress_status_episode
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
-get_hidden_progress_items = ws.get_hidden_progress_items
+get_hidden_progress_items, get_database, watched_info_episode = ws.get_hidden_progress_items, ws.get_database, ws.watched_info_episode
 string =  str
 poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.default_addon_fanart
 run_plugin, unaired_label, tmdb_poster = 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
@@ -47,9 +47,9 @@ def build_episode_list(params):
 					display, unaired = unaired_label % ep_name, True
 					item['title'] = display
 				else: display, unaired = ep_name, False
-				playcount = get_watched_status(watched_info, string(tmdb_id), season, episode)
+				playcount = get_watched_status_episode(watched_info, (season, episode))
 				if playcount and hide_watched: continue
-				progress = get_progress_percent(bookmarks, tmdb_id, season, episode)
+				progress = get_progress_status_episode(bookmarks, season, episode)
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
 											'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_external': is_external, 'unaired': unaired})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
@@ -113,7 +113,9 @@ def build_episode_list(params):
 			poster_path = [i['poster_path'] for i in meta_get('season_data') if i['season_number'] == int(season)][0]
 			season_poster = tmdb_poster % poster_path if poster_path is not None else show_poster
 		except: season_poster = show_poster
-	(watched_info, bookmarks) = get_media_info(watched_indicators, 'episode', True)
+	watched_db = get_database(watched_indicators)
+	watched_info = watched_info_episode(tmdb_id, watched_db)
+	bookmarks = get_bookmarks_episode(tmdb_id, watched_db)
 	add_items(handle, list(_process()))
 	set_sort_method(handle, content_type)
 	category_name = 'Season %s' % season
@@ -183,9 +185,10 @@ def build_single_episode(list_type, params={}):
 			else: title_string = ''
 			if display_format in (0, 1): seas_ep = '%sx%s - ' % (str_season_zfill2, str_episode_zfill2)
 			else: seas_ep = ''
-			playcount = get_watched_status(watched_info, string(tmdb_id), season, episode)
-			if playcount and hide_watched: return
-			progress = get_progress_percent(bookmarks, tmdb_id, season, episode)
+			watched_info = watched_info_episode(tmdb_id, watched_db)
+			bookmarks = get_bookmarks_episode(tmdb_id, watched_db)
+			playcount = get_watched_status_episode(watched_info, episode)
+			progress = get_progress_status_episode(bookmarks, season, episode)
 			if list_type_starts_with('next_'):
 				if playcount: return
 				if include_airdate:
@@ -247,14 +250,15 @@ def build_single_episode(list_type, params={}):
 	item_list_append = item_list.append
 	all_episodes, watched_indicators, use_minimal_media, display_format = default_all_episodes(), watched_indicators_info(), use_minimal_media_info(), ep_display_format(is_external)
 	current_date, adjust_hours, hide_watched = get_datetime(), date_offset_info(), is_home and widget_hide_watched()
-	(watched_info, bookmarks), watched_title = get_media_info(watched_indicators, 'episode', True), 'Trakt' if watched_indicators == 1 else 'Fen Light'
+	watched_db = get_database(watched_indicators)
+	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	show_all_episodes = all_episodes in (1, 2)
 	category_name = _get_category_name()
 	if list_type == 'episode.next':
 		include_unwatched, include_unaired = nextep_include_unwatched(), nextep_include_unaired()
 		sort_key, sort_direction = nextep_sort_key(), nextep_sort_direction()
 		include_airdate = nextep_include_airdate()
-		data = get_next_episodes(watched_info)
+		data = get_next_episodes()
 		hidden_data = get_hidden_progress_items(watched_indicators)
 		data = [i for i in data if not i['media_ids']['tmdb'] in hidden_data]
 		if watched_indicators == 1: resformat, resinsert, list_type = '%Y-%m-%dT%H:%M:%S.%fZ', '2000-01-01T00:00:00.000Z', 'episode.next_trakt'
