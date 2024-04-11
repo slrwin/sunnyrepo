@@ -24,7 +24,7 @@ def search_trakt_lists(params):
 				list_info = item[list_key]
 				if list_key == 'officiallist': continue
 				item_count = list_info['item_count']
-				if list_info['privacy'] in ('private', 'friends') or item_count == 0: continue
+				if list_info['privacy'] == 'private' or item_count == 0: continue
 				list_name, user, slug = list_info['name'], list_info['username'], list_info['ids']['slug']
 				list_name_upper = list_name.upper()
 				if not slug: continue
@@ -103,7 +103,7 @@ def get_trakt_trending_popular_lists(params):
 				cm_append = cm.append
 				item = _list['list']
 				item_count = item.get('item_count', 0)
-				if item['user']['private'] or item_count == 0: continue
+				if item_count == 0: continue
 				list_name, user, slug = item['name'], item['user']['ids']['slug'], item['ids']['slug']
 				list_name_upper = list_name.upper()
 				if not slug: continue

@@ -69,7 +69,7 @@ class Sources():
 		self.default_ext_only = params_get('default_ext_only', self.default_ext_only) == 'true'
 		self.folders_ignore_filters = get_setting('fenlight.results.folders_ignore_filters', 'false') == 'true'
 		self.filter_size_method = int(get_setting('fenlight.results.filter_size_method', '0'))
-		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')
+		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')		
 		self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
 		self.custom_season, self.custom_episode = params_get('custom_season', None), params_get('custom_episode', None)
 		if 'autoplay' in self.params: self.autoplay = params_get('autoplay', 'false') == 'true'
@@ -614,9 +614,9 @@ class Sources():
 		except: pass
 
 	def get_playback_percent(self):
-		if self.media_type == 'movie': percent = percent = get_progress_status_movie(get_bookmarks_movie(), self.tmdb_id)
+		if self.media_type == 'movie': percent = get_progress_status_movie(get_bookmarks_movie(), self.tmdb_id)
 		elif any((self.random, self.random_continual)): return 0.0
-		percent = get_progress_status_episode(get_bookmarks_episode(self.tmdb_id), self.season, self.episode)
+		else: percent = get_progress_status_episode(get_bookmarks_episode(self.tmdb_id), self.season, self.episode)
 		if not percent: return 0.0
 		action = self.get_resume_status(percent)
 		if action == 'cancel': return None

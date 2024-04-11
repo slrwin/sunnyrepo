@@ -727,7 +727,6 @@ def trakt_sync_activities(force_update=False):
 	if _compare(latest_shows['hidden_at'], cached_shows['hidden_at']):
 		clear_properties('episode')
 		clear_trakt_hidden_data('progress_watched')
-		clear_tvshow_watched_cache = True
 	if _compare(latest_movies['watched_at'], cached_movies['watched_at']):
 		clear_properties('movie')
 		trakt_indicators_movies()

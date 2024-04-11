@@ -9,7 +9,7 @@ from modules.utils import get_datetime, adjust_premiered_date, sort_for_article,
 # logger = kodi_utils.logger
 
 sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
-watched_indicators_function, lists_sort_order, date_offset = settings.watched_indicators, settings.lists_sort_order, settings.date_offset
+watched_indicators_function, lists_sort_order, date_offset, nextep_method = settings.watched_indicators, settings.lists_sort_order, settings.date_offset, settings.nextep_method
 notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
 progress_db_string = 'fenlight_hidden_progress_items'
 indicators_dict = {0: 'watched_db', 1: 'trakt_db'}
@@ -29,11 +29,14 @@ def cache_watched_tvshow_status(function, status_type, watched_indicators=None):
 	dbcon.execute('INSERT OR REPLACE INTO watched_status VALUES (?, ?, ?)', (status_type, get_timestamp(12), repr(result)))
 	return result or []
 
-def clear_cache_watched_tvshow_status(watched_indicators=None, status_types=('watched', 'progress', 'next_episode')):
-	watched_indicators = watched_indicators or watched_indicators_function()
-	dbcon = get_database()
-	for status in status_types: dbcon.execute('DELETE FROM watched_status WHERE db_type = ?', (status,))
-	dbcon.execute('VACUUM')
+def clear_cache_watched_tvshow_status(watched_indicators=None, status_types=('watched', 'progress')):
+	try:
+		watched_indicators = watched_indicators or watched_indicators_function()
+		dbcon = get_database()
+		for status in status_types: dbcon.execute('DELETE FROM watched_status WHERE db_type = ?', (status,))
+		dbcon.execute('VACUUM')
+		return True
+	except: return False
 
 def hide_unhide_progress_items(params):
 	action, tmdb_id = params['action'], int(params.get('media_id', '0'))
@@ -41,7 +44,6 @@ def hide_unhide_progress_items(params):
 	if action == 'hide': current_items.append(tmdb_id)
 	else: current_items.remove(tmdb_id)
 	main_cache.set(progress_db_string, current_items, 1825)
-	clear_cache_watched_tvshow_status()
 	return kodi_refresh()
 
 def get_last_played_value(watched_indicators):
@@ -66,10 +68,7 @@ def active_tvshows_information(status_type):
 	watched_indicators = watched_indicators_function()
 	watched_info = watched_info_tvshow()
 	data = [v for k, v in watched_info.items()]
-	if status_type == 'progress':
-		status_check = 0
-		hidden_items = get_hidden_progress_items(watched_indicators_function())
-		data = [i for i in data if not int(i['media_id']) in hidden_items]
+	if status_type == 'progress': status_check = 0
 	else: status_check = 1
 	threads = list(make_thread_list(_process, data))
 	[i.join() for i in threads]
@@ -343,17 +342,18 @@ def batch_watched_status_mark(watched_indicators, insert_list, action):
 		clear_cache_watched_tvshow_status()
 	except: notification('Error')
 
-def get_next_episodes():	
-	def _process(dummy_arg):
-		seen = set()
-		seen_add = seen.add
-		watched_db = get_database()
-		data = watched_db.execute('SELECT media_id, season, episode, title, last_played FROM watched WHERE db_type == ?', ('episode',)).fetchall()
-		data.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
-		data.sort(key=lambda x: (x[4]), reverse=True)
-		return [{'media_ids': {'tmdb': int(i[0])}, 'season': int(i[1]), 'episode': int(i[2]), 'title': i[3], 'last_played': i[4]} for i in data
-				if not (i[0] in seen or seen_add(i[0]))]
-	return cache_watched_tvshow_status(_process, 'next_episode')
+def get_next_episodes():
+	watched_db = get_database()
+	method = 0#nextep_method()
+	if method == 0:
+		data = watched_db.execute('''WITH cte AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY media_id ORDER BY season DESC, episode DESC) rn FROM watched WHERE db_type == ?)
+									SELECT media_id, season, episode, title, last_played FROM cte WHERE rn = 1''', ('episode',)).fetchall()
+	else:
+		data = watched_db.execute('SELECT media_id, season, episode, title, MAX(last_played), COUNT(*) AS COUNTER FROM watched WHERE db_type = ? GROUP BY media_id',
+								('episode',)).fetchall()
+	data = [{'media_ids': {'tmdb': int(i[0])}, 'season': int(i[1]), 'episode': int(i[2]), 'title': i[3], 'last_played': i[4]} for i in data]
+	data.sort(key=lambda x: (x['last_played']), reverse=True)
+	return data
 
 def get_in_progress_movies(dummy_arg, page_no):
 	dbcon = get_database()
@@ -365,6 +365,8 @@ def get_in_progress_movies(dummy_arg, page_no):
 
 def get_in_progress_tvshows(dummy_arg, page_no):
 	results = cache_watched_tvshow_status(active_tvshows_information, 'progress')
+	hidden_items = get_hidden_progress_items(watched_indicators_function())
+	results = [i for i in results if not int(i['media_id']) in hidden_items]
 	if lists_sort_order('progress') == 0: results = sort_for_article(results, 'title')
 	else: results = sorted(results, key=lambda x: x['last_played'], reverse=True)
 	return results
