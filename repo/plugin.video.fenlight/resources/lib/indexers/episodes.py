@@ -188,7 +188,7 @@ def build_single_episode(list_type, params={}):
 			else: seas_ep = ''
 			watched_info = watched_info_episode(tmdb_id, watched_db)
 			bookmarks = get_bookmarks_episode(tmdb_id, watched_db)
-			playcount = get_watched_status_episode(watched_info, episode)
+			playcount = get_watched_status_episode(watched_info, (season, episode))
 			progress = get_progress_status_episode(bookmarks, season, episode)
 			if list_type_starts_with('next_'):
 				if playcount: return

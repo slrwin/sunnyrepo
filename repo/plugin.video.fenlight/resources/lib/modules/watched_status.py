@@ -17,26 +17,26 @@ indicators_dict = {0: 'watched_db', 1: 'trakt_db'}
 def get_database(watched_indicators=None):
 	return connect_database(indicators_dict[watched_indicators or watched_indicators_function()])
 
-def cache_watched_tvshow_status(function, status_type, watched_indicators=None):
-	watched_indicators = watched_indicators or watched_indicators_function()
-	dbcon = get_database(watched_indicators)
-	cache = dbcon.execute('SELECT media_id, status FROM watched_status WHERE db_type = ?', (status_type,)).fetchone()
-	if cache is not None:
-		expiration, result = cache
-		if int(expiration) > get_timestamp(): return eval(result)
-		clear_cache_watched_tvshow_status(watched_indicators, (status_type,))
-	result = function(status_type)
-	dbcon.execute('INSERT OR REPLACE INTO watched_status VALUES (?, ?, ?)', (status_type, get_timestamp(12), repr(result)))
-	return result or []
+# def cache_watched_tvshow_status(function, status_type, watched_indicators=None):
+# 	watched_indicators = watched_indicators or watched_indicators_function()
+# 	dbcon = get_database(watched_indicators)
+# 	cache = dbcon.execute('SELECT media_id, status FROM watched_status WHERE db_type = ?', (status_type,)).fetchone()
+# 	if cache is not None:
+# 		expiration, result = cache
+# 		if int(expiration) > get_timestamp(): return eval(result)
+# 		clear_cache_watched_tvshow_status(watched_indicators, (status_type,))
+# 	result = function(status_type)
+# 	dbcon.execute('INSERT OR REPLACE INTO watched_status VALUES (?, ?, ?)', (status_type, get_timestamp(12), repr(result)))
+# 	return result or []
 
-def clear_cache_watched_tvshow_status(watched_indicators=None, status_types=('watched', 'progress')):
-	try:
-		watched_indicators = watched_indicators or watched_indicators_function()
-		dbcon = get_database()
-		for status in status_types: dbcon.execute('DELETE FROM watched_status WHERE db_type = ?', (status,))
-		dbcon.execute('VACUUM')
-		return True
-	except: return False
+# def clear_cache_watched_tvshow_status(watched_indicators=None, status_types=('watched', 'progress')):
+# 	try:
+# 		watched_indicators = watched_indicators or watched_indicators_function()
+# 		dbcon = get_database()
+# 		for status in status_types: dbcon.execute('DELETE FROM watched_status WHERE db_type = ?', (status,))
+# 		dbcon.execute('VACUUM')
+# 		return True
+# 	except: return False
 
 def hide_unhide_progress_items(params):
 	action, tmdb_id = params['action'], int(params.get('media_id', '0'))
@@ -328,7 +328,7 @@ def watched_status_mark(watched_indicators, media_type='', tmdb_id='', action=''
 		elif action == 'mark_as_unwatched':
 			dbcon.execute('DELETE FROM watched WHERE (db_type = ? and media_id = ? and season = ? and episode = ?)', (media_type, tmdb_id, season, episode))
 		erase_bookmark(media_type, tmdb_id, season, episode)
-		if media_type == 'episode': clear_cache_watched_tvshow_status()
+		# if media_type == 'episode': clear_cache_watched_tvshow_status()
 	except: notification('Error')
 
 def batch_watched_status_mark(watched_indicators, insert_list, action):
@@ -339,7 +339,7 @@ def batch_watched_status_mark(watched_indicators, insert_list, action):
 		elif action == 'mark_as_unwatched':
 			dbcon.executemany('DELETE FROM watched WHERE (db_type = ? and media_id = ? and season = ? and episode = ?)', insert_list)
 		batch_erase_bookmark(watched_indicators, insert_list, action)
-		clear_cache_watched_tvshow_status()
+		# clear_cache_watched_tvshow_status()
 	except: notification('Error')
 
 def get_next_episodes():
@@ -364,7 +364,8 @@ def get_in_progress_movies(dummy_arg, page_no):
 	return data
 
 def get_in_progress_tvshows(dummy_arg, page_no):
-	results = cache_watched_tvshow_status(active_tvshows_information, 'progress')
+	# results = cache_watched_tvshow_status(active_tvshows_information, 'progress')
+	results = active_tvshows_information('progress')
 	hidden_items = get_hidden_progress_items(watched_indicators_function())
 	results = [i for i in results if not int(i['media_id']) in hidden_items]
 	if lists_sort_order('progress') == 0: results = sort_for_article(results, 'title')
@@ -380,7 +381,8 @@ def get_in_progress_episodes():
 	return episode_list
 
 def get_watched_items(media_type, page_no):
-	if media_type == 'tvshow': results = cache_watched_tvshow_status(active_tvshows_information, 'watched')
+	# if media_type == 'tvshow': results = cache_watched_tvshow_status(active_tvshows_information, 'watched')
+	if media_type == 'tvshow': results = active_tvshows_information('watched')
 	else: results = [v for k,v in watched_info_movie().items()]
 	if lists_sort_order('watched') == 0: results = sort_for_article(results, 'title')
 	else: results = sorted(results, key=lambda x: x['last_played'], reverse=True)

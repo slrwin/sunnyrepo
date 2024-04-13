@@ -189,12 +189,14 @@ def clear_cache(cache_type, silent=False):
 		success = main_cache.delete_all_folderscrapers()
 	elif cache_type == 'list':
 		if not _confirm(): return
+		# from caches.lists_cache import lists_cache
+		# from modules.watched_status import clear_cache_watched_tvshow_status
+		# results = []
+		# results.append(clear_cache_watched_tvshow_status())
+		# results.append(lists_cache.delete_all_lists())
+		# success = False not in results
 		from caches.lists_cache import lists_cache
-		from modules.watched_status import clear_cache_watched_tvshow_status
-		results = []
-		results.append(clear_cache_watched_tvshow_status())
-		results.append(lists_cache.delete_all_lists())
-		success = False not in results
+		success = lists_cache.delete_all_lists()
 	else:# main
 		if not _confirm(): return
 		from caches.main_cache import main_cache

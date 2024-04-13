@@ -691,9 +691,9 @@ def get_trakt(params):
 	return result[0] if params.get('pagination', True) else result
 
 def trakt_sync_activities(force_update=False):
-	def clear_watched_tvshow_cache():
-		from modules.watched_status import clear_cache_watched_tvshow_status
-		clear_cache_watched_tvshow_status(watched_indicators=1)
+	# def clear_watched_tvshow_cache():
+	# 	from modules.watched_status import clear_cache_watched_tvshow_status
+	# 	clear_cache_watched_tvshow_status(watched_indicators=1)
 	def clear_properties(media_type):
 		for item in ((True, True), (True, False), (False, True), (False, False)): clear_property('1_%s_%s_%s_watched' % (media_type, item[0], item[1]))
 	def _get_timestamp(date_time):
@@ -733,7 +733,7 @@ def trakt_sync_activities(force_update=False):
 	if _compare(latest_episodes['watched_at'], cached_episodes['watched_at']):
 		clear_properties('episode')
 		trakt_indicators_tv()
-		clear_tvshow_watched_cache = True
+		# clear_tvshow_watched_cache = True
 	if _compare(latest_movies['paused_at'], cached_movies['paused_at']): refresh_movies_progress = True
 	if _compare(latest_episodes['paused_at'], cached_episodes['paused_at']): refresh_shows_progress = True
 	if _compare(latest_lists['updated_at'], cached_lists['updated_at']):
@@ -754,5 +754,5 @@ def trakt_sync_activities(force_update=False):
 		for item in lists_actions:
 			clear_trakt_list_data(item)
 			clear_trakt_list_contents_data(item)
-	if clear_tvshow_watched_cache: clear_watched_tvshow_cache()
+	# if clear_tvshow_watched_cache: clear_watched_tvshow_cache()
 	return 'success'

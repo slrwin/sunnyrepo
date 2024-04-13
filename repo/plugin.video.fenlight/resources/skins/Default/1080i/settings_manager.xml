@@ -112,7 +112,7 @@
                         <onclick>noop</onclick>
                     </item>
                     <item id="30">
-                        <label>Navigation</label>
+                        <label>Content</label>
                         <onclick>noop</onclick>
                     </item>
                     <item id="40">
