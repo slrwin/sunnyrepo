@@ -12,9 +12,10 @@ string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, k
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.set_property
 sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
-meta_function, add_item, home = movie_meta, kodi_utils.add_item, kodi_utils.home
+movie_meta, add_item, home = movie_meta, kodi_utils.add_item, kodi_utils.home
 watched_indicators, use_minimal_media_info, widget_hide_next_page = settings.watched_indicators, settings.use_minimal_media_info, settings.widget_hide_next_page
 widget_hide_watched, extras_open_action, page_limit, paginate = settings.widget_hide_watched, settings.extras_open_action, settings.page_limit, settings.paginate
+tmdb_api_key = settings.tmdb_api_key
 run_plugin = 'RunPlugin(%s)'
 main = ('tmdb_movies_popular', 'tmdb_movies_popular_today','tmdb_movies_blockbusters','tmdb_movies_in_theaters', 'tmdb_movies_upcoming', 'tmdb_movies_latest_releases',
 'tmdb_movies_premieres', 'tmdb_movies_oscar_winners')
@@ -109,7 +110,7 @@ class Movies:
 		
 	def build_movie_content(self, _position, _id):
 		try:
-			meta = meta_function(self.id_type, _id, self.current_date, self.current_time)
+			meta = movie_meta(self.id_type, _id, self.tmdb_api_key, self.current_date, self.current_time)
 			if not meta or 'blank_entry' in meta: return
 			listitem = make_listitem()
 			cm = []
@@ -170,7 +171,7 @@ class Movies:
 		except: pass
 
 	def worker(self):
-		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), watched_indicators()
+		self.current_date, self.current_time, self.watched_indicators, self.tmdb_api_key = get_datetime(), get_current_timestamp(), watched_indicators(), tmdb_api_key()
 		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
 		watched_db = get_database(self.watched_indicators)
 		self.watched_info, self.bookmarks = watched_info_movie(watched_db), get_bookmarks_movie(watched_db)

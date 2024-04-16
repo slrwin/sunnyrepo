@@ -57,7 +57,7 @@ class FenLightPlayer(xbmc_player):
 				except: pass
 			resolve_percent = round(resolve_percent + 26.0/100, 1)
 			self.sources_object.progress_dialog.update_resolver(percent=resolve_percent)
-			sleep(100)
+			sleep(50)
 
 	def playback_close_dialogs(self):
 		self.sources_object.playback_successful = True

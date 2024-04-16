@@ -3,7 +3,7 @@ from caches.settings_cache import get_setting, set_setting
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-translate_path, get_property, tmdb_default_api = kodi_utils.translate_path, kodi_utils.get_property, kodi_utils.tmdb_default_api
+translate_path, get_property = kodi_utils.translate_path, kodi_utils.get_property
 download_directories_dict = {'movie': 'fenlight.movie_download_directory', 'episode': 'fenlight.tvshow_download_directory', 'thumb_url': 'fenlight.image_download_directory',
 							'image_url': 'fenlight.image_download_directory','image': 'fenlight.image_download_directory', 'premium': 'fenlight.premium_download_directory',
 							None: 'fenlight.premium_download_directory', 'None': False}
@@ -16,6 +16,15 @@ prescrape_scrapers_tuple = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'fol
 sort_to_top_dict = {'folders': 'fenlight.results.sort_folders_first', 'rd_cloud': 'fenlight.results.sort_rdcloud_first',
 					'pm_cloud': 'fenlight.results.sort_pmcloud_first', 'ad_cloud': 'fenlight.results.sort_adcloud_first'}
 internal_scrapers_clouds_list = [('rd', 'provider.rd_cloud'), ('pm', 'provider.pm_cloud'), ('ad', 'provider.ad_cloud')]
+
+def tmdb_api_key():
+	return get_setting('fenlight.tmdb_api', '')
+
+def trakt_client():
+	return get_setting('fenlight.trakt.client', '')
+
+def trakt_secret():
+	return get_setting('fenlight.trakt.secret', '')
 
 def results_format():
 	window_format = str(get_setting('fenlight.results.list_format', 'List'))

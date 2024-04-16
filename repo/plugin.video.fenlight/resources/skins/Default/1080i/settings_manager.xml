@@ -923,6 +923,45 @@
                         <property name="setting_description">Revoke authorization of your Trakt account</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=trakt.trakt_revoke_authentication)</onclick>
                     </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <label>Client ID Key</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.trakt.client)]</property>
+                        <property name="setting_description">Enter here your Trakt Client ID key</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=trakt.client)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <label>Client Secret Key</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.trakt.secret)]</property>
+                        <property name="setting_description">Enter here your Trakt Client Secret key</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=trakt.secret)</onclick>
+                    </item>
+            <!-- TMDb -->
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <label>TMDb</label>
+                        <property name="setting_type">separator</property>
+                        <onclick>noop</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <label>API Key</label>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdb_api)]</property>
+                        <property name="setting_description">Enter here your TMDb API key</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=tmdb_api)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <label>Test API Key...</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">...</property>
+                        <property name="setting_description">Test if your TMDb API is activated and working</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=tmdb_api_check_choice)</onclick>
+                    </item>
             <!-- OMDb -->
                     <item>
                         <visible>Container(2000).HasFocus(40)</visible>

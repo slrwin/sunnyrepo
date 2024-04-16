@@ -9,11 +9,9 @@ from modules.watched_status import get_database, watched_info_tvshow, get_watche
 
 string, sys, external, add_items, add_dir, use_minimal_media_info = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, settings.use_minimal_media_info
 set_content, end_directory, set_view_mode, folder_path, random = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path, kodi_utils.random
-sleep, meta_function, add_item, xbmc_actor, home = kodi_utils.sleep, tvshow_meta, kodi_utils.add_item, kodi_utils.xbmc_actor, kodi_utils.home
-set_category, json = kodi_utils.set_category, kodi_utils.json
-make_listitem, build_url, set_property = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.set_property
-poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.default_addon_fanart
-nextpage_landscape = kodi_utils.nextpage_landscape
+sleep, meta_function, add_item, xbmc_actor, home, tmdb_api_key = kodi_utils.sleep, tvshow_meta, kodi_utils.add_item, kodi_utils.xbmc_actor, kodi_utils.home, settings.tmdb_api_key
+set_category, json, make_listitem, build_url, set_property = kodi_utils.set_category, kodi_utils.json, kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.set_property
+poster_empty, fanart_empty, nextpage_landscape = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.nextpage_landscape
 extras_open_action, default_all_episodes, page_limit, paginate = settings.extras_open_action, settings.default_all_episodes, settings.page_limit, settings.paginate
 widget_hide_next_page, widget_hide_watched, watched_indicators = settings.widget_hide_next_page, settings.widget_hide_watched, settings.watched_indicators
 run_plugin, container_update = 'RunPlugin(%s)', 'Container.Update(%s)'
@@ -122,7 +120,7 @@ class TVShows:
 
 	def build_tvshow_content(self, _position, _id):
 		try:
-			meta = meta_function(self.id_type, _id, self.current_date, self.current_time)
+			meta = meta_function(self.id_type, _id, self.tmdb_api_key, self.current_date, self.current_time)
 			if not meta or 'blank_entry' in meta: return
 			cm = []
 			cm_append = cm.append
@@ -183,7 +181,7 @@ class TVShows:
 		except: pass
 
 	def worker(self):
-		self.current_date, self.current_time, self.use_minimal_media = get_datetime(), get_current_timestamp(), use_minimal_media_info()
+		self.current_date, self.current_time, self.use_minimal_media, self.tmdb_api_key = get_datetime(), get_current_timestamp(), use_minimal_media_info(), tmdb_api_key()
 		self.all_episodes, self.open_extras = default_all_episodes(), extras_open_action('tvshow')
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = watched_indicators()

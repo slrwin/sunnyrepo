@@ -7,7 +7,7 @@ from modules.downloader import manager
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
 get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
@@ -20,10 +20,17 @@ numeric_input, container_update, activate_window, addon_fanart = kodi_utils.nume
 addon_icon, poster_empty = kodi_utils.addon_icon, kodi_utils.empty_poster
 extras_button_label_values, jsonrpc_get_addons = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
-audio_filters, extras_open_action = settings.audio_filters, settings.extras_open_action
+audio_filters, extras_open_action, tmdb_api_key = settings.audio_filters, settings.extras_open_action, settings.tmdb_api_key
 quality_filter, date_offset = settings.quality_filter, settings.date_offset
 single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_fenlight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
 scraper_names = ['EXTERNAL SCRAPERS', 'EASYNEWS', 'RD CLOUD', 'PM CLOUD', 'AD CLOUD', 'FOLDERS 1-5']
+
+def tmdb_api_check_choice(params):
+	from apis.tmdb_api import movie_details
+	data = movie_details('299534', tmdb_api_key())
+	if not data.get('success', True): text = 'There is an issue with your API Key.[CR][B]"Error: %s"[/B]' % data.get('status_message', '')
+	else: text = 'Your TMDb API Key is enabled and working'
+	return ok_dialog(text=text)
 
 def clear_sources_folder_choice(params):
 	setting_id = params['setting_id']
@@ -164,7 +171,7 @@ def playback_choice(params):
 	except: pass
 	if not isinstance(meta, dict):
 		function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
-		meta = function('tmdb_id', meta, get_datetime())
+		meta = function('tmdb_id', meta, tmdb_api_key(), get_datetime())
 	aliases = get_aliases_titles(make_alias_dict(meta, meta['title']))
 	items = []
 	items += [{'line': 'Rescrape & Select Source', 'function': 'clear_and_rescrape'}]
@@ -444,7 +451,7 @@ def options_menu_choice(params, meta=None):
 	if content.startswith('episode.'): content = 'episode'
 	if not meta:
 		function = metadata.movie_meta if content == 'movie' else metadata.tvshow_meta
-		meta = function('tmdb_id', tmdb_id, get_datetime())
+		meta = function('tmdb_id', tmdb_id, tmdb_api_key(), get_datetime())
 	meta_get = meta.get
 	rootname, title, year, imdb_id, tvdb_id = meta_get('rootname', None), meta_get('title'), meta_get('year'), meta_get('imdb_id', None), meta_get('tvdb_id', None)
 	window_function = activate_window if is_external else container_update
@@ -606,7 +613,7 @@ def extras_menu_choice(params):
 	if not stacked: show_busy_dialog()
 	media_type = params['media_type']
 	function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
-	meta = function('tmdb_id', params['tmdb_id'], get_datetime())
+	meta = function('tmdb_id', params['tmdb_id'], tmdb_api_key(), get_datetime())
 	if not stacked: hide_busy_dialog()
 	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_external=params.get('is_external', 'true' if external() else 'false'),
 															options_media_type=media_type, starting_position=params.get('starting_position', None))

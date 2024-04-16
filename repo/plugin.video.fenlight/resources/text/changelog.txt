@@ -1,7 +1,14 @@
 ++
 
-[COLOR dodgerblue][B]Version 1.0.44/45[/B][/COLOR]
+[COLOR dodgerblue][B]Version 1.0.47[/B][/COLOR]
+- Added option to use your own TMDb API key in Settings->Accounts.
+- Added option to use your own Trakt Client ID and Client Secret in Settings->Accounts.
+- Fixed more watched status issues.
+- Other changes/fixes.
+
+[COLOR dodgerblue][B]Version 1.0.44/45/46[/B][/COLOR]
 - Hopefully fixed Next Episode and sorting issues.
+- Fix more issues with watched statuses.
 
 [COLOR dodgerblue][B]Version 1.0.43[/B][/COLOR]
 - Re-write of watched progress handling. Should see some speed increase.

@@ -18,7 +18,7 @@ addon_fanart, empty_poster = kodi_utils.default_addon_fanart, kodi_utils.empty_p
 extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extras_button_label_values, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
 extras_enable_scrollbars, omdb_api_key, date_offset = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset
-default_all_episodes, extras_enabled_menus = settings.default_all_episodes, settings.extras_enabled_menus
+default_all_episodes, extras_enabled_menus, tmdb_api_key = settings.default_all_episodes, settings.extras_enabled_menus, settings.tmdb_api_key
 enable_extra_ratings = settings.extras_enable_extra_ratings
 options_menu_choice, extras_menu_choice, imdb_videos_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice, dialogs.imdb_videos_choice
 trakt_manager_choice, random_choice, playback_choice, favorites_choice = dialogs.trakt_manager_choice, dialogs.random_choice, dialogs.playback_choice, dialogs.favorites_choice
@@ -95,7 +95,7 @@ class Extras(BaseDialog):
 			from modules.metadata import movie_meta, tvshow_meta
 			chosen_listitem = self.get_listitem(focus_id)
 			function = movie_meta if self.media_type == 'movie' else tvshow_meta
-			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), get_datetime())
+			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), self.tmdb_api_key, get_datetime())
 			hide_busy_dialog()
 			self.show_extrainfo(self.media_type, meta, meta.get('poster', empty_poster))
 		elif action in self.context_actions:
@@ -341,7 +341,7 @@ class Extras(BaseDialog):
 		except: return
 		if not coll_id: return
 		try:
-			data = movieset_meta(coll_id)
+			data = movieset_meta(coll_id, self.tmdb_api_key)
 			item_list = list(self.make_tmdb_listitems(sorted(data['parts'], key=lambda k: k['release_date'] or '2050')))
 			self.setProperty('more_from_collection.name', data['title'])
 			self.setProperty('more_from_collection.overview', data['plot'] or data['title'])
@@ -617,7 +617,7 @@ class Extras(BaseDialog):
 		self.tmdb_id, self.imdb_id = self.meta_get('tmdb_id'), self.meta_get('imdb_id')
 		self.folder_runner = activate_window if self.is_external == 'true' else container_update
 		self.enabled_lists, self.enable_scrollbars = extras_enabled_menus(), extras_enable_scrollbars()
-		self.omdb_api = omdb_api_key()
+		self.tmdb_api_key, self.omdb_api = tmdb_api_key(), omdb_api_key()
 		self.display_extra_ratings = self.imdb_id and self.omdb_api not in ('empty_setting', '') and enable_extra_ratings()
 		self.title, self.year, self.rootname = self.meta_get('title'), str(self.meta_get('year')), self.meta_get('rootname')
 		self.poster = self.meta_get('poster') or empty_poster

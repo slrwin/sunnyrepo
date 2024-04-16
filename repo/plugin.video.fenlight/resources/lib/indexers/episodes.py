@@ -14,7 +14,7 @@ nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
 get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
 watched_indicators_info, use_minimal_media_info = settings.watched_indicators, settings.use_minimal_media_info
-nextep_limit_history, nextep_limit = settings.nextep_limit_history, settings.nextep_limit
+nextep_limit_history, nextep_limit, tmdb_api_key = settings.nextep_limit_history, settings.nextep_limit, settings.tmdb_api_key
 tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
 get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode = ws.get_watched_status_episode, ws.get_bookmarks_episode, ws.get_progress_status_episode
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
@@ -95,7 +95,7 @@ def build_episode_list(params):
 	watched_indicators, adjust_hours, use_minimal_media = watched_indicators_info(), date_offset_info(), use_minimal_media_info()
 	current_date, hide_watched = get_datetime(), is_home and widget_hide_watched()
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
-	meta = tv_meta_function('tmdb_id', params.get('tmdb_id'), current_date)
+	meta = tv_meta_function('tmdb_id', params.get('tmdb_id'), tmdb_api_key(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, tvshow_plot, orig_title = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot'), meta_get('original_title')
 	title, show_year, rootname, show_duration, show_status = meta_get('title'), meta_get('year') or '2050', meta_get('rootname'), meta_get('duration'), meta_get('status')
@@ -133,7 +133,7 @@ def build_single_episode(list_type, params={}):
 	def _process(_position, ep_data):
 		try:
 			ep_data_get = ep_data.get
-			meta = tv_meta_function('trakt_dict', ep_data_get('media_ids'), current_date)
+			meta = tv_meta_function('trakt_dict', ep_data_get('media_ids'), api_key, current_date)
 			if not meta: return
 			meta_get = meta.get
 			cm = []
@@ -251,6 +251,7 @@ def build_single_episode(list_type, params={}):
 	item_list_append = item_list.append
 	all_episodes, watched_indicators, use_minimal_media, display_format = default_all_episodes(), watched_indicators_info(), use_minimal_media_info(), ep_display_format(is_external)
 	current_date, adjust_hours, hide_watched = get_datetime(), date_offset_info(), is_home and widget_hide_watched()
+	api_key = tmdb_api_key()
 	watched_db = get_database(watched_indicators)
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	show_all_episodes = all_episodes in (1, 2)

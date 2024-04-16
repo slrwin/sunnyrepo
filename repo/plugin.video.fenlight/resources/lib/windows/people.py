@@ -10,7 +10,7 @@ from modules.utils import calculate_age, get_datetime
 
 addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.default_addon_fanart, kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
 notification, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.notification, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
-extras_enable_scrollbars = settings.extras_enable_scrollbars
+extras_enable_scrollbars, tmdb_api_key = settings.extras_enable_scrollbars, settings.tmdb_api_key
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'
 backup_cast_thumbnail = get_icon('genre_family')
 roles_exclude = ('himself', 'herself', 'self', 'narrator', 'voice', 'voice (voice)')
@@ -77,7 +77,7 @@ class People(BaseDialog):
 			chosen_listitem = self.get_listitem(focus_id)
 			media_type = 'movie' if focus_id in (more_from_movies_id, more_from_director_id) else 'tvshow'
 			function = movie_meta if media_type == 'movie' else tvshow_meta
-			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), get_datetime())
+			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), tmdb_api_key(), get_datetime())
 			hide_busy_dialog()
 			self.show_extrainfo(media_type, meta, meta.get('poster', empty_poster))
 		if not self.control_id: return

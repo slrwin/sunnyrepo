@@ -7,7 +7,7 @@ from modules.watched_status import get_database, watched_info_season, get_watche
 
 poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
 sys, add_items, set_content, end_directory, set_view_mode = kodi_utils.sys, kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
-make_listitem, build_url, external, date_offset_info = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.external, settings.date_offset
+make_listitem, build_url, external, date_offset_info, tmdb_api_key = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.external, settings.date_offset, settings.tmdb_api_key
 use_minimal_media_info, watched_indicators_info, widget_hide_watched = settings.use_minimal_media_info, settings.watched_indicators, settings.widget_hide_watched
 string, run_plugin, unaired_label, tmdb_poster = str, 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
 view_mode, content_type = 'view.seasons', 'seasons'
@@ -73,7 +73,7 @@ def build_season_list(params):
 	watched_indicators, use_minimal_media, adjust_hours, hide_watched = watched_indicators_info(), use_minimal_media_info(), date_offset_info(), is_home and widget_hide_watched()
 	current_date = get_datetime()
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
-	meta = tvshow_meta('tmdb_id', params['tmdb_id'], current_date)
+	meta = tvshow_meta('tmdb_id', params['tmdb_id'], tmdb_api_key(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'
 	orig_title, status, show_plot = meta_get('original_title', ''), meta_get('status'), meta_get('plot')

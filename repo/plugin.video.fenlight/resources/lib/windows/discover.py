@@ -7,13 +7,13 @@ from modules.utils import safe_string, remove_accents
 # from modules.kodi_utils import logger
 
 json, dialog, select_dialog, ok_dialog, get_icon = kodi_utils.json, kodi_utils.dialog, kodi_utils.select_dialog, kodi_utils.ok_dialog, kodi_utils.get_icon
-sleep, container_refresh, tmdb_api_key = kodi_utils.sleep, kodi_utils.container_refresh, kodi_utils.tmdb_default_api
+sleep, container_refresh = kodi_utils.sleep, kodi_utils.container_refresh
 years_movies, years_tvshows, movie_genres, tvshow_genres = meta_lists.years_movies, meta_lists.years_tvshows, meta_lists.movie_genres, meta_lists.tvshow_genres
 movie_certifications, networks, movie_certifications = meta_lists.movie_certifications, meta_lists.networks, meta_lists.movie_certifications
 watch_providers_movies, watch_providers_tvshows = meta_lists.watch_providers_movies, meta_lists.watch_providers_tvshows
 movie_sorts, tvshow_sorts, discover_items = meta_lists.movie_sorts, meta_lists.tvshow_sorts, meta_lists.discover_items
 
-base_url = 'https://api.themoviedb.org/3/discover/%s?api_key=%s&language=en-US&region=US&with_original_language=en%s%s'
+base_url = 'https://api.themoviedb.org/3/discover/%s?language=en-US&region=US&with_original_language=en%s'
 filter_list_id = 2100
 button_ids = (10, 11)
 button_actions = {10: 'Save and Exit', 11: 'Exit'}
@@ -194,7 +194,7 @@ class Discover(BaseDialog):
 		return {key: discover_items[key] for key in [i for i in discover_items if self.get_attribute(self, i)]}
 
 	def make_url(self, active_attributes):
-		self.url = base_url % (('movie' if self.media_type == 'movie' else 'tv'), tmdb_api_key, ''.join([self.get_attribute(self, i) for i in active_attributes]), '&page=%s')
+		self.url = base_url % (('movie' if self.media_type == 'movie' else 'tv'), ''.join([self.get_attribute(self, i) for i in active_attributes]))
 
 	def make_label(self, active_attributes):
 		label = '[B]%sS[/B]' % self.media_type.upper()
@@ -219,7 +219,7 @@ class Discover(BaseDialog):
 				else: continue
 			else: label_extend = values['name_value'] % attribute_value
 			label += label_extend
-		self.label = label#.upper()
+		self.label = label
 
 	def set_key_values(self, key_content, display_key_content):
 		self.set_attribute(self, self.chosen_item['key'], key_content)

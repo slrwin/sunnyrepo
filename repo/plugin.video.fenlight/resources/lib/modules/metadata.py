@@ -4,8 +4,8 @@ from caches.meta_cache import meta_cache
 from modules.utils import jsondate_to_datetime, subtract_dates
 # from modules.kodi_utils import logger
 
-movie_data, tvshow_data, season_episodes_details = tmdb_api.movie_details, tmdb_api.tvshow_details, tmdb_api.season_episodes_details
-movie_set_data, movie_external, tvshow_external = tmdb_api.movie_set_details, tmdb_api.movie_external_id, tmdb_api.tvshow_external_id
+movie_details, tvshow_details, season_episodes_details = tmdb_api.movie_details, tmdb_api.tvshow_details, tmdb_api.season_episodes_details
+movie_set_details, movie_external_id, tvshow_external_id = tmdb_api.movie_set_details, tmdb_api.movie_external_id, tmdb_api.tvshow_external_id
 metacache_get, metacache_set, metacache_get_season, metacache_set_season = meta_cache.get, meta_cache.set, meta_cache.get_season, meta_cache.set_season
 writer_credits = ('Author', 'Writer', 'Screenplay', 'Characters')
 alt_titles_check, trailers_check, finished_show_check, empty_value_check = ('US', 'GB', 'UK', ''), ('Trailer', 'Teaser'), ('Ended', 'Canceled'), ('', 'None', None)
@@ -13,7 +13,7 @@ tmdb_image_url, youtube_url, date_format = 'https://image.tmdb.org/t/p/%s%s', 'p
 EXPIRES_1_DAYS, EXPIRES_4_DAYS, EXPIRES_7_DAYS, EXPIRES_14_DAYS, EXPIRES_30_DAYS, EXPIRES_182_DAYS = 24, 96, 168, 336, 720, 4368
 invalid_error_codes = (6, 34, 37)
 
-def movie_meta(id_type, media_id, current_date, current_time=None):
+def movie_meta(id_type, media_id, api_key, current_date, current_time=None):
 	if id_type == 'trakt_dict':
 		if media_id.get('tmdb', None): id_type, media_id = 'tmdb_id', media_id['tmdb']
 		elif media_id.get('imdb', None): id_type, media_id = 'imdb_id', media_id['imdb']
@@ -22,11 +22,11 @@ def movie_meta(id_type, media_id, current_date, current_time=None):
 	meta = metacache_get('movie', id_type, media_id, current_time)
 	if meta: return meta
 	try:
-		if id_type in ('tmdb_id', 'imdb_id'): data = movie_data(media_id)
+		if id_type in ('tmdb_id', 'imdb_id'): data = movie_details(media_id, api_key)
 		else:
-			external_result = movie_external(id_type, media_id)
+			external_result = movie_external_id(id_type, media_id, api_key)
 			if not external_result: data = None
-			else: data = movie_data(external_result['id'])
+			else: data = movie_details(external_result['id'], api_key)
 		if not data: return None
 		elif data.get('status_code') in invalid_error_codes:
 			if id_type == 'tmdb_id': meta = {'tmdb_id': media_id, 'imdb_id': 'tt0000000', 'tvdb_id': '0000000', 'blank_entry': True}
@@ -123,7 +123,7 @@ def movie_meta(id_type, media_id, current_date, current_time=None):
 	except: pass
 	return meta
 
-def tvshow_meta(id_type, media_id, current_date, current_time=None):
+def tvshow_meta(id_type, media_id, api_key, current_date, current_time=None):
 	if id_type == 'trakt_dict':
 		if media_id.get('tmdb', None): id_type, media_id = 'tmdb_id', media_id['tmdb']
 		elif media_id.get('imdb', None): id_type, media_id = 'imdb_id', media_id['imdb']
@@ -133,11 +133,11 @@ def tvshow_meta(id_type, media_id, current_date, current_time=None):
 	meta = metacache_get('tvshow', id_type, media_id, current_time)
 	if meta: return meta
 	try:
-		if id_type == 'tmdb_id': data = tvshow_data(media_id)
+		if id_type == 'tmdb_id': data = tvshow_details(media_id, api_key)
 		else:
-			external_result = tvshow_external(id_type, media_id)
+			external_result = tvshow_external_id(id_type, media_id)
 			if not external_result: data = None
-			else: data = tvshow_data(external_result['id'])
+			else: data = tvshow_details(external_result['id'], api_key)
 		if not data or data.get('status_code', '') in invalid_error_codes:
 			if id_type == 'tmdb_id': meta = {'tmdb_id': media_id, 'imdb_id': 'tt0000000', 'tvdb_id': '0000000', 'blank_entry': True}
 			elif id_type == 'imdb_id': meta = {'tmdb_id': '0000000', 'imdb_id': media_id, 'tvdb_id': '0000000', 'blank_entry': True}
@@ -243,13 +243,13 @@ def tvshow_meta(id_type, media_id, current_date, current_time=None):
 	except: pass
 	return meta
 
-def movieset_meta(media_id, current_time=None):
+def movieset_meta(media_id, api_key, current_time=None):
 	if media_id == None: return None
 	id_type = 'tmdb_id'
 	meta = metacache_get('movie_set', id_type, media_id, current_time)
 	if meta: return meta
 	try:
-		data = movie_set_data(media_id)
+		data = movie_set_details(media_id, api_key)
 		if not data: return None
 		elif 'status_code' in data and data.get('status_code') in invalid_error_codes:
 			meta = {'tmdb_id': media_id, 'fanart_added': True, 'blank_entry': True}
@@ -335,11 +335,11 @@ def all_episodes_meta(meta):
 	except: pass
 	return data
 
-def movie_meta_external_id(external_source, external_id):
-	return movie_external(external_source, external_id)
+def movie_meta_external_id(external_source, external_id, api_key):
+	return movie_external_id(external_source, external_id, api_key)
 
-def tvshow_meta_external_id(external_source, external_id):
-	return tvshow_external(external_source, external_id)
+def tvshow_meta_external_id(external_source, external_id, api_key):
+	return tvshow_external_id(external_source, external_id, api_key)
 
 def movie_expiry(current_date, meta):
 	try:

@@ -250,6 +250,10 @@ def default_settings():
 #=====================================================================================#
 #==================== Trakt
 {'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'},
+{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1'},
+#==================== TMDb
+{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': 'b370b60447737762ca38457bd77579b3'},
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 

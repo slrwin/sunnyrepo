@@ -16,7 +16,7 @@ Thread, get_property, set_property, clear_property = kodi_utils.Thread, kodi_uti
 auto_play, active_internal_scrapers, provider_sort_ranks, audio_filters = settings.auto_play, settings.active_internal_scrapers, settings.provider_sort_ranks, settings.audio_filters
 check_prescrape_sources, external_scraper_info, auto_resume = settings.check_prescrape_sources, settings.external_scraper_info, settings.auto_resume
 store_resolved_to_cloud, source_folders_directory, watched_indicators = settings.store_resolved_to_cloud, settings.source_folders_directory, settings.watched_indicators
-quality_filter, sort_to_top = settings.quality_filter, settings.sort_to_top
+quality_filter, sort_to_top, tmdb_api_key = settings.quality_filter, settings.sort_to_top, settings.tmdb_api_key
 scraping_settings, include_prerelease_results, auto_rescrape_with_all = settings.scraping_settings, settings.include_prerelease_results, settings.auto_rescrape_with_all
 ignore_results_filter, results_sort_order, results_format, filter_status = settings.ignore_results_filter, settings.results_sort_order, settings.results_format, settings.filter_status
 autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
@@ -447,9 +447,9 @@ class Sources():
 		return results
 
 	def get_meta(self):
-		if self.media_type == 'movie': self.meta = metadata.movie_meta('tmdb_id', self.tmdb_id, get_datetime())
+		if self.media_type == 'movie': self.meta = metadata.movie_meta('tmdb_id', self.tmdb_id, tmdb_api_key(), get_datetime())
 		else:
-			self.meta = metadata.tvshow_meta('tmdb_id', self.tmdb_id, get_datetime())
+			self.meta = metadata.tvshow_meta('tmdb_id', self.tmdb_id, tmdb_api_key(), get_datetime())
 			episodes_data = metadata.episodes_meta(self.season, self.meta)
 			try:
 				episode_data = [i for i in episodes_data if i['episode'] == self.episode][0]
