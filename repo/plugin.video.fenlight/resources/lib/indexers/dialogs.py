@@ -61,10 +61,6 @@ def external_scraper_choice(params):
 		ok_dialog(text='The [B]%s[/B] Module is not compatible.[CR]Please choose a different Module...' % module_name.upper())
 		return external_scraper_choice(params)
 
-def restore_addon_fanart_choice(params):
-	if not confirm_dialog(): return
-	set_setting('default_addon_fanart', addon_fanart)
-
 def audio_filters_choice(params={}):
 	icon = get_icon('audio')
 	list_items = [{'line1': item[0], 'line2': item[1], 'icon': icon} for item in audio_filter_choices]
@@ -174,6 +170,7 @@ def playback_choice(params):
 		meta = function('tmdb_id', meta, tmdb_api_key(), get_datetime())
 	aliases = get_aliases_titles(make_alias_dict(meta, meta['title']))
 	items = []
+	items += [{'line': 'Select Source', 'function': 'scrape'}]
 	items += [{'line': 'Rescrape & Select Source', 'function': 'clear_and_rescrape'}]
 	items += [{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'}]
 	items += [{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'}]
@@ -191,7 +188,10 @@ def playback_choice(params):
 		clear_cache('internal_scrapers', silent=True)
 		ExternalCache().delete_cache_single(media_type, str(meta['tmdb_id']))
 		hide_busy_dialog()
-	if choice == 'clear_and_rescrape':
+	if choice == 'scrape':
+		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'autoplay': 'false'}
+		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'autoplay': 'false'}
+	elif choice == 'clear_and_rescrape':
 		clear_caches()
 		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'autoplay': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'autoplay': 'false'}

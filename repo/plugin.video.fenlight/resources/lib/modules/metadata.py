@@ -306,18 +306,20 @@ def episodes_meta(season, meta):
 	media_id, data = meta['tmdb_id'], None
 	prop_string = '%s_%s' % (media_id, season)
 	data = metacache_get_season(prop_string)
-	if data: return data
+	if data is not None: return data
 	try:
 		season, tvshow_status, total_seasons = int(season), meta['status'], meta['total_seasons']
 		if season == 1: season_type = 'premiere_finale' if (total_seasons == season and tvshow_status in finished_show_check) else 'premiere'
 		else: season_type = 'finale' if (total_seasons == season and tvshow_status in finished_show_check) else ''
 		if tvshow_status in finished_show_check or total_seasons > int(season): expiration = EXPIRES_182_DAYS
 		else: expiration = EXPIRES_4_DAYS
-		details = season_episodes_details(media_id, season)['episodes']
-		total_episodes = len(details)
-		data = list(_process())
-		metacache_set_season(prop_string, data, expiration)
-	except: pass
+		try:
+			details = season_episodes_details(media_id, season)['episodes']
+			total_episodes = len(details)
+			data = list(_process())
+		except: data, expiration = [], EXPIRES_4_DAYS
+	except: data, expiration = [], EXPIRES_4_DAYS
+	metacache_set_season(prop_string, data, expiration)
 	return data
 
 def all_episodes_meta(meta):

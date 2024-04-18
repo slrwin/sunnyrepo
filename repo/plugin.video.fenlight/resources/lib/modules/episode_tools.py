@@ -5,7 +5,7 @@ from modules.sources import Sources
 from modules.metadata import episodes_meta, all_episodes_meta
 from modules.watched_status import get_next_episodes, get_hidden_progress_items
 from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 Thread, get_property, set_property, add_items = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.add_items
 make_listitem, set_content, end_directory, set_view_mode = kodi_utils.make_listitem, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
@@ -31,8 +31,8 @@ class EpisodeTools:
 			episode = current_episode + 1 if current_episode < curr_season_data['episode_count'] else 1
 			ep_data = episodes_meta(season, self.meta)
 			if not ep_data: return 'no_next_episode'
-			try: ep_data = [i for i in ep_data if i['episode'] == episode][0]
-			except: return 'no_next_episode'
+			ep_data = next((i for i in ep_data if i['episode'] == episode), None)
+			if not ep_data: return 'no_next_episode'
 			airdate = ep_data['premiered']
 			d = airdate.split('-')
 			episode_date = date(int(d[0]), int(d[1]), int(d[2]))
@@ -47,7 +47,9 @@ class EpisodeTools:
 			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
 			if custom_title: url_params['custom_title'] = custom_title
 			if 'custom_year' in self.meta: url_params['custom_year'] = self.meta_get('custom_year')
-		except: url_params = 'error'
+		except Exception as e:
+			logger('error', str(e))
+			url_params = 'error'
 		return url_params
 
 	def get_random_episode(self, continual=False, first_run=True):
@@ -126,7 +128,7 @@ def build_next_episode_manager():
 	list_items = []
 	append = list_items.append
 	indicators = watched_indicators()
-	show_list = get_next_episodes()
+	show_list = get_next_episodes(0)
 	hidden_list = get_hidden_progress_items(indicators)
 	if indicators == 0: icon, mode = get_icon('folder'), 'hide_unhide_progress_items'
 	else: icon, mode = get_icon('trakt'), 'trakt.hide_unhide_progress_items'

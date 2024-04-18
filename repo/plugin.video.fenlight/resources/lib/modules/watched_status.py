@@ -6,7 +6,7 @@ from caches.main_cache import main_cache, cache_object
 from caches.trakt_cache import clear_trakt_collection_watchlist_data
 from modules import kodi_utils, settings, metadata
 from modules.utils import get_datetime, adjust_premiered_date, sort_for_article, make_thread_list
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
 notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
@@ -181,10 +181,12 @@ def erase_bookmark(media_type, media_id, season='', episode='', refresh='false')
 	try:
 		watched_indicators = watched_indicators_function()
 		if watched_indicators == 1:
-			if media_type == 'episode': resume_id = [i[4] for i in get_bookmarks_episode(media_id) if i[2] == int(season) and i[3] == int(episode)][0]
-			else: resume_id = [i[3] for i in get_bookmarks_movie() if i[0] == str(media_id)][0]
-			sleep(1000)
-			trakt_progress('clear_progress', media_type, media_id, 0, season, episode, resume_id)
+			try:
+				if media_type == 'episode': resume_id = [i[4] for i in get_bookmarks_episode(media_id) if i[2] == int(season) and i[3] == int(episode)][0]
+				else: resume_id = [i[3] for i in get_bookmarks_movie() if i[0] == str(media_id)][0]
+				sleep(1000)
+				trakt_progress('clear_progress', media_type, media_id, 0, season, episode, resume_id)
+			except: pass
 		dbcon = get_database()
 		dbcon.execute('DELETE FROM progress where db_type = ? and media_id = ? and season = ? and episode = ?', (media_type, media_id, season, episode))
 		refresh_container(refresh == 'true')
@@ -197,10 +199,10 @@ def batch_erase_bookmark(watched_indicators, insert_list, action):
 		if watched_indicators == 1:
 			def _process():
 				for i in insert_list:
-					tmdb_id, season, episode = insert_list[1], insert_list[2], insert_list[3]
-					bookmarks = get_bookmarks_episode(tmdb_id)
-					resume_id = [i[4] for i in bookmarks if i[2] == int(season) and i[3] == int(episode)][0]
 					try:
+						tmdb_id, season, episode = insert_list[1], insert_list[2], insert_list[3]
+						bookmarks = get_bookmarks_episode(tmdb_id)
+						resume_id = [i[4] for i in bookmarks if i[2] == int(season) and i[3] == int(episode)][0]
 						sleep(1100)
 						trakt_progress('clear_progress', i[0], i[1], 0, i[2], i[3], resume_id)
 					except: pass
@@ -344,10 +346,9 @@ def batch_watched_status_mark(watched_indicators, insert_list, action):
 		# clear_cache_watched_tvshow_status()
 	except: notification('Error')
 
-def get_next_episodes():
+def get_next_episodes(nextep_content):
 	watched_db = get_database()
-	method = 0#nextep_method()
-	if method == 0:
+	if nextep_content == 0:
 		data = watched_db.execute('''WITH cte AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY media_id ORDER BY season DESC, episode DESC) rn FROM watched WHERE db_type == ?)
 									SELECT media_id, season, episode, title, last_played FROM cte WHERE rn = 1''', ('episode',)).fetchall()
 	else:
@@ -356,6 +357,33 @@ def get_next_episodes():
 	data = [{'media_ids': {'tmdb': int(i[0])}, 'season': int(i[1]), 'episode': int(i[2]), 'title': i[3], 'last_played': i[4]} for i in data]
 	data.sort(key=lambda x: (x['last_played']), reverse=True)
 	return data
+	
+def get_next(season, episode, watched_info, season_data, total_seasons, nextep_content):
+	if episode == 0: episode = 1
+	elif nextep_content == 0:
+		try:
+			episode_count = next((i['episode_count'] for i in season_data if i['season_number'] == season), None)
+			season = season if episode < episode_count else season + 1
+			episode = episode + 1 if episode < episode_count else 1
+		except: pass
+	else:
+		try:
+			next_episode = 0
+			relevant_seasons = [i for i in season_data if i['season_number'] >= season]
+			for item in relevant_seasons:
+				episode_count, item_season = item['episode_count'], item['season_number']
+				if season == item_season:
+					if episode >= episode_count:
+						item_season, next_episode = None, None
+						continue
+					episode_range = range(episode + 1, episode_count + 1)
+				else: episode_range = range(1, episode_count + 1)
+				next_episode = next((i for i in episode_range if not get_watched_status_episode(watched_info, (item_season, i))), None)
+				if next_episode: break
+			if not next_episode: season, episode = None, None
+			season, episode = item_season, next_episode
+		except: pass
+	return season, episode
 
 def get_in_progress_movies(dummy_arg, page_no):
 	dbcon = get_database()

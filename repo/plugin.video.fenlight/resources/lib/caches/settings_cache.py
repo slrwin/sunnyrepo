@@ -167,7 +167,15 @@ def set_source_folder_path(params):
 	current_setting = get_setting('fenlight.%s' % setting_id)
 	if current_setting not in (None, 'None', ''):
 		if confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_setting(setting_id, 'None')
-	return set_path(params) 
+	return set_path(params)
+
+def restore_setting_default(params):
+	if not confirm_dialog(): return
+	try:
+		setting_id = params['setting_id']
+		setting_default = default_setting_values(setting_id)['setting_default']
+		set_setting(setting_id, setting_default)
+	except: ok_dialog(text='Error restoring default setting')
 
 def default_setting_values(setting_id):
 	return [i for i in default_settings() if i['setting_id'] == setting_id][0]
@@ -210,7 +218,7 @@ def default_settings():
 
 
 #==================================================================================#
-#====================================NAVIGATION====================================#
+#====================================CONTENT====================================#
 #==================================================================================#
 #==================== Sorting - Personal Lists
 {'setting_id': 'sort.progress', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Recently Watched'}},
@@ -231,11 +239,11 @@ def default_settings():
 {'setting_id': 'trakt.calendar_previous_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
 {'setting_id': 'trakt.calendar_future_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
 #==================== Next Episodes
-# {'setting_id': 'nextep.method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Last Aired', '1': 'Last Watched'}},
+{'setting_id': 'nextep.method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Last Aired', '1': 'Last Watched'}},
 {'setting_id': 'nextep.sort_type', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recently Watched', '1': 'Airdate', '2': 'Title'}},
 {'setting_id': 'nextep.sort_order', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
 {'setting_id': 'nextep.limit_history', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'nextep.limit', 'setting_type': 'action', 'setting_default': '20', 'min_value': '5', 'max_value': '200'},
+{'setting_id': 'nextep.limit', 'setting_type': 'action', 'setting_default': '20', 'min_value': '1', 'max_value': '200'},
 {'setting_id': 'nextep.include_unwatched', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Watchlist', '2': 'Favorites', '3': 'Both'}},
 {'setting_id': 'nextep.include_airdate', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'nextep.airing_today', 'setting_type': 'boolean', 'setting_default': 'false'},

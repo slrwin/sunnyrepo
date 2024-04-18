@@ -20,7 +20,7 @@ class ListsCache(BaseCache):
 
 lists_cache = ListsCache()
 
-def lists_cache_object(function, string, args, json=True, expiration=24):
+def lists_cache_object(function, string, args, json=False, expiration=48):
 	cache = lists_cache.get(string)
 	if cache is not None: return cache
 	if isinstance(args, list): args = tuple(args)

@@ -7,7 +7,7 @@ from caches.settings_cache import set_setting
 from modules.utils import string_alphanum_to_num
 from modules.settings import update_use_test_repo
 from modules import kodi_utils 
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 translate_path, osPath, delete_file, execute_builtin, get_icon = kodi_utils.translate_path, kodi_utils.osPath, kodi_utils.delete_file, kodi_utils.execute_builtin, kodi_utils.get_icon
 update_kodi_addons_db, notification, show_text, confirm_dialog = kodi_utils.update_kodi_addons_db, kodi_utils.notification, kodi_utils.show_text, kodi_utils.confirm_dialog
@@ -63,9 +63,9 @@ def perform_update(current_version, online_version, use_test_repo):
 def update_check(action=4):
 	use_test_repo = update_use_test_repo()
 	if action == 3: return
-	online_type = ' [B]Test[/B]' if use_test_repo else ''
 	current_version, online_version = get_versions(use_test_repo)
 	if not current_version: return
+	online_type = ' [B]Test[/B]' if use_test_repo else ''
 	if not perform_update(current_version, online_version, use_test_repo):
 		if action == 4: return ok_dialog(heading=heading_str, text=result_str % (current_version, online_type, online_version, no_update_str))
 		return

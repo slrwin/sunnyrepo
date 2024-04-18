@@ -486,7 +486,7 @@
                         <property name="setting_type">action</property>
                         <property name="setting_value">...</property>
                         <property name="setting_description">Restore default Fen Light background</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=restore_addon_fanart_choice)</onclick>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=default_addon_fanart)</onclick>
                     </item>
             <!-- Watched Indicators -->
                     <item>
@@ -647,7 +647,7 @@
                         <property name="setting_description">Enable this and Fen Light will attempt to open it's custom context menu instead of Kodi's standard context menu when called from a media item, and will also attempt to open it's Extras window instead of Kodi's default Information window</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=auto_custom_actions)</onclick>
                     </item>
-    <!-- NAVIGATION 30 -->
+    <!-- CONTENT 30 -->
             <!-- Sorting - Personal Lists -->
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
@@ -800,14 +800,14 @@
                         <property name="setting_type">separator</property>
                         <onclick>noop</onclick>
                     </item>
-                    <!--item>
+                    <item>
                         <visible>Container(2000).HasFocus(30)</visible>
                         <label>Calculate Content Based On</label>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.nextep.method_name)]</property>
-                        <property name="setting_description">Choose the method used to determine the content of your Next Episodes list. Last Aired or Last Watched. NOTE: If set to Last Watched, there will be times when already watched episodes will appear in you Next Episodes list, as a result of the nature of Last Watched</property>
+                        <property name="setting_description">Choose the method used to determine the content of your Next Episodes list. Last Aired or Last Watched</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=nextep.method)</onclick>
-                    </item-->
+                    </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
                         <label>Sort Type</label>
@@ -933,11 +933,29 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(40)</visible>
+                        <visible>!String.IsEqual(Window(10000).Property(fenlight.trakt.client),1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb)</visible>
+                        <label>    - Restore Default Client ID Key</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">...</property>
+                        <property name="setting_description">Restore default Trakt Client ID Key</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=trakt.client)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
                         <label>Client Secret Key</label>
                         <property name="setting_type">numeric</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.trakt.secret)]</property>
                         <property name="setting_description">Enter here your Trakt Client Secret key</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=trakt.secret)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <visible>!String.IsEqual(Window(10000).Property(fenlight.trakt.secret),8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1)</visible>
+                        <label>    - Restore Default Client Secret Key</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">...</property>
+                        <property name="setting_description">Restore default Trakt Client Secret Key</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=trakt.secret)</onclick>
                     </item>
             <!-- TMDb -->
                     <item>
@@ -953,6 +971,15 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdb_api)]</property>
                         <property name="setting_description">Enter here your TMDb API key</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=tmdb_api)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(40)</visible>
+                        <visible>!String.IsEqual(Window(10000).Property(fenlight.tmdb_api),b370b60447737762ca38457bd77579b3)</visible>
+                        <label>    - Restore Default TMDb API Key</label>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">...</property>
+                        <property name="setting_description">Restore default TMDb API Key</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=tmdb_api)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(40)</visible>

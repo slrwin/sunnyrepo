@@ -13,12 +13,11 @@ nextep_airing_today, nextep_sort_key, nextep_sort_direction = settings.nextep_ai
 nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep_include_unaired, settings.single_ep_display_format, settings.widget_hide_watched
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
 get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
-watched_indicators_info, use_minimal_media_info = settings.watched_indicators, settings.use_minimal_media_info
+watched_indicators_info, use_minimal_media_info, nextep_method = settings.watched_indicators, settings.use_minimal_media_info, settings.nextep_method
 nextep_limit_history, nextep_limit, tmdb_api_key = settings.nextep_limit_history, settings.nextep_limit, settings.tmdb_api_key
-tv_meta_function, episodes_meta_function, all_episodes_meta_function = tvshow_meta, episodes_meta, all_episodes_meta
 get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode = ws.get_watched_status_episode, ws.get_bookmarks_episode, ws.get_progress_status_episode
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
-get_hidden_progress_items, get_database, watched_info_episode = ws.get_hidden_progress_items, ws.get_database, ws.watched_info_episode
+get_hidden_progress_items, get_database, watched_info_episode, get_next = ws.get_hidden_progress_items, ws.get_database, ws.watched_info_episode, ws.get_next
 string =  str
 poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.default_addon_fanart
 run_plugin, unaired_label, tmdb_poster = 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
@@ -95,7 +94,7 @@ def build_episode_list(params):
 	watched_indicators, adjust_hours, use_minimal_media = watched_indicators_info(), date_offset_info(), use_minimal_media_info()
 	current_date, hide_watched = get_datetime(), is_home and widget_hide_watched()
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
-	meta = tv_meta_function('tmdb_id', params.get('tmdb_id'), tmdb_api_key(), current_date)
+	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), tmdb_api_key(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, tvshow_plot, orig_title = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot'), meta_get('original_title')
 	title, show_year, rootname, show_duration, show_status = meta_get('title'), meta_get('year') or '2050', meta_get('rootname'), meta_get('duration'), meta_get('status')
@@ -106,12 +105,12 @@ def build_episode_list(params):
 	show_clearlogo = meta_get('clearlogo') or ''
 	show_landscape = meta_get('landscape') or ''
 	if season == 'all':
-		episodes_data = all_episodes_meta_function(meta)
+		episodes_data = all_episodes_meta(meta)
 		season_poster = show_poster
 	else:
-		episodes_data = episodes_meta_function(season, meta)
+		episodes_data = episodes_meta(season, meta)
 		try:
-			poster_path = [i['poster_path'] for i in meta_get('season_data') if i['season_number'] == int(season)][0]
+			poster_path = next((i['poster_path'] for i in meta_get('season_data') if i['season_number'] == int(season)), None)
 			season_poster = tmdb_poster % poster_path if poster_path is not None else show_poster
 		except: season_poster = show_poster
 	watched_db = get_database(watched_indicators)
@@ -133,7 +132,7 @@ def build_single_episode(list_type, params={}):
 	def _process(_position, ep_data):
 		try:
 			ep_data_get = ep_data.get
-			meta = tv_meta_function('trakt_dict', ep_data_get('media_ids'), api_key, current_date)
+			meta = tvshow_meta('trakt_dict', ep_data_get('media_ids'), api_key, current_date)
 			if not meta: return
 			meta_get = meta.get
 			cm = []
@@ -142,20 +141,17 @@ def build_single_episode(list_type, params={}):
 			set_properties = listitem.setProperties
 			orig_season, orig_episode = ep_data_get('season'), ep_data_get('episode')
 			unwatched = ep_data_get('unwatched', False)
+			tmdb_id, tvdb_id, imdb_id, title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'
 			season_data = meta_get('season_data')
+			watched_info = watched_info_episode(meta_get('tmdb_id'), watched_db)
 			if list_type_starts_with('next_'):
-				if orig_episode == 0: orig_episode = 1
-				else:
-					try:
-						episode_count = [i for i in season_data if i['season_number'] == orig_season][0]['episode_count']
-						if orig_episode >= episode_count:
-							orig_season, orig_episode = orig_season + 1, 1
-							if orig_season > meta_get('total_seasons'): return
-						else: orig_episode = orig_episode + 1
-					except: return
-			episodes_data = episodes_meta_function(orig_season, meta)
-			try: item = [i for i in episodes_data if i['episode'] == orig_episode][0]
-			except: return
+				orig_season, orig_episode = get_next(orig_season, orig_episode, watched_info, season_data, meta_get('total_seasons'), nextep_content)
+				if not orig_season or not orig_episode: return
+				playcount = 0
+			episodes_data = episodes_meta(orig_season, meta)
+			if not episodes_data: return
+			item = next((i for i in episodes_data if i['episode'] == orig_episode), None)
+			if not item: return
 			item_get = item.get
 			season, episode, ep_name = item_get('season'), item_get('episode'), item_get('title')
 			episode_date, premiered = adjust_premiered_date(item_get('premiered'), adjust_hours)
@@ -167,7 +163,6 @@ def build_single_episode(list_type, params={}):
 					if not date_difference(current_date, episode_date, 7): return
 				unaired = True
 			else: unaired = False
-			tmdb_id, tvdb_id, imdb_id, title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'
 			orig_title, rootname, trailer, genre, studio = meta_get('original_title'), meta_get('rootname'), string(meta_get('trailer')), meta_get('genre'), meta_get('studio')
 			cast, mpaa, tvshow_plot, show_status = meta_get('cast', []), meta_get('mpaa'), meta_get('plot'), meta_get('status')
 			show_poster = meta_get('poster') or poster_empty
@@ -178,7 +173,7 @@ def build_single_episode(list_type, params={}):
 			try: year = premiered.split('-')[0]
 			except: year = show_year or '2050'
 			try:
-				poster_path = [i['poster_path'] for i in season_data if i['season_number'] == int(season)][0]
+				poster_path = next((i['poster_path'] for i in season_data if i['season_number'] == int(season)), None)
 				season_poster = tmdb_poster % poster_path if poster_path is not None else show_poster
 			except: season_poster = show_poster
 			str_season_zfill2, str_episode_zfill2 = string(season).zfill(2), string(episode).zfill(2)
@@ -186,17 +181,14 @@ def build_single_episode(list_type, params={}):
 			else: title_string = ''
 			if display_format in (0, 1): seas_ep = '%sx%s - ' % (str_season_zfill2, str_episode_zfill2)
 			else: seas_ep = ''
-			watched_info = watched_info_episode(tmdb_id, watched_db)
 			bookmarks = get_bookmarks_episode(tmdb_id, watched_db)
-			playcount = get_watched_status_episode(watched_info, (season, episode))
+			if not list_type_starts_with('next_'): playcount = get_watched_status_episode(watched_info, (season, episode))
 			progress = get_progress_status_episode(bookmarks, season, episode)
 			if list_type_starts_with('next_'):
-				if playcount: return
 				if include_airdate:
 					if episode_date: display_premiered = '[%s] ' % make_day(current_date, episode_date)
 					else: display_premiered = '[UNKNOWN] '
 				else: display_premiered = ''
-
 				if unwatched: highlight_start, highlight_end = '[COLOR darkgoldenrod]', '[/COLOR]'
 				elif unaired: highlight_start, highlight_end = '[COLOR red]', '[/COLOR]'
 				else: highlight_start, highlight_end = '', ''
@@ -257,10 +249,10 @@ def build_single_episode(list_type, params={}):
 	show_all_episodes = all_episodes in (1, 2)
 	category_name = _get_category_name()
 	if list_type == 'episode.next':
-		include_unwatched, include_unaired = nextep_include_unwatched(), nextep_include_unaired()
+		include_unwatched, include_unaired, nextep_content = nextep_include_unwatched(), nextep_include_unaired(), nextep_method()
 		sort_key, sort_direction = nextep_sort_key(), nextep_sort_direction()
 		include_airdate = nextep_include_airdate()
-		data = get_next_episodes()
+		data = get_next_episodes(nextep_content)
 		if nextep_limit_history(): data = data[:nextep_limit()]
 		hidden_data = get_hidden_progress_items(watched_indicators)
 		data = [i for i in data if not i['media_ids']['tmdb'] in hidden_data]

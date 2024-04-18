@@ -19,10 +19,11 @@ extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extr
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
 extras_enable_scrollbars, omdb_api_key, date_offset = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset
 default_all_episodes, extras_enabled_menus, tmdb_api_key = settings.default_all_episodes, settings.extras_enabled_menus, settings.tmdb_api_key
-enable_extra_ratings = settings.extras_enable_extra_ratings
+enable_extra_ratings, nextep_method, watched_indicators = settings.extras_enable_extra_ratings, settings.nextep_method, settings.watched_indicators
 options_menu_choice, extras_menu_choice, imdb_videos_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice, dialogs.imdb_videos_choice
 trakt_manager_choice, random_choice, playback_choice, favorites_choice = dialogs.trakt_manager_choice, dialogs.random_choice, dialogs.playback_choice, dialogs.favorites_choice
 get_next_episodes, get_watched_status_movie, watched_info_movie = watched_status.get_next_episodes, watched_status.get_watched_status_movie, watched_status.watched_info_movie
+watched_info_episode, get_database, get_next = watched_status.watched_info_episode, watched_status.get_database, watched_status.get_next
 get_progress_status_movie, get_bookmarks_movie = watched_status.get_progress_status_movie, watched_status.get_bookmarks_movie
 trailer_choice, media_extra_info, genres_choice, random_choice = dialogs.trailer_choice, dialogs.media_extra_info_choice, dialogs.genres_choice, dialogs.random_choice
 keywords_choice = dialogs.keywords_choice
@@ -430,27 +431,22 @@ class Extras(BaseDialog):
 		self.nextep_season, self.nextep_episode = None, None
 		value, curr_season_data, episode_date = '', [], None
 		try:
-			ep_list = get_next_episodes()
-			info = [i for i in ep_list if i['media_ids']['tmdb'] == self.tmdb_id][0]
-			current_season = info['season']
-			current_episode = info['episode']
+			nextep_content = nextep_method()
+			ep_list = get_next_episodes(nextep_content)
+			ep_data = next((i for i in ep_list if i['media_ids']['tmdb'] == self.tmdb_id), None)
+			orig_season, orig_episode = ep_data.get('season'), ep_data.get('episode')
 			season_data = self.meta_get('season_data')
-			curr_season_data = [i for i in season_data if i['season_number'] == current_season][0]
-		except: self.nextep_season, self.nextep_episode = 1, 1
-		if curr_season_data:
-			try:
-				adjust_hours = date_offset()
-				if current_episode >= curr_season_data['episode_count']: current_season, current_episode, new_season = current_season + 1, 1, True
-				else: current_episode, new_season = current_episode + 1, False
-				episodes_data = episodes_meta(current_season, self.meta)				
-				item = [i for i in episodes_data if i['episode'] == current_episode][0]
-				item_get = item.get
-				nextep_season, nextep_episode = item_get('season'), item_get('episode')
-				episode_date, premiered = adjust_premiered_date(item_get('premiered'), adjust_hours)
-			except: pass
-		if episode_date and get_datetime() >= episode_date:
-			self.nextep_season, self.nextep_episode = nextep_season, nextep_episode
-			value = 'Next Episode: S%.2dE%.2d' % (self.nextep_season, self.nextep_episode)
+			watched_info = watched_info_episode(self.tmdb_id, get_database(watched_indicators()))
+			nextep_season, nextep_episode = get_next(orig_season, orig_episode, watched_info, season_data, self.meta_get('total_seasons'), nextep_content)
+			if not nextep_season: return
+			episodes_data = episodes_meta(nextep_season, self.meta)
+			item = next((i for i in episodes_data if i['episode'] == orig_episode), None)
+			item_get = item.get
+			episode_date, premiered = adjust_premiered_date(item_get('premiered'), date_offset())
+			if episode_date and get_datetime() >= episode_date:
+				self.nextep_season, self.nextep_episode = nextep_season, nextep_episode
+				value = 'Next Episode: S%.2dE%.2d' % (self.nextep_season, self.nextep_episode)
+		except: pass
 		return value
 
 	def make_tvshow_browse_params(self):

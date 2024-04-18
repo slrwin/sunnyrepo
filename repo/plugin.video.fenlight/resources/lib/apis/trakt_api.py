@@ -62,7 +62,6 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 		except Exception as e: return logger('Trakt Error', str(e))
 		return resp
 	CLIENT_ID = trakt_client()
-	logger('client_id', CLIENT_ID)
 	if CLIENT_ID in empty_setting_check: return no_client_key()
 	headers = {'Content-Type': 'application/json', 'trakt-api-version': '2', 'trakt-api-key': CLIENT_ID}
 	if pagination: params['page'] = page_no
@@ -185,29 +184,29 @@ def trakt_revoke_authentication(dummy=''):
 def trakt_movies_trending(page_no):
 	string = 'trakt_movies_trending_%s' % page_no
 	params = {'path': 'movies/trending/%s', 'params': {'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_movies_trending_recent(page_no):
 	current_year = get_datetime().year
 	years = '%s-%s' % (str(current_year-1), str(current_year))
 	string = 'trakt_movies_trending_recent_%s' % page_no
 	params = {'path': 'movies/trending/%s', 'params': {'limit': 20, 'years': years}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_movies_top10_boxoffice(page_no):
 	string = 'trakt_movies_top10_boxoffice'
 	params = {'path': 'movies/boxoffice/%s', 'pagination': False}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_movies_most_watched(page_no):
 	string = 'trakt_movies_most_watched_%s' % page_no
 	params = {'path': 'movies/watched/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_movies_most_favorited(page_no):
 	string = 'trakt_movies_most_favorited%s' % page_no
 	params = {'path': 'movies/favorited/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_recommendations(media_type):
 	string = 'trakt_recommendations_%s' % (media_type)
@@ -218,29 +217,29 @@ def trakt_recommendations(media_type):
 def trakt_tv_trending(page_no):
 	string = 'trakt_tv_trending_%s' % page_no
 	params = {'path': 'shows/trending/%s', 'params': {'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_trending_recent(page_no):
 	current_year = get_datetime().year
 	years = '%s-%s' % (str(current_year-1), str(current_year))
 	string = 'trakt_tv_trending_recent_%s' % page_no
 	params = {'path': 'shows/trending/%s', 'params': {'limit': 20, 'years': years}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_most_watched(page_no):
 	string = 'trakt_tv_most_watched_%s' % page_no
 	params = {'path': 'shows/watched/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_most_favorited(page_no):
 	string = 'trakt_tv_most_favorited_%s' % page_no
 	params = {'path': 'shows/favorited/daily/%s', 'params': {'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_certifications(certification, page_no):
 	string = 'trakt_tv_certifications_%s_%s' % (certification, page_no)
 	params = {'path': 'shows/collected/all%s', 'params': {'certifications': certification, 'limit': 20}, 'page_no': page_no}
-	return lists_cache_object(get_trakt, string, params, False, 48)
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_get_hidden_items(list_type):
 	def _get_trakt_ids(item):
@@ -623,7 +622,7 @@ def trakt_comments(media_type, imdb_id):
 
 def trakt_progress_movies(progress_info):
 	def _process(item):
-		tmdb_id = get_trakt_movie_id(item['movie']['ids'], tmdb_api_key())
+		tmdb_id = get_trakt_movie_id(item['movie']['ids'])
 		if not tmdb_id: return
 		obj = ('movie', str(tmdb_id), '', '', str(round(item['progress'], 1)), 0, item['paused_at'], item['id'], item['movie']['title'])
 		insert_append(obj)

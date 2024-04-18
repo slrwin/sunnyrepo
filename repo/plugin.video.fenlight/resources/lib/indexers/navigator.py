@@ -51,8 +51,8 @@ class Navigator:
 		self.end_directory()
 
 	def discover(self):
-		self.add({'mode': 'navigator.discover_contents', 'media_type': 'movie'}, 'Discover Movies', 'movies')
-		self.add({'mode': 'navigator.discover_contents', 'media_type': 'tvshow'}, 'Discover TV Shows', 'tv')
+		self.add({'mode': 'navigator.discover_contents', 'media_type': 'movie'}, 'Movies', 'movies')
+		self.add({'mode': 'navigator.discover_contents', 'media_type': 'tvshow'}, 'TV Shows', 'tv')
 		self.end_directory()
 
 	def premium(self):

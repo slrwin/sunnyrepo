@@ -1,5 +1,15 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.48[/B][/COLOR]
+- Forgot to mention last update. Changes there will mean you will need to recreate any "Discover" paths you may have made and use.
+- Added "Calculate Content Based On" to Content->Next Episodes. Choose "Last Aired" or Last Watched".
+
+[B]"Last Aired" will perform the same as Next Episodes has always performed. It will take the last AIRED episode you have watched and return the next availabe aired episode. "Last Watched" will perform differently. It will take the last WATCHED episode and return the next availabe unwatched episode.[/B]
+
+- Added "Select Source" to Playback Options. Use when autoplay fails to provide the desired file but you don't need to rescrape for sources.
+- Hopefully last fixes for watched status issues.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.47[/B][/COLOR]
 - Added option to use your own TMDb API key in Settings->Accounts.
 - Added option to use your own Trakt Client ID and Client Secret in Settings->Accounts.
