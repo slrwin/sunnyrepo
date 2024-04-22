@@ -437,7 +437,7 @@ class Extras(BaseDialog):
 			orig_season, orig_episode = ep_data.get('season'), ep_data.get('episode')
 			season_data = self.meta_get('season_data')
 			watched_info = watched_info_episode(self.tmdb_id, get_database(watched_indicators()))
-			nextep_season, nextep_episode = get_next(orig_season, orig_episode, watched_info, season_data, self.meta_get('total_seasons'), nextep_content)
+			nextep_season, nextep_episode = get_next(orig_season, orig_episode, watched_info, season_data, nextep_content)
 			if not nextep_season: return
 			episodes_data = episodes_meta(nextep_season, self.meta)
 			item = next((i for i in episodes_data if i['episode'] == orig_episode), None)

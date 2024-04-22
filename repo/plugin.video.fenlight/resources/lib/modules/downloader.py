@@ -13,8 +13,8 @@ video_extensions, image_extensions, get_icon, dialog, unquote = kodi_utils.video
 add_items, set_sort_method, set_content, end_directory, sys = kodi_utils.add_items, kodi_utils.set_sort_method, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.sys
 show_busy_dialog, hide_busy_dialog, make_directory, open_file = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.make_directory, kodi_utils.open_file
 json, Thread, urlparse, parse_qsl, notification = kodi_utils.json, kodi_utils.Thread, kodi_utils.urlparse, kodi_utils.parse_qsl, kodi_utils.notification
+confirm_dialog, ok_dialog, build_url, get_visibility = kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.build_url, kodi_utils.get_visibility
 sleep, set_category, poster_empty, select_dialog = kodi_utils.sleep, kodi_utils.set_category, kodi_utils.empty_poster, kodi_utils.select_dialog
-player, confirm_dialog, ok_dialog, build_url = kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.build_url
 get_property, set_property, clear_property = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
 set_view_mode, make_listitem, list_dirs = kodi_utils.set_view_mode, kodi_utils.make_listitem, kodi_utils.list_dirs
 sources = Sources()
@@ -355,7 +355,7 @@ class Downloader:
 
 	def finish_download(self, status):
 		if self.action == 'image': notification(status.upper(), 2500, self.image)
-		else:
+		elif not get_visibility('Window.IsActive(fullscreenvideo)'):
 			notification('[B]%s[/B] %s' % (status.upper(), self.final_name.replace('.', ' ').replace('_', ' ')), 2500, self.image)
 		self.remove_active_download()
 

@@ -68,7 +68,7 @@
                         <top>0</top>
                         <width>40</width>
                         <height>40</height>
-                        <texture>$INFO[ListItem.Property(image)]</texture>
+                        <texture colordiffuse="$INFO[ListItem.Property(highlight)]">fenlight_common/white.png</texture>
                     </control>
                 </itemlayout>
                 <focusedlayout height="44" width="44">
@@ -86,7 +86,7 @@
                             <top>2</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture>$INFO[ListItem.Property(image)]</texture>
+                            <texture colordiffuse="$INFO[ListItem.Property(highlight)]">fenlight_common/white.png</texture>
                         </control>
                     </control>
                 </focusedlayout>
@@ -149,7 +149,7 @@
                     <ondown>10</ondown>
                     <onleft>2000</onleft>
                     <onright>2000</onright>
-                    <label>$INFO[Container(2000).ListItem.Property(label)]</label>
+                    <label>$INFO[Container(2000).ListItem.Property(highlight)]</label>
                     <font>font12</font> <!-- FENLIGHT_26 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <focusedcolor>FF1F2020</focusedcolor>
@@ -163,36 +163,8 @@
                     <width>235</width>
                     <height>300</height>
                     <aspectratio>stretch</aspectratio>
-                    <texture border="30" colordiffuse="$INFO[Container(2000).ListItem.Property(label)]">fenlight_common/dialog.png</texture>
+                    <texture border="30" colordiffuse="$INFO[Container(2000).ListItem.Property(highlight)]">fenlight_common/dialog.png</texture>
                 </control>
-            </control>
-        </control>
-        <control type="grouplist">
-            <top>500</top>
-            <left>130</left>
-            <width>1662</width>
-            <height>70</height>
-            <orientation>horizontal</orientation>
-            <itemgap>10</itemgap>
-            <align>center</align>
-            <visible>String.IsEqual(Window.Property(show_busy_dialog),true)</visible>
-            <control type="image">
-                <width max="70">auto</width>
-                <height max="70">auto</height>
-                <texture flipx="true" colordiffuse="FFFAFAFA">fenlight_common/spinner.png</texture>
-                <animation effect="fade" time="320" delay="400">Visible</animation>
-                <animation effect="rotate" end="360" center="auto" time="1200" loop="true" reversible="false" condition="true">Conditional</animation>
-                <animation effect="fade" start="70" time="1200" condition="true" pulse="true">Conditional</animation>
-            </control>
-            <control type="label">
-                <width max="1700">auto</width>
-                <height>70</height>
-                <align>left</align>
-                <aligny>center</aligny>
-                <textcolor>white</textcolor>
-                <shadowcolor>black</shadowcolor>
-                <font>font14</font> <!-- FENLIGHT_33 -->
-                <label>[B]Extracting Color Palette. Please Wait.[/B]</label>
             </control>
         </control>
     </controls>

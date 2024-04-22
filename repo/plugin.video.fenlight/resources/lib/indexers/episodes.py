@@ -145,7 +145,7 @@ def build_single_episode(list_type, params={}):
 			season_data = meta_get('season_data')
 			watched_info = watched_info_episode(meta_get('tmdb_id'), watched_db)
 			if list_type_starts_with('next_'):
-				orig_season, orig_episode = get_next(orig_season, orig_episode, watched_info, season_data, meta_get('total_seasons'), nextep_content)
+				orig_season, orig_episode = get_next(orig_season, orig_episode, watched_info, season_data, nextep_content)
 				if not orig_season or not orig_episode: return
 				playcount = 0
 			episodes_data = episodes_meta(orig_season, meta)

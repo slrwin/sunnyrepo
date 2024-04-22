@@ -6,6 +6,7 @@ from caches.base_cache import connect_database
 json, numeric_input = kodi_utils.json, kodi_utils.numeric_input
 dialog, ok_dialog, select_dialog, confirm_dialog = kodi_utils.dialog, kodi_utils.ok_dialog, kodi_utils.select_dialog, kodi_utils.confirm_dialog
 default_addon_fanart, get_property, set_property, notification = kodi_utils.default_addon_fanart, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.notification
+tmdb_default_api, trakt_default_id, trakt_default_secret = kodi_utils.tmdb_default_api, kodi_utils.trakt_default_id, kodi_utils.trakt_default_secret
 boolean_dict = {'true': 'false', 'false': 'true'}
 
 BASE_GET = 'SELECT setting_value from settings WHERE setting_id = ?'
@@ -258,10 +259,10 @@ def default_settings():
 #=====================================================================================#
 #==================== Trakt
 {'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'},
-{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1'},
+{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': trakt_default_id},
+{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': trakt_default_secret},
 #==================== TMDb
-{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': 'b370b60447737762ca38457bd77579b3'},
+{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': tmdb_default_api},
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 

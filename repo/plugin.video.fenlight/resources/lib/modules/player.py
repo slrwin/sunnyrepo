@@ -77,8 +77,8 @@ class FenLightPlayer(xbmc_player):
 				else: self.autoplay_nextep, self.autoscrape_nextep = self.sources_object.autoplay_nextep, self.sources_object.autoscrape_nextep
 			else: play_random_continual, self.autoplay_nextep, self.autoscrape_nextep = False, False, False
 			while total_check_time <= 30 and not get_visibility(video_fullscreen_check):
-				sleep(250)
-				total_check_time += 0.25
+				sleep(100)
+				total_check_time += 0.10
 			hide_busy_dialog()
 			sleep(1000)
 			while self.isPlayingVideo():

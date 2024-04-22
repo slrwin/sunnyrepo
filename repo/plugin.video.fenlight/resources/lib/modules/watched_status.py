@@ -358,7 +358,7 @@ def get_next_episodes(nextep_content):
 	data.sort(key=lambda x: (x['last_played']), reverse=True)
 	return data
 	
-def get_next(season, episode, watched_info, season_data, total_seasons, nextep_content):
+def get_next(season, episode, watched_info, season_data, nextep_content):
 	if episode == 0: episode = 1
 	elif nextep_content == 0:
 		try:
