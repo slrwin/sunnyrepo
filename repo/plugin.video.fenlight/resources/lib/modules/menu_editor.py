@@ -136,7 +136,14 @@ class MenuEditor:
 		if not new_folder_name: return
 		if new_folder_name == self.name: return
 		list_items = navigator_cache.get_shortcut_folder_contents(self.name)
-		self._db_execute('delete', self.name, list_type='shortcut_folder')
+		self._db_execute('delete', self.name, list_type='shortcut_folder', refresh=False)
+		self._db_execute('make_new_shortcut_folder', new_folder_name, list_items)
+
+	def shortcut_folder_convert(self):
+		if '[COLOR red][RANDOM][/COLOR]' in self.name: new_folder_name = self.name.replace(' [COLOR red][RANDOM][/COLOR]', '')
+		else: new_folder_name = self.name + ' [COLOR red][RANDOM][/COLOR]'
+		list_items = navigator_cache.get_shortcut_folder_contents(self.name)
+		self._db_execute('delete', self.name, list_type='shortcut_folder', refresh=False)
 		self._db_execute('make_new_shortcut_folder', new_folder_name, list_items)
 
 	def shortcut_folder_add(self):
@@ -204,6 +211,7 @@ class MenuEditor:
 		if db_action == 'set': navigator_cache.set_list(list_name, list_type, list_contents)
 		elif db_action == 'delete': navigator_cache.delete_list(list_name, list_type)
 		elif db_action == 'make_new_shortcut_folder': navigator_cache.set_list(list_name, 'shortcut_folder', list_contents)
+		else: return notification('Failed', 1500)
 		notification('Success', 1500)
 		sleep(500)
 		if refresh: kodi_refresh()

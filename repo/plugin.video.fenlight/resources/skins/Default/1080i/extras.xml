@@ -1714,13 +1714,17 @@
                             <label>[B]Media Images | [/B]$INFO[Container(2062).ListItem.Property(name)]</label>
                             <visible>Control.HasFocus(2062)</visible>
                         </control>
-                        <control type="panel" id="2062">
+                        <control type="fixedlist" id="2062">
+                            <animation effect="slide" end="-320,0" time="0" condition="Integer.IsEqual(Container(2062).NumItems,1) | Integer.IsEqual(Container(2062).NumItems,2)">Conditional</animation>
                             <top>60</top>
                             <width>1180</width>
                             <height>360</height>
                             <onup>2061</onup>
                             <ondown>10</ondown>
                             <scrolltime tween="sine">500</scrolltime>
+                            <orientation>horizontal</orientation>
+                            <focusposition>1</focusposition>
+                            <movement>1</movement>
                             <itemlayout height="320" width="320">
                                 <control type="image">
                                     <left>10</left>

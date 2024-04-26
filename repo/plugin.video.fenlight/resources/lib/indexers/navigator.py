@@ -8,15 +8,22 @@ from modules.watched_status import get_recently_watched
 tp, sys, build_url, notification, addon, make_listitem, list_dirs = k.translate_path, k.sys, k.build_url, k.notification, k.addon, k.make_listitem, k.list_dirs
 add_item, set_content, end_directory, set_view_mode, add_items, get_infolabel = k.add_item, k.set_content, k.end_directory, k.set_view_mode, k.add_items, k.get_infolabel
 set_sort_method, set_category, container_refresh_input, current_window_object = k.set_sort_method, k.set_category, k.container_refresh_input, k.current_window_object
-json, close_all_dialog, sleep, home, get_property, fanart = k.json, k.close_all_dialog, k.sleep, k.home, k.get_property, k.get_addon_fanart()
+json, close_all_dialog, sleep, home, get_property, set_property, fanart = k.json, k.close_all_dialog, k.sleep, k.home, k.get_property, k.set_property, k.get_addon_fanart()
 download_directory, easynews_authorized, get_icon, unquote, container_refresh = s.download_directory, s.easynews_authorized, k.get_icon, k.unquote, k.container_refresh
 get_shortcut_folders, currently_used_list, get_shortcut_folder_contents = nc.get_shortcut_folders, nc.currently_used_list, nc.get_shortcut_folder_contents
 get_main_lists, authorized_debrid_check = nc.get_main_lists, s.authorized_debrid_check
 log_loc, old_log_loc = tp('special://logpath/kodi.log'), tp('special://logpath/kodi.old.log')
 folder_icon = get_icon('folder')
+random_test = '[COLOR red][RANDOM][/COLOR]'
 run_plugin = 'RunPlugin(%s)'
-me_str, sf_str = 'menu_editor.%s', 'menu_editor.shortcut_folder_edit'
 random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'trakt': nc.random_trakt_lists}
+random_valid = ('build_movie_list', 'build_tvshow_list', 'build_season_list', 'build_episode_list', 'build_in_progress_episode',
+				'build_recently_watched_episode', 'build_next_episode', 'build_my_calendar')
+random_valid_type_check = {'build_movie_list': 'movie', 'build_tvshow_list': 'tvshow', 'build_season_list': 'season', 'build_episode_list': 'episode',
+							'build_in_progress_episode': 'single_episdoe', 'build_recently_watched_episode': 'single_episdoe',
+							'build_next_episode': 'single_episdoe', 'build_my_calendar': 'single_episdoe'}
+random_episodes_check = {'build_in_progress_episode': 'episode.progress', 'build_recently_watched_episode': 'episode.recently_watched',
+						'build_next_episode': 'episode.next', 'build_my_calendar': 'episode.trakt'}
 search_mode_dict = {'movie': ('movie_queries', {'mode': 'search.get_key_id', 'media_type': 'movie', 'isFolder': 'false'}),
 				'tvshow': ('tvshow_queries', {'mode': 'search.get_key_id', 'media_type': 'tv_show', 'isFolder': 'false'}),
 				'people': ('people_queries', {'mode': 'search.get_key_id', 'search_type': 'people', 'isFolder': 'false'}),
@@ -40,13 +47,13 @@ class Navigator:
 			item_get = item.get
 			iconImage = item_get('iconImage')
 			icon, original_image = (iconImage, True) if iconImage.startswith('http') else (iconImage, False)
-			cm_items = [('[B]Move[/B]', run_plugin % build_url({'mode': me_str % 'move', 'active_list': self.list_name, 'position': count})),
-						('[B]Remove[/B]', run_plugin % build_url({'mode': me_str % 'remove', 'active_list': self.list_name, 'position': count})),
-						('[B]Add Content[/B]', run_plugin % build_url({'mode': me_str % 'add', 'active_list': self.list_name, 'position': count})),
-						('[B]Restore Menu[/B]', run_plugin % build_url({'mode': me_str % 'restore', 'active_list': self.list_name, 'position': count})),
-						('[B]Check for New Menu Items[/B]', run_plugin % build_url({'mode': me_str % 'update', 'active_list': self.list_name, 'position': count})),
-						('[B]Reload Menu[/B]', run_plugin % build_url({'mode': me_str % 'reload', 'active_list': self.list_name, 'position': count})),
-						('[B]Browse Removed items[/B]', run_plugin % build_url({'mode': me_str % 'browse', 'active_list': self.list_name, 'position': count}))]
+			cm_items = [('[B]Move[/B]', run_plugin % build_url({'mode': 'menu_editor.move', 'active_list': self.list_name, 'position': count})),
+						('[B]Remove[/B]', run_plugin % build_url({'mode': 'menu_editor.remove', 'active_list': self.list_name, 'position': count})),
+						('[B]Add Content[/B]', run_plugin % build_url({'mode': 'menu_editor.add', 'active_list': self.list_name, 'position': count})),
+						('[B]Restore Menu[/B]', run_plugin % build_url({'mode': 'menu_editor.restore', 'active_list': self.list_name, 'position': count})),
+						('[B]Check for New Menu Items[/B]', run_plugin % build_url({'mode': 'menu_editor.update', 'active_list': self.list_name, 'position': count})),
+						('[B]Reload Menu[/B]', run_plugin % build_url({'mode': 'menu_editor.reload', 'active_list': self.list_name, 'position': count})),
+						('[B]Browse Removed items[/B]', run_plugin % build_url({'mode': 'menu_editor.browse', 'active_list': self.list_name, 'position': count}))]
 			self.add(item, item_get('name', ''), icon, original_image, cm_items=cm_items)
 		self.end_directory()
 
@@ -326,9 +333,11 @@ class Navigator:
 		if folders:
 			for i in folders:
 				name = i[0]
+				convert_sr = '[B]Remove Random[/B]' if random_test in name else '[B]Make Random[/B]'
 				cm_items = [('[B]Rename[/B]', run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_rename'})),
 							('[B]Delete Shortcut Folder[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_delete'})),
-							('[B]Make New Shortcut Folder[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_make'}))]
+							('[B]Make New Shortcut Folder[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_make'})),
+							(convert_sr , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_convert', 'name': name}))]
 				self.add({'mode': 'navigator.build_shortcut_folder_contents', 'name': name, 'iconImage': 'folder'}, name, 'folder', cm_items=cm_items)
 		else: self.add({'mode': 'menu_editor.shortcut_folder_make', 'isFolder': 'false'}, '[I]Make New Shortcut Folder...[/I]', 'new')
 		self.category_name = 'Shortcut Folders'
@@ -336,20 +345,33 @@ class Navigator:
 
 	def build_shortcut_folder_contents(self):
 		list_name = self.params_get('name')
+		is_random = random_test in list_name
 		contents = get_shortcut_folder_contents(list_name)
 		if contents:
+			if is_random:
+				contents = [i for i in contents if i.get('mode') in random_valid]
+				if not contents: return self.end_directory()
+				import random
+				list_name = list_name.replace(' [COLOR red][RANDOM][/COLOR]', '')
+				random_content = random.choice(contents)
+				menu_type = random_valid_type_check[random_content['mode']]
+				random_list_name = random_content.get('name', 'Random')
+				set_property('fenlight.%s' % list_name, random_list_name)
+				return self.handle_random(menu_type, params=random_content)
 			for count, item in enumerate(contents):
 				item_get = item.get
 				iconImage = item_get('iconImage', None)
 				if iconImage: icon, original_image = iconImage, True if iconImage.startswith('http') else False
 				else: icon, original_image = folder_icon, False
 				
-				cm_items = [('[B]Move[/B]', run_plugin % build_url({'mode': sf_str, 'active_list': list_name, 'position': count, 'action': 'move'})),
-							('[B]Remove[/B]' , run_plugin % build_url({'mode': sf_str, 'active_list': list_name, 'position': count, 'action': 'remove'})),
-							('[B]Add Content[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_add', 'name': list_name})),
-							('[B]Rename[/B]' , run_plugin % build_url({'mode': sf_str, 'active_list': list_name, 'position': count, 'action': 'rename'})),
-							('[B]Clear All[/B]' , run_plugin % build_url({'mode': sf_str, 'active_list': list_name, 'position': count, 'action': 'clear'}))]
+				cm_items = [
+					('[B]Move[/B]', run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'move'})),
+					('[B]Remove[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'remove'})),
+					('[B]Add Content[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_add', 'name': list_name})),
+					('[B]Rename[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'rename'})),
+					('[B]Clear All[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'clear'}))]
 				self.add(item, item_get('name'), icon, original_image, cm_items=cm_items)
+		elif is_random: pass
 		else: self.add({'mode': 'menu_editor.shortcut_folder_add', 'name': list_name, 'isFolder': 'false'}, '[I]Add Content...[/I]', 'new', False)
 		self.end_directory()
 
@@ -379,7 +401,7 @@ class Navigator:
 	def tips(self):
 		tips_location = 'special://home/addons/plugin.video.fenlight/resources/text/tips'
 		files = sorted(list_dirs(tips_location)[1])
-		tips_location = tips_location + '/%s'
+		tips_location += '/%s'
 		tips_list = []
 		tips_append = tips_list.append
 		for item in files:
@@ -388,8 +410,8 @@ class Navigator:
 			elif '!!NEW!!' in tip: tip, sort_order = tip.replace('!!NEW!!', '[COLOR chartreuse][B]NEW!![/B][/COLOR] '), 1
 			elif '!!SPOTLIGHT!!' in tip: tip, sort_order = tip.replace('!!SPOTLIGHT!!', '[COLOR orange][B]SPOTLIGHT![/B][/COLOR] '), 2
 			else: sort_order = 3
-			action = {'mode': 'show_text', 'heading': tip, 'file': tp(tips_location % item), 'font_size': 'large', 'isFolder': 'false'}
-			tips_append((action, tip, sort_order))
+			params = {'mode': 'show_text', 'heading': tip, 'file': tp(tips_location % item), 'font_size': 'large', 'isFolder': 'false'}
+			tips_append((params, tip, sort_order))
 		item_list = sorted(tips_list, key=lambda x: x[2])
 		for c, i in enumerate(item_list, 1): self.add(i[0], '[B]%02d. [/B]%s' % (c, i[1]), 'information', False)
 		self.end_directory()
@@ -410,10 +432,24 @@ class Navigator:
 		for item in random_list_dict[menu_type](): self.add(item, item['name'], item['iconImage'])
 		self.end_directory()
 
-	def handle_random(self, menu_type, action):
-		if menu_type == 'movie': from indexers.movies import Movies as function
-		else: from indexers.tvshows import TVShows as function
-		return function({'action': action, 'random': 'true'}).fetch_list()
+	def handle_random(self, menu_type, action=None, params=None):
+		params = params or {'action': action, 'random': 'true'}
+		if menu_type == 'movie':
+			from indexers.movies import Movies as function
+			return function(params).fetch_list()
+		elif menu_type == 'tvshow':
+			from indexers.tvshows import TVShows as function
+			return function(params).fetch_list()
+		elif menu_type == 'season':
+			from indexers.seasons import build_season_list
+			return build_season_list(params)
+		elif menu_type == 'episode':
+			from indexers.episodes import build_episode_list
+			return build_episode_list(params)
+		else:#single_episode
+			from indexers.episodes import build_single_episode
+			episode_type = random_episodes_check[params['mode']]
+			return build_single_episode(episode_type, params)
 
 	def add(self, url_params, list_name, iconImage='folder', original_image=False, cm_items=[]):
 		isFolder = url_params.get('isFolder', 'true') == 'true'

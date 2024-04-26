@@ -364,7 +364,7 @@ class Extras(BaseDialog):
 					yield listitem
 				except: pass
 		try:
-			all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i.capitalize())) for i in ('poster', 'fanart', 'clearlogo')]
+			all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i.capitalize())) for i in ('poster', 'fanart', 'landscape', 'clearlogo')]
 			all_images = [i for i in all_images if not i[0] in missing_image_check]
 			if not all_images: return
 			self.all_media_images = [(change_image_resolution(i[0], 'original'), i[1]) for i in all_images]
@@ -516,7 +516,7 @@ class Extras(BaseDialog):
 		return _images({'mode': 'imdb_image_results', 'imdb_id': self.imdb_id, 'media_title': self.rootname, 'page_no': 1, 'rolling_count_list': [0]})
 
 	def show_media_images(self):
-		all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i)) for i in ('poster', 'fanart', 'clearlogo')]
+		all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i)) for i in ('poster', 'fanart', 'landscape', 'clearlogo')]
 		all_images = [i for i in all_images if not i[0] in missing_image_check]
 		if not all_images: return self.notification('No Media Images to Display')
 		all_images = [(i[0], change_image_resolution(i[0], 'original'), i[1]) for i in all_images]
@@ -619,6 +619,7 @@ class Extras(BaseDialog):
 		self.poster = self.meta_get('poster') or empty_poster
 		self.fanart = self.meta_get('fanart') or addon_fanart
 		self.clearlogo = self.meta_get('clearlogo') or ''
+		self.landscape = self.meta_get('landscape') or ''
 		self.rating = str(round(self.meta_get('rating'), 1)) if self.meta_get('rating') not in (0, 0.0, None) else None
 		self.mpaa, self.genre, self.network = self.meta_get('mpaa'), self.meta_get('genre'), self.meta_get('studio') or ''
 		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(float(self.meta_get('duration'))/60)

@@ -108,6 +108,7 @@ def rollback_check():
 	results = [i['name'].split('-')[1].replace('.zip', '') for i in results.json() if 'plugin.video.fenlight' in i['name'] \
 				and not i['name'].split('-')[1].replace('.zip', '') == current_version]
 	if not results: return ok_dialog(heading=heading_str, text=no_rollback_str)
+	results.sort(reverse=True)
 	list_items = [{'line1': item, 'icon': downloads_icon} for item in results]
 	kwargs = {'items': json.dumps(list_items), 'heading': rollback_heading_str}
 	rollback_version = select_dialog(results, **kwargs)
