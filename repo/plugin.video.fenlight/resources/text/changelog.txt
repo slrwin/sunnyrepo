@@ -1,7 +1,11 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.51[/B][/COLOR]
+- Qucik fix for "Play Next" in Extras window.
+- Random widget labels will have to wait. Bit bigger job than I thought.
+
 [COLOR dodgerblue][B]Version 1.0.49/50[/B][/COLOR]
-- Added ability to assign "Shortcut Folders" as "Random". Using this, you can make the shortcut folder a widget and each refresh of the widget will load a different list from the contents of that shortcut folder. Only movie, tv show, season and episode lists are supported.See Fen Light Tips in the Tools directory for more information.
+- Added ability to assign "Shortcut Folders" as "Random". Using this, you can make the shortcut folder a widget and each refresh of the widget will load a different list from the contents of that shortcut folder. Only movie, tv show, season and episode lists are supported. See Fen Light Tips in the Tools directory for more information.
 - Other changes/fixes.
 
 [COLOR dodgerblue][B]Version 1.0.48[/B][/COLOR]

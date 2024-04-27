@@ -431,16 +431,18 @@ class Extras(BaseDialog):
 		self.nextep_season, self.nextep_episode = None, None
 		value, curr_season_data, episode_date = '', [], None
 		try:
-			nextep_content = nextep_method()
-			ep_list = get_next_episodes(nextep_content)
-			ep_data = next((i for i in ep_list if i['media_ids']['tmdb'] == self.tmdb_id), None)
-			orig_season, orig_episode = ep_data.get('season'), ep_data.get('episode')
+			try:
+				nextep_content = nextep_method()
+				ep_list = get_next_episodes(nextep_content)
+				ep_data = next((i for i in ep_list if i['media_ids']['tmdb'] == self.tmdb_id), None)
+				orig_season, orig_episode = ep_data.get('season'), ep_data.get('episode')
+			except: orig_season, orig_episode = 1, 0
 			season_data = self.meta_get('season_data')
 			watched_info = watched_info_episode(self.tmdb_id, get_database(watched_indicators()))
 			nextep_season, nextep_episode = get_next(orig_season, orig_episode, watched_info, season_data, nextep_content)
 			if not nextep_season: return
 			episodes_data = episodes_meta(nextep_season, self.meta)
-			item = next((i for i in episodes_data if i['episode'] == orig_episode), None)
+			item = next((i for i in episodes_data if i['episode'] == nextep_episode), None)
 			item_get = item.get
 			episode_date, premiered = adjust_premiered_date(item_get('premiered'), date_offset())
 			if episode_date and get_datetime() >= episode_date:

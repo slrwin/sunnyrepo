@@ -17,11 +17,9 @@ folder_icon = get_icon('folder')
 random_test = '[COLOR red][RANDOM][/COLOR]'
 run_plugin = 'RunPlugin(%s)'
 random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'trakt': nc.random_trakt_lists}
-random_valid = ('build_movie_list', 'build_tvshow_list', 'build_season_list', 'build_episode_list', 'build_in_progress_episode',
-				'build_recently_watched_episode', 'build_next_episode', 'build_my_calendar')
 random_valid_type_check = {'build_movie_list': 'movie', 'build_tvshow_list': 'tvshow', 'build_season_list': 'season', 'build_episode_list': 'episode',
-							'build_in_progress_episode': 'single_episdoe', 'build_recently_watched_episode': 'single_episdoe',
-							'build_next_episode': 'single_episdoe', 'build_my_calendar': 'single_episdoe'}
+							'build_in_progress_episode': 'single_episode', 'build_recently_watched_episode': 'single_episode',
+							'build_next_episode': 'single_episode', 'build_my_calendar': 'single_episode', 'trakt.list.build_trakt_list': 'trakt_list'}
 random_episodes_check = {'build_in_progress_episode': 'episode.progress', 'build_recently_watched_episode': 'episode.recently_watched',
 						'build_next_episode': 'episode.next', 'build_my_calendar': 'episode.trakt'}
 search_mode_dict = {'movie': ('movie_queries', {'mode': 'search.get_key_id', 'media_type': 'movie', 'isFolder': 'false'}),
@@ -349,7 +347,7 @@ class Navigator:
 		contents = get_shortcut_folder_contents(list_name)
 		if contents:
 			if is_random:
-				contents = [i for i in contents if i.get('mode') in random_valid]
+				contents = [i for i in contents if i.get('mode') in random_valid_type_check]
 				if not contents: return self.end_directory()
 				import random
 				list_name = list_name.replace(' [COLOR red][RANDOM][/COLOR]', '')
@@ -428,7 +426,7 @@ class Navigator:
 
 	def build_random_lists(self):
 		menu_type = self.params_get('menu_type')
-		self.category_name = 'Random Movie Lists' if menu_type == 'movie' else 'Random TV Show Lists' if menu_type == 'tvshow' else 'Random Trakt Lists'
+		self.category_name = 'Movie Lists' if menu_type == 'movie' else 'TV Show Lists' if menu_type == 'tvshow' else 'Trakt Lists'
 		for item in random_list_dict[menu_type](): self.add(item, item['name'], item['iconImage'])
 		self.end_directory()
 
@@ -446,10 +444,13 @@ class Navigator:
 		elif menu_type == 'episode':
 			from indexers.episodes import build_episode_list
 			return build_episode_list(params)
-		else:#single_episode
+		elif menu_type == 'single_episode':
 			from indexers.episodes import build_single_episode
 			episode_type = random_episodes_check[params['mode']]
 			return build_single_episode(episode_type, params)
+		else:#trakt_list
+			from indexers.trakt_lists import build_trakt_list
+			return build_trakt_list(params)
 
 	def add(self, url_params, list_name, iconImage='folder', original_image=False, cm_items=[]):
 		isFolder = url_params.get('isFolder', 'true') == 'true'

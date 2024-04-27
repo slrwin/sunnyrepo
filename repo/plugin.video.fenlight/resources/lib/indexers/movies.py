@@ -195,7 +195,11 @@ class Movies:
 				threads = list(make_thread_list(lambda x: random_results.extend(function(x)), ['movies',] if self.action == 'trakt_recommendations' else range(1, 6)))
 			else:
 				info = random.choice(meta_list_dict[self.action])
-				self.category_name = 'Random %s' % info['name']
+				list_name = self.action.split('_')[-1]
+				if not list_name.endswith('s'): list_name += 's'
+				random_list_name = info['name']
+				self.category_name = random_list_name
+				set_property('fenlight.%s' % list_name, random_list_name)
 				threads = list(make_thread_list(lambda x: random_results.extend(function(info['id'], x)['results']), range(1, 6)))
 			[i.join() for i in threads]
 			return {'results': random.sample(random_results, min(len(random_results), 20))}
