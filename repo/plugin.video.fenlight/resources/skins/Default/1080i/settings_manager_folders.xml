@@ -71,7 +71,7 @@
                         <left>40</left>
                         <width>220</width>
                         <height>85</height>
-                        <label>[UPPERCASE]$INFO[ListItem.Label][/UPPERCASE]</label>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(setting_label)][/UPPERCASE]</label>
                         <font>font12</font> <!-- FENLIGHT_26 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <aligny>center</aligny>
@@ -91,7 +91,7 @@
                         <left>40</left>
                         <width>220</width>
                         <height>85</height>
-                        <label>[UPPERCASE]$INFO[ListItem.Label][/UPPERCASE]</label>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(setting_label)][/UPPERCASE]</label>
                         <font>font12</font> <!-- FENLIGHT_26 -->
                         <textcolor>FF1F2020</textcolor>
                         <aligny>center</aligny>
@@ -101,24 +101,19 @@
                 </focusedlayout>
                 <content>
                     <item id="10">
-                        <label>Folder 1</label>
-                        <onclick>noop</onclick>
+                        <property name="setting_label">Folder 1</property>
                     </item>
                     <item id="20">
-                        <label>Folder 2</label>
-                        <onclick>noop</onclick>
+                        <property name="setting_label">Folder 2</property>
                     </item>
                     <item id="30">
-                        <label>Folder 3</label>
-                        <onclick>noop</onclick>
+                        <property name="setting_label">Folder 3</property>
                     </item>
                     <item id="40">
-                        <label>Folder 4</label>
-                        <onclick>noop</onclick>
+                        <property name="setting_label">Folder 4</property>
                     </item>
                     <item id="50">
-                        <label>Folder 5</label>
-                        <onclick>noop</onclick>
+                        <property name="setting_label">Folder 5</property>
                     </item>
                 </content>
             </control>
@@ -137,7 +132,7 @@
                         <left>40</left>
                         <width>330</width>
                         <height>85</height>
-                        <label>[UPPERCASE]$INFO[ListItem.Label][/UPPERCASE]</label>
+                        <label>[UPPERCASE]$INFO[ListItem.Property(setting_label)][/UPPERCASE]</label>
                         <font>font12</font> <!-- FENLIGHT_26 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <aligny>center</aligny>
@@ -171,11 +166,10 @@
                             <left>40</left>
                             <width>330</width>
                             <height>85</height>
-                            <label>[UPPERCASE]$INFO[ListItem.Label][/UPPERCASE]</label>
+                            <label>[UPPERCASE]$INFO[ListItem.Property(setting_label)][/UPPERCASE]</label>
                             <font>font12</font> <!-- FENLIGHT_26 -->
                             <textcolor>FF1F2020</textcolor>
                             <aligny>center</aligny>
-                            <label>$INFO[ListItem.Label]</label>
                             <scroll>Control.HasFocus(2101)</scroll>
                         </control>
                         <control type="label">
@@ -183,11 +177,10 @@
                             <left>40</left>
                             <width>330</width>
                             <height>85</height>
-                            <label>[UPPERCASE]$INFO[ListItem.Label][/UPPERCASE]</label>
+                            <label>[UPPERCASE]$INFO[ListItem.Property(setting_label)][/UPPERCASE]</label>
                             <font>font12</font> <!-- FENLIGHT_26 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <aligny>center</aligny>
-                            <label>$INFO[ListItem.Label]</label>
                             <scroll>false</scroll>
                         </control>
                     </control>
@@ -222,121 +215,121 @@
                 <content>
                     <item>
                         <visible>Container(2001).HasFocus(10)</visible>
-                        <label>Display Name</label>
+                        <property name="setting_label">Display Name</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder1.display_name)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=folder1.display_name)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(10)</visible>
-                        <label>Movies Directory</label>
+                        <property name="setting_label">Movies Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder1.movies_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder1.movies_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(10)</visible>
-                        <label>TV Shows Directory</label>
+                        <property name="setting_label">TV Shows Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder1.tv_shows_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder1.tv_shows_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(10)</visible>
-                        <label>Restore Default</label>
+                        <property name="setting_label">Restore Default</property>
                         <property name="setting_value">...</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=clear_sources_folder_choice&amp;setting_id=folder1)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(20)</visible>
-                        <label>Display Name</label>
+                        <property name="setting_label">Display Name</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder2.display_name)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=folder2.display_name)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(20)</visible>
-                        <label>Movies Directory</label>
+                        <property name="setting_label">Movies Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder2.movies_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder2.movies_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(20)</visible>
-                        <label>TV Shows Directory</label>
+                        <property name="setting_label">TV Shows Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder2.tv_shows_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder2.tv_shows_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(20)</visible>
-                        <label>Restore Default</label>
+                        <property name="setting_label">Restore Default</property>
                         <property name="setting_value">...</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=clear_sources_folder_choice&amp;setting_id=folder2)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(30)</visible>
-                        <label>Display Name</label>
+                        <property name="setting_label">Display Name</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder3.display_name)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=folder3.display_name)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(30)</visible>
-                        <label>Movies Directory</label>
+                        <property name="setting_label">Movies Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder3.movies_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder3.movies_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(30)</visible>
-                        <label>TV Shows Directory</label>
+                        <property name="setting_label">TV Shows Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder3.tv_shows_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder3.tv_shows_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(30)</visible>
-                        <label>Restore Default</label>
+                        <property name="setting_label">Restore Default</property>
                         <property name="setting_value">...</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=clear_sources_folder_choice&amp;setting_id=folder3)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(40)</visible>
-                        <label>Display Name</label>
+                        <property name="setting_label">Display Name</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder4.display_name)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=folder4.display_name)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(40)</visible>
-                        <label>Movies Directory</label>
+                        <property name="setting_label">Movies Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder4.movies_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder4.movies_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(40)</visible>
-                        <label>TV Shows Directory</label>
+                        <property name="setting_label">TV Shows Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder4.tv_shows_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder4.tv_shows_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(40)</visible>
-                        <label>Restore Default</label>
+                        <property name="setting_label">Restore Default</property>
                         <property name="setting_value">...</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=clear_sources_folder_choice&amp;setting_id=folder4)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(50)</visible>
-                        <label>Display Name</label>
+                        <property name="setting_label">Display Name</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder5.display_name)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=folder5.display_name)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(50)</visible>
-                        <label>Movies Directory</label>
+                        <property name="setting_label">Movies Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder5.movies_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder5.movies_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(50)</visible>
-                        <label>TV Shows Directory</label>
+                        <property name="setting_label">TV Shows Directory</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.folder5.tv_shows_directory)]</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_source_folder_path&amp;setting_id=folder5.tv_shows_directory)</onclick>
                     </item>
                     <item>
                         <visible>Container(2001).HasFocus(50)</visible>
-                        <label>Restore Default</label>
+                        <property name="setting_label">Restore Default</property>
                         <property name="setting_value">...</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=clear_sources_folder_choice&amp;setting_id=folder5)</onclick>
                     </item>

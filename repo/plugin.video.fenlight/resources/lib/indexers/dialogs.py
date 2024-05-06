@@ -7,7 +7,7 @@ from modules.downloader import manager
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
 get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
@@ -444,6 +444,7 @@ def options_menu_choice(params, meta=None):
 	params_get = params.get
 	tmdb_id, content, poster, season_poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None), params_get('season_poster', None)
 	is_external, from_extras = params_get('is_external') in (True, 'True', 'true'), params_get('from_extras', 'false') == 'true'
+	custom_actions_active = get_setting('fenlight.auto_custom_actions') == 'true'
 	unaired = params_get('unaired') in (True, 'True', 'true')
 	season, episode, in_progress_menu = params_get('season', ''), params_get('episode', ''), params_get('in_progress_menu', 'false') == 'true'
 	if not content: content = container_content()[:-1]

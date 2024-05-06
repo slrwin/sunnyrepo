@@ -12,5 +12,3 @@ As well as adding menus/lists to your shortcut folders, you can also re-arrange 
 Also, in Tools->Shortcut Folders Manager, you can delete a shortcut folder completely.
 
 You can have as many shortcut folders as you wish, and you can place them in more than one main menu. If you remove a folder from a menu, it will still exist waiting to be placed in another menu. You must go to the Shortcut Folders Manager to delete a folder completely.
-
-Please also read the tip "Making Shortcut Folders Random for Widget Use" for info on making your shortcut folder random...

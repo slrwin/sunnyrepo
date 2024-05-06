@@ -426,15 +426,6 @@ def trakt_get_lists(list_type):
 	params = {'path': path, 'params': {'limit': 1000}, 'pagination': False, 'with_auth': True}
 	return cache_trakt_object(get_trakt, string, params)
 
-def get_trakt_random_lists(params):
-	import random
-	from indexers.trakt_lists import build_trakt_list
-	list_type = params.get('list_type')
-	random_list = random.choice(trakt_get_lists(list_type))
-	if list_type == 'liked_lists': random_list = random_list['list']
-	url_params = {'user': random_list['user']['ids']['slug'], 'slug': random_list['ids']['slug'], 'list_type': list_type, 'list_name': random_list['name'], 'random': 'true'}
-	return build_trakt_list(url_params)
-
 def get_trakt_list_selection(list_choice=None):
 	my_lists = [{'name': item['name'], 'display': '[B]PERSONAL:[/B] [I]%s[/I]' % item['name'].upper(), 'user': item['user']['ids']['slug'], 'slug': item['ids']['slug']} \
 																											for item in trakt_get_lists('my_lists')]

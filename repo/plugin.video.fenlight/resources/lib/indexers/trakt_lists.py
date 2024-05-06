@@ -173,7 +173,8 @@ def build_trakt_list(params):
 			threaded_object.start()
 			threads.append(threaded_object)
 		[i.join() for i in threads]
-		if not is_random: item_list.sort(key=lambda k: k[1])
+		if is_random: return [i[0] for i in item_list]
+		item_list.sort(key=lambda k: k[1])
 		add_items(handle, [i[0] for i in item_list])
 		if total_pages > page_no:
 			new_page = str(page_no + 1)

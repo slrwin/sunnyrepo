@@ -2,15 +2,14 @@
 from modules import meta_lists
 from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
-from modules.utils import manual_function_import, get_datetime, make_thread_list, make_thread_list_enumerate, make_thread_list_multi_arg, \
-						get_current_timestamp, paginate_list, jsondate_to_datetime
+from modules.utils import manual_function_import, get_datetime, make_thread_list_enumerate, make_thread_list_multi_arg, get_current_timestamp, paginate_list
 from modules.watched_status import get_database, watched_info_tvshow, get_watched_status_tvshow, get_progress_status_tvshow
 # logger = kodi_utils.logger
 
 string, sys, external, add_items, add_dir, use_minimal_media_info = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, settings.use_minimal_media_info
-set_content, end_directory, set_view_mode, folder_path, random = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path, kodi_utils.random
 sleep, meta_function, add_item, xbmc_actor, home, tmdb_api_key = kodi_utils.sleep, tvshow_meta, kodi_utils.add_item, kodi_utils.xbmc_actor, kodi_utils.home, settings.tmdb_api_key
 set_category, json, make_listitem, build_url, set_property = kodi_utils.set_category, kodi_utils.json, kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.set_property
+set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 poster_empty, fanart_empty, nextpage_landscape = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.nextpage_landscape
 extras_open_action, default_all_episodes, page_limit, paginate = settings.extras_open_action, settings.default_all_episodes, settings.page_limit, settings.paginate
 widget_hide_next_page, widget_hide_watched, watched_indicators = settings.widget_hide_next_page, settings.widget_hide_watched, settings.watched_indicators
@@ -57,16 +56,13 @@ class TVShows:
 			try: function = manual_function_import(var_module, import_function)
 			except: pass
 			if self.action in main:
-				if is_random: data = self.random_worker(function)
-				else: data = function(page_no)
+				data = function(page_no)
 				self.list = [i['id'] for i in data['results']]
 				if not is_random and  data['total_pages'] > page_no: self.new_page = {'new_page': string(page_no + 1)}
 			elif self.action in special:
-				if is_random: data, key_id = self.random_worker(function), None
-				else:
-					key_id = self.params_get('key_id') or self.params_get('query')
-					if not key_id: return
-					data = function(key_id, page_no)
+				key_id = self.params_get('key_id') or self.params_get('query')
+				if not key_id: return
+				data = function(key_id, page_no)
 				self.list = [i['id'] for i in data['results']]
 				if not is_random and data['total_pages'] > page_no: self.new_page = {'new_page': string(page_no + 1), 'key_id': key_id}
 			elif self.action in personal:
@@ -77,18 +73,15 @@ class TVShows:
 				if total_pages > page_no: self.new_page = {'new_page': string(page_no + 1), 'paginate_start': self.paginate_start}
 			elif self.action in trakt_main:
 				self.id_type = 'trakt_dict'
-				if is_random: data = self.random_worker(function)['results']
-				else: data = function(page_no)
+				data = function(page_no)
 				try: self.list = [i['show']['ids'] for i in data]
 				except: self.list = [i['ids'] for i in data]
 				if not is_random and self.action != 'trakt_recommendations': self.new_page = {'new_page': string(page_no + 1)}
 			elif self.action in trakt_special:
 				self.id_type = 'trakt_dict'
-				if is_random: data = self.random_worker(function)['results']
-				else:
-					key_id = self.params_get('key_id', None)
-					if not key_id: return
-					data = function(key_id, page_no)
+				key_id = self.params_get('key_id', None)
+				if not key_id: return
+				data = function(key_id, page_no)
 				self.list = [i['show']['ids'] for i in data]
 				if not is_random: self.new_page = {'new_page': string(page_no + 1), 'key_id': key_id}
 			elif self.action in trakt_personal:
@@ -138,6 +131,7 @@ class TVShows:
 				playcount, total_watched, total_unwatched = get_watched_status_tvshow(self.watched_info.get(string(tmdb_id), None), total_aired_eps)
 				if total_watched: progress = get_progress_status_tvshow(total_watched, total_aired_eps)
 				else: progress = 0
+				visible_progress = 0 if progress == 100 else progress
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'playcount': playcount,
 										'progress': progress, 'is_external': self.is_external, 'unaired': unaired, 'in_progress_menu': self.in_progress_menu})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external})
@@ -159,7 +153,7 @@ class TVShows:
 				cm_append(('[B]Mark Unwatched %s[/B]' % self.watched_title, run_plugin % build_url({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_unwatched',
 																			'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id})))
 				set_properties({'watchedepisodes': string(total_watched), 'unwatchedepisodes': string(total_unwatched)})
-			set_properties({'watchedprogress': string(progress), 'totalepisodes': string(total_aired_eps), 'totalseasons': string(total_seasons)})
+			set_properties({'watchedprogress': string(visible_progress), 'totalepisodes': string(total_aired_eps), 'totalseasons': string(total_seasons)})
 			if self.is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			else: cm_append(('[B]Exit TV Show List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
 			listitem.setLabel(title)
@@ -196,25 +190,6 @@ class TVShows:
 			self.items.sort(key=lambda k: k[1])
 			self.items = [i[0] for i in self.items]
 		return self.items
-
-	def random_worker(self, function):
-		try:
-			random_results = []
-			if self.action in main: threads = list(make_thread_list(lambda x: random_results.extend(function(x)['results']), range(1, 6)))
-			elif self.action in trakt_main:
-				threads = list(make_thread_list(lambda x: random_results.extend(function(x)), ['shows',] if self.action == 'trakt_recommendations' else range(1, 6)))
-			else:
-				info = random.choice(meta_list_dict[self.action])
-				list_name = self.action.split('_')[-1]
-				if not list_name.endswith('s'): list_name += 's'
-				random_list_name = info['name']
-				self.category_name = random_list_name
-				set_property('fenlight.%s' % list_name, random_list_name)
-				if self.action in trakt_special: threads = list(make_thread_list(lambda x: random_results.extend(function(info['id'], x)), range(1, 6)))
-				else: threads = list(make_thread_list(lambda x: random_results.extend(function(info['id'], x)['results']), range(1, 6)))
-			[i.join() for i in threads]
-			return {'results': random.sample(random_results, min(len(random_results), 20))}
-		except: return {'results': []}
 
 	def paginate_list(self, data, page_no):
 		if paginate(self.is_home):

@@ -37,6 +37,7 @@ def build_season_list(params):
 				else:
 					playcount, watched, unwatched = get_watched_status_season(watched_info.get(season_number, None), aired_eps)
 					progress = get_progress_status_season(watched, aired_eps)
+				visible_progress = 0 if progress == 100 else progress
 				url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': season_number})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': is_external})
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'season', 'tmdb_id': tmdb_id, 'poster': show_poster, 'playcount': playcount,
@@ -52,7 +53,7 @@ def build_season_list(params):
 					cm_append(('[B]Mark Unwatched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_unwatched',
 														'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number})))
 					set_properties({'watchedepisodes': string(watched), 'unwatchedepisodes': string(unwatched)})
-				set_properties({'totalepisodes': string(aired_eps), 'watchedprogress': string(progress),
+				set_properties({'totalepisodes': string(aired_eps), 'watchedprogress': string(visible_progress),
 								'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params})
 				if is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 				info_tag = listitem.getVideoInfoTag()

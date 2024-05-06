@@ -107,7 +107,7 @@ def set_view_mode(view_type, content='files', is_external=None):
 		sleep(100)
 		while not container_content() == content:
 			hold += 1
-			if hold < 5000: sleep(1)
+			if hold < 3000: sleep(1)
 			else: return
 		execute_builtin('Container.SetViewMode(%s)' % view_id)
 	except: return

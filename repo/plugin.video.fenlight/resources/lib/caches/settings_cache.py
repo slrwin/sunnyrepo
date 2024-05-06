@@ -10,7 +10,7 @@ tmdb_default_api, trakt_default_id, trakt_default_secret = kodi_utils.tmdb_defau
 boolean_dict = {'true': 'false', 'false': 'true'}
 
 BASE_GET = 'SELECT setting_value from settings WHERE setting_id = ?'
-GET_MANY = 'SELECT * FROM settings WHERE setting_value in (%s)'
+GET_MANY = 'SELECT setting_id, setting_value FROM settings WHERE setting_id in (%s)'
 GET_ALL = 'SELECT setting_id, setting_value FROM settings'
 BASE_SET = 'INSERT OR REPLACE INTO settings VALUES (?, ?, ?, ?)'
 BASE_DELETE = 'DELETE FROM settings WHERE setting_id = ?'
@@ -31,8 +31,12 @@ class SettingsCache:
 		dbcon.execute(BASE_DELETE, (setting_id,))
 
 	def get_many(self, settings_list):
-		dbcon = connect_database('settings_db')
-		cache_data = dbcon.execute(GET_MANY % (', '.join('?' for _ in settings_list)), settings_list).fetchall()
+		try:
+			dbcon = connect_database('settings_db')
+			results = dict(dbcon.execute(GET_MANY % (', '.join('?' for _ in settings_list)), settings_list).fetchall())
+			return results
+		except: results = {}
+		return results
 
 	def get_all(self):
 		dbcon = connect_database('settings_db')
@@ -81,6 +85,9 @@ def set_setting(setting_id, value):
 
 def get_setting(setting_id, fallback=''):
 	return get_property(setting_id) or settings_cache.get(setting_id) or fallback
+
+def get_many(settings_list):
+	return settings_cache.get_many(settings_list)
 
 def sync_settings(params={}):
 	silent = params.get('silent', 'true') == 'true'
@@ -179,7 +186,7 @@ def restore_setting_default(params):
 	except: ok_dialog(text='Error restoring default setting')
 
 def default_setting_values(setting_id):
-	return [i for i in default_settings() if i['setting_id'] == setting_id][0]
+	return next((i for i in default_settings() if i['setting_id'] == setting_id), None)
 
 def default_settings():
 	return [

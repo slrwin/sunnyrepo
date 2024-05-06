@@ -17,11 +17,6 @@ folder_icon = get_icon('folder')
 random_test = '[COLOR red][RANDOM][/COLOR]'
 run_plugin = 'RunPlugin(%s)'
 random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'trakt': nc.random_trakt_lists}
-random_valid_type_check = {'build_movie_list': 'movie', 'build_tvshow_list': 'tvshow', 'build_season_list': 'season', 'build_episode_list': 'episode',
-							'build_in_progress_episode': 'single_episode', 'build_recently_watched_episode': 'single_episode',
-							'build_next_episode': 'single_episode', 'build_my_calendar': 'single_episode', 'trakt.list.build_trakt_list': 'trakt_list'}
-random_episodes_check = {'build_in_progress_episode': 'episode.progress', 'build_recently_watched_episode': 'episode.recently_watched',
-						'build_next_episode': 'episode.next', 'build_my_calendar': 'episode.trakt'}
 search_mode_dict = {'movie': ('movie_queries', {'mode': 'search.get_key_id', 'media_type': 'movie', 'isFolder': 'false'}),
 				'tvshow': ('tvshow_queries', {'mode': 'search.get_key_id', 'media_type': 'tv_show', 'isFolder': 'false'}),
 				'people': ('people_queries', {'mode': 'search.get_key_id', 'search_type': 'people', 'isFolder': 'false'}),
@@ -215,6 +210,7 @@ class Navigator:
 	def changelog_utils(self):
 		fenlight_clogpath = tp('special://home/addons/plugin.video.fenlight/resources/text/changelog.txt')
 		self.add({'mode': 'show_text', 'heading': 'Changelog', 'file': fenlight_clogpath, 'font_size': 'large', 'isFolder': 'false'}, 'Changelog', 'lists', False)
+		self.add({'mode': 'updater.get_changes', 'isFolder': 'false'}, 'Check Online Version Changelog', 'lists')
 		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer', 'file': log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer', 'lists', False)
 		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer (Old)', 'file': old_log_loc, 'kodi_log': 'true', 'isFolder': 'false'},
 			'Kodi Log Viewer (Old)', 'lists', False)
@@ -225,7 +221,6 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, certifications = 'build_movie_list', 'tmdb_movies_certifications', ml.movie_certifications
 		else: mode, action, certifications = 'build_tvshow_list', 'trakt_tv_certifications', ml.tvshow_certifications
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in certifications: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'certifications')
 		self.end_directory()
 
@@ -233,7 +228,6 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action = 'build_movie_list', 'tmdb_movies_languages'
 		else: mode, action = 'build_tvshow_list', 'tmdb_tv_languages'
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in ml.languages: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'languages')
 		self.end_directory()
 
@@ -241,7 +235,6 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, years = 'build_movie_list', 'tmdb_movies_year', ml.years_movies
 		else: mode, action, years = 'build_tvshow_list', 'tmdb_tv_year', ml.years_tvshows
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in years: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'calender')
 		self.end_directory()
 
@@ -249,7 +242,6 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, decades = 'build_movie_list', 'tmdb_movies_decade', ml.decades_movies
 		else: mode, action, decades = 'build_tvshow_list', 'tmdb_tv_decade', ml.decades_tvshows
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in decades: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'calendar_decades')
 		self.end_directory()
 
@@ -257,7 +249,6 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': return
 		mode, action, networks = 'build_tvshow_list', 'tmdb_tv_networks', sorted(ml.networks, key=lambda k: k['name'])
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in networks: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'])
 		self.end_directory()
 
@@ -266,7 +257,6 @@ class Navigator:
 		image_insert = 'https://image.tmdb.org/t/p/original/%s'
 		if menu_type == 'movie': mode, action, providers = 'build_movie_list', 'tmdb_movies_providers', ml.watch_providers_movies
 		else: mode, action, providers = 'build_tvshow_list', 'tmdb_tv_providers', ml.watch_providers_tvshows
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in providers: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], image_insert % i['icon'], original_image=True)
 		self.end_directory()
 
@@ -274,7 +264,6 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': genre_list, mode, action = ml.movie_genres, 'build_movie_list', 'tmdb_movies_genres'
 		else: genre_list, mode, action = ml.tvshow_genres, 'build_tvshow_list', 'tmdb_tv_genres'
-		if 'random' in self.params: return self.handle_random(menu_type, action)
 		for i in genre_list: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'])
 		self.end_directory()
 
@@ -347,15 +336,8 @@ class Navigator:
 		contents = get_shortcut_folder_contents(list_name)
 		if contents:
 			if is_random:
-				contents = [i for i in contents if i.get('mode') in random_valid_type_check]
-				if not contents: return self.end_directory()
-				import random
-				list_name = list_name.replace(' [COLOR red][RANDOM][/COLOR]', '')
-				random_content = random.choice(contents)
-				menu_type = random_valid_type_check[random_content['mode']]
-				random_list_name = random_content.get('name', 'Random')
-				set_property('fenlight.%s' % list_name, random_list_name)
-				return self.handle_random(menu_type, params=random_content)
+				from indexers.random_lists import random_shortcut_folders
+				return random_shortcut_folders(list_name.replace(' [COLOR red][RANDOM][/COLOR]', ''), contents)
 			for count, item in enumerate(contents):
 				item_get = item.get
 				iconImage = item_get('iconImage', None)
@@ -429,28 +411,6 @@ class Navigator:
 		self.category_name = 'Movie Lists' if menu_type == 'movie' else 'TV Show Lists' if menu_type == 'tvshow' else 'Trakt Lists'
 		for item in random_list_dict[menu_type](): self.add(item, item['name'], item['iconImage'])
 		self.end_directory()
-
-	def handle_random(self, menu_type, action=None, params=None):
-		params = params or {'action': action, 'random': 'true'}
-		if menu_type == 'movie':
-			from indexers.movies import Movies as function
-			return function(params).fetch_list()
-		elif menu_type == 'tvshow':
-			from indexers.tvshows import TVShows as function
-			return function(params).fetch_list()
-		elif menu_type == 'season':
-			from indexers.seasons import build_season_list
-			return build_season_list(params)
-		elif menu_type == 'episode':
-			from indexers.episodes import build_episode_list
-			return build_episode_list(params)
-		elif menu_type == 'single_episode':
-			from indexers.episodes import build_single_episode
-			episode_type = random_episodes_check[params['mode']]
-			return build_single_episode(episode_type, params)
-		else:#trakt_list
-			from indexers.trakt_lists import build_trakt_list
-			return build_trakt_list(params)
 
 	def add(self, url_params, list_name, iconImage='folder', original_image=False, cm_items=[]):
 		isFolder = url_params.get('isFolder', 'true') == 'true'

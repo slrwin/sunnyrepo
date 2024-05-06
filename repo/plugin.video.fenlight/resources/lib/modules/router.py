@@ -64,6 +64,9 @@ def routing(sys):
 		if mode == 'build_tmdb_people':
 			from indexers.people import tmdb_people
 			return tmdb_people(params)
+		if 'random.' in mode:
+			from indexers.random_lists import RandomLists
+			return RandomLists(params).run_random()
 	if 'watched_status.' in mode:
 		if mode == 'watched_status.mark_episode':
 			from modules.watched_status import mark_episode

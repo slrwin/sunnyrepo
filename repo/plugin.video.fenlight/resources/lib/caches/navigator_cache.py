@@ -9,6 +9,10 @@ DELETE_LIST = 'DELETE FROM navigator WHERE list_name=? and list_type=?'
 GET_FOLDERS = 'SELECT list_name, list_contents FROM navigator WHERE list_type = ?'
 GET_FOLDER_CONTENTS = 'SELECT list_contents FROM navigator WHERE list_name = ? AND list_type = ?'
 prop_dict = {'default': 'fenlight_%s_default', 'edited': 'fenlight_%s_edited', 'shortcut_folder': 'fenlight_%s_shortcut_folder'}
+movie_random_converts = {'navigator.genres': 'tmdb_movies_genres', 'navigator.providers': 'tmdb_movies_providers',  'navigator.languages': 'tmdb_movies_languages',
+'navigator.years': 'tmdb_movies_year', 'navigator.decades': 'tmdb_movies_decade', 'navigator.certifications': 'tmdb_movies_certifications'}
+tvshow_random_converts = {'navigator.genres': 'tmdb_tv_genres', 'navigator.providers': 'tmdb_tv_providers', 'navigator.networks': 'tmdb_tv_networks',
+'navigator.languages': 'tmdb_tv_languages', 'navigator.years': 'tmdb_tv_year', 'navigator.decades': 'tmdb_tv_decade', 'navigator.certifications': 'trakt_tv_certifications'}
 timeout = 60
 
 root_list = [
@@ -339,28 +343,29 @@ class NavigatorCache:
 
 	def rebuild_database(self):
 		dbcon = connect_database('navigator_db')
-		dbcon = connect_database('navigator_db')
 		for list_name in default_menu_items: self.set_list(list_name, 'default', main_menus[list_name])
 
 	def _get_list_prop(self, list_type):
 		return prop_dict[list_type]
 	
 	def random_movie_lists(self):
-		return [dict(i, **{'random': 'true', 'name': 'Random %s' % i['name']}) for i in movie_list if 'random_support' in i]
+		return [dict(i, **{'mode': 'random.build_movie_list', 'action': i.get('action') or movie_random_converts[i['mode']],
+							'random': 'true', 'name': 'Movies Random %s' % i['name'], 'menu_type': 'movie'}) for i in movie_list if 'random_support' in i]
 	
 	def random_tvshow_lists(self):
-		return [dict(i, **{'random': 'true', 'name': 'Random %s' % i['name']}) for i in tvshow_list if 'random_support' in i]
+		return [dict(i, **{'mode': 'random.build_tvshow_list', 'action': i.get('action') or tvshow_random_converts[i['mode']],
+							'random': 'true', 'name': 'TV Shows Random %s' % i['name'], 'menu_type': 'tvshow'}) for i in tvshow_list if 'random_support' in i]
 
 	def random_trakt_lists(self):
 		return [
-			{'mode': 'build_movie_list', 'action': 'trakt_collection_lists', 'new_page': 'random', 'name': 'Trakt Movie Collection', 'iconImage': 'movies', 'random': 'true'},
-			{'mode': 'build_tvshow_list', 'action': 'trakt_collection_lists', 'new_page': 'random', 'name': 'Trakt TV Show Collection', 'iconImage': 'tv', 'random': 'true'},
-			{'mode': 'build_movie_list', 'action': 'trakt_watchlist_lists', 'new_page': 'random', 'name': 'Trakt Movie Watchlist', 'iconImage': 'movies', 'random': 'true'},
-			{'mode': 'build_tvshow_list', 'action': 'trakt_watchlist_lists', 'new_page': 'random', 'name': 'Trakt TV Show Watchlist', 'iconImage': 'tv', 'random': 'true'},
-			{'mode': 'build_movie_list', 'action': 'trakt_recommendations', 'new_page': 'movies', 'name': 'Recommended Movies', 'iconImage': 'movies', 'random': 'true'},
-			{'mode': 'build_tvshow_list', 'action': 'trakt_recommendations', 'new_page': 'shows', 'name': 'Recommended TV Shows', 'iconImage': 'tv', 'random': 'true'},
-			{'mode': 'trakt.get_trakt_random_lists', 'list_type': 'my_lists', 'name': 'Trakt My Lists', 'iconImage': 'lists', 'random': 'true'},
-			{'mode': 'trakt.get_trakt_random_lists', 'list_type': 'liked_lists', 'name': 'Trakt Liked Lists', 'iconImage': 'lists', 'random': 'true'}
+			{'mode': 'random.build_movie_list', 'action': 'trakt_collection_lists', 'new_page': 'random', 'name': 'Trakt Movie Collection', 'iconImage': 'movies', 'random': 'true'},
+			{'mode': 'random.build_tvshow_list', 'action': 'trakt_collection_lists', 'new_page': 'random', 'name': 'Trakt TV Show Collection', 'iconImage': 'tv', 'random': 'true'},
+			{'mode': 'random.build_movie_list', 'action': 'trakt_watchlist_lists', 'new_page': 'random', 'name': 'Trakt Movie Watchlist', 'iconImage': 'movies', 'random': 'true'},
+			{'mode': 'random.build_tvshow_list', 'action': 'trakt_watchlist_lists', 'new_page': 'random', 'name': 'Trakt TV Show Watchlist', 'iconImage': 'tv', 'random': 'true'},
+			{'mode': 'random.build_movie_list', 'action': 'trakt_recommendations', 'new_page': 'movies', 'name': 'Trakt Recommended Movies', 'iconImage': 'movies', 'random': 'true'},
+			{'mode': 'random.build_tvshow_list', 'action': 'trakt_recommendations', 'new_page': 'shows', 'name': 'Trakt Recommended TV Shows', 'iconImage': 'tv', 'random': 'true'},
+			{'mode': 'random.build_trakt_lists', 'list_type': 'my_lists', 'name': 'Trakt My Lists', 'iconImage': 'lists', 'random': 'true'},
+			{'mode': 'random.build_trakt_lists', 'list_type': 'liked_lists', 'name': 'Trakt Liked Lists', 'iconImage': 'lists', 'random': 'true'}
 				]
 
 navigator_cache = NavigatorCache()

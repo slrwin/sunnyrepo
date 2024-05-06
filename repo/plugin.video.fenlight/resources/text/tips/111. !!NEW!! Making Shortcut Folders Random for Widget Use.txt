@@ -3,11 +3,11 @@ Fen Light enables you to "Randomize" the contents of your Shortcut Folders.
 
 First, follow the Tip for Shortcut Folders to make and populate a shortcut folder. Afterwards, if you enact the context menu on the folder, you can select "Make Random". This will change the folder's name to include "[RANDOM]" in red so you know it is now a random folder.
 
-Random folders will take their contents and select a random movie, tvshow, season or episode list from the contents to display.
+Random folders will take their contents and select a random movie, tvshow, season or episode list from the contents to display. Unfortunately, Lists within the folder that are themselves "random" will not be available when the shortcut folder has been randomized.
 
 This means if you use a random shortcut folder as a widget, you will see random content in that widget from the list of items in the Random Folder every time that widget is refreshed.
 
-If you also wish to have the widget show the correct label for the currently displaying content, then simply name the widget $INFO[Window.Property(fenlight.[NAME OF SHORTCUT FOLDER])], replacing [NAME OF SHORTCUT FOLDER] with the name of the shortcut folder you are making a widget with (do not include the "[RANDOM]" part of the name).
+If you also wish to have the widget show the correct label for the currently displaying content, then simply name the widget $INFO[Window.Property(fenlight.[NAME OF SHORTCUT FOLDER])], replacing [NAME OF SHORTCUT FOLDER] with the name of the shortcut folder you are making a widget with.
 
 Now you will have a random widget based on the contents of the Shortcut Folder you have used.
 
