@@ -5,11 +5,11 @@ import hashlib
 import _strptime
 import unicodedata
 from html import unescape
+from zipfile import ZipFile
 from importlib import import_module, reload as rel_module
 from datetime import datetime, timedelta, date
-from modules.kodi_utils import sys, translate_path, Thread, json, random
+from modules.kodi_utils import sys, translate_path, Thread, random, show_busy_dialog, hide_busy_dialog, path_exists
 # from modules.kodi_utils import logger
-
 
 def change_image_resolution(image, replace_res):
 	return re.sub(r'(w185|w300|w342|w780|w1280|h632|original)', replace_res, image)
@@ -270,40 +270,33 @@ def paginate_list(item_list, page, limit=20, paginate_start=0):
 	result = (pages[page - 1], len(pages))
 	return result
 
-def download_github_zip(repo, file, destination):
-	from io import BytesIO
-	from zipfile import ZipFile
-	from modules.kodi_utils import requests, path_exists, userdata_path, translate_path
+def unzip(zip_location, destination_location, destination_check, show_busy=True):
+	if show_busy: show_busy_dialog()
 	try:
-		url = 'https://github.com/Tikipeter/%s/raw/main/%s.zip' % (repo, file)
-		result = requests.get(url, stream=True)
-		zipfile = ZipFile(BytesIO(result.raw.read()))
-		zipfile.extractall(path=userdata_path)
-		if path_exists(destination): status = True
+		zipfile = ZipFile(zip_location)
+		zipfile.extractall(path=destination_location)
+		if path_exists(destination_check): status = True
 		else: status = False
-	except Exception as e:
-		from modules.kodi_utils import logger
-		logger('download_github_zip error', str(e))
-		status = False
+	except: status = False
+	if show_busy: hide_busy_dialog()
 	return status
 
 def copy2clip(txt):
-	from sys import platform
-	if platform == "win32":
+	if sys.platform == "win32":
 		try:
 			from subprocess import check_call
 			cmd = 'echo ' + txt.replace('&', '^&').strip() + '|clip'
 			return check_call(cmd, shell=True)
-		except: pass
-	elif platform == "darwin":
+		except: return
+	if sys.platform == "darwin":
 		try:
 			from subprocess import check_call
 			cmd = 'echo ' + txt.strip() + '|pbcopy'
 			return check_call(cmd, shell=True)
-		except: pass
-	elif platform == "linux":
+		except: return
+	if sys.platform == "linux":
 		try:
 			from subprocess import Popen, PIPE
 			p = Popen(['xsel', '-pi'], stdin=PIPE)
 			p.communicate(input=txt)
-		except: pass
+		except: return

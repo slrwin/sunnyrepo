@@ -1,5 +1,9 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.54[/B][/COLOR]
+- Fixed Random Shortcut Folders with Trakt lists included.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.53[/B][/COLOR]
 - Some fixes for random list naming when used as widget.
 - Other changes/fixes.

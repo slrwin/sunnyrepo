@@ -4,20 +4,16 @@ import time
 import sqlite3 as database
 from zipfile import ZipFile
 from caches.settings_cache import set_setting
-from modules.utils import string_alphanum_to_num
+from modules.utils import string_alphanum_to_num, unzip
 from modules.settings import update_use_test_repo
 from modules import kodi_utils 
 # logger = kodi_utils.logger
 
 translate_path, osPath, delete_file, execute_builtin, get_icon = kodi_utils.translate_path, kodi_utils.osPath, kodi_utils.delete_file, kodi_utils.execute_builtin, kodi_utils.get_icon
 update_kodi_addons_db, notification, show_text, confirm_dialog = kodi_utils.update_kodi_addons_db, kodi_utils.notification, kodi_utils.show_text, kodi_utils.confirm_dialog
-requests, addon_info, unzip, confirm_dialog, ok_dialog = kodi_utils.requests, kodi_utils.addon_info, kodi_utils.unzip, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
+requests, addon_info, confirm_dialog, ok_dialog = kodi_utils.requests, kodi_utils.addon_info, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
 update_local_addons, disable_enable_addon, close_all_dialog = kodi_utils.update_local_addons, kodi_utils.disable_enable_addon, kodi_utils.close_all_dialog
 json, select_dialog, show_busy_dialog, hide_busy_dialog = kodi_utils.json, kodi_utils.select_dialog, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
-
-# gitlab_contents_url = 'https://gitlab.com/api/v4/projects/52767991/repository/tree'
-# gitlab_version_url = 'https://gitlab.com/Tikipeter/Tikipeter.gitlab.io/raw/main/fen_light_version'
-# gitlab_download_url = 'https://gitlab.com/Tikipeter/Tikipeter.gitlab.io/raw/main/plugin.video.fenlight-x.x.xx.zip'
 
 packages_dir = translate_path('special://home/addons/packages/')
 home_addons_dir = translate_path('special://home/addons/')

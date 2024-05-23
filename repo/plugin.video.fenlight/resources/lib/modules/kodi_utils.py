@@ -409,18 +409,6 @@ def toggle_language_invoker():
 	update_local_addons()
 	disable_enable_addon()
 
-def unzip(zip_location, destination_location, destination_check, show_busy=True):
-	if show_busy: show_busy_dialog()
-	try:
-		from zipfile import ZipFile
-		zipfile = ZipFile(zip_location)
-		zipfile.extractall(path=destination_location)
-		if path_exists(destination_check): status = True
-		else: status = False
-	except: status = False
-	if show_busy: hide_busy_dialog()
-	return status
-
 def upload_logfile(params):
 	log_files = [('Current Kodi Log', 'kodi.log'), ('Previous Kodi Log', 'kodi.old.log')]
 	list_items = [{'line1': i[0]} for i in log_files]
