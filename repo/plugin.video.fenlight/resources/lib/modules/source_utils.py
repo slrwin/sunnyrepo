@@ -118,6 +118,7 @@ def seas_ep_filter(season, episode, release_title, split=False, return_match=Fal
 	string4 = r'([.-]<<S>>[.-]?<<E>>[.-])'
 	string5 = r'(episode[.-]?<<E>>[.-])'
 	string6 = r'([.-]e[p]?[.-]?<<E>>[.-])'
+	string7 = r'(^(?=.*[.-]e?0*<<E>>[.-])(?:(?!((?:s|season)[.-]?\d+[.-x]?(?:ep?|episode)[.-]?\d+)|\d+x\d+).)*$)'
 	string_list = []
 	string_list_append = string_list.append
 	string_list_append(string1.replace('<<S>>', season_fill).replace('<<E>>', episode_fill))
@@ -132,11 +133,14 @@ def seas_ep_filter(season, episode, release_title, split=False, return_match=Fal
 	string_list_append(string3.replace('<<S>>', season_fill).replace('<<E1>>', episode_fill).replace('<<E2>>', str_ep_plus_1.zfill(2)))
 	string_list_append(string4.replace('<<S>>', season_fill).replace('<<E>>', episode_fill))
 	string_list_append(string4.replace('<<S>>', str_season).replace('<<E>>', episode_fill))
+	string_list_append(string5.replace('<<E>>', str_episode))
+	string_list_append(string6.replace('<<E>>', episode_fill))
+	string_list_append(string7.replace('<<E>>', episode_fill))
 	final_string = '|'.join(string_list)
 	reg_pattern = re.compile(final_string)
 	if split: return release_title.split(re.search(reg_pattern, release_title).group(), 1)[1]
-	elif return_match: return re.search(reg_pattern, release_title).group()
-	else: return bool(re.search(reg_pattern, release_title))
+	if return_match: return re.search(reg_pattern, release_title).group()
+	return bool(re.search(reg_pattern, release_title))
 
 def find_season_in_release_title(release_title):
 	release_title = re.sub(r'[^A-Za-z0-9-]+', '.', unquote(release_title).replace('\'', '')).lower()
@@ -208,7 +212,6 @@ def clean_title(title):
 		if not title: return
 		title = title.lower()
 		title = re.sub(r'&#(\d+);', '', title)
-		title = re.sub(r'(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
 		title = re.sub(r'(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
 		title = title.replace('&quot;', '\"').replace('&amp;', '&')
 		title = re.sub(r'\n|([\[({].+?[})\]])|([:;–\-"\',!_.?~$@])|\s', '', title)

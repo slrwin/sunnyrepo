@@ -156,18 +156,6 @@ def clean_file_name(s, use_encoding=False, use_blanks=True):
 	except: pass
 	return s
 
-def clean_title(title):
-	try:
-		if not title: return
-		title = title.lower()
-		title = re.sub(r'&#(\d+);', '', title)
-		title = re.sub(r'(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-		title = re.sub(r'(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-		title = title.replace('&quot;', '\"').replace('&amp;', '&')
-		title = re.sub(r'\n|([\[({].+?[})\]])|([:;–\-"\',!_.?~$@])|\s', '', title)
-	except: pass
-	return title
-
 def byteify(data, ignore_dicts=False):
 	try:
 		if isinstance(data, unicode): return data.encode('utf-8')

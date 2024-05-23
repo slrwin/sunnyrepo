@@ -79,9 +79,8 @@ def active_tvshows_information(status_type):
 def watched_info_movie(watched_db=None):
 	if not watched_db: watched_db = get_database()
 	try:
-		watched_info = watched_db.execute('SELECT media_id, title, last_played FROM watched WHERE db_type = ?',
-							('movie',)).fetchall()
-		return dict([(i[0], {'media_id':i[0], 'title': i[1], 'last_played': i[2]}) for i in watched_info])
+		watched_info = watched_db.execute('SELECT media_id, title, last_played FROM watched WHERE db_type = ?', ('movie',)).fetchall()
+		return dict([(i[0], {'media_id': i[0], 'title': i[1], 'last_played': i[2]}) for i in watched_info])
 	except: return {}
 
 def get_watched_status_movie(watched_info, media_id):
@@ -93,13 +92,14 @@ def get_watched_status_movie(watched_info, media_id):
 
 def get_bookmarks_movie(watched_db=None):
 	if not watched_db: watched_db = get_database()
-	try: info = watched_db.execute('SELECT media_id, resume_point, curr_time, resume_id FROM progress WHERE db_type = ?',
-			('movie',)).fetchall()
-	except: info = []
+	try:
+		info = watched_db.execute('SELECT media_id, resume_point, curr_time, resume_id FROM progress WHERE db_type = ?', ('movie',)).fetchall()
+		info = dict([(i[0], {'media_id': i[0], 'resume_point': i[1], 'curr_time': i[2], 'resume_id': i[3]}) for i in info])
+	except: info = {}
 	return info
 
-def get_progress_status_movie(bookmarks, media_id):
-	try: percent = str(round(float([i[1] for i in bookmarks if i[0] == str(media_id)][0])))
+def get_progress_status_movie(progress_info, media_id):
+	try: percent = str(round(float(progress_info[media_id]['resume_point'])))
 	except: percent = None
 	return percent
 
@@ -108,7 +108,7 @@ def watched_info_tvshow(watched_db=None):
 	try:
 		data = watched_db.execute('SELECT media_id, season, episode, title, MAX(last_played), COUNT(*) AS COUNTER FROM watched WHERE db_type = ? GROUP BY media_id',
 								('episode',)).fetchall()
-		return dict([(i[0], {'media_id':i[0], 'season': i[1], 'episode': i[2], 'title': i[3], 'last_played': i[4], 'total_played': i[5]}) for i in data])
+		return dict([(i[0], {'media_id': i[0], 'season': i[1], 'episode': i[2], 'title': i[3], 'last_played': i[4], 'total_played': i[5]}) for i in data])
 	except: return {}
 
 def get_watched_status_tvshow(watched_info, aired_eps):
@@ -158,15 +158,17 @@ def get_watched_status_episode(watched_info, season_episode):
 	if season_episode in watched_info: return 1
 	return 0
 
-def get_bookmarks_episode(media_id, watched_db=None):
+def get_bookmarks_episode(media_id, season, watched_db=None):
 	if not watched_db: watched_db = get_database()
-	try: info = watched_db.execute('SELECT resume_point, curr_time, season, episode, resume_id FROM progress WHERE db_type = ? AND media_id = ?',
-			('episode', str(media_id))).fetchall()
-	except: info = []
+	try:
+		info = watched_db.execute('SELECT resume_point, curr_time, resume_id, episode FROM progress WHERE db_type = ? AND media_id = ? AND season = ?',
+			('episode', str(media_id), season)).fetchall()
+		info = dict([(i[3], {'resume_point': i[0], 'curr_time': i[1], 'resume_id': i[2]}) for i in info])
+	except: info = {}
 	return info
 
-def get_progress_status_episode(bookmarks, season, episode):
-	try: percent = str(round(float([i[0] for i in bookmarks if i[2] == season and i[3] == episode][0])))
+def get_progress_status_episode(progress_info, episode):
+	try: percent = str(round(float(progress_info[episode]['resume_point'])))
 	except: percent = None
 	return percent
 
@@ -180,35 +182,34 @@ def clear_local_bookmarks():
 def erase_bookmark(media_type, media_id, season='', episode='', refresh='false'):
 	try:
 		watched_indicators = watched_indicators_function()
+		watched_db = get_database(watched_indicators)
 		if watched_indicators == 1:
 			try:
-				if media_type == 'episode': resume_id = [i[4] for i in get_bookmarks_episode(media_id) if i[2] == int(season) and i[3] == int(episode)][0]
-				else: resume_id = [i[3] for i in get_bookmarks_movie() if i[0] == str(media_id)][0]
+				if media_type == 'episode': resume_id = get_bookmarks_episode(str(media_id), season, watched_db)[episode]['resume_id']
+				else: resume_id = get_bookmarks_movie()[str(media_id)]['resume_id']
 				sleep(1000)
 				trakt_progress('clear_progress', media_type, media_id, 0, season, episode, resume_id)
 			except: pass
-		dbcon = get_database()
-		dbcon.execute('DELETE FROM progress where db_type = ? and media_id = ? and season = ? and episode = ?', (media_type, media_id, season, episode))
+		watched_db.execute('DELETE FROM progress where db_type = ? and media_id = ? and season = ? and episode = ?', (media_type, media_id, season, episode))
 		refresh_container(refresh == 'true')
 	except: pass
 
 def batch_erase_bookmark(watched_indicators, insert_list, action):
 	try:
+		watched_db = get_database(watched_indicators)
 		if action == 'mark_as_watched': modified_list = [(i[0], i[1], i[2], i[3]) for i in insert_list]
 		else: modified_list = insert_list
 		if watched_indicators == 1:
 			def _process():
 				for i in insert_list:
 					try:
-						tmdb_id, season, episode = insert_list[1], insert_list[2], insert_list[3]
-						bookmarks = get_bookmarks_episode(tmdb_id)
-						resume_id = [i[4] for i in bookmarks if i[2] == int(season) and i[3] == int(episode)][0]
+						media_id, season, episode = insert_list[1], insert_list[2], insert_list[3]
+						resume_id = get_bookmarks_episode(str(media_id), season, watched_db)[episode]['resume_id']
 						sleep(1100)
 						trakt_progress('clear_progress', i[0], i[1], 0, i[2], i[3], resume_id)
 					except: pass
 			Thread(target=_process).start()
-		dbcon = get_database(watched_indicators)
-		dbcon.executemany('DELETE FROM progress where db_type = ? and media_id = ? and season = ? and episode = ?', modified_list)
+		watched_db.executemany('DELETE FROM progress where db_type = ? and media_id = ? and season = ? and episode = ?', modified_list)
 	except: pass
 
 def set_bookmark(params):

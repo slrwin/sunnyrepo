@@ -3,7 +3,7 @@ from windows.base_window import BaseDialog, window_manager, json, select_dialog
 from indexers.people import person_data_dialog
 from modules.settings import download_directory
 from modules.kodi_utils import default_addon_fanart, nextpage
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 class ThumbImageViewer(BaseDialog):
 	def __init__(self, *args, **kwargs):

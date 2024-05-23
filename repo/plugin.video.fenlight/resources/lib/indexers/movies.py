@@ -115,12 +115,13 @@ class Movies:
 			premiered = meta_get('premiered')
 			title, year = meta_get('title'), meta_get('year') or '2050'
 			tmdb_id, imdb_id = meta_get('tmdb_id'), meta_get('imdb_id')
+			str_tmdb_id = string(tmdb_id)
 			poster, fanart, clearlogo, landscape = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or '', meta_get('landscape') or ''
 			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
 			if not first_airdate or self.current_date < first_airdate: unaired = True
 			else: unaired = False
-			progress = get_progress_status_movie(self.bookmarks, tmdb_id)
-			playcount = get_watched_status_movie(self.watched_info, string(tmdb_id))
+			progress = get_progress_status_movie(self.bookmarks, str_tmdb_id)
+			playcount = get_watched_status_movie(self.watched_info, str_tmdb_id)
 			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'playcount': playcount,
@@ -147,7 +148,7 @@ class Movies:
 			info_tag = listitem.getVideoInfoTag()
 			info_tag.setMediaType('movie'), info_tag.setTitle(title), info_tag.setOriginalTitle(meta_get('original_title')), info_tag.setGenres(meta_get('genre'))
 			info_tag.setDuration(meta_get('duration')), info_tag.setPlaycount(playcount), info_tag.setPlot(meta_get('plot'))
-			info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id)}), info_tag.setIMDBNumber(imdb_id), info_tag.setPremiered(premiered)
+			info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': str_tmdb_id}), info_tag.setIMDBNumber(imdb_id), info_tag.setPremiered(premiered)
 			if not self.use_minimal_media:
 				info_tag.setYear(int(year)), info_tag.setRating(meta_get('rating')), info_tag.setVotes(meta_get('votes')), info_tag.setMpaa(meta_get('mpaa'))
 				info_tag.setCountries(meta_get('country')), info_tag.setTrailer(meta_get('trailer'))

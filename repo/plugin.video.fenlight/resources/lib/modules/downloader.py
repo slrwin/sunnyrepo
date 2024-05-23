@@ -6,7 +6,8 @@ from caches.settings_cache import get_setting
 from modules import kodi_utils
 from modules.sources import Sources
 from modules.settings import download_directory
-from modules.utils import clean_file_name, clean_title, safe_string, remove_accents, normalize
+from modules.source_utils import clean_title
+from modules.utils import clean_file_name, safe_string, remove_accents, normalize
 # logger = kodi_utils.logger
 
 video_extensions, image_extensions, get_icon, dialog, unquote = kodi_utils.video_extensions, kodi_utils.image_extensions, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.unquote

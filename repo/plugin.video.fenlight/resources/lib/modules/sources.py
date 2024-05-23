@@ -614,9 +614,9 @@ class Sources():
 		except: pass
 
 	def get_playback_percent(self):
-		if self.media_type == 'movie': percent = get_progress_status_movie(get_bookmarks_movie(), self.tmdb_id)
+		if self.media_type == 'movie': percent = get_progress_status_movie(get_bookmarks_movie(), str(self.tmdb_id))
 		elif any((self.random, self.random_continual)): return 0.0
-		else: percent = get_progress_status_episode(get_bookmarks_episode(self.tmdb_id), self.season, self.episode)
+		else: percent = get_progress_status_episode(get_bookmarks_episode(self.tmdb_id, self.season), self.episode)
 		if not percent: return 0.0
 		action = self.get_resume_status(percent)
 		if action == 'cancel': return None

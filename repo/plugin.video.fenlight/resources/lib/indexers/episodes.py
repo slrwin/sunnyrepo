@@ -49,7 +49,7 @@ def build_episode_list(params):
 				else: display, unaired = ep_name, False
 				playcount = get_watched_status_episode(watched_info, (season, episode))
 				if playcount and hide_watched: continue
-				progress = get_progress_status_episode(bookmarks, season, episode)
+				progress = get_progress_status_episode(bookmarks, episode)
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
 											'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_external': is_external, 'unaired': unaired})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
@@ -115,7 +115,7 @@ def build_episode_list(params):
 		except: season_poster = show_poster
 	watched_db = get_database(watched_indicators)
 	watched_info = watched_info_episode(tmdb_id, watched_db)
-	bookmarks = get_bookmarks_episode(tmdb_id, watched_db)
+	bookmarks = get_bookmarks_episode(tmdb_id, season, watched_db)
 	add_items(handle, list(_process()))
 	set_sort_method(handle, content_type)
 	category_name = 'Season %s' % season
@@ -181,9 +181,9 @@ def build_single_episode(list_type, params={}):
 			else: title_string = ''
 			if display_format in (0, 1): seas_ep = '%sx%s - ' % (str_season_zfill2, str_episode_zfill2)
 			else: seas_ep = ''
-			bookmarks = get_bookmarks_episode(tmdb_id, watched_db)
+			bookmarks = get_bookmarks_episode(tmdb_id, season, watched_db)
+			progress = get_progress_status_episode(bookmarks, episode)
 			if not list_type_starts_with('next_'): playcount = get_watched_status_episode(watched_info, (season, episode))
-			progress = get_progress_status_episode(bookmarks, season, episode)
 			if list_type_starts_with('next_'):
 				if include_airdate:
 					if episode_date: display_premiered = '[%s] ' % make_day(current_date, episode_date)

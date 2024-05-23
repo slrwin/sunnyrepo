@@ -646,7 +646,7 @@ class Extras(BaseDialog):
 
 	def set_infoline2(self):
 		if self.media_type == 'movie':
-			percent_watched = get_progress_status_movie(get_bookmarks_movie(), self.tmdb_id)
+			percent_watched = get_progress_status_movie(get_bookmarks_movie(), str(self.tmdb_id))
 			if not percent_watched:
 				try: percent_watched = '100' if get_watched_status_movie(watched_info_movie(), str(self.tmdb_id)) == 1 else '0'
 				except: percent_watched = '0'

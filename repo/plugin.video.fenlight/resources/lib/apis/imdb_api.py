@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import re
 from caches.base_cache import connect_database
-from caches.main_cache import cache_object
+from caches.main_cache import cache_object, main_cache
 from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
 from modules.kodi_utils import requests, json, sleep
 from modules.utils import remove_accents, replace_html_codes
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'}
+# headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'}
+headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
 base_url = 'https://www.imdb.com/%s'
 reviews_url = 'title/%s/reviews/_ajax?paginationKey=%s'
 trivia_url = 'title/%s/trivia'
@@ -60,22 +61,46 @@ def imdb_people_trivia(imdb_id):
 	return cache_object(get_imdb, string, params, False, 168)[0]
 
 def imdb_images(imdb_id, page_no):
-	url = base_url % images_url % (imdb_id, page_no)
 	string = 'imdb_images_%s_%s' % (imdb_id, str(page_no))
-	params = {'url': url, 'action': 'imdb_images', 'next_page': int(page_no)+1}
-	return cache_object(get_imdb, string, params, False, 168)
-
-def imdb_videos(imdb_id):
-	url = base_url % videos_url % imdb_id
-	string = 'imdb_videos_%s' % imdb_id
-	params = {'url': url, 'imdb_id': imdb_id, 'action': 'imdb_videos'}
-	return cache_object(get_imdb, string, params, False, 24)[0]
+	cache = main_cache.get(string)
+	if cache is not None:
+		logger('cache used', page_no)
+		return cache
+	logger('cache NOT used', page_no)
+	url = base_url % images_url % (imdb_id, page_no)
+	params = {'url': url, 'action': 'imdb_images', 'next_page': int(page_no)+1, 'total_tries': 0}
+	result = get_imdb(params)
+	if result == 'failed':
+		logger('online lookup was UNSUCCESSFUL', '')
+		return None
+	logger('online lookup was SUCCESSFUL', '')
+	main_cache.set(string, result, expiration=168)
+	return result
+	# return cache_object(get_imdb, string, params, False, 1)
 
 def imdb_people_images(imdb_id, page_no):
-	url = base_url % people_images_url % (imdb_id, page_no)
 	string = 'imdb_people_images_%s_%s' % (imdb_id, str(page_no))
-	params = {'url': url, 'action': 'imdb_images', 'next_page': 1}
-	return cache_object(get_imdb, string, params, False, 168)
+	cache = main_cache.get(string)
+	if cache is not None:
+		logger('cache used', page_no)
+		return cache
+	logger('cache NOT used', page_no)
+	url = base_url % people_images_url % (imdb_id, page_no)
+	params = {'url': url, 'action': 'imdb_images', 'next_page': 1, 'total_tries': 0}
+	result = get_imdb(params)
+	if result == 'failed':
+		logger('online lookup was UNSUCCESSFUL', '')
+		return None
+	logger('online lookup was SUCCESSFUL', '')
+	main_cache.set(string, result, expiration=168)
+	return result
+	# return cache_object(get_imdb, string, params, False, 168)
+
+def imdb_videos(imdb_id):
+	string = 'imdb_videos_%s' % imdb_id
+	url = base_url % videos_url % imdb_id
+	params = {'url': url, 'imdb_id': imdb_id, 'action': 'imdb_videos'}
+	return cache_object(get_imdb, string, params, False, 24)[0]
 
 def get_imdb(params):
 	imdb_list = []
@@ -177,10 +202,18 @@ def get_imdb(params):
 					except: continue
 					yield images
 				except: pass
+		total_tries = params['total_tries']
+		if params['total_tries'] == 5: return 'failed'
 		image_results = []
-		result = requests.get(url, timeout=timeout)
+		result = requests.get(url, timeout=timeout, headers=headers)
 		result = remove_accents(result.text)
 		result = result.replace('\n', ' ')
+		logger('result', result[:150])
+		
+		if not 'xmlns:og="http://ogp.me/ns#"' in result:
+			params['total_tries'] += 1
+			return get_imdb(params)
+		
 		try:
 			pages = parseDOM(result, 'span', attrs={'class': 'page_list'})[0]
 			pages = [int(i) for i in parseDOM(pages, 'a')]
@@ -191,6 +224,7 @@ def get_imdb(params):
 			image_results = parseDOM(image_results, 'a')
 		except: pass
 		if image_results: imdb_list = list(_process())
+		logger('FINISHED total_tries', total_tries)
 	elif action == 'imdb_videos':
 		def _process():
 			for count, item in enumerate(playlists, 1):

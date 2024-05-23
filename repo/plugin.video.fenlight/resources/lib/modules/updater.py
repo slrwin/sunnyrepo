@@ -13,11 +13,11 @@ translate_path, osPath, delete_file, execute_builtin, get_icon = kodi_utils.tran
 update_kodi_addons_db, notification, show_text, confirm_dialog = kodi_utils.update_kodi_addons_db, kodi_utils.notification, kodi_utils.show_text, kodi_utils.confirm_dialog
 requests, addon_info, unzip, confirm_dialog, ok_dialog = kodi_utils.requests, kodi_utils.addon_info, kodi_utils.unzip, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
 update_local_addons, disable_enable_addon, close_all_dialog = kodi_utils.update_local_addons, kodi_utils.disable_enable_addon, kodi_utils.close_all_dialog
-json, select_dialog = kodi_utils.json, kodi_utils.select_dialog
+json, select_dialog, show_busy_dialog, hide_busy_dialog = kodi_utils.json, kodi_utils.select_dialog, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 
 # gitlab_contents_url = 'https://gitlab.com/api/v4/projects/52767991/repository/tree'
 # gitlab_version_url = 'https://gitlab.com/Tikipeter/Tikipeter.gitlab.io/raw/main/fen_light_version'
-# gitlab_download_url = 'https://gitlab.com/Tikipeter/Tikipeter.gitlab.io/raw/main/plugin.video.fenlight-1.0.15.zip'
+# gitlab_download_url = 'https://gitlab.com/Tikipeter/Tikipeter.gitlab.io/raw/main/plugin.video.fenlight-x.x.xx.zip'
 
 packages_dir = translate_path('special://home/addons/packages/')
 home_addons_dir = translate_path('special://home/addons/')
@@ -49,17 +49,21 @@ no_rollback_str = 'No previous versions found.[CR]Please install rollback manual
 error_update_str = 'Error Updating.[CR]Please install new update manually'
 error_rollback_str = 'Error rolling back.[CR]Please install rollback manually'
 changes_heading_str = 'New Online Release (v.%s) Changelog'
-view_changes_str = 'Do you want to view the changelog for the new release before installing?'
+view_changes_str = 'New release available [B](v.%s)[/B].[CR]Do you want to view the changelog for the new release before installing?'
 no_changes_str = 'You are running the current version of Fen Light.[CR][CR]There is no new version changelog to view.'
 
 def get_versions(use_test_repo):
 	try:
+		show_busy_dialog()
 		result = requests.get(versions_url % repo_location[use_test_repo])
+		hide_busy_dialog()
 		if result.status_code != 200: return None, None
 		online_version = result.text.replace('\n', '')
 		current_version = addon_info('version')
 		return current_version, online_version
-	except: return None, None
+	except:
+		hide_busy_dialog()
+		return None, None
 
 def get_changes(use_test_repo=None, online_version=None):
 	try:
@@ -67,11 +71,15 @@ def get_changes(use_test_repo=None, online_version=None):
 			use_test_repo = update_use_test_repo()
 			current_version, online_version = get_versions(use_test_repo)
 			if not version_check(current_version, online_version, use_test_repo): return ok_dialog(heading=heading_str, text=no_changes_str)
+		show_busy_dialog()
 		result = requests.get(changes_url % repo_location[use_test_repo])
+		hide_busy_dialog()
 		if result.status_code != 200: return notification(error_str, icon=downloads_icon)
 		changes = result.text
 		return show_text(changes_heading_str % online_version, text=changes, font_size='large')
-	except: return notification(error_str, icon=downloads_icon)
+	except:
+		hide_busy_dialog()
+		return notification(error_str, icon=downloads_icon)
 
 def version_check(current_version, online_version, use_test_repo):
 	if use_test_repo: return current_version != online_version
@@ -87,8 +95,8 @@ def update_check(action=4):
 		if action == 4: return ok_dialog(heading=heading_str, text=result_str % (current_version, online_type, online_version, no_update_str))
 		return
 	if action in (0, 4):
+		if confirm_dialog(heading=heading_str, text=view_changes_str % online_version): get_changes(use_test_repo, online_version)
 		if not confirm_dialog(heading=heading_str, text=result_str % (current_version, online_type, online_version, update_available_str)): return
-		if confirm_dialog(heading=heading_str, text=view_changes_str): get_changes(use_test_repo, online_version)
 	if action == 1: notification(notification_occuring_str, icon=downloads_icon)
 	elif action == 2: return notification(notification_available_str, icon=downloads_icon)
 	return update_addon(online_version, action, use_test_repo)
@@ -97,7 +105,9 @@ def rollback_check():
 	use_test_repo = update_use_test_repo()
 	current_version = get_versions(use_test_repo)[0]
 	url = contents_url % repo_location[use_test_repo]
+	show_busy_dialog()
 	results = requests.get(url)
+	hide_busy_dialog()
 	if results.status_code != 200: return ok_dialog(heading=heading_str, text=error_rollback_str)
 	results = [i['name'].split('-')[1].replace('.zip', '') for i in results.json() if 'plugin.video.fenlight' in i['name'] \
 				and not i['name'].split('-')[1].replace('.zip', '') == current_version]
@@ -117,7 +127,9 @@ def update_addon(new_version, action, use_test_repo):
 	notification(notification_str, icon=downloads_icon)
 	zip_name = zipfile_name % new_version
 	url = location_url % (repo_location[use_test_repo], zip_name)
+	show_busy_dialog()
 	result = requests.get(url, stream=True)
+	hide_busy_dialog()
 	if result.status_code != 200: return ok_dialog(heading=heading_str, text=error_update_str)
 	zip_location = osPath.join(packages_dir, zip_name)
 	with open(zip_location, 'wb') as f: shutil.copyfileobj(result.raw, f)

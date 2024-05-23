@@ -7,7 +7,7 @@ from modules.downloader import manager
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
 get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
@@ -169,22 +169,22 @@ def playback_choice(params):
 		function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
 		meta = function('tmdb_id', meta, tmdb_api_key(), get_datetime())
 	aliases = get_aliases_titles(make_alias_dict(meta, meta['title']))
-	items = []
-	items += [{'line': 'Select Source', 'function': 'scrape'}]
-	items += [{'line': 'Rescrape & Select Source', 'function': 'clear_and_rescrape'}]
-	items += [{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'}]
-	items += [{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'}]
-	items += [{'line': 'Scrape With All Filters Ignored', 'function': 'scrape_with_filters_ignored'}]
+	items = [{'line': 'Select Source', 'function': 'scrape'},
+			{'line': 'Rescrape & Select Source', 'function': 'clear_and_rescrape'},
+			{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'},
+			{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'},
+			{'line': 'Scrape With All Filters Ignored', 'function': 'scrape_with_filters_ignored'}]
 	if aliases: items += [{'line': 'Scrape with an Alias', 'function': 'scrape_with_aliases'}]
 	items += [{'line': 'Scrape with Custom Values', 'function': 'scrape_with_custom_values'}]
+	items += [{'line': 'Scrape with Custom HDLR', 'function': 'scrape_with_custom_hdlr'}]
 	list_items = [{'line1': i['line'], 'icon': poster} for i in items]
 	kwargs = {'items': json.dumps(list_items), 'heading': 'Playback'}
 	choice = select_dialog([i['function'] for i in items], **kwargs)
 	if choice == None: return notification('Cancelled', 2500)
-	def clear_caches():
+	if choice in ('clear_and_rescrape', 'scrape_with_custom_values'):
+		show_busy_dialog()
 		from caches.base_cache import clear_cache
 		from caches.external_cache import ExternalCache
-		show_busy_dialog()
 		clear_cache('internal_scrapers', silent=True)
 		ExternalCache().delete_cache_single(media_type, str(meta['tmdb_id']))
 		hide_busy_dialog()
@@ -192,7 +192,6 @@ def playback_choice(params):
 		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'autoplay': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'autoplay': 'false'}
 	elif choice == 'clear_and_rescrape':
-		clear_caches()
 		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'autoplay': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'autoplay': 'false'}
 	elif choice == 'scrape_with_default':
@@ -225,8 +224,7 @@ def playback_choice(params):
 						'custom_title': custom_title, 'prescrape': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode,
 							'custom_title': custom_title, 'prescrape': 'false'}
-	else:
-		clear_caches()
+	elif choice == 'scrape_with_custom_values':
 		default_title, default_year = meta['title'], str(meta['year'])
 		if media_type in ('movie', 'movies'): play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'prescrape': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false'}
@@ -264,6 +262,9 @@ def playback_choice(params):
 		if disable_filters_choice:
 			_process_params('', 'true', 'ignore_scrape_filters')
 			set_property('fs_filterless_search', 'true')
+	else:
+		from modules.metadata import episodes_meta
+		episodes_data = episodes_meta(orig_season, meta)
 	from modules.sources import Sources
 	Sources().playback_prep(play_params)
 

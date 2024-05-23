@@ -9,14 +9,13 @@ from modules.utils import copy2clip
 # logger = kodi_utils.logger
 
 requests, sleep, confirm_dialog, ok_dialog, monitor = kodi_utils.requests, kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.monitor
-progress_dialog, dialog, get_icon, notification = kodi_utils.progress_dialog, kodi_utils.dialog, kodi_utils.get_icon, kodi_utils.notification
-Thread = kodi_utils.Thread
+progress_dialog, dialog, get_icon, notification, Thread = kodi_utils.progress_dialog, kodi_utils.dialog, kodi_utils.get_icon, kodi_utils.notification, kodi_utils.Thread
 base_url = 'https://api.real-debrid.com/rest/1.0/'
 auth_url = 'https://api.real-debrid.com/oauth/v2/'
 device_url = 'device/code?%s'
 credentials_url = 'device/credentials?%s'
-timeout = 20.0
 icon = get_icon('realdebrid')
+timeout = 20.0
 
 class RealDebridAPI:
 	def __init__(self):
@@ -213,6 +212,7 @@ class RealDebridAPI:
 			vid_only = [i for i in torrent_files if self.video_only(i, extensions)]
 			remainder = [i for i in torrent_files if not i in vid_only]
 			torrent_files = vid_only + remainder
+			# logger('torrent_files', torrent_files)
 			if season: torrent_files = [item for item in torrent_files if self.name_check(item, season, episode, seas_ep_filter)]
 			else:
 				m2ts_check = self._m2ts_check(torrent_files)
@@ -238,6 +238,8 @@ class RealDebridAPI:
 					if not torrent_info['links']: continue
 					if 'error' in torrent_info: continue
 					selected_files = [(idx, i) for idx, i in enumerate([i for i in torrent_info['files'] if i['selected'] == 1])]
+					# logger('season', season)
+					# logger('selected_files', selected_files)
 					if season:
 						correct_files = []
 						correct_file_check = False
@@ -251,6 +253,10 @@ class RealDebridAPI:
 							if any(x in compare_link for x in EXTRAS): continue
 							else: match = True; break
 						if match: index = [i[0] for i in selected_files if i[1]['path'] == correct_files[0]['path']][0]; break
+						# match = True
+						# index = [i[0] for i in selected_files][0]
+						# logger('index', index)
+						# break
 					elif m2ts_check: match, index = True, [i[0] for i in selected_files if i[1]['id'] == m2ts_key][0]; break
 					else:
 						match = False
@@ -265,6 +271,8 @@ class RealDebridAPI:
 			if match:
 				rd_link = torrent_info['links'][index]
 				file_url = self.unrestrict_link(rd_link)
+				# logger('rd_link', rd_link)
+				# logger('file_url', file_url)
 				if file_url.endswith('rar'): file_url = None
 				if not any(file_url.lower().endswith(x) for x in extensions): file_url = None
 				if not store_to_cloud: Thread(target=self.delete_torrent, args=(torrent_id,)).start()

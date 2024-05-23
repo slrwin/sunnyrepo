@@ -1,5 +1,9 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.53[/B][/COLOR]
+- Some fixes for random list naming when used as widget.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.52[/B][/COLOR]
 YOU WILL LIKELY HAVE TO REMAKE ANY WIDGETS OR SHORTCUT FOLDERS THAT CONTAIN RANDOM ITEMS AFTER THIS UPDATE.
 - Re-write of Random list handling.
