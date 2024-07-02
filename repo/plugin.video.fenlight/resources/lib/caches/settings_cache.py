@@ -178,12 +178,14 @@ def set_source_folder_path(params):
 	return set_path(params)
 
 def restore_setting_default(params):
-	if not confirm_dialog(): return
+	silent = params.get('silent', 'false') == 'true'
+	if not silent and not confirm_dialog(): return
 	try:
 		setting_id = params['setting_id']
 		setting_default = default_setting_values(setting_id)['setting_default']
 		set_setting(setting_id, setting_default)
-	except: ok_dialog(text='Error restoring default setting')
+	except:
+		if not silent: ok_dialog(text='Error restoring default setting')
 
 def default_setting_values(setting_id):
 	return next((i for i in default_settings() if i['setting_id'] == setting_id), None)
@@ -242,6 +244,8 @@ def default_settings():
 {'setting_id': 'single_ep_display_widget', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_minimal_media_info', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'use_viewtypes', 'setting_type': 'boolean', 'setting_default': 'true'},
+{'setting_id': 'shuffle_trakt_personal', 'setting_type': 'boolean', 'setting_default': 'false'},
 #======+============= Trakt Calendar
 {'setting_id': 'trakt.calendar_sort_order', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
 {'setting_id': 'trakt.calendar_previous_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},

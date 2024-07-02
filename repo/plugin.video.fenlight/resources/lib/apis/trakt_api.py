@@ -405,7 +405,8 @@ def trakt_favorites(media_type, dummy_arg):
 
 def get_trakt_list_contents(list_type, user, slug, with_auth):
 	def _process(params):
-		return [{'media_ids': i[i['type']]['ids'], 'title': i[i['type']]['title'], 'type': i['type'], 'order': c} for c, i in enumerate(get_trakt(params))]	
+		return [{'media_ids': i[i['type']]['ids'], 'title': i[i['type']]['title'], 'type': i['type'], 'order': c} \
+				for c, i in enumerate(get_trakt(params)) if i['type'] in ('movie', 'show')]	
 	string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
 	if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full'}, 'method': 'sort_by_headers'}
 	else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'with_auth': with_auth, 'method': 'sort_by_headers'}

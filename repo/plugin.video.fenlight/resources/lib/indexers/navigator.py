@@ -23,6 +23,7 @@ search_mode_dict = {'movie': ('movie_queries', {'mode': 'search.get_key_id', 'me
 				'tmdb_keyword_movie': ('keyword_tmdb_movie_queries', {'mode': 'search.get_key_id', 'search_type': 'tmdb_keyword', 'media_type': 'movie', 'isFolder': 'false'}),
 				'tmdb_keyword_tvshow': ('keyword_tmdb_tvshow_queries', {'mode': 'search.get_key_id', 'search_type': 'tmdb_keyword', 'media_type': 'tvshow', 'isFolder': 'false'}),
 				'easynews_video': ('easynews_video_queries', {'mode': 'search.get_key_id', 'search_type': 'easynews_video', 'isFolder': 'false'}),
+				'easynews_image': ('easynews_image_queries', {'mode': 'search.get_key_id', 'search_type': 'easynews_image', 'isFolder': 'false'}),
 				'trakt_lists': ('trakt_list_queries', {'mode': 'search.get_key_id', 'search_type': 'trakt_lists', 'isFolder': 'false'})}
 
 class Navigator:
@@ -63,7 +64,8 @@ class Navigator:
 		self.end_directory()
 
 	def easynews(self):
-		self.add({'mode': 'navigator.search_history', 'action': 'easynews_video'}, 'Search', 'search')
+		self.add({'mode': 'navigator.search_history', 'action': 'easynews_video'}, 'Search Videos', 'search')
+		self.add({'mode': 'navigator.search_history', 'action': 'easynews_image'}, 'Search Images', 'search')
 		self.add({'mode': 'easynews.account_info', 'isFolder': 'false'}, 'Account Info', 'easynews')
 		self.end_directory()
 
@@ -168,7 +170,8 @@ class Navigator:
 		if get_setting('fenlight.external_scraper.module') not in ('empty_setting', ''):
 			self.add({'mode': 'open_external_scraper_settings', 'isFolder': 'false'}, 'External Scraper Settings', 'settings')
 		self.add({'mode': 'navigator.tips'}, 'Tips for Use', 'settings2')
-		self.add({'mode': 'navigator.set_view_modes'}, 'Set Views', 'settings2')
+		if get_setting('fenlight.use_viewtypes', 'true') == 'true':
+			self.add({'mode': 'navigator.set_view_modes'}, 'Set Views', 'settings2')
 		self.add({'mode': 'build_next_episode_manager'}, 'TV Shows Progress Manager', 'settings2')
 		self.add({'mode': 'navigator.shortcut_folders'}, 'Shortcut Folders Manager', 'settings2')
 		self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
@@ -197,13 +200,13 @@ class Navigator:
 		self.end_directory()
 
 	def set_view_modes(self):
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.main', 'content': '', 'name': 'menus'}, 'Menus', 'settings', False)
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.movies', 'content': 'movies'}, 'Movies', 'settings', False)
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.tvshows', 'content': 'tvshows'}, 'TV Shows', 'settings', False)
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.seasons', 'content': 'seasons'}, 'Seasons', 'settings', False)
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.episodes', 'content': 'episodes'}, 'Episodes', 'settings', False)
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.episodes_single', 'content': 'episodes', 'name': 'episode lists'}, 'Episode Lists', 'settings', False)
-		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.premium', 'content': 'files', 'name': 'premium files'}, 'Premium Files', 'settings', False)
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.main', 'content': '', 'name': 'menus'}, 'Set Menus', 'folder')
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.movies', 'content': 'movies'}, 'Set Movies', 'movies')
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.tvshows', 'content': 'tvshows'}, 'Set TV Shows', 'tv')
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.seasons', 'content': 'seasons'}, 'Set Seasons', 'ontheair')
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.episodes', 'content': 'episodes'}, 'Set Episodes', 'next_episodes')
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.episodes_single', 'content': 'episodes', 'name': 'episode lists'}, 'Set Episode Lists', 'calender')
+		self.add({'mode': 'navigator.choose_view', 'view_type': 'view.premium', 'content': 'files', 'name': 'premium files'}, 'Set Premium Files', 'premium')
 		self.end_directory()
 
 	def update_utils(self):
@@ -214,10 +217,10 @@ class Navigator:
 
 	def changelog_utils(self):
 		fenlight_clogpath = tp('special://home/addons/plugin.video.fenlight/resources/text/changelog.txt')
-		self.add({'mode': 'show_text', 'heading': 'Changelog', 'file': fenlight_clogpath, 'font_size': 'large', 'isFolder': 'false'}, 'Changelog', 'lists', False)
-		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer', 'file': log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer', 'lists', False)
-		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer (Old)', 'file': old_log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer (Old)', 'lists', False)
-		self.add({'mode': 'upload_logfile', 'isFolder': 'false'}, 'Upload Kodi Log to Pastebin', 'lists', False)
+		self.add({'mode': 'show_text', 'heading': 'Changelog', 'file': fenlight_clogpath, 'font_size': 'large', 'isFolder': 'false'}, 'Changelog', 'lists')
+		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer', 'file': log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer', 'lists')
+		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer (Old)', 'file': old_log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer (Old)', 'lists')
+		self.add({'mode': 'upload_logfile', 'isFolder': 'false'}, 'Upload Kodi Log to Pastebin', 'lists')
 		self.end_directory()
 
 	def certifications(self):
@@ -275,7 +278,7 @@ class Navigator:
 		setting_id, action_dict = search_mode_dict[self.list_name]
 		url_params = dict(action_dict)
 		data = main_cache.get(setting_id) or []
-		self.add(action_dict, '[B]NEW SEARCH...[/B]', 'search_new', False)
+		self.add(action_dict, '[B]NEW SEARCH...[/B]', 'search_new')
 		for i in data:
 			try:
 				key_id = unquote(i)
@@ -306,10 +309,10 @@ class Navigator:
 		self.end_directory()
 
 	def choose_view(self):
-		view_type, content = self.params['view_type'], self.params['content']
+		content = self.params['content']
 		name = self.params.get('name') or content
 		handle = int(sys.argv[1])
-		self.add({'mode': 'navigator.set_view', 'view_type': view_type, 'name': name, 'isFolder': 'false'}, 'Set view and then click here', 'settings', False)
+		self.add({'mode': 'navigator.set_view', 'view_type': view_type, 'name': name, 'isFolder': 'false'}, 'Set view and then click here', 'settings')
 		set_content(handle, content)
 		end_directory(handle)
 		set_view_mode(view_type, content, False)
@@ -355,7 +358,7 @@ class Navigator:
 					('[B]Clear All[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'clear'}))]
 				self.add(item, item_get('name'), icon, original_image, cm_items=cm_items)
 		elif is_random: pass
-		else: self.add({'mode': 'menu_editor.shortcut_folder_add', 'name': list_name, 'isFolder': 'false'}, '[I]Add Content...[/I]', 'new', False)
+		else: self.add({'mode': 'menu_editor.shortcut_folder_add', 'name': list_name, 'isFolder': 'false'}, '[I]Add Content...[/I]', 'new')
 		self.end_directory()
 
 	def discover_contents(self):
@@ -396,7 +399,7 @@ class Navigator:
 			params = {'mode': 'show_text', 'heading': tip, 'file': tp(tips_location % item), 'font_size': 'large', 'isFolder': 'false'}
 			tips_append((params, tip, sort_order))
 		item_list = sorted(tips_list, key=lambda x: x[2])
-		for c, i in enumerate(item_list, 1): self.add(i[0], '[B]%02d. [/B]%s' % (c, i[1]), 'information', False)
+		for c, i in enumerate(item_list, 1): self.add(i[0], '[B]%02d. [/B]%s' % (c, i[1]), 'information')
 		self.end_directory()
 
 	def because_you_watched(self):
@@ -406,7 +409,7 @@ class Navigator:
 		for item in recently_watched:
 			if media_type == 'movie': name, tmdb_id = item['title'], item['media_id']
 			else: name, tmdb_id = '%s - %sx%s' % (item['title'], str(item['season']), str(item['episode'])), item['media_ids']['tmdb']
-			self.add({'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Because You Watched %s' % name}, name, 'because_you_watched', False)
+			self.add({'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Because You Watched %s' % name}, name, 'because_you_watched')
 		self.end_directory()
 
 	def build_random_lists(self):

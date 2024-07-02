@@ -106,7 +106,9 @@ class Downloader:
 		if self.url in (None, 'None', ''): return self.return_notification(_notification='No URL found for Download. Pick another Source')
 		self.get_filename()
 		self.get_extension()
-		if not self.download_check(): return self.return_notification(_ok_dialog='Failed')
+		if not self.download_check():
+			if self.media_type == 'thumb_url': return
+			return self.return_notification(_ok_dialog='Failed')
 		if not self.confirm_download(): return self.return_notification(_notification='Cancelled')
 		self.get_download_folder()
 		if not self.get_destination_folder(): return self.return_notification(_notification='Cancelled')
@@ -209,8 +211,7 @@ class Downloader:
 
 	def get_download_folder(self):
 		self.down_folder = download_directory(self.media_type)
-		if self.media_type == 'thumb_url':
-			self.down_folder = os.path.join(self.down_folder, '.thumbs')
+		if self.media_type == 'thumb_url': self.down_folder = os.path.join(self.down_folder, '.thumbs')
 		for level in levels:
 			try: make_directory(os.path.abspath(os.path.join(self.down_folder, level)))
 			except: pass
@@ -355,8 +356,10 @@ class Downloader:
 		except: return None
 
 	def finish_download(self, status):
-		if self.action == 'image': notification(status.upper(), 2500, self.image)
-		elif not get_visibility('Window.IsActive(fullscreenvideo)'):
+		if self.action == 'image':
+			if self.media_type == 'image_url': return notification(status.upper(), 2500, self.final_destination)
+			else: return
+		if not get_visibility('Window.IsActive(fullscreenvideo)'):
 			notification('[B]%s[/B] %s' % (status.upper(), self.final_name.replace('.', ' ').replace('_', ' ')), 2500, self.image)
 		self.remove_active_download()
 

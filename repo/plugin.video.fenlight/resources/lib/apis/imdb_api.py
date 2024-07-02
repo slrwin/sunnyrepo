@@ -10,6 +10,7 @@ from modules.utils import remove_accents, replace_html_codes
 
 # headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'}
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
+# headers = {'User-Agent': 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543 Safari/419.3'}
 base_url = 'https://www.imdb.com/%s'
 reviews_url = 'title/%s/reviews/_ajax?paginationKey=%s'
 trivia_url = 'title/%s/trivia'
@@ -67,7 +68,7 @@ def imdb_images(imdb_id, page_no):
 	url = base_url % images_url % (imdb_id, page_no)
 	params = {'url': url, 'action': 'imdb_images', 'next_page': int(page_no)+1, 'total_tries': 0}
 	result = get_imdb(params)
-	if result == 'failed': return None
+	if result == 'failed': return ([], 1)
 	main_cache.set(string, result, expiration=168)
 	return result
 
@@ -174,39 +175,40 @@ def get_imdb(params):
 		all_reviews = non_spoiler_list + spoiler_list
 		imdb_list = list(_process())
 	elif action == 'imdb_images':
-		def _process():
-			for item in image_results:
-				try:
-					try: title = re.search(r'alt="(.+?)"', item, re.DOTALL).group(1)
-					except: title = ''
-					try:
-						thumb = re.search(r'src="(.+?)"', item, re.DOTALL).group(1)
-						split = thumb.split('_V1_')[0]
-						thumb = split + '_V1_UY300_CR26,0,300,300_AL_.jpg'
-						image = split + '_V1_.jpg'
-						images = {'title': title, 'thumb': thumb, 'image': image}
-					except: continue
-					yield images
-				except: pass
-		total_tries = params['total_tries']
-		if params['total_tries'] == 5: return 'failed'
-		image_results = []
-		result = requests.get(url, timeout=timeout, headers=headers)
-		result = remove_accents(result.text)
-		result = result.replace('\n', ' ')		
-		if not 'xmlns:og="http://ogp.me/ns#"' in result:
-			params['total_tries'] += 1
-			return get_imdb(params)
-		try:
-			pages = parseDOM(result, 'span', attrs={'class': 'page_list'})[0]
-			pages = [int(i) for i in parseDOM(pages, 'a')]
-		except: pages = [1]
-		if params['next_page'] in pages: next_page = params['next_page']
-		try:
-			image_results = parseDOM(result, 'div', attrs={'class': 'media_index_thumb_list'})[0]
-			image_results = parseDOM(image_results, 'a')
-		except: pass
-		if image_results: imdb_list = list(_process())
+		pass
+		# def _process():
+		# 	for item in image_results:
+		# 		try:
+		# 			try: title = re.search(r'alt="(.+?)"', item, re.DOTALL).group(1)
+		# 			except: title = ''
+		# 			try:
+		# 				thumb = re.search(r'src="(.+?)"', item, re.DOTALL).group(1)
+		# 				split = thumb.split('_V1_')[0]
+		# 				thumb = split + '_V1_UY300_CR26,0,300,300_AL_.jpg'
+		# 				image = split + '_V1_.jpg'
+		# 				images = {'title': title, 'thumb': thumb, 'image': image}
+		# 			except: continue
+		# 			yield images
+		# 		except: pass
+		# total_tries = params['total_tries']
+		# if params['total_tries'] == 3: return 'failed'
+		# image_results = []
+		# result = requests.get(url, timeout=timeout, headers=headers)
+		# result = remove_accents(result.text)
+		# result = result.replace('\n', ' ')		
+		# if not 'xmlns:og="http://ogp.me/ns#"' in result:
+		# 	params['total_tries'] += 1
+		# 	return get_imdb(params)
+		# try:
+		# 	pages = parseDOM(result, 'span', attrs={'class': 'page_list'})[0]
+		# 	pages = [int(i) for i in parseDOM(pages, 'a')]
+		# except: pages = [1]
+		# if params['next_page'] in pages: next_page = params['next_page']
+		# try:
+		# 	image_results = parseDOM(result, 'div', attrs={'class': 'media_index_thumb_list'})[0]
+		# 	image_results = parseDOM(image_results, 'a')
+		# except: pass
+		# if image_results: imdb_list = list(_process())
 	elif action == 'imdb_videos':
 		def _process():
 			for count, item in enumerate(playlists, 1):

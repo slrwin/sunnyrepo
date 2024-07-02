@@ -38,18 +38,18 @@ trakt_default_secret = '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218
 int_window_prop, pause_services_prop, firstrun_update_prop = 'fenlight.internal_results.%s', 'fenlight.pause_services', 'fenlight.firstrun_update'
 current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
-sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2}
+sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2, 'none': 0}
 playlist_type_dict = {'music': 0, 'video': 1}
 tmdb_dict_removals = ('adult', 'backdrop_path', 'genre_ids', 'original_language', 'original_title', 'overview', 'popularity', 'vote_count', 'video', 'origin_country', 'original_name')
 extras_button_label_values = {
 				'movie':
 					{'movies_play': 'Playback', 'show_trailers': 'Trailer', 'show_images': 'Images',  'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
-					'show_director': 'Director', 'show_options': 'Options', 'show_media_images': 'Media Images', 'show_recommended': 'Recommended',
+					'show_director': 'Director', 'show_options': 'Options', 'show_recommended': 'Recommended',
 					'show_trakt_manager': 'Trakt Manager', 'playback_choice': 'Playback Options', 'show_favorites_manager': 'Favorites Manager', 'show_plot': 'Plot',
 					'show_keywords': 'Keywords'},
 				'tvshow':
 					{'tvshow_browse': 'Browse', 'show_trailers': 'Trailer', 'show_images': 'Images', 'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
-					'play_nextep': 'Play Next', 'show_options': 'Options', 'show_media_images': 'Media Images', 'show_recommended': 'Recommended',
+					'play_nextep': 'Play Next', 'show_options': 'Options', 'show_recommended': 'Recommended',
 					'show_trakt_manager': 'Trakt Manager', 'play_random_episode': 'Play Random', 'show_favorites_manager': 'Favorites Manager', 'show_plot': 'Plot',
 					'show_keywords': 'Keywords'}}
 video_extensions = ('m4v', '3g2', '3gp', 'nsv', 'tp', 'ts', 'ty', 'pls', 'rm', 'rmvb', 'mpd', 'ifo', 'mov', 'qt', 'divx', 'xvid', 'bivx', 'vob', 'nrg', 'img', 'iso', 'udf', 'pva',
@@ -98,6 +98,7 @@ def end_directory(handle, cacheToDisc=True):
 	endOfDirectory(handle, cacheToDisc=cacheToDisc)
 
 def set_view_mode(view_type, content='files', is_external=None):
+	if not get_property('fenlight.use_viewtypes') == 'true': return
 	if is_external == None: is_external = external()
 	if is_external: return
 	view_id = get_property('fenlight.%s' % view_type) or None

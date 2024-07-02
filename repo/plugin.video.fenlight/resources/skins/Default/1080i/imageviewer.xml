@@ -49,7 +49,7 @@
                         <height>1080</height>
                         <aspectratio>keep</aspectratio>
                         <fadetime>200</fadetime>
-                        <texture>$INFO[ListItem.Property(image)]</texture>
+                        <texture fallback="$INFO[Window.Property(backup_thumbnail)]">$INFO[ListItem.Property(image)]</texture>
                     </control>
                 </focusedlayout>
             </control>

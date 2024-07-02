@@ -293,7 +293,7 @@
                             <height>70</height>
                             <onleft>13</onleft>
                             <onright>11</onright>
-                            <onup>2062</onup>
+                            <onup>2061</onup>
                             <ondown>14</ondown>
                             <label>$INFO[Window.Property(button10.label)]</label>
                             <font>font13</font> <!-- FENLIGHT_30 -->
@@ -309,7 +309,7 @@
                             <height>70</height>
                             <onleft>10</onleft>
                             <onright>12</onright>
-                            <onup>2062</onup>
+                            <onup>2061</onup>
                             <ondown>15</ondown>
                             <label>$INFO[Window.Property(button11.label)]</label>
                             <font>font13</font> <!-- FENLIGHT_30 -->
@@ -325,7 +325,7 @@
                             <height>70</height>
                             <onleft>11</onleft>
                             <onright>13</onright>
-                            <onup>2062</onup>
+                            <onup>2061</onup>
                             <ondown>16</ondown>
                             <label>$INFO[Window.Property(button12.label)]</label>
                             <font>font13</font> <!-- FENLIGHT_30 -->
@@ -341,7 +341,7 @@
                             <height>70</height>
                             <onleft>12</onleft>
                             <onright>10</onright>
-                            <onup>2062</onup>
+                            <onup>2061</onup>
                             <ondown>17</ondown>
                             <label>$INFO[Window.Property(button13.label)]</label>
                             <font>font13</font> <!-- FENLIGHT_30 -->
@@ -1667,7 +1667,7 @@
                             <width>1170</width>
                             <height>15</height>
                             <onup>2061</onup>
-                            <ondown>2062</ondown>
+                            <ondown>10</ondown>
                             <texturesliderbackground colordiffuse="FF1F2020">fenlight_common/white.png</texturesliderbackground>
                             <texturesliderbar colordiffuse="FF555556">fenlight_common/white.png</texturesliderbar>
                             <texturesliderbarfocus colordiffuse="FFCCCCCC">fenlight_common/white.png</texturesliderbarfocus>
@@ -1690,75 +1690,6 @@
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2061) | Control.HasFocus(4061)] + Container(2061).HasNext</visible>
-                        </control>
-                    </control>
-                </control>
-                <!-- Media Images 2062 -->
-                <control type="group">
-                    <visible>Integer.IsGreater(Container(2062).NumItems,0)</visible>
-                    <height>760</height>
-                    <control type="group">
-                        <control type="label">
-                            <width min="30" max="1160">auto</width>
-                            <height>20</height>
-                            <font>font14</font> <!-- FENLIGHT_33 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Media Images $INFO[Window.Property(media_images.number)][/B]</label>
-                            <visible>!Control.HasFocus(2062)</visible>
-                        </control>
-                        <control type="label">
-                            <width min="30" max="1160">auto</width>
-                            <height>20</height>
-                            <font>font14</font> <!-- FENLIGHT_33 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Media Images | [/B]$INFO[Container(2062).ListItem.Property(name)]</label>
-                            <visible>Control.HasFocus(2062)</visible>
-                        </control>
-                        <control type="fixedlist" id="2062">
-                            <animation effect="slide" end="-320,0" time="0" condition="Integer.IsEqual(Container(2062).NumItems,1) | Integer.IsEqual(Container(2062).NumItems,2)">Conditional</animation>
-                            <top>60</top>
-                            <width>1180</width>
-                            <height>360</height>
-                            <onup>2061</onup>
-                            <ondown>10</ondown>
-                            <scrolltime tween="sine">500</scrolltime>
-                            <orientation>horizontal</orientation>
-                            <focusposition>1</focusposition>
-                            <movement>1</movement>
-                            <itemlayout height="320" width="320">
-                                <control type="image">
-                                    <left>10</left>
-                                    <top>10</top>
-                                    <width>300</width>
-                                    <height>300</height>
-                                    <aspectratio>keep</aspectratio>
-                                    <texture>$INFO[ListItem.Property(thumbnail)]</texture>
-                                </control>
-                            </itemlayout>
-                            <focusedlayout height="320" width="320">
-                                <control type="group">
-                                    <control type="image">
-                                        <animation type="Focus" reversible="false">
-                                            <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
-                                            <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
-                                        </animation>
-                                        <left>0</left>
-                                        <top>0</top>
-                                        <width>320</width>
-                                        <height>320</height>
-                                        <texture colordiffuse="FFCCCCCC" border="12">fenlight_common/panel-256-box.png</texture>
-                                        <visible>Control.HasFocus(2062)</visible>
-                                    </control>
-                                    <control type="image">
-                                        <left>10</left>
-                                        <top>10</top>
-                                        <width>300</width>
-                                        <height>300</height>
-                                        <aspectratio>keep</aspectratio>
-                                        <texture>$INFO[ListItem.Property(thumbnail)]</texture>
-                                    </control>
-                                </control>
-                            </focusedlayout>
                         </control>
                     </control>
                 </control>

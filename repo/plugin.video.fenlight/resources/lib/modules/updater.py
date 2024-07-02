@@ -91,8 +91,8 @@ def update_check(action=4):
 		if action == 4: return ok_dialog(heading=heading_str, text=result_str % (current_version, online_type, online_version, no_update_str))
 		return
 	if action in (0, 4):
-		if confirm_dialog(heading=heading_str, text=view_changes_str % online_version): get_changes(use_test_repo, online_version)
-		if not confirm_dialog(heading=heading_str, text=result_str % (current_version, online_type, online_version, update_available_str)): return
+		if confirm_dialog(heading=heading_str, text=view_changes_str % online_version, ok_label='Yes', cancel_label='No'): get_changes(use_test_repo, online_version)
+		if not confirm_dialog(heading=heading_str, text=result_str % (current_version, online_type, online_version, update_available_str), ok_label='Yes', cancel_label='No'): return
 	if action == 1: notification(notification_occuring_str, icon=downloads_icon)
 	elif action == 2: return notification(notification_available_str, icon=downloads_icon)
 	return update_addon(online_version, action, use_test_repo)

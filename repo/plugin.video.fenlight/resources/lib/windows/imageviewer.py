@@ -2,8 +2,10 @@
 from windows.base_window import BaseDialog, window_manager, json, select_dialog
 from indexers.people import person_data_dialog
 from modules.settings import download_directory
-from modules.kodi_utils import default_addon_fanart, nextpage
-from modules.kodi_utils import logger
+from modules.kodi_utils import default_addon_fanart, get_icon, nextpage
+# from modules.kodi_utils import logger
+
+backup_thumbnail = get_icon('genre_family')
 
 class ThumbImageViewer(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -16,7 +18,6 @@ class ThumbImageViewer(BaseDialog):
 		self.ImagesInstance = kwargs.get('ImagesInstance')
 
 	def onInit(self):
-		self.set_home_property('window_loaded', 'true')
 		self.make_page()
 
 	def run(self):
@@ -49,7 +50,7 @@ class ThumbImageViewer(BaseDialog):
 				#download
 				name, thumb, path = chosen_listitem.getProperty('name'), chosen_listitem.getProperty('thumb'), chosen_listitem.getProperty('path')
 				if not path: return self.notification('No Image Path to Download')
-				params = {'mode': 'downloader.runner', 'action': 'image', 'name': name, 'thumb_url': thumb, 'image_url': path, 'media_type': 'image', 'image': thumb}
+				params = {'mode': 'downloader.runner', 'action': 'image', 'name': name, 'thumb_url': thumb, 'image_url': path, 'media_type': 'image', 'image': path}
 				self.execute_code('RunPlugin(%s)' % self.build_url(params))
 
 	def make_page(self):
@@ -108,6 +109,7 @@ class ThumbImageViewer(BaseDialog):
 	def set_properties(self):
 		self.setProperty('page_no', str(self.current_page))
 		self.setProperty('fanart', default_addon_fanart)
+		self.setProperty('backup_thumbnail', backup_thumbnail)
 
 class ImageViewer(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -145,3 +147,4 @@ class ImageViewer(BaseDialog):
 
 	def set_properties(self):
 		self.setProperty('fanart', default_addon_fanart)
+		self.setProperty('backup_thumbnail', backup_thumbnail)

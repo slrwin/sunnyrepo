@@ -2,7 +2,7 @@
 import re
 from xml.dom.minidom import parse as mdParse
 from modules import kodi_utils
-from caches.settings_cache import get_setting
+from caches.settings_cache import get_setting, set_setting, restore_setting_default
 from modules.utils import manual_function_import
 
 window_xml_dialog, logger, player, notification, delete_folder = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.player, kodi_utils.notification, kodi_utils.delete_folder
@@ -152,6 +152,12 @@ class BaseDialog(window_xml_dialog):
 
 	def get_setting(self, setting_id, setting_default=''):
 		return get_setting(setting_id, setting_default)
+
+	def set_setting(self, setting_id, value):
+		set_setting(setting_id, value)
+
+	def restore_setting_default(self, params):
+		restore_setting_default(params)
 
 	def make_listitem(self):
 		return make_listitem()

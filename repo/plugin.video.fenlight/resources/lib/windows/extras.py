@@ -40,7 +40,7 @@ setting_base, label_base, ratings_icon_base = 'fenlight.extras.%s.button', 'butt
 separator = '[B]  •  [/B]'
 button_ids = (10, 11, 12, 13, 14, 15, 16, 17, 50)
 plot_id, cast_id, recommended_id, reviews_id, comments_id, trivia_id, blunders_id, parentsguide_id = 2000, 2050, 2051, 2052, 2053, 2054, 2055, 2056
-videos_id, year_id, genres_id, networks_id, collection_id, media_images_id = 2057, 2058, 2059, 2060, 2061, 2062
+videos_id, year_id, genres_id, networks_id, collection_id = 2057, 2058, 2059, 2060, 2061
 items_list_ids = (recommended_id, year_id, genres_id, networks_id, collection_id)
 text_list_ids = (reviews_id, trivia_id, blunders_id, parentsguide_id, comments_id)
 finished_tvshow = ('', 'Ended', 'Canceled')
@@ -59,7 +59,7 @@ class Extras(BaseDialog):
 		self.set_properties()
 		self.tasks = (self.set_artwork, self.set_infoline1, self.set_infoline2, self.make_ratings, self.make_cast, self.make_recommended, self.make_reviews,
 					self.make_comments, self.make_trivia, self.make_blunders, self.make_parentsguide, self.make_videos, self.make_year, self.make_genres,
-					self.make_network, self.make_collection, self.make_media_images)
+					self.make_network, self.make_collection)
 
 	def onInit(self):
 		self.set_home_property('window_loaded', 'true')
@@ -75,7 +75,9 @@ class Extras(BaseDialog):
 
 	def set_default_focus(self):
 		try: self.setFocusId(10)
-		except: self.close()
+		except:
+			self.close_all()
+			self.close()
 
 	def run(self):
 		self.doModal()
@@ -125,8 +127,6 @@ class Extras(BaseDialog):
 				self.set_current_params()
 				self.window_player_url = chosen
 				return window_player(self)
-			elif self.control_id == media_images_id:
-				return self.select_item(self.control_id, _images({'mode': 'imageviewer','all_images': self.get_attribute(self, chosen_var), 'current_index': position}))
 			elif self.control_id in text_list_ids:
 				if self.control_id == parentsguide_id: return self.show_text_media(text=chosen_var)
 				else: return self.select_item(self.control_id, self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=position))
@@ -352,28 +352,6 @@ class Extras(BaseDialog):
 			self.add_items(collection_id, item_list)
 		except: pass
 
-	def make_media_images(self):
-		if not media_images_id in self.enabled_lists: return
-		def builder():
-			for item in all_images:
-				try:
-					listitem = self.make_listitem()
-					listitem.setProperty('name', item[1])
-					listitem.setProperty('thumbnail', item[0])
-					listitem.setProperty('content_list', 'all_media_images')
-					yield listitem
-				except: pass
-		try:
-			all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i.capitalize())) for i in ('poster', 'fanart', 'landscape', 'clearlogo')]
-			all_images = [i for i in all_images if not i[0] in missing_image_check]
-			if not all_images: return
-			self.all_media_images = [(change_image_resolution(i[0], 'original'), i[1]) for i in all_images]
-			item_list = list(builder())
-			self.setProperty('media_images.number', count_insert % len(item_list))
-			self.item_action_dict[media_images_id] = 'content_list'
-			self.add_items(media_images_id, item_list)
-		except: pass
-
 	def get_extra_ratings(self):
 		if not self.display_extra_ratings: return None
 		data = self.meta_get('extra_ratings', None) or fetch_ratings_info(self.meta, self.omdb_api)
@@ -515,14 +493,7 @@ class Extras(BaseDialog):
 		return window_player(self)
 
 	def show_images(self):
-		return _images({'mode': 'imdb_image_results', 'imdb_id': self.imdb_id, 'media_title': self.rootname, 'page_no': 1, 'rolling_count_list': [0]})
-
-	def show_media_images(self):
-		all_images = [(self.get_attribute(self, i), '%s %s' % (self.title, i)) for i in ('poster', 'fanart', 'landscape', 'clearlogo')]
-		all_images = [i for i in all_images if not i[0] in missing_image_check]
-		if not all_images: return self.notification('No Media Images to Display')
-		all_images = [(i[0], change_image_resolution(i[0], 'original'), i[1]) for i in all_images]
-		return _images({'mode': 'tmdb_media_image_results', 'all_images': all_images})
+		return _images({'mode': 'tmdb_media_image_results', 'media_type': self.media_type, 'tmdb_id': self.tmdb_id})
 
 	def show_extrainfo(self, media_type=None, meta=None, poster=None):
 		text = media_extra_info({'media_type': media_type or self.media_type, 'meta': meta or self.meta})
@@ -552,6 +523,7 @@ class Extras(BaseDialog):
 		Sources().playback_prep(url_params)
 
 	def play_random_episode(self):
+		self.close_all()
 		function = random_choice({'meta': self.meta, 'poster': self.poster, 'return_choice': 'true'})
 		if not function: return
 		exec('EpisodeTools(self.meta).%s()' % function)
@@ -570,6 +542,7 @@ class Extras(BaseDialog):
 		return options_menu_choice(params, self.meta)
 
 	def show_recommended(self):
+		self.close_all()
 		mode, action = ('build_movie_list', 'tmdb_movies_recommendations') if self.media_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_recommendations')
 		self.selected = self.folder_runner({'mode': mode, 'action': action, 'key_id': self.tmdb_id, 'name': 'Recommended based on %s' % self.title})
 		self.close()
@@ -592,8 +565,15 @@ class Extras(BaseDialog):
 	def assign_buttons(self):
 		setting_id_base = setting_base % self.media_type
 		for item in button_ids[:-1]:
-			button_action = self.get_setting(setting_id_base + str(item))
-			self.setProperty(label_base % item, extras_button_label_values[self.media_type][button_action])
+			setting_id = setting_id_base + str(item)
+			try:
+				button_action = self.get_setting(setting_id)
+				button_label = extras_button_label_values[self.media_type][button_action]
+			except:
+				self.restore_setting_default({'setting_id': setting_id.replace('fenlight.', ''), 'silent': 'true'})
+				button_action = self.get_setting(setting_id)
+				button_label = extras_button_label_values[self.media_type][button_action]
+			self.setProperty(label_base % item, button_label)
 			self.button_action_dict[item] = button_action
 		self.button_action_dict[50] = 'show_plot'
 

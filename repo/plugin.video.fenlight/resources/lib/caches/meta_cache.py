@@ -137,7 +137,7 @@ class MetaCache:
 		try:
 			dbcon = connect_database('metacache_db')
 			current_time = get_timestamp()
-			cache_data = dbcon.execute(GET_FUNCTION, (prop_string,))[0]
+			cache_data = dbcon.execute(GET_FUNCTION, (prop_string,)).fetchone()
 			if cache_data:
 				if cache_data[2] > current_time: result = eval(cache_data[1])
 				else: dbcon.execute(DELETE_FUNCTION, (prop_string,))

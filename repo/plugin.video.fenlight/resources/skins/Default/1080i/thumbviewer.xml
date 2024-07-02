@@ -78,12 +78,19 @@
                 <scrolltime tween="sine">350</scrolltime>
                 <itemlayout height="330" width="330">
                     <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>320</width>
+                        <height>320</height>
+                        <texture colordiffuse="FF1F2020" border="12">fenlight_common/panel-256-box.png</texture>
+                    </control>
+                    <control type="image">
                         <left>10</left>
                         <top>10</top>
                         <width>300</width>
                         <height>300</height>
                         <aspectratio>keep</aspectratio>
-                        <texture>$INFO[ListItem.Property(thumb)]</texture>
+                        <texture fallback="$INFO[Window.Property(backup_thumbnail)]">$INFO[ListItem.Property(thumb)]</texture>
                     </control>
                 </itemlayout>
                 <focusedlayout height="330" width="330">

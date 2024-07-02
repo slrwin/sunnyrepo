@@ -13,10 +13,10 @@ tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'
 default_image = get_icon('genre_family')
 
 def tmdb_people(params):
-	Images().run({'mode': 'tmdb_people_image_results', 'action': params['action'], 'page_no': 1})
+	return Images().run({'mode': 'tmdb_people_list_image_results', 'action': params['action'], 'page_no': 1})
 
 def person_search(key_id=None):
-	return Images().run({'mode': 'people_search_image_results', 'key_id': unquote(key_id), 'page_no': 1})
+	return Images().run({'mode': 'tmdb_people_search_image_results', 'key_id': unquote(key_id), 'page_no': 1})
 
 def person_data_dialog(params):
 	if 'key_id' in params: key_id = unquote(params.get('key_id'))

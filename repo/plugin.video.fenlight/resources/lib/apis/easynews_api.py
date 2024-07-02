@@ -5,13 +5,14 @@ from caches.base_cache import connect_database
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
-from modules.kodi_utils import make_session, json, urlencode, quote, clear_property
+from modules.kodi_utils import make_session, json, urlencode, quote, clear_property, parse_qsl
 # from modules.kodi_utils import logger
 
 video_extensions = 'm4v,3g2,3gp,nsv,tp,ts,ty,pls,rm,rmvb,mpd,ifo,mov,qt,divx,xvid,bivx,vob,nrg,img,iso,udf,pva,wmv,asf,asx,ogm,m2v,avi,bin,dat,mpg,mpeg,mp4,mkv,mk3d,avc,vp3,svq3,' \
 					'nuv,viv,dv,fli,flv,wpl,xspf,vdr,dvr-ms,xsp,mts,m2t,m2ts,evo,ogv,sdp,avs,rec,url,pxml,vc1,h264,rcv,rss,mpls,mpl,webm,bdmv,bdm,wtv,trp,f4v,pvr,disc'
-SEARCH_PARAMS = {'st': 'adv', 'sb': 1, 'fex': video_extensions, 'fty[]': 'VIDEO', 'spamf': 1, 'u': '1', 'gx': 1,
-				'pno': 1, 'sS': 3, 's1': 'relevance', 's1d': '-', 's2d': '-', 's3d': '-', 'pby': 1000}
+SEARCH_PARAMS = {'st': 'adv', 'sb': 1, 'fex': video_extensions, 'fty[]': 'VIDEO', 'spamf': 1, 'u': 1, 'gx': 1, 'pno': 1, 'sS': 3, 's1': 'relevance', 's1d': '-', 'pby': 1000}
+IMAGE_SEARCH_PARAMS = {'st': 'adv', 'sb': 1, 'pno': 1, 'chxu': 1, 'u': 1, 'chxgx': 1, 's1': 'dtime', 's1d': '-', 'fty[]': 'IMAGE', 'pby': 50}
+search_types_params = {'VIDEO': SEARCH_PARAMS, 'IMAGE': IMAGE_SEARCH_PARAMS}
 timeout = 20.0
 session = make_session()
 
@@ -46,6 +47,13 @@ class EasyNewsAPI:
 		string = 'EASYNEWS_SEARCH_' + urlencode(self.params)
 		return cache_object(self._process_search, string, url, json=False, expiration=expiration)
 
+	def search_images(self, query, page_no=1, expiration=48):
+		self.base_process = self.process_image_files
+		url, self.params = self._translate_search(query, search_type='IMAGE')
+		self.params['pno'] = int(page_no)
+		string = 'EASYNEWS_IMAGE_SEARCH_%s_%s' % (urlencode(self.params), page_no)
+		return cache_object(self._process_search, string, url, json=False, expiration=expiration)
+
 	def account(self):
 		account_info, usage_info = self.account_info(), self.usage_info()
 		return account_info, usage_info
@@ -68,6 +76,37 @@ class EasyNewsAPI:
 			usage_info[1] = re.sub(r'[</].+?>', '', usage_info[1])
 		except: pass
 		return usage_info
+
+	def process_image_files(self, files):
+		def _process():
+			for item in files:
+				try:
+					post_hash, size, post_title, ext = item['0'], item['4'], item['10'], item['11']
+					if ext == '.gif': continue
+					if 'type' in item and item['type'].upper() != 'IMAGE': continue
+					elif 'virus' in item and item['virus']: continue
+					url_add = quote('/%s/%s/%s%s/%s%s' % (dl_farm, dl_port, post_hash, ext, post_title, ext))
+					url_dl = download_url + url_add
+					file_dl = down_url + url_add + '|Authorization=%s' % self.auth_quoted
+					thumbnail = 'https://th.easynews.com/thumbnails-%s/sm-%s.jpg' % (post_hash[0:3], post_hash)
+					result = {'name': post_title,
+							  'fullsize': size,
+							  'fullres': item['fullres'],
+							  'url_dl': url_dl,
+							  'down_url': file_dl,
+							  'version': 'version2',
+							  'thumbnail': thumbnail}
+					yield result
+				except Exception as e:
+					from modules.kodi_utils import logger
+					logger('easynews API Exception', str(e))
+		down_url = files.get('downURL')
+		download_url = 'https://%s:%s@members.easynews.com/dl' % (quote(self.username), quote(self.password))
+		dl_farm, dl_port = self.get_farm_and_port(files)
+		total_results, total_pages = files.get('results'), files.get('numPages')
+		files = files.get('data', [])
+		results = list(_process())
+		return {'total_results': total_results, 'total_pages': total_pages, 'results': results}
 
 	def _process_files(self, files):
 		def _process():
@@ -141,8 +180,8 @@ class EasyNewsAPI:
 		results = list(_process())
 		return results
 
-	def _translate_search(self, query):
-		params = SEARCH_PARAMS
+	def _translate_search(self, query, search_type='VIDEO'):
+		params = search_types_params[search_type]
 		params['safeO'] = 0
 		params['gps'] = query
 		url = self.base_url + self.search_link
@@ -200,10 +239,20 @@ class EasyNewsAPIv3(EasyNewsAPI):
 def clear_media_results_database():
 	dbcon = connect_database('maincache_db')
 	easynews_results = [str(i[0]) for i in dbcon.execute("SELECT id FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'").fetchall()]
-	if not easynews_results: return True
-	try:
-		dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'")
-		for i in easynews_results: clear_property(i)
-		return True
-	except: return False
+	if easynews_results:
+		try:
+			dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'")
+			for i in easynews_results: clear_property(i)
+			process_result = True
+		except: process_result = False
+	else: process_result = True
+	easynews_image_results = [str(i[0]) for i in dbcon.execute("SELECT id FROM maincache WHERE id LIKE 'EASYNEWS_IMAGE_SEARCH_%'").fetchall()]
+	if easynews_image_results:
+		try:
+			dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_IMAGE_SEARCH_%'")
+			for i in easynews_image_results: clear_property(i)
+			process_image_result = True
+		except: process_image_result = False
+	else: process_image_result = True
+	return (process_result, process_image_result) == (True, True)
 

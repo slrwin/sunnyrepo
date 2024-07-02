@@ -7,7 +7,7 @@ from modules.downloader import manager
 from modules import kodi_utils, source_utils, settings, metadata
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
 get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
@@ -17,7 +17,7 @@ kodi_refresh, container_refresh_input, autoscrape_next_episode = kodi_utils.kodi
 json, build_url, select_dialog, clear_property = kodi_utils.json, kodi_utils.build_url, kodi_utils.select_dialog, kodi_utils.clear_property
 run_plugin, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window, addon_fanart = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.default_addon_fanart
-addon_icon, poster_empty = kodi_utils.addon_icon, kodi_utils.empty_poster
+addon_icon, poster_empty, parse_qsl, get_infolabel = kodi_utils.addon_icon, kodi_utils.empty_poster, kodi_utils.parse_qsl, kodi_utils.get_infolabel
 extras_button_label_values, jsonrpc_get_addons = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 audio_filters, extras_open_action, tmdb_api_key = settings.audio_filters, settings.extras_open_action, settings.tmdb_api_key
@@ -174,9 +174,8 @@ def playback_choice(params):
 			{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'},
 			{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'},
 			{'line': 'Scrape With All Filters Ignored', 'function': 'scrape_with_filters_ignored'}]
-	if aliases: items += [{'line': 'Scrape with an Alias', 'function': 'scrape_with_aliases'}]
-	items += [{'line': 'Scrape with Custom Values', 'function': 'scrape_with_custom_values'}]
-	items += [{'line': 'Scrape with Custom HDLR', 'function': 'scrape_with_custom_hdlr'}]
+	if aliases: items.append({'line': 'Scrape with an Alias', 'function': 'scrape_with_aliases'})
+	items.append({'line': 'Scrape with Custom Values', 'function': 'scrape_with_custom_values'})
 	list_items = [{'line1': i['line'], 'icon': poster} for i in items]
 	kwargs = {'items': json.dumps(list_items), 'heading': 'Playback'}
 	choice = select_dialog([i['function'] for i in items], **kwargs)
@@ -291,8 +290,13 @@ def extras_buttons_choice(params):
 			setting_id_base = 'extras.%s.button' % _type
 			for item in range(10, 18):
 				setting_id = setting_id_base + str(item)
-				button_action = get_setting('fenlight.%s' % setting_id)
-				button_label = extras_button_label_values[_type][button_action]
+				try:
+					button_action = get_setting('fenlight.%s' % setting_id)
+					button_label = extras_button_label_values[_type][button_action]
+				except:
+					set_setting(setting_id.replace('fenlight.', ''), default_setting_values(setting_id.replace('fenlight.', ''))['setting_default'])
+					button_action = get_setting('fenlight.%s' % setting_id)
+					button_label = extras_button_label_values[_type][button_action]
 				button_dict[setting_id] = {'button_action': button_action, 'button_label': button_label, 'button_name': 'Button %s' % str(item - 9)}
 				orig_button_dict[setting_id] = {'button_action': button_action, 'button_label': button_label, 'button_name': 'Button %s' % str(item - 9)}
 	if media_type == None:
@@ -329,7 +333,7 @@ def extras_buttons_choice(params):
 	choices = [(v, k) for k, v in extras_button_label_values[media_type].items() if not v == button_label]
 	choices = [i for i in choices if not i[0] == button_label]
 	list_items = [{'line1': i[0]} for i in choices]
-	kwargs = {'items': json.dumps(list_items), 'heading': 'Choose Action For [B]%s[/B]' % button_name, 'narrow_window': 'true'}
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Choose Action For %s' % button_name, 'narrow_window': 'true'}
 	choice = select_dialog(choices, **kwargs)
 	if choice == None: return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
 	button_label, button_action = choice
@@ -337,10 +341,8 @@ def extras_buttons_choice(params):
 	return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
 
 def extras_lists_choice(params={}):
-	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('Reviews', 2052), ('Comments', 2053),
-				('Trivia', 2054), ('Blunders', 2055), ('Parental Guide', 2056), ('Videos', 2057),
-				('More from Year', 2058), ('More from Genres', 2059),	('More from Networks', 2060),
-				('More from Collection', 2061), ('Media Images', 2062)]
+	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('Reviews', 2052), ('Comments', 2053), ('Trivia', 2054), ('Blunders', 2055), ('Parental Guide', 2056),
+				('Videos', 2057), ('More from Year', 2058), ('More from Genres', 2059),	('More from Networks', 2060), ('More from Collection', 2061)]
 	list_items = [{'line1': i[0]} for i in choices]
 	current_settings = extras_enabled_menus()
 	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]
@@ -619,6 +621,18 @@ def extras_menu_choice(params):
 	if not stacked: hide_busy_dialog()
 	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_external=params.get('is_external', 'true' if external() else 'false'),
 															options_media_type=media_type, starting_position=params.get('starting_position', None))
+
+def custom_key_extras_menu_choice(params):
+	try:
+		params = dict(parse_qsl(get_infolabel('ListItem.Property(fenlight.extras_params)').split('plugin://plugin.video.fenlight/?')[1], keep_blank_values=True))
+		if params: extras_menu_choice(params)
+	except: pass
+
+def custom_key_options_menu_choice(params):
+	try:
+		params = dict(parse_qsl(get_infolabel('ListItem.Property(fenlight.options_params)').split('plugin://plugin.video.fenlight/?')[1], keep_blank_values=True))
+		if params: options_menu_choice(params)
+	except: pass
 
 def media_extra_info_choice(params):
 	media_type, meta = params.get('media_type'), params.get('meta')

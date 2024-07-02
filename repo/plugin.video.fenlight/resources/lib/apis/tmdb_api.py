@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-from caches.main_cache import cache_object
-from caches.lists_cache import lists_cache_object
 from caches.meta_cache import cache_function
+from caches.lists_cache import lists_cache_object
 from modules.meta_lists import oscar_winners
 from modules.settings import get_meta_filter, tmdb_api_key
 from modules.kodi_utils import make_session, tmdb_dict_removals, remove_keys, notification
@@ -66,28 +65,28 @@ def tmdb_network_details(network_id):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_network_details_%s' % network_id
 	url = '%s/network/%s?api_key=%s' % (base_url, network_id, api_key)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_keywords_by_query(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_keywords_by_query_%s_%s' % (query, page_no)
 	url = '%s/search/keyword?api_key=%s&query=%s&page=%s' % (base_url, api_key, query, page_no)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_movie_keywords(tmdb_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_movie_keywords_%s' % tmdb_id
 	url = '%s/movie/%s/keywords?api_key=%s' % (base_url, tmdb_id, api_key)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_tv_keywords(tmdb_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_keywords_%s' % tmdb_id
 	url = '%s/tv/%s/keywords?api_key=%s' % (base_url, tmdb_id, api_key)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_movie_keyword_results(tmdb_id, page_no):
 	api_key = tmdb_api_key()
@@ -124,29 +123,31 @@ def tmdb_company_id(query):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_company_id_%s' % query
 	url = '%s/search/company?api_key=%s&query=%s' % (base_url, api_key, query)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_media_images(media_type, tmdb_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
-	if media_type == 'movies': media_type = 'movie'
-	url = '%s/%s/%s/images?api_key=%s' % (base_url, media_type, tmdb_id, api_key)
-	return get_tmdb(url).json()
+	if media_type in ('movie', 'movies'): media_type = 'movie'
+	else: media_type = 'tv'
+	string = 'tmdb_media_images_%s_%s' % (media_type, tmdb_id)
+	url = '%s/%s/%s/images?include_image_language=en,null&api_key=%s' % (base_url, media_type, tmdb_id, api_key)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_media_videos(media_type, tmdb_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
-	if media_type == 'movies': media_type = 'movie'
-	if media_type in ('tvshow', 'tvshows'): media_type = 'tv'
+	if media_type in ('movie', 'movies'): media_type = 'movie'
+	else: media_type = 'tv'
 	string = 'tmdb_media_videos_%s_%s' % (media_type, tmdb_id)
 	url = '%s/%s/%s/videos?api_key=%s' % (base_url, media_type, tmdb_id, api_key)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_movies_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return cache_object(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url)
 
 def tmdb_movies_popular(page_no):
 	api_key = tmdb_api_key()
@@ -285,7 +286,7 @@ def tmdb_tv_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return cache_object(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url)
 
 def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
@@ -410,28 +411,28 @@ def tmdb_popular_people(page_no):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_popular_%s' % page_no
 	url = '%s/person/popular?api_key=%s&language=en&page=%s' % (base_url, api_key, page_no)
-	return cache_object(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url)
 
 def tmdb_trending_people_day(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_trending_day_%s' % page_no
 	url = '%s/trending/person/day?api_key=%s&page=%s' % (base_url, api_key, page_no)
-	return cache_object(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url)
 
 def tmdb_trending_people_week(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_trending_week_%s' % page_no
 	url = '%s/trending/person/week?api_key=%s&page=%s' % (base_url, api_key, page_no)
-	return cache_object(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url)
 
 def tmdb_people_full_info(actor_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_full_info_%s' % actor_id
 	url = '%s/person/%s?api_key=%s&language=en&append_to_response=external_ids,combined_credits,images,tagged_images' % (base_url, actor_id, api_key)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_people_info(query, page_no=1):
 	api_key = tmdb_api_key()
@@ -439,7 +440,7 @@ def tmdb_people_info(query, page_no=1):
 	meta_filter = get_meta_filter()
 	string = 'tmdb_people_info_%s_%s_%s' % (query, meta_filter, page_no)
 	url = '%s/search/person?api_key=%s&language=en&include_adult=%s&query=%s&page=%s' % (base_url, api_key, meta_filter, query, page_no)
-	return cache_object(get_tmdb, string, url, expiration=EXPIRY_4_HOURS)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_4_HOURS)
 
 def season_episodes_details(tmdb_id, season_no):
 	api_key = tmdb_api_key()
@@ -483,7 +484,7 @@ def get_reviews_data(media_type, tmdb_id):
 				except: pass
 		return reviews_list
 	string, url = 'tmdb_%s_reviews_%s' % (media_type ,tmdb_id), [media_type, tmdb_id]
-	return cache_object(builder, string, url, json=False, expiration=EXPIRY_1_WEEK)
+	return cache_function(builder, string, url, json=False, expiration=EXPIRY_1_WEEK)
 
 def get_data(url):
 	data = get_tmdb(url).json()

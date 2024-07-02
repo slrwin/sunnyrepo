@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-airing = 'eUeOcto'
 alldebrid = 'UBjURaL'
 audio = 'fDf9q4B'
 bad_language = 'tKJVTmq'

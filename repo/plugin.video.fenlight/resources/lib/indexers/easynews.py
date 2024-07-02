@@ -2,6 +2,7 @@
 from datetime import datetime
 from modules.utils import jsondate_to_datetime
 from apis.easynews_api import import_easynews
+from indexers.images import Images
 from modules import kodi_utils
 from modules.utils import clean_file_name
 # logger = kodi_utils.logger
@@ -13,6 +14,9 @@ add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_con
 make_listitem, ok_dialog = kodi_utils.make_listitem, kodi_utils.ok_dialog
 fanart = get_addon_fanart()
 EasyNews = import_easynews()
+
+def search_easynews_image(key_id=None):
+	return Images().run({'mode': 'easynews_image_results', 'key_id': unquote(key_id), 'page_no': 1})
 
 def search_easynews(params):
 	handle = int(sys.argv[1])

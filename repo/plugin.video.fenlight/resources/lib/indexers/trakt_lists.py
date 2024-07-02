@@ -4,7 +4,7 @@ from indexers.movies import Movies
 from indexers.tvshows import TVShows
 from modules import kodi_utils
 from modules.utils import paginate_list
-from modules.settings import paginate, page_limit
+from modules.settings import paginate, page_limit, shuffle_trakt_personal
 # logger = kodi_utils.logger
 
 add_dir, external, dialog, sleep, json, get_icon = kodi_utils.add_dir, kodi_utils.external, kodi_utils.dialog, kodi_utils.sleep, kodi_utils.json, kodi_utils.get_icon
@@ -87,11 +87,15 @@ def get_trakt_lists(params):
 	try:
 		list_type = params['list_type']
 		lists = trakt_get_lists(list_type)
+		if shuffle_trakt_personal():
+			random.shuffle(lists)
+			sort_method = 'none'
+		else: sort_method = 'label'
 		add_items(handle, list(_process()))
 	except: pass
 	set_content(handle, 'files')
 	set_category(handle, params.get('category_name', ''))
-	set_sort_method(handle, 'label')
+	set_sort_method(handle, sort_method)
 	end_directory(handle)
 	set_view_mode('view.main')
 
