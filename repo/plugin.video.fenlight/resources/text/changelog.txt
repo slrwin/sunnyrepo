@@ -1,10 +1,11 @@
 ++
 
-[COLOR dodgerblue][B]Version 1.0.56[/B][/COLOR]
+[COLOR dodgerblue][B]Version 1.0.56/57[/B][/COLOR]
 - Adjustments to shuffle trakt lists functionality.
 - Fixed caching issue for lists made using FenLight's "Discover" method. Caching will be 48 hours instead of 720 hours.
 - Removed setting for "shuffling" the order of Trakt My Lists/Liked Lists. The shuffled lists are now found in Random Lists->Trakt Lists.
 - Other changes/fixes.
+- 57: Quick fix.
 
 [COLOR dodgerblue][B]Version 1.0.55[/B][/COLOR]
 - Added Easynews image search.

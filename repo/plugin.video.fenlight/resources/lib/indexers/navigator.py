@@ -309,9 +309,9 @@ class Navigator:
 		self.end_directory()
 
 	def choose_view(self):
-		content = self.params['content']
-		name = self.params.get('name') or content
 		handle = int(sys.argv[1])
+		content = self.params['content']
+		view_type, name = self.params['view_type'], self.params.get('name') or content
 		self.add({'mode': 'navigator.set_view', 'view_type': view_type, 'name': name, 'isFolder': 'false'}, 'Set view and then click here', 'settings')
 		set_content(handle, content)
 		end_directory(handle)
