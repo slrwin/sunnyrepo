@@ -245,7 +245,6 @@ def default_settings():
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_minimal_media_info', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_viewtypes', 'setting_type': 'boolean', 'setting_default': 'true'},
-{'setting_id': 'shuffle_trakt_personal', 'setting_type': 'boolean', 'setting_default': 'false'},
 #======+============= Trakt Calendar
 {'setting_id': 'trakt.calendar_sort_order', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
 {'setting_id': 'trakt.calendar_previous_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},

@@ -10,7 +10,6 @@ from os import path as osPath
 from threading import Thread, activeCount
 from urllib.parse import unquote, unquote_plus, urlencode, quote, parse_qsl, urlparse
 from modules import icons
-
 try: xbmc_actor = xbmc.Actor
 except: xbmc_actor = None
 addon_object = xbmcaddon.Addon('plugin.video.fenlight')
@@ -381,14 +380,11 @@ def volume_checker():
 		if int(100 - (float(string_alphanum_to_num(get_infolabel('Player.Volume').split('.')[0]))/60)*100) > max_volume: execute_builtin('SetVolume(%d)' % max_volume)
 	except: pass
 
-def focus_index(index, sleep_time=1000):
-	show_busy_dialog()
-	sleep(sleep_time)
+def focus_index(index):
 	current_window = current_window_object()
 	focus_id = current_window.getFocusId()
 	try: current_window.getControl(focus_id).selectItem(index)
 	except: pass
-	hide_busy_dialog()
 
 def get_all_icon_vars(include_values=False):
 	if include_values: return [(k, v) for k, v in vars(icons).items() if not k.startswith('__')]

@@ -147,7 +147,7 @@ def tmdb_movies_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return cache_function(get_tmdb, string, url)
+	return lists_cache_object(get_tmdb, string, url, True)
 
 def tmdb_movies_popular(page_no):
 	api_key = tmdb_api_key()
@@ -286,7 +286,7 @@ def tmdb_tv_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return cache_function(get_tmdb, string, url)
+	return lists_cache_object(get_tmdb, string, url, True)
 
 def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()

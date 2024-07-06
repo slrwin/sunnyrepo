@@ -138,8 +138,9 @@ def clean_databases():
 	from caches.main_cache import main_cache
 	from caches.meta_cache import meta_cache
 	from caches.debrid_cache import debrid_cache
+	from caches.lists_cache import lists_cache
 	success = []
-	for item in (external_cache, main_cache, meta_cache, debrid_cache): success.append(item.clean_database())
+	for item in (external_cache, main_cache, lists_cache, meta_cache, debrid_cache): success.append(item.clean_database())
 	if all(success): line1 = 'Success'
 	elif any(success): line1 = 'Success, with Errors'
 	else: line1 = 'Failed'

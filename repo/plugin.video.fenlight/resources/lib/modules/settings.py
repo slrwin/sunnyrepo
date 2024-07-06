@@ -302,6 +302,3 @@ def update_action():
 
 def update_use_test_repo():
 	return get_setting('fenlight.update.use_test_repo', 'true') == 'true'
-
-def shuffle_trakt_personal():
-	return get_setting('fenlight.shuffle_trakt_personal', 'false') == 'true'

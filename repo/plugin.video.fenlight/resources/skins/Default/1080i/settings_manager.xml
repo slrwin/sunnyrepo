@@ -760,14 +760,6 @@
                         <property name="setting_description">Enable this and Fen Light will control view types used within the addon. This can be disabled if the skin you are using has a helper that provides a "lock view" type function. If enabled, views can be set in Tools->Set Views within the addon</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=use_viewtypes)</onclick>
                     </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(30)</visible>
-                        <property name="setting_label">Shuffle Appearance Order of Personal/Liked Trakt Lists</property>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.shuffle_trakt_personal)]</property>
-                        <property name="setting_description">Randomize the order that Trakt Personal and Liked lists present within Fen Light</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=shuffle_trakt_personal)</onclick>
-                    </item>
             <!-- Trakt Calendar -->
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>

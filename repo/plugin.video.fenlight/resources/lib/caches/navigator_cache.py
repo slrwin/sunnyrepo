@@ -365,7 +365,9 @@ class NavigatorCache:
 			{'mode': 'random.build_movie_list', 'action': 'trakt_recommendations', 'new_page': 'movies', 'name': 'Trakt Recommended Movies', 'iconImage': 'movies', 'random': 'true'},
 			{'mode': 'random.build_tvshow_list', 'action': 'trakt_recommendations', 'new_page': 'shows', 'name': 'Trakt Recommended TV Shows', 'iconImage': 'tv', 'random': 'true'},
 			{'mode': 'random.build_trakt_lists', 'list_type': 'my_lists', 'name': 'Trakt My Lists', 'iconImage': 'lists', 'random': 'true'},
-			{'mode': 'random.build_trakt_lists', 'list_type': 'liked_lists', 'name': 'Trakt Liked Lists', 'iconImage': 'lists', 'random': 'true'}
+			{'mode': 'random.build_trakt_lists', 'list_type': 'liked_lists', 'name': 'Trakt Liked Lists', 'iconImage': 'lists', 'random': 'true'},
+			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'name': 'Shuffled Trakt My Lists', 'iconImage': 'trakt', 'shuffle': 'true'},
+			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'name': 'Shuffled Trakt Liked Lists', 'iconImage': 'trakt', 'shuffle': 'true'}
 				]
 
 navigator_cache = NavigatorCache()

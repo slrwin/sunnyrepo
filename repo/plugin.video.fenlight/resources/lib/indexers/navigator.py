@@ -95,8 +95,8 @@ class Navigator:
 		if get_setting('fenlight.trakt.user', 'empty_setting') not in ('empty_setting', ''):
 			self.add({'mode': 'navigator.trakt_collections'}, 'Trakt Collection', 'trakt')
 			self.add({'mode': 'navigator.trakt_watchlists'}, 'Trakt Watchlist', 'trakt')
-			self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'build_list': 'true', 'category_name': 'My Lists'}, 'Trakt My Lists', 'trakt')
-			self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'build_list': 'true', 'category_name': 'Liked Lists'}, 'Trakt Liked Lists', 'trakt')
+			self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'category_name': 'My Lists'}, 'Trakt My Lists', 'trakt')
+			self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'category_name': 'Liked Lists'}, 'Trakt Liked Lists', 'trakt')
 			self.add({'mode': 'navigator.trakt_favorites', 'category_name': 'Favorites'}, 'Trakt Favorites', 'trakt')
 			self.add({'mode': 'navigator.trakt_recommendations', 'category_name': 'Recommended'}, 'Trakt Recommended', 'trakt')
 			self.add({'mode': 'build_my_calendar'}, 'Trakt Calendar', 'trakt')
