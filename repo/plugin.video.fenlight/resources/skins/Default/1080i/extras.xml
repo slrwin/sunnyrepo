@@ -302,6 +302,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="11">
                             <left>300</left>
@@ -318,6 +319,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="12">
                             <left>600</left>
@@ -334,6 +336,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="13">
                             <left>900</left>
@@ -350,6 +353,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                     </control>
                     <!-- Buttons Row 2 14-17 -->
@@ -369,6 +373,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="15">
                             <left>300</left>
@@ -385,6 +390,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="16">
                             <left>600</left>
@@ -401,6 +407,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="17">
                             <left>900</left>
@@ -417,6 +424,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                     </control>
                 </control>

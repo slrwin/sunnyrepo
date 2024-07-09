@@ -21,7 +21,7 @@ addon_icon, poster_empty, parse_qsl, get_infolabel = kodi_utils.addon_icon, kodi
 extras_button_label_values, jsonrpc_get_addons = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 audio_filters, extras_open_action, tmdb_api_key = settings.audio_filters, settings.extras_open_action, settings.tmdb_api_key
-quality_filter, date_offset = settings.quality_filter, settings.date_offset
+quality_filter, date_offset, extras_videos_default = settings.quality_filter, settings.date_offset, settings.extras_videos_default
 single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_fenlight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
 scraper_names = ['EXTERNAL SCRAPERS', 'EASYNEWS', 'RD CLOUD', 'PM CLOUD', 'AD CLOUD', 'FOLDERS 1-5']
 
@@ -130,6 +130,11 @@ def imdb_videos_choice(params):
 	videos, poster = params['videos'], params['poster']
 	try: videos = json.loads(videos)
 	except: pass
+	default_quality = extras_videos_default()
+	if default_quality:
+		quality = {1: '1080p', 2: '720p', 3: '480p', 4: '360p'}[default_quality]
+		chosen_video = next((i for i in videos if i['quality'] == quality), None)
+		if chosen_video: return chosen_video['url']
 	videos.sort(key=lambda x: x['quality_rank'])
 	list_items = [{'line1': i['quality'], 'icon': poster} for i in videos]
 	kwargs = {'items': json.dumps(list_items)}

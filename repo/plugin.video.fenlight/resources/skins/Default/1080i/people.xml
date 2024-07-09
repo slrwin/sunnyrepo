@@ -156,6 +156,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="11">
                             <left>443</left>
@@ -172,6 +173,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                         </control>
                         <control type="button" id="12">
                             <left>743</left>
@@ -188,6 +190,7 @@
                             <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
+                            <aligny>center</aligny>
                             <visible>String.IsEqual(Window.Property(easynews_authorized),true)</visible>
                         </control>
                     </control>

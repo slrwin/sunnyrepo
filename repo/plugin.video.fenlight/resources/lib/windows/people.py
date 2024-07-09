@@ -96,7 +96,7 @@ class People(BaseDialog):
 				self.select_item(self.control_id, end_index)
 			elif self.control_id == videos_id:
 				thumb = chosen_listitem.getProperty('thumbnail')
-				chosen = dialogs.imdb_videos_choice(self.get_attribute(self, chosen_var)[self.get_position(self.control_id)]['videos'], thumb)
+				chosen = dialogs.imdb_videos_choice({'videos': self.get_attribute(self, chosen_var)[self.get_position(self.control_id)]['videos'], 'poster': thumb})
 				if not chosen: return
 				self.set_current_params()
 				self.window_player_url = chosen

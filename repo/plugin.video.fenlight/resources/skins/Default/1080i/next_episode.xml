@@ -128,6 +128,7 @@
                         <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                         <texturenofocus colordiffuse="FF4a4347" border="30">fenlight_common/circle.png</texturenofocus>
                         <align>center</align>
+                        <aligny>center</aligny>
                     </control>
                     <control type="button" id="11">
                         <description>Play</description>
@@ -142,6 +143,7 @@
                         <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                         <texturenofocus colordiffuse="FF4a4347" border="30">fenlight_common/circle.png</texturenofocus>
                         <align>center</align>
+                        <aligny>center</aligny>
                     </control>
                     <control type="button" id="12">
                         <description>Cancel</description>
@@ -156,6 +158,7 @@
                         <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                         <texturenofocus colordiffuse="FF4a4347" border="30">fenlight_common/circle.png</texturenofocus>
                         <align>center</align>
+                        <aligny>center</aligny>
                     </control>
                 </control>
             </control>

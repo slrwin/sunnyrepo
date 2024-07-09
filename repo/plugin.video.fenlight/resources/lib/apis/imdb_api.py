@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from caches.base_cache import connect_database
-from caches.main_cache import cache_object, main_cache
+from caches.main_cache import cache_object
 from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
 from modules.kodi_utils import requests, json, sleep
@@ -60,28 +60,6 @@ def imdb_people_trivia(imdb_id):
 	string = 'imdb_people_trivia_%s' % imdb_id
 	params = {'url': url, 'action': 'imdb_people_trivia'}
 	return cache_object(get_imdb, string, params, False, 168)[0]
-
-def imdb_images(imdb_id, page_no):
-	string = 'imdb_images_%s_%s' % (imdb_id, str(page_no))
-	cache = main_cache.get(string)
-	if cache is not None: return cache
-	url = base_url % images_url % (imdb_id, page_no)
-	params = {'url': url, 'action': 'imdb_images', 'next_page': int(page_no)+1, 'total_tries': 0}
-	result = get_imdb(params)
-	if result == 'failed': return ([], 1)
-	main_cache.set(string, result, expiration=168)
-	return result
-
-def imdb_people_images(imdb_id, page_no):
-	string = 'imdb_people_images_%s_%s' % (imdb_id, str(page_no))
-	cache = main_cache.get(string)
-	if cache is not None: return cache
-	url = base_url % people_images_url % (imdb_id, page_no)
-	params = {'url': url, 'action': 'imdb_images', 'next_page': 1, 'total_tries': 0}
-	result = get_imdb(params)
-	if result == 'failed': return None
-	main_cache.set(string, result, expiration=168)
-	return result
 
 def imdb_videos(imdb_id):
 	string = 'imdb_videos_%s' % imdb_id
@@ -174,41 +152,6 @@ def get_imdb(params):
 			count += 1
 		all_reviews = non_spoiler_list + spoiler_list
 		imdb_list = list(_process())
-	elif action == 'imdb_images':
-		pass
-		# def _process():
-		# 	for item in image_results:
-		# 		try:
-		# 			try: title = re.search(r'alt="(.+?)"', item, re.DOTALL).group(1)
-		# 			except: title = ''
-		# 			try:
-		# 				thumb = re.search(r'src="(.+?)"', item, re.DOTALL).group(1)
-		# 				split = thumb.split('_V1_')[0]
-		# 				thumb = split + '_V1_UY300_CR26,0,300,300_AL_.jpg'
-		# 				image = split + '_V1_.jpg'
-		# 				images = {'title': title, 'thumb': thumb, 'image': image}
-		# 			except: continue
-		# 			yield images
-		# 		except: pass
-		# total_tries = params['total_tries']
-		# if params['total_tries'] == 3: return 'failed'
-		# image_results = []
-		# result = requests.get(url, timeout=timeout, headers=headers)
-		# result = remove_accents(result.text)
-		# result = result.replace('\n', ' ')		
-		# if not 'xmlns:og="http://ogp.me/ns#"' in result:
-		# 	params['total_tries'] += 1
-		# 	return get_imdb(params)
-		# try:
-		# 	pages = parseDOM(result, 'span', attrs={'class': 'page_list'})[0]
-		# 	pages = [int(i) for i in parseDOM(pages, 'a')]
-		# except: pages = [1]
-		# if params['next_page'] in pages: next_page = params['next_page']
-		# try:
-		# 	image_results = parseDOM(result, 'div', attrs={'class': 'media_index_thumb_list'})[0]
-		# 	image_results = parseDOM(image_results, 'a')
-		# except: pass
-		# if image_results: imdb_list = list(_process())
 	elif action == 'imdb_videos':
 		def _process():
 			for count, item in enumerate(playlists, 1):

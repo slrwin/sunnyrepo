@@ -151,7 +151,7 @@ class Images():
 		EasyNews = import_easynews()
 		key_id, page_no = self.params['key_id'], self.params['page_no']
 		results = EasyNews.search_images(key_id, page_no)
-		image_info, total_results, total_pages = results['results'], results['total_results'], results['total_pages']
+		image_info, total_pages = results['results'], results['total_pages']
 		all_images = [(i['url_dl'], i['name']) for i in image_info]
 		image_action = json.dumps({'mode': 'imageviewer', 'all_images': all_images})
 		self.list_items = list(builder())

@@ -4,10 +4,8 @@ from windows.base_window import FontUtils
 from caches.base_cache import make_databases, remove_old_databases
 from caches.settings_cache import get_setting, sync_settings
 from apis.trakt_api import trakt_sync_activities
-from indexers.dialogs import extras_menu_choice, options_menu_choice
 from modules.updater import update_check
 from modules import kodi_utils, settings
-from modules.utils import jsondate_to_datetime, datetime_workaround
 
 get_infolabel, run_plugin, external, run_addon = kodi_utils.get_infolabel, kodi_utils.run_plugin, kodi_utils.external, kodi_utils.run_addon
 pause_services_prop, xbmc_monitor, xbmc_player, userdata_path = kodi_utils.pause_services_prop, kodi_utils.xbmc_monitor, kodi_utils.xbmc_player, kodi_utils.userdata_path
@@ -82,10 +80,7 @@ class CustomActions:
 
 	def run_custom_action(self, action, window, _type):
 		close_dialog(window, True)
-		# run_plugin(action)
-		params = dict(parse_qsl(get_infolabel(listitem_property_str % _type).split('plugin://plugin.video.fenlight/?')[1], keep_blank_values=True))
-		if _type == 'fenlight.extras_params': extras_menu_choice(params)
-		else: options_menu_choice(params)
+		run_plugin(action, True)
 
 class CustomFonts:
 	def run(self):

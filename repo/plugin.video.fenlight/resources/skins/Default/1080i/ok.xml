@@ -76,6 +76,7 @@
                 <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                 <texturenofocus colordiffuse="FF4a4347" border="30">fenlight_common/circle.png</texturenofocus>
                 <align>center</align>
+                <aligny>center</aligny>
             </control>
         </control>
     </controls>
