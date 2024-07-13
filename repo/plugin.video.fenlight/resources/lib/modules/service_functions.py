@@ -7,20 +7,14 @@ from apis.trakt_api import trakt_sync_activities
 from modules.updater import update_check
 from modules import kodi_utils, settings
 
-get_infolabel, run_plugin, external, run_addon = kodi_utils.get_infolabel, kodi_utils.run_plugin, kodi_utils.external, kodi_utils.run_addon
-pause_services_prop, xbmc_monitor, xbmc_player, userdata_path = kodi_utils.pause_services_prop, kodi_utils.xbmc_monitor, kodi_utils.xbmc_player, kodi_utils.userdata_path
-firstrun_update_prop, get_window_id, make_directories = kodi_utils.firstrun_update_prop, kodi_utils.get_window_id, kodi_utils.make_directories
-logger, close_dialog, kodi_version, ok_dialog, parse_qsl = kodi_utils.logger, kodi_utils.close_dialog, kodi_utils.kodi_version, kodi_utils.ok_dialog, kodi_utils.parse_qsl
-get_property, set_property, clear_property, get_visibility = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property, kodi_utils.get_visibility
-kodi_refresh, current_skin_prop, notification = kodi_utils.kodi_refresh, kodi_utils.current_skin_prop, kodi_utils.notification
-trakt_sync_interval, auto_start, update_action, update_delay = settings.trakt_sync_interval, settings.auto_start, settings.update_action, settings.update_delay
-auto_start_fenlight = settings.auto_start_fenlight
-window_top_str, listitem_property_str = 'Window.IsTopMost(%s)', 'ListItem.Property(%s)'
-movieinformation_str, contextmenu_str = 'movieinformation', 'contextmenu'
+run_addon, pause_services_prop, xbmc_monitor, xbmc_player = kodi_utils.run_addon, kodi_utils.pause_services_prop, kodi_utils.xbmc_monitor, kodi_utils.xbmc_player
+firstrun_update_prop, get_property, set_property, clear_property = kodi_utils.firstrun_update_prop, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
+logger, kodi_version, ok_dialog = kodi_utils.logger, kodi_utils.kodi_version, kodi_utils.ok_dialog
+kodi_refresh, current_skin_prop, auto_start_fenlight = kodi_utils.kodi_refresh, kodi_utils.current_skin_prop, settings.auto_start_fenlight
+trakt_sync_interval, update_action, update_delay = settings.trakt_sync_interval, settings.update_action, settings.update_delay
 trakt_service_string = 'TraktMonitor Service Update %s - %s'
 trakt_success_line_dict = {'success': 'Trakt Update Performed', 'no account': '(Unauthorized) Trakt Update Performed'}
 update_string = 'Next Update in %s minutes...'
-media_windows = (10000, 10025, 11121)
 
 class MakeDatabases:
 	def run(self):
@@ -45,42 +39,6 @@ class CheckKodiVersion:
 		logger('Fen Light', 'CheckKodiVersion Service Starting')
 		if kodi_version() < 20: ok_dialog('Fen Light', 'Kodi 20 or above required[CR]Please update Kodi or uninstall Fen Light')
 		return logger('Fen Light', 'CheckKodiVersion Service Finished')
-
-class CustomActions:
-	def run(self):
-		logger('Fen Light', 'CustomActions Service Starting')
-		monitor, player = xbmc_monitor(), xbmc_player()
-		self.wait_for_abort, abort_requested, is_playing = monitor.waitForAbort, monitor.abortRequested, player.isPlayingVideo
-		while not abort_requested():
-			context_visible, info_visible, run_custom = False, False, False
-			while not any([context_visible, info_visible]) and not abort_requested():
-				if not get_setting('fenlight.auto_custom_actions') == 'true': self.wait_for_abort(5); continue
-				if not get_window_id() in media_windows: self.wait_for_abort(2); continue
-				if get_property(pause_services_prop) == 'true' or is_playing(): self.wait_for_abort(2); continue
-				context_menu_params = get_infolabel(listitem_property_str % 'fenlight.options_params')
-				extras_params = get_infolabel(listitem_property_str % 'fenlight.extras_params')
-				if context_menu_params or extras_params:
-					run_custom = True
-					self.wait_for_abort(0.25)
-				else:
-					self.wait_for_abort(1); continue
-				context_visible, info_visible = get_visibility(window_top_str % contextmenu_str), get_visibility(window_top_str % movieinformation_str)
-			try:
-				if run_custom and (context_menu_params or extras_params):
-					if info_visible:
-						if extras_params: self.run_custom_action(extras_params, movieinformation_str, 'fenlight.extras_params')
-					elif context_menu_params: self.run_custom_action(context_menu_params, contextmenu_str, 'fenlight.options_params')
-				else: self.wait_for_abort(1)
-			except: self.wait_for_abort(2)
-		try: del monitor
-		except: pass
-		try: del player
-		except: pass
-		return logger('Fen Light', 'CustomActions Service Finished')
-
-	def run_custom_action(self, action, window, _type):
-		close_dialog(window, True)
-		run_plugin(action, True)
 
 class CustomFonts:
 	def run(self):

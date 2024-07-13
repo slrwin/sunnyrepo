@@ -224,8 +224,6 @@ def default_settings():
 {'setting_id': 'extras.enable_extra_ratings', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'extras.enable_scrollbars', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'extras.videos_default', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Choose', '1': '1080p', '2': '720p', '3': '480p', '4': '360p'}},
-#==================== Custom Actions
-{'setting_id': 'auto_custom_actions', 'setting_type': 'boolean', 'setting_default': 'false'},
 
 
 #==================================================================================#

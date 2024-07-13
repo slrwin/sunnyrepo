@@ -50,8 +50,7 @@ def build_episode_list(params):
 				playcount = get_watched_status_episode(watched_info, (season, episode))
 				if playcount and hide_watched: continue
 				progress = get_progress_status_episode(bookmarks, episode)
-				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
-											'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_external': is_external, 'unaired': unaired})
+				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 				play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})
 				url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})
@@ -199,8 +198,7 @@ def build_single_episode(list_type, params={}):
 				display = '[%s] %s%s%s' % (display_premiered, title_string, seas_ep, ep_name)
 			else: display = '%s%s%s' % (title_string, seas_ep, ep_name)
 			if not item_get('duration'): item['duration'] = meta_get('duration')
-			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
-										'poster': show_poster, 'playcount': playcount, 'progress': progress, 'is_external': is_external, 'in_progress_menu': 'true'})
+			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 			play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})
 			url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})

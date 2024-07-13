@@ -40,8 +40,7 @@ def build_season_list(params):
 				visible_progress = 0 if progress == 100 else progress
 				url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': season_number})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': is_external})
-				options_params = build_url({'mode': 'options_menu_choice', 'content': 'season', 'tmdb_id': tmdb_id, 'poster': show_poster, 'playcount': playcount,
-											'progress': progress, 'season': season_number, 'is_external': is_external, 'unaired': unaired, 'season_poster': poster})
+				options_params = build_url({'mode': 'options_menu_choice', 'content': 'season', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				cm_append(('[B]Extras...[/B]', run_plugin % extras_params))
 				cm_append(('[B]Options...[/B]', run_plugin % options_params))
 				if playcount:

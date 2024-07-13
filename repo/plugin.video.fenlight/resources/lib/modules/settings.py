@@ -26,6 +26,9 @@ def trakt_client():
 def trakt_secret():
 	return get_setting('fenlight.trakt.secret', '')
 
+def trakt_user_active():
+	return get_setting('fenlight.trakt.user', 'empty_setting') not in ('empty_setting', '')
+
 def results_format():
 	window_format = str(get_setting('fenlight.results.list_format', 'List'))
 	if not window_format in results_window_numbers_dict:
@@ -126,9 +129,6 @@ def trakt_sync_interval():
 
 def lists_sort_order(setting):
 	return int(get_setting('fenlight.sort.%s' % setting, '0'))
-
-def auto_start():
-	return get_setting('fenlight.auto_start', 'false') == 'true'
 
 def use_minimal_media_info():
 	return get_setting('fenlight.use_minimal_media_info', 'true') == 'true'
@@ -267,7 +267,7 @@ def extras_open_action(media_type):
 	return int(get_setting('fenlight.extras.open_action', '0')) in extras_open_action_dict[media_type]
 
 def watched_indicators():
-	if get_setting('fenlight.trakt.user') in ('empty_setting', ''): return 0
+	if not trakt_user_active(): return 0
 	return int(get_setting('fenlight.watched_indicators', '0'))
 
 def nextep_method():

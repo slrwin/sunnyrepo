@@ -630,21 +630,6 @@
                         <property name="setting_description">Choose the default quality to play videos from the videos section of Extras. Includes an option to always choose which quality per video. If quality is unavailable, then the choices will be shown to decide</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=extras.videos_default)</onclick>
                     </item>
-            <!-- Custom Actions -->
-                    <item>
-                        <visible>Container(2000).HasFocus(20)</visible>
-                        <property name="setting_label">Custom Actions</property>
-                        <property name="setting_type">separator</property>
-                        <onclick>noop</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(20)</visible>
-                        <property name="setting_label">Replace Kodi Context Menu and Info Window with Fen Light</property>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.auto_custom_actions)]</property>
-                        <property name="setting_description">Enable this and Fen Light will attempt to open it's custom context menu instead of Kodi's standard context menu when called from a media item, and will also attempt to open it's Extras window instead of Kodi's default Information window</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=auto_custom_actions)</onclick>
-                    </item>
     <!-- CONTENT 30 -->
             <!-- Sorting - Personal Lists -->
                     <item>

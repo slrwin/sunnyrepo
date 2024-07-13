@@ -367,7 +367,9 @@ class NavigatorCache:
 			{'mode': 'random.build_trakt_lists', 'list_type': 'my_lists', 'name': 'Trakt My Lists', 'iconImage': 'lists', 'random': 'true'},
 			{'mode': 'random.build_trakt_lists', 'list_type': 'liked_lists', 'name': 'Trakt Liked Lists', 'iconImage': 'lists', 'random': 'true'},
 			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'name': 'Shuffled Trakt My Lists', 'iconImage': 'trakt', 'shuffle': 'true'},
-			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'name': 'Shuffled Trakt Liked Lists', 'iconImage': 'trakt', 'shuffle': 'true'}
+			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'name': 'Shuffled Trakt Liked Lists', 'iconImage': 'trakt', 'shuffle': 'true'},
+			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'name': 'Shuffle Contents Trakt My Lists', 'iconImage': 'trakt', 'random': 'true'},
+			{'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'name': 'Shuffle Contents Trakt Liked Lists', 'iconImage': 'trakt', 'random': 'true'}
 				]
 
 navigator_cache = NavigatorCache()

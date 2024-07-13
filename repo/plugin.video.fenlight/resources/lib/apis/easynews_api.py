@@ -9,12 +9,12 @@ from modules.utils import chunks
 from modules.kodi_utils import make_session, json, urlencode, quote, clear_property, parse_qsl
 # from modules.kodi_utils import logger
 
-video_extensions = 'm4v,3g2,3gp,nsv,tp,ts,ty,pls,rm,rmvb,mpd,ifo,mov,qt,divx,xvid,bivx,vob,nrg,img,iso,udf,pva,wmv,asf,asx,ogm,m2v,avi,bin,dat,mpg,mpeg,mp4,mkv,mk3d,avc,vp3,svq3,' \
-					'nuv,viv,dv,fli,flv,wpl,xspf,vdr,dvr-ms,xsp,mts,m2t,m2ts,evo,ogv,sdp,avs,rec,url,pxml,vc1,h264,rcv,rss,mpls,mpl,webm,bdmv,bdm,wtv,trp,f4v,pvr,disc'
+video_extensions = 'm4v, 3g2, 3gp, nsv, tp, ts, ty, pls, rm, rmvb, mpd, ifo, mov, qt, divx, xvid, bivx, vob, nrg, img, iso, udf, pva, wmv, asf, asx, ogm, m2v, avi, bin, dat,' \
+'mpg, mpeg, mp4, mkv, mk3d, avc, vp3, svq3, nuv, viv, dv, fli, flv, wpl, xspf, vdr, dvr-ms, xsp, mts, m2t, m2ts, evo, ogv, sdp, avs, rec, url, pxml, vc1, h264, rcv, rss, mpls,' \
+'mpl, webm, bdmv, bdm, wtv, trp, f4v, pvr, disc'
 SEARCH_PARAMS = {'st': 'adv', 'sb': 1, 'fex': video_extensions, 'fty[]': 'VIDEO', 'spamf': 1, 'u': 1, 'gx': 1, 'pno': 1, 'sS': 3, 's1': 'relevance', 's1d': '-', 'pby': 1000}
-# IMAGE_SEARCH_PARAMS = {'st': 'adv', 'sb': 1, 'pno': 1, 'chxu': 1, 'u': 1, 'chxgx': 1, 's1': 'dtime', 's1d': '-', 'fty[]': 'IMAGE', 'pby': 10000}
 IMAGE_SEARCH_PARAMS = {'st': 'adv', 'safeO': 0, 'sb': 1, 's1': 'relevance', 's1d': '+', 's2': 'nsubject', 's2d': '+', 's3': 'nrfile', 's3d': '+', 'pno': 1, 'sS':1,
-						'fty[]': 'IMAGE', 'pby': 10000}
+'fty[]': 'IMAGE', 'pby': 10000}
 search_types_params = {'VIDEO': SEARCH_PARAMS, 'IMAGE': IMAGE_SEARCH_PARAMS}
 image_remove_filters = ['comic', 'fake', 'erotica']
 timeout = 20.0
@@ -58,7 +58,8 @@ class EasyNewsAPI:
 		url, self.params = self._translate_search(search_type='IMAGE')
 		string = 'EASYNEWS_IMAGE_SEARCH_%s' % urlencode(self.params)
 		results = cache_object(self._process_search, string, url, json=False, expiration=expiration)
-		results['results'] = results['results'][page_no -1]
+		try: results['results'] = results['results'][page_no -1]
+		except: pass
 		return results
 
 	def account(self):

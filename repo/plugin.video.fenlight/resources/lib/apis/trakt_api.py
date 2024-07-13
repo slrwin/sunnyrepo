@@ -13,7 +13,7 @@ logger, notification, player, confirm_dialog, get_property = kodi_utils.logger, 
 dialog, unquote, addon_installed, addon_enabled, addon = kodi_utils.dialog, kodi_utils.unquote, kodi_utils.addon_installed, kodi_utils.addon_enabled, kodi_utils.addon
 path_check, get_icon, clear_property = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.clear_property
 requests, execute_builtin, select_dialog, kodi_refresh = kodi_utils.requests, kodi_utils.execute_builtin, kodi_utils.select_dialog, kodi_utils.kodi_refresh
-progress_dialog, external = kodi_utils.progress_dialog, kodi_utils.external
+progress_dialog, external, trakt_user_active = kodi_utils.progress_dialog, kodi_utils.external, settings.trakt_user_active
 lists_sort_order, trakt_client, trakt_secret, tmdb_api_key = settings.lists_sort_order, settings.trakt_client, settings.trakt_secret, settings.tmdb_api_key
 clear_all_trakt_cache_data, cache_trakt_object, clear_trakt_calendar = trakt_cache.clear_all_trakt_cache_data, trakt_cache.cache_trakt_object, trakt_cache.clear_trakt_calendar
 trakt_watched_cache, reset_activity, clear_trakt_list_contents_data = trakt_cache.trakt_watched_cache, trakt_cache.reset_activity, trakt_cache.clear_trakt_list_contents_data
@@ -725,7 +725,7 @@ def trakt_sync_activities(force_update=False):
 	clear_trakt_list_contents_data('user_lists')
 	clear_trakt_list_contents_data('liked_lists')
 	clear_trakt_list_contents_data('my_lists')
-	if get_setting('fenlight.trakt.user', 'empty_setting') in ('empty_setting', '') and not force_update: return 'no account'
+	if not trakt_user_active and not force_update: return 'no account'
 	try: latest = trakt_get_activity()
 	except: return 'failed'
 	cached = reset_activity(latest)

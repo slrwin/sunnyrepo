@@ -39,7 +39,6 @@ class TVShows:
 		self.widget_hide_watched = self.is_home and widget_hide_watched()
 		self.custom_order = self.params_get('custom_order', 'false') == 'true'
 		self.paginate_start = int(self.params_get('paginate_start', '0'))
-		self.in_progress_menu = 'true' if self.action == 'in_progress_tvshows' else 'false'
 		self.append = self.items.append
 	
 	def fetch_list(self):
@@ -132,8 +131,7 @@ class TVShows:
 				if total_watched: progress = get_progress_status_tvshow(total_watched, total_aired_eps)
 				else: progress = 0
 				visible_progress = 0 if progress == 100 else progress
-			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'playcount': playcount,
-										'progress': progress, 'is_external': self.is_external, 'unaired': unaired, 'in_progress_menu': self.in_progress_menu})
+			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external})
 			if self.all_episodes:
 				if self.all_episodes == 1 and total_seasons > 1: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id})
@@ -144,6 +142,12 @@ class TVShows:
 				url_params = extras_params
 			else: cm_append(('[B]Extras...[/B]', run_plugin % extras_params))
 			cm_append(('[B]Options...[/B]', run_plugin % options_params))
+			cm_append(('[B]Browse Recommended[/B]', self.window_command % \
+					build_url({'mode': 'build_tvshow_list', 'action': 'tmdb_tv_recommendations', 'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})))
+			cm_append(('[B]Trakt Lists Manager[/B]', run_plugin % \
+				build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id, 'media_type': 'tvshow', 'icon': poster})))
+			cm_append(('[B]Favorites Manager[/B]', run_plugin % \
+				build_url({'mode': 'favorites_choice', 'media_type': 'tvshow', 'tmdb_id': tmdb_id, 'title': title})))
 			if playcount:
 				if self.widget_hide_watched: return
 			elif not unaired:
@@ -181,6 +185,7 @@ class TVShows:
 		self.watched_indicators = watched_indicators()
 		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
 		self.watched_info = watched_info_tvshow(get_database(self.watched_indicators))
+		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_tvshow_content, self.list))
 			[i.join() for i in threads]

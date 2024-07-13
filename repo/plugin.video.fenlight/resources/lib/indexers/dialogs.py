@@ -10,18 +10,15 @@ from modules.utils import get_datetime, title_key, adjust_premiered_date, append
 # logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
-get_property, set_property, get_icon, dialog, open_settings = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
+set_property, get_icon, dialog, open_settings = kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
-img_url, sleep, external_scraper_settings = kodi_utils.img_url, kodi_utils.sleep, kodi_utils.external_scraper_settings
-kodi_refresh, container_refresh_input, autoscrape_next_episode = kodi_utils.kodi_refresh, kodi_utils.container_refresh_input, settings.autoscrape_next_episode
-json, build_url, select_dialog, clear_property = kodi_utils.json, kodi_utils.build_url, kodi_utils.select_dialog, kodi_utils.clear_property
-run_plugin, autoplay_next_episode, quality_filter = kodi_utils.run_plugin, settings.autoplay_next_episode, settings.quality_filter
-numeric_input, container_update, activate_window, addon_fanart = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.default_addon_fanart
-addon_icon, poster_empty, parse_qsl, get_infolabel = kodi_utils.addon_icon, kodi_utils.empty_poster, kodi_utils.parse_qsl, kodi_utils.get_infolabel
-extras_button_label_values, jsonrpc_get_addons = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons
+external_scraper_settings, kodi_refresh, autoscrape_next_episode = kodi_utils.external_scraper_settings, kodi_utils.kodi_refresh, settings.autoscrape_next_episode
+json, select_dialog, autoplay_next_episode, quality_filter = kodi_utils.json, kodi_utils.select_dialog, settings.autoplay_next_episode, settings.quality_filter
+numeric_input, container_update, activate_window = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window
+poster_empty, parse_qsl, get_infolabel, audio_filters = kodi_utils.empty_poster, kodi_utils.parse_qsl, kodi_utils.get_infolabel, settings.audio_filters
+extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
-audio_filters, extras_open_action, tmdb_api_key = settings.audio_filters, settings.extras_open_action, settings.tmdb_api_key
-quality_filter, date_offset, extras_videos_default = settings.quality_filter, settings.date_offset, settings.extras_videos_default
+quality_filter, date_offset, extras_videos_default, trakt_user_active = settings.quality_filter, settings.date_offset, settings.extras_videos_default, settings.trakt_user_active
 single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_fenlight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
 scraper_names = ['EXTERNAL SCRAPERS', 'EASYNEWS', 'RD CLOUD', 'PM CLOUD', 'AD CLOUD', 'FOLDERS 1-5']
 
@@ -153,7 +150,7 @@ def random_choice(params):
 	exec('EpisodeTools(meta).%s()' % choice)
 
 def trakt_manager_choice(params):
-	if get_setting('fenlight.trakt.user', 'empty_setting') in ('empty_setting', '') : return notification('No Results', 3500)
+	if not trakt_user_active(): return notification('No Active Trakt Account', 3500)
 	icon = params.get('icon', None) or get_icon('trakt')
 	choices = [('Add To Trakt List...', 'Add'), ('Remove From Trakt List...', 'Remove')]
 	list_items = [{'line1': item[0], 'icon': icon} for item in choices]
@@ -450,11 +447,8 @@ def color_choice(params):
 
 def options_menu_choice(params, meta=None):
 	params_get = params.get
-	tmdb_id, content, poster, season_poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None), params_get('season_poster', None)
+	tmdb_id, content, poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None)
 	is_external, from_extras = params_get('is_external') in (True, 'True', 'true'), params_get('from_extras', 'false') == 'true'
-	custom_actions_active = get_setting('fenlight.auto_custom_actions') == 'true'
-	unaired = params_get('unaired') in (True, 'True', 'true')
-	season, episode, in_progress_menu = params_get('season', ''), params_get('episode', ''), params_get('in_progress_menu', 'false') == 'true'
 	if not content: content = container_content()[:-1]
 	menu_type = content
 	if content.startswith('episode.'): content = 'episode'
@@ -462,54 +456,18 @@ def options_menu_choice(params, meta=None):
 		function = metadata.movie_meta if content == 'movie' else metadata.tvshow_meta
 		meta = function('tmdb_id', tmdb_id, tmdb_api_key(), get_datetime())
 	meta_get = meta.get
-	rootname, title, year, imdb_id, tvdb_id = meta_get('rootname', None), meta_get('title'), meta_get('year'), meta_get('imdb_id', None), meta_get('tvdb_id', None)
+	if menu_type == 'movie': collection_id, collection_name = meta_get('extra_info').get('collection_id', None), meta_get('extra_info').get('collection_name', None)
+	else: collection_id, collection_name = None, None
+	rootname, title, imdb_id, tvdb_id = meta_get('rootname', None), meta_get('title'), meta_get('imdb_id', None), meta_get('tvdb_id', None)
 	window_function = activate_window if is_external else container_update
 	listing = []
 	listing_append = listing.append
-	if not from_extras:
-		try: playcount = int(params_get('playcount', '0'))
-		except: playcount = 0
-		try: progress = int(params_get('progress', '0'))
-		except: progress = 0
-		if menu_type in ('movie', 'tvshow'):
-			if extras_open_action(content):
-				if menu_type == 'movie': listing_append(('Playback', '', 'playback'))
-				else: listing_append(('Browse', 'Browse %s' % title, 'browse'))
-			else: listing_append(('Extras', '', 'extras'))
-			if menu_type == 'movie':
-				listing_append(('Playback Options', 'Scrapers Options', 'playback_choice'))
-				if not unaired:
-					if playcount: listing_append(('Mark Unwatched', '', 'mark_unwatched_movie'))
-					else: listing_append(('Mark Watched', '', 'mark_watched_movie'))
-				if progress: listing_append(('Clear Progress', '', 'clear_progress'))
-			else:
-				if not unaired:
-					if not playcount: listing_append(('Mark Watched', '', 'mark_watched_tvshow'))
-					if progress: listing_append(('Mark Unwatched', '', 'mark_unwatched_tvshow'))
-			if not is_external: listing_append(('Exit Movie List' if menu_type == 'movie' else 'Exit TV Show List', '', 'exit_menu'))
-		else:
-			listing_append(('Extras', '', 'extras'))
-			if menu_type == 'season':
-				if not unaired:
-					if not playcount: listing_append(('Mark Watched', '', 'mark_watched_season'))
-					if progress: listing_append(('Mark Unwatched', '', 'mark_unwatched_season'))
-			else:
-				listing_append(('Playback Options', 'Scrapers Options', 'playback_choice'))
-				if not unaired:
-					if not playcount: listing_append(('Mark Watched', '', 'mark_watched_episode'))
-					else: listing_append(('Mark Unwatched', '', 'mark_unwatched_episode'))
-				if progress: listing_append(('Clear Progress', '', 'clear_progress'))
-		if is_external: listing_append(('Refresh Widgets', '', 'refresh_widgets'))
-	if menu_type in ('movie', 'episode') or menu_type in single_ep_list:
-		if menu_type == 'movie' and from_extras: listing_append(('Playback Options', 'Scrapers Options', 'playback_choice'))
-		if menu_type in single_ep_list:
-			listing_append(('Browse', 'Browse %s' % title, 'browse'))
-			listing_append(('Browse Season', 'Browse %s Season %s' % (title, season), 'browse_season'))
-	if menu_type in ('movie', 'tvshow'):
-		if get_setting('fenlight.trakt.user', 'empty_setting') not in ('empty_setting', ''): listing_append(('Trakt Lists Manager', '', 'trakt_manager'))
+	if from_extras:
+		if menu_type in ('movie', 'episode'): listing_append(('Playback Options', 'Scrapers Options', 'playback_choice'))
+		if trakt_user_active(): listing_append(('Trakt Lists Manager', '', 'trakt_manager'))
 		listing_append(('Favorites Manager', '', 'favorites_choice'))
-		listing_append(('Recommended', 'Based On %s' % rootname, 'recommended'))
-		if menu_type == 'tvshow': listing_append(('Play Random', 'Based On %s' % rootname, 'random'))
+	if menu_type in single_ep_list: listing_append(('Browse', 'Browse %s' % title, 'browse'))
+	if menu_type == 'tvshow': listing_append(('Play Random', 'Based On %s' % rootname, 'random'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list:
 		base_str1, base_str2, on_str, off_str = '%s%s', 'Currently: [B]%s[/B]', 'On', 'Off'
 		if auto_play(content): autoplay_status, autoplay_toggle, quality_setting = on_str, 'false', 'autoplay_quality_%s' % content
@@ -527,46 +485,19 @@ def options_menu_choice(params, meta=None):
 				listing_append((base_str1 % ('Autoscrape Next Episode', ''), base_str2 % autoscrape_next_status, 'toggle_autoscrape_next'))
 		listing_append((base_str1 % ('Quality Limit', ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
 		listing_append((base_str1 % ('', 'Enable Scrapers'), base_str2 % current_scrapers_status, 'enable_scrapers'))
-	if menu_type in ('movie', 'tvshow'): listing_append(('RE-CACHE %s INFO' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
-	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Clear Scrapers Cache', '', 'clear_scrapers_cache'))
-	if in_progress_menu: listing_append(('TV Shows Progress Manager', '', 'nextep_manager'))
-	listing_append(('Open Download Manager', '', 'open_download_manager'))
-	listing_append(('Open Tools', '', 'open_tools'))
-	if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Open External Scraper Settings', '', 'open_external_scraper_settings'))
-	listing_append(('Open Settings', '', 'open_settings'))
+	if not from_extras:
+		if menu_type in ('movie', 'tvshow'): listing_append(('Re-Cache %s Info' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
+		if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Clear Scrapers Cache', '', 'clear_scrapers_cache'))
+		if menu_type in ('tvshow', 'season', 'episode'): listing_append(('TV Shows Progress Manager', '', 'nextep_manager'))
+		listing_append(('Open Download Manager', '', 'open_download_manager'))
+		listing_append(('Open Tools', '', 'open_tools'))
+		if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Open External Scraper Settings', '', 'open_external_scraper_settings'))
+		listing_append(('Open Settings', '', 'open_settings'))
 	list_items = [{'line1': item[0], 'line2': item[1] or item[0], 'icon': poster} for item in listing]
 	heading = rootname or 'Options...'
 	kwargs = {'items': json.dumps(list_items), 'heading': heading, 'multi_line': 'true'}
 	choice = select_dialog([i[2] for i in listing], **kwargs)
 	if choice == None: return
-	if choice == 'playback':
-		return run_plugin({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
-	if choice == 'extras':
-		return extras_menu_choice({'tmdb_id': tmdb_id, 'media_type': content, 'is_external': str(is_external)})
-	if choice == 'mark_watched_movie':
-		return run_plugin({'mode': 'watched_status.mark_movie', 'action': 'mark_as_watched', 'title': title, 'tmdb_id': tmdb_id})
-	if choice == 'mark_unwatched_movie':
-		return run_plugin({'mode': 'watched_status.mark_movie', 'action': 'mark_as_unwatched', 'title': title, 'tmdb_id': tmdb_id})
-	if choice == 'mark_watched_episode':
-		return run_plugin({'mode': 'watched_status.mark_episode', 'action': 'mark_as_watched', 'title': title, 'tmdb_id': tmdb_id,
-							'tvdb_id': tvdb_id, 'season': season, 'episode': episode})
-	if choice == 'mark_unwatched_episode':
-		return run_plugin({'mode': 'watched_status.mark_episode', 'action': 'mark_as_unwatched', 'title': title, 'tmdb_id': tmdb_id,
-							'tvdb_id': tvdb_id, 'season': season, 'episode': episode})
-	if choice == 'mark_watched_tvshow':
-		return run_plugin({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_watched', 'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id})
-	if choice == 'mark_unwatched_tvshow':
-		return run_plugin({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_unwatched', 'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id})
-	if choice == 'mark_watched_season':
-		return run_plugin({'mode': 'watched_status.mark_season', 'action': 'mark_as_watched', 'title': title, 'tmdb_id': tmdb_id,
-							'tvdb_id': tvdb_id, 'season': season})
-	if choice == 'mark_unwatched_season':
-		return run_plugin({'mode': 'watched_status.mark_season', 'action': 'mark_as_unwatched', 'title': title, 'tmdb_id': tmdb_id,
-							'tvdb_id': tvdb_id, 'season': season})
-	if choice == 'clear_progress':
-		return run_plugin({'mode': 'watched_status.erase_bookmark', 'media_type': content, 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'refresh': 'true'})
-	if choice == 'refresh_widgets':
-		return kodi_refresh()
 	if choice == 'clear_media_cache':
 		close_all_dialog()
 		return refresh_cached_data(meta)
@@ -592,19 +523,13 @@ def options_menu_choice(params, meta=None):
 		return window_function({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': season})
 	if choice == 'nextep_manager':
 		return window_function({'mode': 'build_next_episode_manager'})
-	if choice == 'recommended':
-		close_all_dialog()
-		mode, action = ('build_movie_list', 'tmdb_movies_recommendations') if menu_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_recommendations')
-		return window_function({'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})
 	if choice == 'random':
 		close_all_dialog()
 		return random_choice({'meta': meta, 'poster': poster})
 	if choice == 'trakt_manager':
 		return trakt_manager_choice({'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id or 'None', 'media_type': content, 'icon': poster})
 	if choice == 'favorites_choice':
-		return favorites_choice({'media_type': content, 'tmdb_id': tmdb_id, 'title': title})
-	if choice == 'exit_menu':
-		return run_plugin({'mode': 'navigator.exit_media_menu'})
+		return favorites_choice({'media_type': content if content in ('movie', 'tvshow') else 'tvshow', 'tmdb_id': tmdb_id, 'title': title})
 	if choice == 'toggle_autoplay':
 		set_setting('auto_play_%s' % content, autoplay_toggle)
 	elif choice == 'toggle_autoplay_next':

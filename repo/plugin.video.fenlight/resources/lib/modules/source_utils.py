@@ -118,7 +118,7 @@ def seas_ep_filter(season, episode, release_title, split=False, return_match=Fal
 	string4 = r'([.-]<<S>>[.-]?<<E>>[.-])'
 	string5 = r'(episode[.-]?<<E>>[.-])'
 	string6 = r'([.-]e[p]?[.-]?<<E>>[.-])'
-	string7 = r'(^(?=.*[.-]e?0*<<E>>[.-])(?:(?!((?:s|season)[.-]?\d+[.-x]?(?:ep?|episode)[.-]?\d+)|\d+x\d+).)*$)'
+	string7 = r'(^(?=.*\.e?0*<<E>>\.)(?:(?!((?:s|season)[.-]?\d+[.-x]?(?:ep?|episode)[.-]?\d+)|\d+x\d+).)*$)'
 	string_list = []
 	string_list_append = string_list.append
 	string_list_append(string1.replace('<<S>>', season_fill).replace('<<E>>', episode_fill))

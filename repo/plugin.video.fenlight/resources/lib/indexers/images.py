@@ -3,6 +3,7 @@ import os
 from windows.base_window import open_window
 from apis.tmdb_api import tmdb_people_info, tmdb_people_full_info, tmdb_popular_people, tmdb_trending_people_day, tmdb_trending_people_week, tmdb_media_images
 from apis.easynews_api import import_easynews
+from modules.utils import paginate_list, chunks
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
@@ -10,14 +11,12 @@ json, notification, set_property, make_listitem, list_dirs = kodi_utils.json, ko
 delete_file, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.delete_file, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'
 
-
 class Images():
 	def run(self, params):
 		show_busy_dialog()
 		self.list_items = []
 		self.params = params
 		self.mode = self.params.pop('mode')
-		self.folder_path = self.params.get('folder_path')
 		if self.mode == 'imageviewer': return self.imageviewer()
 		if self.mode == 'delete_image': return self.delete_image()
 		if self.mode == 'tmdb_people_list_image_results': self.tmdb_people_list_image_results()
@@ -172,17 +171,20 @@ class Images():
 					listitem.setProperties({'thumb': thumb_url, 'path': image_url, 'name': item, 'action': image_action, 'delete': 'true'})
 					yield listitem
 				except: pass
-		if not folder_path: folder_path = self.folder_path
-		image_info = list_dirs(folder_path)[1]
-		image_info.sort()
+		if not folder_path: folder_path = self.params.get('folder_path')
 		thumbs_path = os.path.join(folder_path, '.thumbs')
-		thumbs_info = list_dirs(thumbs_path)[1]
-		thumbs_info.sort()
+		page_no = self.params.get('page_no', 1)
+		full_set_images = sorted(list_dirs(folder_path)[1])
+		image_info, total_pages = paginate_list(full_set_images, page_no, 50)
+		full_set_thumbs = [i for i in sorted(list_dirs(thumbs_path)[1]) if i in full_set_images]
+		thumbs_info = [i for i in full_set_thumbs if i in image_info]
 		all_images = [(os.path.join(folder_path, i), i) for i in image_info]
-		image_action = json.dumps({'mode': 'imageviewer', 'all_images': all_images, 'page_no': 'final_page'})
+		image_action = json.dumps({'mode': 'imageviewer', 'all_images': all_images})
 		self.list_items = list(builder())
-		self.next_page_params = {}
+		new_page = page_no + 1
+		if new_page > total_pages: new_page = 'final_page'
 		if return_items: return self.list_items
+		self.next_page_params = {'mode': 'browser_image', 'folder_path': folder_path, 'page_no': new_page}
 
 	def open_window_xml(self):
 		hide_busy_dialog()
@@ -192,8 +194,9 @@ class Images():
 		hide_busy_dialog()
 		return open_window(('windows.imageviewer', 'ImageViewer'), 'imageviewer.xml', all_images=self.params['all_images'], index=int(self.params['current_index']))
 
-	def delete_image(self):
-		delete_file(self.params['thumb_url'])
-		delete_file(self.params['image_url'])
+	def delete_image(self, image_url=None, thumb_url=None):
+		image_url, thumb_url = image_url or self.params['image_url'], thumb_url or self.params['thumb_url']
+		delete_file(thumb_url)
+		delete_file(image_url)
+		kodi_utils.sleep(1000)
 		hide_busy_dialog()
-		set_property('fenlight.delete_image_finished', 'true')

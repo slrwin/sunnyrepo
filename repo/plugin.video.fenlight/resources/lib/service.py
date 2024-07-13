@@ -14,7 +14,6 @@ class FenLightMonitor(xbmc_monitor):
 		service_functions.CheckSettings().run()
 		service_functions.RemoveOldDatabases().run()
 		service_functions.CheckKodiVersion().run()
-		Thread(target=service_functions.CustomActions().run).start()
 		Thread(target=service_functions.CustomFonts().run).start()
 		Thread(target=service_functions.TraktMonitor().run).start()
 		Thread(target=service_functions.UpdateCheck().run).start()

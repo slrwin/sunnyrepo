@@ -101,9 +101,7 @@ class ThumbImageViewer(BaseDialog):
 		except: pass
 
 	def reset_after_delete(self, choice, position):
-		self.set_home_property('delete_image_finished', 'false')
-		self.ImagesInstance.run({'mode': 'delete_image', 'image_url': choice.getProperty('path'), 'thumb_url': choice.getProperty('thumb')})
-		while not self.get_home_property('delete_image_finished') == 'true': self.sleep(10)
+		self.ImagesInstance.delete_image(choice.getProperty('path'), choice.getProperty('thumb'))
 		self.reset_window(self.window_id)
 		self.list_items = self.ImagesInstance.browser_image(download_directory('image'), return_items=True)
 		self.make_page()

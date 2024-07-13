@@ -5,7 +5,7 @@ from indexers.tvshows import TVShows
 from modules import kodi_utils
 from modules.utils import paginate_list
 from modules.settings import paginate, page_limit
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 add_dir, external, dialog, sleep, json, get_icon = kodi_utils.add_dir, kodi_utils.external, kodi_utils.dialog, kodi_utils.sleep, kodi_utils.json, kodi_utils.get_icon
 trakt_icon, fanart, add_item, set_property, random = get_icon('trakt'), kodi_utils.get_addon_fanart(), kodi_utils.add_item, kodi_utils.set_property, kodi_utils.random
@@ -61,48 +61,45 @@ def search_trakt_lists(params):
 def get_trakt_lists(params):
 	def _process():
 		for item in lists:
-			try:
-				if list_type == 'liked_lists': item = item['list']
-				cm = []
-				cm_append = cm.append
-				list_name, user, slug, item_count = item['name'], item['user']['ids']['slug'], item['ids']['slug'], item['item_count']
-				list_name_upper = list_name.upper()
-				url = build_url({'mode': 'trakt.list.build_trakt_list', 'user': user, 'slug': slug, 'list_type': list_type, 'list_name': list_name})
-				if list_type == 'liked_lists':
-					display = '%s | [I]%s (x%s)[/I]' % (list_name_upper, user, str(item_count))
-					cm_append(('[B]Unlike List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.trakt_unlike_a_list', 'user': user, 'list_slug': slug})))
-				else:
-					display = '%s [I](x%s)[/I]' % (list_name_upper, str(item_count))
-					cm_append(('[B]Make New List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.make_new_trakt_list'})))
-					cm_append(('[B]Delete List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.delete_trakt_list', 'user': user, 'list_slug': slug})))
-				listitem = make_listitem()
-				listitem.setLabel(display)
-				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
-				info_tag = listitem.getVideoInfoTag()
-				info_tag.setPlot(' ')
-				listitem.addContextMenuItems(cm)
-				yield (url, listitem, True)
-			except: pass
-	handle = int(sys.argv[1])
-	list_type = params['list_type']
-	shuffle = params.get('shuffle', 'false') == 'true'
-	returning_to_list = False
-	try:
-		lists = trakt_get_lists(list_type)
-		if shuffle:
-			returning_to_list = 'trakt.list.build_trakt_list' in folder_path()
-			if returning_to_list:
-				try: lists = json.loads(get_property('fenlight.trakt.lists.order'))
-				except: pass
+			# try:
+			if list_type == 'liked_lists': item = item['list']
+			cm = []
+			cm_append = cm.append
+			list_name, user, slug = item['name'], item['user']['ids']['slug'], item['ids']['slug']
+			mode = 'random.build_trakt_my_lists_contents' if randomize_contents == 'true' else 'trakt.list.build_trakt_list'
+			url = build_url({'mode': mode, 'user': user, 'slug': slug, 'list_type': list_type, 'list_name': list_name, 'random': randomize_contents})
+			if list_type == 'liked_lists':
+				cm_append(('[B]Unlike List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.trakt_unlike_a_list', 'user': user, 'list_slug': slug})))
 			else:
-				random.shuffle(lists)
-				set_property('fenlight.trakt.lists.order', json.dumps(lists))
-			sort_method = 'none'
+				cm_append(('[B]Make New List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.make_new_trakt_list'})))
+				cm_append(('[B]Delete List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.delete_trakt_list', 'user': user, 'list_slug': slug})))
+			listitem = make_listitem()
+			listitem.setLabel(list_name.capitalize())
+			listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
+			info_tag = listitem.getVideoInfoTag()
+			info_tag.setPlot(' ')
+			listitem.addContextMenuItems(cm)
+			yield (url, listitem, True)
+			# except: pass
+	handle = int(sys.argv[1])
+	list_type, randomize_contents, shuffle = params['list_type'], params.get('random', 'false'), params.get('shuffle', 'false') == 'true'
+	returning_to_list = False
+	# try:
+	lists = trakt_get_lists(list_type)
+	if shuffle:
+		returning_to_list = 'trakt.list.build_trakt_list' in folder_path()
+		if returning_to_list:
+			try: lists = json.loads(get_property('fenlight.trakt.lists.order'))
+			except: pass
 		else:
-			clear_property('fenlight.trakt.lists.order')
-			sort_method = 'label'
-		add_items(handle, list(_process()))
-	except: pass
+			random.shuffle(lists)
+			set_property('fenlight.trakt.lists.order', json.dumps(lists))
+		sort_method = 'none'
+	else:
+		clear_property('fenlight.trakt.lists.order')
+		sort_method = 'label'
+	add_items(handle, list(_process()))
+	# except: pass
 	set_content(handle, 'files')
 	set_category(handle, params.get('category_name', ''))
 	set_sort_method(handle, sort_method)
@@ -167,15 +164,13 @@ def build_trakt_list(params):
 	try:
 		threads, item_list = [], []
 		item_list_extend = item_list.extend
-		is_random = params.get('random', 'false') == 'true'
+		is_random, is_random_full = params.get('random', 'false') == 'true', params.get('random_full', 'false') == 'true'
 		user, slug, list_type = params.get('user'), params.get('slug'), params.get('list_type')
 		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
 		if page_no == 1 and not is_external: set_property('fenlight.exit_params', folder_path())
 		with_auth = list_type == 'my_lists'
 		result = get_trakt_list_contents(list_type, user, slug, with_auth)
-		if is_random:
-			result = random.sample(result, min(len(result), 20))
-			random.shuffle(result)
+		if is_random and not is_random_full: result = random.sample(result, min(len(result), 20))
 		process_list, total_pages, paginate_start = _paginate_list(result, page_no, paginate_start)
 		new_params = {'mode': 'trakt.list.build_trakt_list', 'list_type': list_type, 'list_name': list_name,
 						'user': user, 'slug': slug, 'paginate_start': paginate_start}
@@ -188,7 +183,9 @@ def build_trakt_list(params):
 			threaded_object.start()
 			threads.append(threaded_object)
 		[i.join() for i in threads]
-		if is_random: return [i[0] for i in item_list]
+		if is_random:
+			random.shuffle(item_list)
+			return [i[0] for i in item_list]
 		item_list.sort(key=lambda k: k[1])
 		add_items(handle, [i[0] for i in item_list])
 		if total_pages > page_no:
