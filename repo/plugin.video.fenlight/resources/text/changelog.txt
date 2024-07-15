@@ -1,5 +1,9 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.60[/B][/COLOR]
+- Couple of changes.
+- God Bless him and keep him safe.
+
 [COLOR dodgerblue][B]Version 1.0.59[/B][/COLOR]
 - Added "Trakt Lists Manager", "Favorites Manager" and "Browse Recommended" to Movie and TV Show context menus.
 - Added "Shufflle Contents Trakt My Lists" and "Shufflle Contents Trakt Liked Lists" to Random Lists->Trakt. Select the wanted list, and it will present the contents shuffled randomly.
