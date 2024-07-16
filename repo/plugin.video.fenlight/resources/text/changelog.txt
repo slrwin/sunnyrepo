@@ -1,5 +1,9 @@
 ++
 
+[COLOR dodgerblue][B]Version 1.0.61[/B][/COLOR]
+- Quick fix for pagination when using shuffled Trakt personal lists.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.60[/B][/COLOR]
 - Couple of changes.
 - God Bless him and keep him safe.
