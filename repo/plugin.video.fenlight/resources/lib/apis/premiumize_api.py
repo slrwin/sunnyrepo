@@ -7,7 +7,7 @@ from modules import kodi_utils
 from modules.utils import copy2clip
 # logger = kodi_utils.logger
 
-notification, requests = kodi_utils.notification, kodi_utils.requests
+notification, requests, unquote_plus = kodi_utils.notification, kodi_utils.requests, kodi_utils.unquote_plus
 monitor, progress_dialog, dialog, urlencode, get_icon = kodi_utils.monitor, kodi_utils.progress_dialog, kodi_utils.dialog, kodi_utils.urlencode, kodi_utils.get_icon
 json, sleep, confirm_dialog, ok_dialog, Thread = kodi_utils.json, kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.Thread
 base_url = 'https://www.premiumize.me/api/'
@@ -116,7 +116,7 @@ class PremiumizeAPI:
 				if not any(file_url.lower().endswith(x) for x in extensions): file_url = None
 			if file_url:
 				if store_to_cloud: Thread(target=self.create_transfer, args=(magnet_url,)).start()
-				return self.add_headers_to_url(file_url)
+				return self.add_headers_to_url(unquote_plus(file_url))
 		except: return None
 
 	def display_magnet_pack(self, magnet_url, info_hash):

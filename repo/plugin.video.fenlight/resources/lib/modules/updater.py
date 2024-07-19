@@ -7,7 +7,7 @@ from caches.settings_cache import set_setting
 from modules.utils import string_alphanum_to_num, unzip
 from modules.settings import update_use_test_repo
 from modules import kodi_utils 
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 translate_path, osPath, delete_file, execute_builtin, get_icon = kodi_utils.translate_path, kodi_utils.osPath, kodi_utils.delete_file, kodi_utils.execute_builtin, kodi_utils.get_icon
 update_kodi_addons_db, notification, show_text, confirm_dialog = kodi_utils.update_kodi_addons_db, kodi_utils.notification, kodi_utils.show_text, kodi_utils.confirm_dialog
@@ -50,16 +50,12 @@ no_changes_str = 'You are running the current version of Fen Light.[CR][CR]There
 
 def get_versions(use_test_repo):
 	try:
-		show_busy_dialog()
 		result = requests.get(versions_url % repo_location[use_test_repo])
-		hide_busy_dialog()
 		if result.status_code != 200: return None, None
 		online_version = result.text.replace('\n', '')
 		current_version = addon_info('version')
 		return current_version, online_version
-	except:
-		hide_busy_dialog()
-		return None, None
+	except: return None, None
 
 def get_changes(use_test_repo=None, online_version=None):
 	try:
@@ -124,7 +120,6 @@ def update_addon(new_version, action, use_test_repo):
 	zip_name = zipfile_name % new_version
 	url = location_url % (repo_location[use_test_repo], zip_name)
 	show_busy_dialog()
-	logger('url', url)
 	result = requests.get(url, stream=True)
 	hide_busy_dialog()
 	if result.status_code != 200: return ok_dialog(heading=heading_str, text=error_update_str)

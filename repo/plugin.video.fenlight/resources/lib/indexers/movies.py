@@ -4,7 +4,7 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta, movieset_meta
 from modules.utils import manual_function_import, get_datetime, make_thread_list_enumerate, make_thread_list_multi_arg, get_current_timestamp, paginate_list, jsondate_to_datetime
 from modules.watched_status import get_database, watched_info_movie, get_watched_status_movie, get_bookmarks_movie, get_progress_status_movie
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 make_listitem, build_url, nextpage_landscape = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape
 string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, kodi_utils.get_property
@@ -129,6 +129,7 @@ class Movies:
 			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
+			belongs_to_collection = 'true' if all([collection_id, collection_name]) else 'false'
 			if self.open_extras:
 				url_params = extras_params
 				cm_append(('[B]Playback...[/B]', run_plugin % play_params))
@@ -137,18 +138,14 @@ class Movies:
 				cm_append(('[B]Extras...[/B]', run_plugin % extras_params))
 			cm_append(('[B]Options...[/B]', run_plugin % options_params))
 			cm_append(('[B]Playback Options...[/B]', run_plugin % build_url({'mode': 'playback_choice', 'media_type': 'movie', 'poster': poster, 'meta': tmdb_id})))
-			if all([collection_id, collection_name]): cm_append(('[B]Browse Movie Set[/B]', self.window_command % \
+			if belongs_to_collection == 'true': cm_append(('[B]Browse Movie Set[/B]', self.window_command % \
 					build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': collection_id, 'name': collection_name})))
 			cm_append(('[B]Browse Recommended[/B]', self.window_command % \
 					build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_recommendations', 'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})))
 			cm_append(('[B]Trakt Lists Manager[/B]', run_plugin % \
 				build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': 'None', 'media_type': 'movie', 'icon': poster})))
-
-
 			cm_append(('[B]Favorites Manager[/B]', run_plugin % \
 				build_url({'mode': 'favorites_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'title': title})))
-
-
 			if playcount:
 				if self.widget_hide_watched: return
 				cm_append(('[B]Mark Unwatched %s[/B]' % self.watched_title, run_plugin % build_url({'mode': 'watched_status.mark_movie', 'action': 'mark_as_unwatched',
@@ -176,7 +173,7 @@ class Movies:
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape})
-			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params})
+			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'belongs_to_collection': belongs_to_collection})
 			self.append(((url_params, listitem, False), _position))
 		except: pass
 

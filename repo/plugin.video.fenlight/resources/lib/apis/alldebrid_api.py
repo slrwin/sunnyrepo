@@ -9,7 +9,7 @@ from modules.utils import copy2clip
 
 path_exists, requests, Thread, get_icon = kodi_utils.path_exists, kodi_utils.requests, kodi_utils.Thread, kodi_utils.get_icon
 show_busy_dialog, confirm_dialog, clear_property = kodi_utils.show_busy_dialog, kodi_utils.confirm_dialog, kodi_utils.clear_property
-sleep, ok_dialog = kodi_utils.sleep, kodi_utils.ok_dialog
+sleep, ok_dialog, unquote_plus = kodi_utils.sleep, kodi_utils.ok_dialog, kodi_utils.unquote_plus
 progress_dialog, notification, hide_busy_dialog, monitor = kodi_utils.progress_dialog, kodi_utils.notification, kodi_utils.hide_busy_dialog, kodi_utils.monitor
 base_url = 'https://api.alldebrid.com/v4/'
 user_agent = 'Fen Light for Kodi'
@@ -138,7 +138,7 @@ class AllDebridAPI:
 			if media_id:
 				file_url = self.unrestrict_link(media_id)
 				if not any(file_url.lower().endswith(x) for x in extensions): file_url = None
-			return file_url
+			return unquote_plus(file_url)
 		except:
 			try:
 				if transfer_id: self.delete_transfer(transfer_id)
