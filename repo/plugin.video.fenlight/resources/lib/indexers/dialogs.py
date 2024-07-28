@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 from windows.base_window import open_window, create_window
 from caches.base_cache import refresh_cached_data

@@ -3,11 +3,12 @@ import re
 import time
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
-from modules import kodi_utils
 from modules.utils import copy2clip
+from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
+from modules import kodi_utils
 # logger = kodi_utils.logger
 
-notification, requests, unquote_plus = kodi_utils.notification, kodi_utils.requests, kodi_utils.unquote_plus
+notification, requests = kodi_utils.notification, kodi_utils.requests
 monitor, progress_dialog, dialog, urlencode, get_icon = kodi_utils.monitor, kodi_utils.progress_dialog, kodi_utils.dialog, kodi_utils.urlencode, kodi_utils.get_icon
 json, sleep, confirm_dialog, ok_dialog, Thread = kodi_utils.json, kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.Thread
 base_url = 'https://www.premiumize.me/api/'
@@ -90,7 +91,6 @@ class PremiumizeAPI:
 		except: return None
 
 	def resolve_magnet(self, magnet_url, info_hash, store_to_cloud, title, season, episode):
-		from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
 		try:
 			file_url = None
 			correct_files = []
@@ -116,7 +116,7 @@ class PremiumizeAPI:
 				if not any(file_url.lower().endswith(x) for x in extensions): file_url = None
 			if file_url:
 				if store_to_cloud: Thread(target=self.create_transfer, args=(magnet_url,)).start()
-				return self.add_headers_to_url(unquote_plus(file_url))
+				return self.add_headers_to_url(file_url)
 		except: return None
 
 	def display_magnet_pack(self, magnet_url, info_hash):

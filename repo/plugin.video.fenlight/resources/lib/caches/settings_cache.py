@@ -198,7 +198,6 @@ def default_settings():
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
 {'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},
-{'setting_id': 'update.use_test_repo', 'setting_type': 'boolean', 'setting_default': 'false'},
 #==================== General
 {'setting_id': 'auto_start_fenlight', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
@@ -221,6 +220,7 @@ def default_settings():
 #================================================================================#
 #==================== Extras
 {'setting_id': 'extras.open_action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Movies', '2': 'TV Shows', '3': 'Both'}},
+{'setting_id': 'extras.open_collection', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'extras.enable_extra_ratings', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'extras.enable_scrollbars', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'extras.videos_default', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Choose', '1': '1080p', '2': '720p', '3': '480p', '4': '360p'}},

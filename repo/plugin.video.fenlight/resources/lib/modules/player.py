@@ -200,12 +200,11 @@ class FenLightPlayer(xbmc_player):
 		except: pass
 
 	def final_chapter(self):
-		final_chapter = None
 		try:
-			final = float(get_infolabel('Player.Chapters').split(',')[-1])
-			if final >= 90: final_chapter = final
+			final_chapter = float(get_infolabel('Player.Chapters').split(',')[-1])
+			if final_chapter >= 90: return final_chapter
 		except: pass
-		return final_chapter
+		return None
 
 	def kill_dialog(self):
 		try: self.sources_object._kill_progress_dialog()

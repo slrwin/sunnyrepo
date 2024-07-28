@@ -266,6 +266,10 @@ def date_offset():
 def extras_open_action(media_type):
 	return int(get_setting('fenlight.extras.open_action', '0')) in extras_open_action_dict[media_type]
 
+def extras_open_collection(open_extras):
+	if not open_extras: return False
+	return get_setting('extras.open_collection', '0') == 'true'
+
 def watched_indicators():
 	if not trakt_user_active(): return 0
 	return int(get_setting('fenlight.watched_indicators', '0'))
@@ -302,6 +306,3 @@ def update_delay():
 
 def update_action():
 	return int(get_setting('fenlight.update.action', '2'))
-
-def update_use_test_repo():
-	return get_setting('fenlight.update.use_test_repo', 'true') == 'true'

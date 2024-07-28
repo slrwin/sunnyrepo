@@ -438,14 +438,6 @@
                         <property name="setting_description">Choose the delay time before Fen Light checks for updates after Kodi start</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=update.delay)</onclick>
                     </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(10)</visible>
-                        <property name="setting_label">Use Test Repository for Updates (Warning!!!)</property>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.update.use_test_repo)]</property>
-                        <property name="setting_description">Enable this and Fen Light will update from the Tikipeter Test Repository. It is STRONGLY advised to NOT enable this setting, but if you like to live life on the edge....</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=update.use_test_repo)</onclick>
-                    </item>
             <!-- General -->
                     <item>
                         <visible>Container(2000).HasFocus(10)</visible>
@@ -588,6 +580,15 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.open_action_name)]</property>
                         <property name="setting_description">Choose whether you want Fen Light to open the Extras window when you select either a Movie, TV Show or Both</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=extras.open_action)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(20)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.extras.open_action),1) | String.IsEqual(Window(10000).Property(fenlight.extras.open_action),3)</visible>
+                        <property name="setting_label">    - Open Movie Collections Instead When Available</property>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.open_collection)]</property>
+                        <property name="setting_description">Enable this and Fen Light will display the Collection the selected Movie is a part of when that condition is met. This will be instead of opening the Extras window. You would then select the Movie again from the list of collection Movies to open the Extras menu.</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=extras.open_collection)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(20)</visible>

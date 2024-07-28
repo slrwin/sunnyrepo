@@ -6,7 +6,7 @@ from modules import kodi_utils
 
 kodi_refresh, sleep, userdata_path, path_join, translatePath = kodi_utils.kodi_refresh, kodi_utils.sleep, kodi_utils.userdata_path, kodi_utils.path_join, kodi_utils.translatePath
 delete_file, get_property, set_property, clear_property = kodi_utils.delete_file, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
-notification, confirm_dialog, ok_dialog, open_file = kodi_utils.notification, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.open_file
+notification, confirm_dialog, ok_dialog, open_file, show_text = kodi_utils.notification, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.open_file, kodi_utils.show_text
 path_exists, list_dirs, progress_dialog, make_directory = kodi_utils.path_exists, kodi_utils.list_dirs, kodi_utils.progress_dialog, kodi_utils.make_directory
 databases_path = path_join(userdata_path, 'databases/')
 database_path_raw = path_join(userdata_path, 'databases')
@@ -133,18 +133,32 @@ def check_databases_integrity():
 	if database_errors: ok_dialog(text='[B]Following Databases Rebuilt:[/B][CR][CR]%s' % ', '.join(database_errors))
 	else: notification('No Corrupt or Missing Databases', time=3000)
 
+def get_size(file):
+		with open_file(file) as f: s = f.size()
+		return s
+
 def clean_databases():
 	from caches.external_cache import external_cache
 	from caches.main_cache import main_cache
+	from caches.lists_cache import lists_cache
 	from caches.meta_cache import meta_cache
 	from caches.debrid_cache import debrid_cache
-	from caches.lists_cache import lists_cache
-	success = []
-	for item in (external_cache, main_cache, lists_cache, meta_cache, debrid_cache): success.append(item.clean_database())
-	if all(success): line1 = 'Success'
-	elif any(success): line1 = 'Success, with Errors'
-	else: line1 = 'Failed'
-	notification(line1, time=2000)
+	clean_cache_list = (('EXTERNAL CACHE', external_cache, external_db), ('MAIN CACHE', main_cache, maincache_db), ('LISTS CACHE', lists_cache, lists_db),
+						('META CACHE', meta_cache, metacache_db), ('DEBRID CACHE', debrid_cache, debridcache_db))
+	results = []
+	append = results.append
+	for item in clean_cache_list:
+		name, function, location = item
+		start_bytes = get_size(location)
+		result = function.clean_database()
+		if not result:
+			append('[B]%s: [COLOR red]FAILED[/COLOR][/B]' % name)
+			continue
+		end_bytes = get_size(location)
+		saved_bytes = start_bytes - end_bytes
+		append('[B]%s: [COLOR green]SUCCESS[/COLOR][/B][CR]    [B]Saved Size: %sMB[/B][CR]    Start Size/End Size: %sMB/%sMB' \
+		% (name, round(float(saved_bytes)/1024/1024, 2), round(float(start_bytes)/1024/1024, 2), round(float(end_bytes)/1024/1024, 2)))
+	return show_text('Cache Clean Results', text='[CR]----------------------------------[CR]'.join(results), font_size='large')
 
 def clear_cache(cache_type, silent=False):
 	def _confirm(): return silent or confirm_dialog()

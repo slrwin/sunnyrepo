@@ -3,13 +3,14 @@ import re
 import time
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
-from modules import kodi_utils
 from modules.utils import copy2clip
+from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
+from modules import kodi_utils
 # logger = kodi_utils.logger
 
 path_exists, requests, Thread, get_icon = kodi_utils.path_exists, kodi_utils.requests, kodi_utils.Thread, kodi_utils.get_icon
 show_busy_dialog, confirm_dialog, clear_property = kodi_utils.show_busy_dialog, kodi_utils.confirm_dialog, kodi_utils.clear_property
-sleep, ok_dialog, unquote_plus = kodi_utils.sleep, kodi_utils.ok_dialog, kodi_utils.unquote_plus
+sleep, ok_dialog = kodi_utils.sleep, kodi_utils.ok_dialog
 progress_dialog, notification, hide_busy_dialog, monitor = kodi_utils.progress_dialog, kodi_utils.notification, kodi_utils.hide_busy_dialog, kodi_utils.monitor
 base_url = 'https://api.alldebrid.com/v4/'
 user_agent = 'Fen Light for Kodi'
@@ -115,7 +116,6 @@ class AllDebridAPI:
 		return result.get('success', False) == True
 
 	def resolve_magnet(self, magnet_url, info_hash, store_to_cloud, title, season, episode):
-		from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
 		try:
 			file_url, media_id = None, None
 			extensions = supported_video_extensions()
@@ -138,7 +138,7 @@ class AllDebridAPI:
 			if media_id:
 				file_url = self.unrestrict_link(media_id)
 				if not any(file_url.lower().endswith(x) for x in extensions): file_url = None
-			return unquote_plus(file_url)
+			return file_url
 		except:
 			try:
 				if transfer_id: self.delete_transfer(transfer_id)

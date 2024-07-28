@@ -95,8 +95,7 @@ class source:
 	def _get_size(self, file):
 		if file.endswith('.strm'): return 'strm'
 		with open_file(file) as f: s = f.size()
-		size = round(float(s)/1073741824, 2)
-		return size
+		return round(float(s)/1073741824, 2)
 
 	def _year_query_list(self):
 		return (str(self.year), str(self.year+1), str(self.year-1))
