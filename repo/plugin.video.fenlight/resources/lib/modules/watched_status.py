@@ -308,15 +308,15 @@ def mark_season(params):
 	refresh_container()
 
 def mark_episode(params):
+	season, episode, title = int(params.get('season')), int(params.get('episode')), params.get('title')
+	if season == 0: return notification('Failed')
 	action, media_type = params.get('action'), 'episode'
 	refresh, from_playback = params.get('refresh', 'true') == 'true', params.get('from_playback', 'false') == 'true'
 	if from_playback: refresh = False
 	tmdb_id = params.get('tmdb_id')
 	try: tvdb_id = int(params.get('tvdb_id', '0'))
 	except: tvdb_id = 0
-	season, episode, title = int(params.get('season')), int(params.get('episode')), params.get('title')
 	watched_indicators = watched_indicators_function()
-	if season == 0: notification('Failed'); return
 	if watched_indicators == 1:
 		if from_playback == 'true' and trakt_official_status(media_type) == False: sleep(1000)
 		elif not trakt_watched_status_mark(action, media_type, tmdb_id, tvdb_id, season, episode): return notification('Error')

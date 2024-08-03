@@ -135,7 +135,7 @@ def tvshow_meta(id_type, media_id, api_key, current_date, current_time=None):
 	try:
 		if id_type == 'tmdb_id': data = tvshow_details(media_id, api_key)
 		else:
-			external_result = tvshow_external_id(id_type, media_id)
+			external_result = tvshow_external_id(id_type, media_id, api_key)
 			if not external_result: data = None
 			else: data = tvshow_details(external_result['id'], api_key)
 		if not data or data.get('status_code', '') in invalid_error_codes:
@@ -273,7 +273,7 @@ def episodes_meta(season, meta):
 	def _process():
 		midseason_premiere = False
 		for ep_data in details:
-			writer, director = [], []
+			writer, director, guest_stars = [], [], []
 			ep_data_get = ep_data.get
 			title, plot, premiered = ep_data_get('name'), ep_data_get('overview'), ep_data_get('air_date')
 			season, episode = ep_data_get('season_number'), ep_data_get('episode_number')
@@ -295,6 +295,11 @@ def episodes_meta(season, meta):
 			rating, votes, still_path = ep_data_get('vote_average'), ep_data_get('vote_count'), ep_data_get('still_path', None)
 			if still_path: thumb = tmdb_image_url % ('original', still_path)
 			else: thumb = None
+			cast = ep_data_get('guest_stars', [])
+			if cast:
+				try: guest_stars = [{'name': i['name'], 'role': i['character'], 'thumbnail': tmdb_image_url % ('h632', i['profile_path']) if i['profile_path'] else ''}\
+									for i in cast[:20]]
+				except: pass
 			crew = ep_data_get('crew', None)
 			if crew:
 				try: writer = [i['name'] for i in crew if i['job'] in writer_credits]
@@ -302,7 +307,7 @@ def episodes_meta(season, meta):
 				try: director = [i['name'] for i in crew if i['job'] == 'Director']
 				except: pass
 			yield {'writer': writer, 'director': director, 'mediatype': 'episode', 'episode_type': episode_type, 'title': title, 'plot': plot, 'duration': duration,
-					'premiered': premiered, 'season': season, 'episode': episode, 'rating': rating, 'votes': votes, 'thumb': thumb}
+					'premiered': premiered, 'season': season, 'episode': episode, 'rating': rating, 'votes': votes, 'thumb': thumb, 'guest_stars': guest_stars}
 	media_id, data = meta['tmdb_id'], None
 	prop_string = '%s_%s' % (media_id, season)
 	data = metacache_get_season(prop_string)

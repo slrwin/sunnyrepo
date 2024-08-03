@@ -575,23 +575,6 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(20)</visible>
-                        <property name="setting_label">Open Extras When Selecting</property>
-                        <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.open_action_name)]</property>
-                        <property name="setting_description">Choose whether you want Fen Light to open the Extras window when you select either a Movie, TV Show or Both</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=extras.open_action)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(20)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.extras.open_action),1) | String.IsEqual(Window(10000).Property(fenlight.extras.open_action),3)</visible>
-                        <property name="setting_label">    - Open Movie Collections Instead When Available</property>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.open_collection)]</property>
-                        <property name="setting_description">Enable this and Fen Light will display the Collection the selected Movie is a part of when that condition is met. This will be instead of opening the Extras window. You would then select the Movie again from the list of collection Movies to open the Extras menu.</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=extras.open_collection)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(20)</visible>
                         <property name="setting_label">Enable Content for Extras Lists</property>
                         <property name="setting_type">action</property>
                         <property name="setting_value">...</property>
@@ -630,6 +613,29 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.videos_default_name)]</property>
                         <property name="setting_description">Choose the default quality to play videos from the videos section of Extras. Includes an option to always choose which quality per video. If quality is unavailable, then the choices will be shown to decide</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=extras.videos_default)</onclick>
+                    </item>
+            <!-- Special Open Actions -->
+                    <item>
+                        <visible>Container(2000).HasFocus(20)</visible>
+                        <property name="setting_label">Special Open Actions</property>
+                        <property name="setting_type">separator</property>
+                        <onclick>noop</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(20)</visible>
+                        <property name="setting_label">Movies</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.media_open_action_movie_name)]</property>
+                        <property name="setting_description">Choose the Open Action when a Movie is selected in Fen Light. Choices Are None, Open Extras, Open Movie Set, Both. "Both" will open the Movie Set if available or open Extras</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=media_open_action_movie)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(20)</visible>
+                        <property name="setting_label">TV Shows</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.media_open_action_tvshow_name)]</property>
+                        <property name="setting_description">Choose the Open Action when a TV Show is selected in Fen Light. Choices Are None or Open Extras</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=media_open_action_tvshow)</onclick>
                     </item>
     <!-- CONTENT 30 -->
             <!-- Sorting - Personal Lists -->
@@ -737,14 +743,6 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.meta_filter)]</property>
                         <property name="setting_description">Enable this and Fen Light will attempt to filter out adult content from Movie, TV Show and People searches. Success is based purely on the accuracy of TMDb's database. Expect that some adult results may come through and plan accordingly</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=meta_filter)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(30)</visible>
-                        <property name="setting_label">Use Minimal Media Info</property>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.use_minimal_media_info)]</property>
-                        <property name="setting_description">Enable this and Fen Light will NOT assign certain properties to media it creates. Examples of suppressed properties would be ratings, casts, mpaa rating etc. Fen Light will provide Kodi only with the most basic and needed properties for the media</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=use_minimal_media_info)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>

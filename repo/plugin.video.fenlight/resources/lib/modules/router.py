@@ -27,6 +27,9 @@ def routing(sys):
 	if 'choice' in mode:
 		from indexers import dialogs
 		return exec('dialogs.%s(params)' % mode)
+	if 'custom_key.' in mode:
+		from modules import custom_keys
+		return exec('custom_keys.%s()' % mode.split('custom_key.')[1])
 	if 'trakt.' in mode:
 		if '.list' in mode:
 			from indexers import trakt_lists

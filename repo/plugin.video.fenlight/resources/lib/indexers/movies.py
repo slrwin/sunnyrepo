@@ -11,10 +11,10 @@ string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, k
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.set_property
 sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
-movie_meta, add_item, home, focus_index = movie_meta, kodi_utils.add_item, kodi_utils.home, kodi_utils.focus_index
-watched_indicators, use_minimal_media_info, widget_hide_next_page = settings.watched_indicators, settings.use_minimal_media_info, settings.widget_hide_next_page
-widget_hide_watched, extras_open_action, page_limit, paginate = settings.widget_hide_watched, settings.extras_open_action, settings.page_limit, settings.paginate
-tmdb_api_key, extras_open_collection = settings.tmdb_api_key, settings.extras_open_collection
+movie_meta, add_item, home = movie_meta, kodi_utils.add_item, kodi_utils.home
+watched_indicators, widget_hide_next_page = settings.watched_indicators, settings.widget_hide_next_page
+widget_hide_watched, media_open_action, page_limit, paginate = settings.widget_hide_watched, settings.media_open_action, settings.page_limit, settings.paginate
+tmdb_api_key = settings.tmdb_api_key
 run_plugin = 'RunPlugin(%s)'
 main = ('tmdb_movies_popular', 'tmdb_movies_popular_today','tmdb_movies_blockbusters','tmdb_movies_in_theaters', 'tmdb_movies_upcoming', 'tmdb_movies_latest_releases',
 'tmdb_movies_premieres', 'tmdb_movies_oscar_winners')
@@ -41,7 +41,7 @@ class Movies:
 		self.custom_order = self.params_get('custom_order', 'false') == 'true'
 		self.paginate_start = int(self.params_get('paginate_start', '0'))
 		self.append = self.items.append
-		self.collection_list_active = False
+		self.movieset_list_active = False
 
 	def fetch_list(self):
 		handle = int(sys.argv[1])
@@ -92,13 +92,16 @@ class Movies:
 				self.list = [i['id'] for i in data['results']]
 				if data['total_pages'] > page_no: self.new_page = {'url': url, 'new_page': string(data['page'] + 1)}
 			elif self.action  == 'tmdb_movies_sets':
-				self.collection_list_active = True
+				self.movieset_list_active = True
 				data = sorted(movieset_meta(self.params_get('key_id'), tmdb_api_key())['parts'], key=lambda k: k['release_date'] or '2050')
 				self.list = [i['id'] for i in data]
+			elif self.action == 'imdb_more_like_this':
+				self.id_type = 'imdb_id'
+				self.list = function(self.params_get('key_id'))
 			add_items(handle, self.worker())
 			if self.new_page and not self.widget_hide_next_page:
-						self.new_page.update({'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name})
-						add_dir(self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
+					self.new_page.update({'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name})
+					add_dir(self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
 		except: pass
 		set_content(handle, content_type)
 		set_category(handle, self.category_name)
@@ -106,13 +109,11 @@ class Movies:
 		if not self.is_external:
 			if self.params_get('refreshed') == 'true': sleep(1000)
 			set_view_mode(view_mode, content_type, self.is_external)
-			if self.action == 'tmdb_movies_sets': focus_index(self.list.index(int(self.params_get('source_tmdb_id'))))
 		
 	def build_movie_content(self, _position, _id):
 		try:
 			meta = movie_meta(self.id_type, _id, self.tmdb_api_key, self.current_date, self.current_time)
 			if not meta or 'blank_entry' in meta: return
-			is_folder = False
 			listitem = make_listitem()
 			cm = []
 			cm_append = cm.append
@@ -124,7 +125,7 @@ class Movies:
 			tmdb_id, imdb_id = meta_get('tmdb_id'), meta_get('imdb_id')
 			str_tmdb_id = string(tmdb_id)
 			poster, fanart, clearlogo, landscape = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or '', meta_get('landscape') or ''
-			collection_id, collection_name = meta_get('extra_info').get('collection_id', None), meta_get('extra_info').get('collection_name', None)
+			movieset_id, movieset_name = meta_get('extra_info').get('collection_id', None), meta_get('extra_info').get('collection_name', None)
 			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
 			if not first_airdate or self.current_date < first_airdate: unaired = True
 			else: unaired = False
@@ -133,21 +134,23 @@ class Movies:
 			play_params = build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
-			collection_params = build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': collection_id, 'name': collection_name, 'source_tmdb_id': tmdb_id})
-			belongs_to_collection = 'true' if all([collection_id, collection_name]) else 'false'
-			if self.open_extras:
-				if self.open_collection and belongs_to_collection == 'true': url_params, is_folder = collection_params, True
-				else: url_params = extras_params
-				cm_append(('[B]Playback...[/B]', run_plugin % play_params))
-			else:
-				url_params = play_params
-				cm_append(('[B]Extras...[/B]', run_plugin % extras_params))
-			cm_append(('[B]Options...[/B]', run_plugin % options_params))
-			cm_append(('[B]Playback Options...[/B]', run_plugin % build_url({'mode': 'playback_choice', 'media_type': 'movie', 'poster': poster, 'meta': tmdb_id})))
-			if belongs_to_collection == 'true' and not self.collection_list_active and not self.open_collection:
-				cm_append(('[B]Browse Movie Set[/B]', self.window_command % collection_params))
+			more_like_this_params = build_url({'mode': 'build_movie_list', 'action': 'imdb_more_like_this', 'key_id': imdb_id,
+											'name': 'More Like This based on %s' % title, 'is_external': self.is_external})
+			belongs_to_movieset = 'true' if all([movieset_id, movieset_name]) else 'false'
+			movieset_active = self.open_movieset and belongs_to_movieset == 'true'
+			if self.open_extras or movieset_active: cm_append(('[B]Playback[/B]', run_plugin % play_params))
+			if not self.open_extras or movieset_active: cm_append(('[B]Extras[/B]', run_plugin % extras_params))
+			if movieset_active: url_params = build_url({'mode': 'open_movieset_choice', 'key_id': movieset_id, 'name': movieset_name, 'is_external': self.is_external})
+			elif self.open_extras: url_params = extras_params
+			else: url_params = play_params
+			cm_append(('[B]Options[/B]', run_plugin % options_params))
+			cm_append(('[B]Playback Options[/B]', run_plugin % build_url({'mode': 'playback_choice', 'media_type': 'movie', 'poster': poster, 'meta': tmdb_id})))
+			if belongs_to_movieset == 'true' and not self.movieset_list_active and not self.open_movieset:
+				cm_append(('[B]Browse Movie Set[/B]', self.window_command % \
+					build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': movieset_id, 'name': movieset_name})))
 			cm_append(('[B]Browse Recommended[/B]', self.window_command % \
 					build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_recommendations', 'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})))
+			cm_append(('[B]Browse More Like This[/B]', self.window_command % more_like_this_params))
 			cm_append(('[B]Trakt Lists Manager[/B]', run_plugin % \
 				build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': 'None', 'media_type': 'movie', 'icon': poster})))
 			cm_append(('[B]Favorites Manager[/B]', run_plugin % \
@@ -167,20 +170,20 @@ class Movies:
 			info_tag.setMediaType('movie'), info_tag.setTitle(title), info_tag.setOriginalTitle(meta_get('original_title')), info_tag.setGenres(meta_get('genre'))
 			info_tag.setDuration(meta_get('duration')), info_tag.setPlaycount(playcount), info_tag.setPlot(meta_get('plot'))
 			info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': str_tmdb_id}), info_tag.setIMDBNumber(imdb_id), info_tag.setPremiered(premiered)
-			if not self.use_minimal_media:
-				info_tag.setYear(int(year)), info_tag.setRating(meta_get('rating')), info_tag.setVotes(meta_get('votes')), info_tag.setMpaa(meta_get('mpaa'))
-				info_tag.setCountries(meta_get('country')), info_tag.setTrailer(meta_get('trailer'))
-				info_tag.setTagLine(meta_get('tagline')), info_tag.setStudios(meta_get('studio'))
-				info_tag.setWriters(meta_get('writer')), info_tag.setDirectors(meta_get('director'))
-				info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in meta_get('cast', [])])
+			info_tag.setYear(int(year)), info_tag.setRating(meta_get('rating')), info_tag.setVotes(meta_get('votes')), info_tag.setMpaa(meta_get('mpaa'))
+			info_tag.setCountries(meta_get('country')), info_tag.setTrailer(meta_get('trailer'))
+			info_tag.setTagLine(meta_get('tagline')), info_tag.setStudios(meta_get('studio'))
+			info_tag.setWriters(meta_get('writer')), info_tag.setDirectors(meta_get('director'))
+			info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in meta_get('cast', [])])
 			if progress:
 				info_tag.setResumePoint(float(progress))
 				set_properties({'WatchedProgress': progress})
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape})
-			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'belongs_to_collection': belongs_to_collection})
-			self.append(((url_params, listitem, is_folder), _position))
+			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params,
+							'belongs_to_collection': belongs_to_movieset, 'fenlight.more_like_this_params': more_like_this_params})
+			self.append(((url_params, listitem, False), _position))
 		except: pass
 
 	def worker(self):
@@ -188,10 +191,10 @@ class Movies:
 		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
 		watched_db = get_database(self.watched_indicators)
 		self.watched_info, self.bookmarks = watched_info_movie(watched_db), get_bookmarks_movie(watched_db)
-		self.open_extras = extras_open_action('movie')
-		self.use_minimal_media = use_minimal_media_info()
 		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'
-		self.open_collection = extras_open_collection(self.open_extras) and not self.collection_list_active
+		open_action = media_open_action('movie')
+		self.open_movieset = open_action in (2, 3) and not self.movieset_list_active
+		self.open_extras = open_action in (1, 3)
 		if self.custom_order:
 			threads = list(make_thread_list_multi_arg(self.build_movie_content, self.list))
 			[i.join() for i in threads]

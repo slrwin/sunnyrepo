@@ -11,6 +11,10 @@ timeout = 20.0
 session = make_session('http://www.omdbapi.com/')
 metascore_icon, imdb_icon, tmdb_icon = 'metacritic.png', 'imdb.png', 'tmdb.png'
 
+
+# mdb_url = "https://mdblist.com/api/?apikey=%s&i=%s"
+# mdb_session = make_session("https://www.mdblist.com/")
+
 class OMDbAPI:
 	def fetch_info(self, meta, api_key):
 		imdb_id = meta.get('imdb_id')
@@ -23,6 +27,9 @@ class OMDbAPI:
 		data = {}
 		self.result = self.get_result(imdb_id)
 		if not self.result: return {}
+		# mdb_result = mdb_session.get(mdb_url % ('hfpdzkznllo22dg0cufr0xq9n', imdb_id), timeout=timeout)
+		# mdb_result = mdb_result.json()
+		# logger('mdb_result', mdb_result)
 		self.result_get = self.result.get
 		metascore_rating, tomatometer_rating, tomatousermeter_rating = self.process_rating('metascore'), self.process_rating('tomatoMeter'), self.process_rating('tomatoUserMeter')
 		imdb_rating, tomato_image = self.process_rating('imdbRating'), self.process_rating('tomatoImage')

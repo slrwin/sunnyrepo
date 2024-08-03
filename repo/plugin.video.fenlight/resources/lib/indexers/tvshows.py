@@ -6,12 +6,12 @@ from modules.utils import manual_function_import, get_datetime, make_thread_list
 from modules.watched_status import get_database, watched_info_tvshow, get_watched_status_tvshow, get_progress_status_tvshow
 # logger = kodi_utils.logger
 
-string, sys, external, add_items, add_dir, use_minimal_media_info = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, settings.use_minimal_media_info
+string, sys, external, add_items, add_dir = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir
 sleep, meta_function, add_item, xbmc_actor, home, tmdb_api_key = kodi_utils.sleep, tvshow_meta, kodi_utils.add_item, kodi_utils.xbmc_actor, kodi_utils.home, settings.tmdb_api_key
 set_category, json, make_listitem, build_url, set_property = kodi_utils.set_category, kodi_utils.json, kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.set_property
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 poster_empty, fanart_empty, nextpage_landscape = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.nextpage_landscape
-extras_open_action, default_all_episodes, page_limit, paginate = settings.extras_open_action, settings.default_all_episodes, settings.page_limit, settings.paginate
+media_open_action, default_all_episodes, page_limit, paginate = settings.media_open_action, settings.default_all_episodes, settings.page_limit, settings.paginate
 widget_hide_next_page, widget_hide_watched, watched_indicators = settings.widget_hide_next_page, settings.widget_hide_watched, settings.watched_indicators
 run_plugin, container_update = 'RunPlugin(%s)', 'Container.Update(%s)'
 main = ('tmdb_tv_popular', 'tmdb_tv_popular_today', 'tmdb_tv_premieres', 'tmdb_tv_airing_today','tmdb_tv_on_the_air','tmdb_tv_upcoming')
@@ -98,6 +98,9 @@ class TVShows:
 				data = function(url, page_no)
 				self.list = [i['id'] for i in data['results']]
 				if data['total_pages'] > page_no: self.new_page = {'url': url, 'new_page': string(data['page'] + 1)}
+			elif self.action == 'imdb_more_like_this':
+				self.id_type = 'imdb_id'
+				self.list = function(self.params_get('key_id'))
 			add_items(handle, self.worker())
 			if self.new_page and not self.widget_hide_next_page:
 							self.new_page.update({'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name})
@@ -131,19 +134,22 @@ class TVShows:
 				if total_watched: progress = get_progress_status_tvshow(total_watched, total_aired_eps)
 				else: progress = 0
 				visible_progress = 0 if progress == 100 else progress
-			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external})
+			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
+			more_like_this_params = build_url({'mode': 'build_tvshow_list', 'action': 'imdb_more_like_this', 'key_id': imdb_id,
+											'name': 'More Like This based on %s' % title, 'is_external': self.is_external})
 			if self.all_episodes:
 				if self.all_episodes == 1 and total_seasons > 1: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id})
 				else: url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': 'all'})
 			else: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id})
 			if self.open_extras:
-				cm_append(('[B]Browse...[/B]', container_update % url_params))
+				cm_append(('[B]Browse[/B]', container_update % url_params))
 				url_params = extras_params
-			else: cm_append(('[B]Extras...[/B]', run_plugin % extras_params))
-			cm_append(('[B]Options...[/B]', run_plugin % options_params))
+			else: cm_append(('[B]Extras[/B]', run_plugin % extras_params))
+			cm_append(('[B]Options[/B]', run_plugin % options_params))
 			cm_append(('[B]Browse Recommended[/B]', self.window_command % \
 					build_url({'mode': 'build_tvshow_list', 'action': 'tmdb_tv_recommendations', 'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})))
+			cm_append(('[B]Browse More Like This[/B]', self.window_command % more_like_this_params))
 			cm_append(('[B]Trakt Lists Manager[/B]', run_plugin % \
 				build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id, 'media_type': 'tvshow', 'icon': poster})))
 			cm_append(('[B]Favorites Manager[/B]', run_plugin % \
@@ -168,19 +174,18 @@ class TVShows:
 			info_tag.setMediaType('tvshow'), info_tag.setTitle(title), info_tag.setTvShowTitle(title), info_tag.setOriginalTitle(meta_get('original_title'))
 			info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': string(tmdb_id), 'tvdb': string(tvdb_id)}), info_tag.setIMDBNumber(imdb_id)
 			info_tag.setPlot(meta_get('plot')), info_tag.setPlaycount(playcount), info_tag.setGenres(meta_get('genre')), info_tag.setYear(int(year))
-			if not self.use_minimal_media:
-				info_tag.setTagLine(meta_get('tagline')), info_tag.setStudios(meta_get('studio')), info_tag.setWriters(meta_get('writer')), info_tag.setDirectors(meta_get('director'))
-				info_tag.setVotes(meta_get('votes')), info_tag.setMpaa(meta_get('mpaa')), info_tag.setDuration(meta_get('duration')), info_tag.setCountries(meta_get('country'))
-				info_tag.setTrailer(meta_get('trailer')), info_tag.setPremiered(premiered)
-				info_tag.setTvShowStatus(meta_get('status')), info_tag.setRating(meta_get('rating'))
-				info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in meta_get('cast', [])])
-			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params})
+			info_tag.setTagLine(meta_get('tagline')), info_tag.setStudios(meta_get('studio')), info_tag.setWriters(meta_get('writer')), info_tag.setDirectors(meta_get('director'))
+			info_tag.setVotes(meta_get('votes')), info_tag.setMpaa(meta_get('mpaa')), info_tag.setDuration(meta_get('duration')), info_tag.setCountries(meta_get('country'))
+			info_tag.setTrailer(meta_get('trailer')), info_tag.setPremiered(premiered)
+			info_tag.setTvShowStatus(meta_get('status')), info_tag.setRating(meta_get('rating'))
+			info_tag.setCast([xbmc_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in meta_get('cast', [])])
+			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params, 'fenlight.more_like_this_params': more_like_this_params})
 			self.append(((url_params, listitem, self.is_folder), _position))
 		except: pass
 
 	def worker(self):
-		self.current_date, self.current_time, self.use_minimal_media, self.tmdb_api_key = get_datetime(), get_current_timestamp(), use_minimal_media_info(), tmdb_api_key()
-		self.all_episodes, self.open_extras = default_all_episodes(), extras_open_action('tvshow')
+		self.current_date, self.current_time, self.tmdb_api_key = get_datetime(), get_current_timestamp(), tmdb_api_key()
+		self.all_episodes, self.open_extras = default_all_episodes(), media_open_action('tvshow') == 1
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = watched_indicators()
 		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'

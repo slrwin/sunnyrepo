@@ -12,6 +12,7 @@ from modules.utils import remove_accents, replace_html_codes
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
 # headers = {'User-Agent': 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543 Safari/419.3'}
 base_url = 'https://www.imdb.com/%s'
+more_like_this_url = 'title/%s'
 reviews_url = 'title/%s/reviews/_ajax?paginationKey=%s'
 trivia_url = 'title/%s/trivia'
 blunders_url = 'title/%s/goofs'
@@ -23,6 +24,12 @@ people_trivia_url = 'name/%s/trivia'
 people_search_url_backup = 'search/name/?name=%s'
 people_search_url = 'https://sg.media-imdb.com/suggests/%s/%s.json'
 timeout = 20.0
+
+def imdb_more_like_this(imdb_id):
+	url = base_url % more_like_this_url % imdb_id
+	string = 'imdb_more_like_this_%s' % imdb_id
+	params = {'url': url, 'action': 'imdb_more_like_this', 'imdb_id': imdb_id}
+	return cache_object(get_imdb, string, params, False, 168)[0]
 
 def imdb_people_id(actor_name):
 	name = actor_name.lower()
@@ -72,6 +79,20 @@ def get_imdb(params):
 	action = params.get('action')
 	url = params.get('url')
 	next_page = None
+	if action == 'imdb_more_like_this':
+		def _process():
+			for item in items:
+				try:
+					_id = item.split('href="/title/')[1].split('/?ref_')[0]
+					if _id.replace('tt','').isnumeric(): yield (_id)
+				except: pass
+		try:
+			result = requests.get(url, timeout=timeout, headers=headers).text
+			result = result.split('<span>Storyline</span>')[0].split('<span>More like this</span>')[1]
+			items = str(result).split('poster-card__title--clickable" aria-label="')
+		except: items = []
+		imdb_list = list(_process())
+		imdb_list = [i for n, i in enumerate(imdb_list) if i not in imdb_list[n + 1:]] # remove duplicates
 	if action in ('imdb_trivia', 'imdb_blunders'):
 		def _process():
 			for count, item in enumerate(items, 1):

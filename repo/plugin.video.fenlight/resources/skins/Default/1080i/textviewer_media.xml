@@ -59,10 +59,10 @@
                     <align>center</align>
                     <aligny>center</aligny>
                     <textcolor>FFCCCCCC</textcolor>
-                    <pagecontrol>2061</pagecontrol>
+                    <pagecontrol>2099</pagecontrol>
                     <autoscroll>false</autoscroll>
                 </control>
-                <control type="scrollbar" id="2061">
+                <control type="scrollbar" id="2099">
                     <left>1140</left>
                     <top>35</top>
                     <width>10</width>
@@ -70,8 +70,8 @@
                     <texturesliderbackground colordiffuse="FF1F2020">fenlight_common/white.png</texturesliderbackground>
                     <texturesliderbar colordiffuse="FF555556">fenlight_common/white.png</texturesliderbar>
                     <texturesliderbarfocus colordiffuse="FFCCCCCC">fenlight_common/white.png</texturesliderbarfocus>
-                    <onleft>2061</onleft>
-                    <onright>2061</onright>
+                    <onleft>2099</onleft>
+                    <onright>2099</onright>
                     <showonepage>false</showonepage>
                     <orientation>vertical</orientation>
                 </control>

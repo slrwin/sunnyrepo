@@ -9,7 +9,6 @@ download_directories_dict = {'movie': 'fenlight.movie_download_directory', 'epis
 							None: 'fenlight.premium_download_directory', 'None': False}
 results_window_numbers_dict = {'List': 2000, 'Rows': 2001, 'WideList': 2002}
 default_action_dict = {'0': 'play', '1': 'cancel', '2': 'pause'}
-extras_open_action_dict = {'movie': (1, 3), 'tvshow': (2, 3)}
 paginate_dict = {True: 'fenlight.paginate.limit_widgets', False: 'fenlight.paginate.limit_addon'}
 nextep_sort_key_dict = {0: 'last_played', 1: 'first_aired', 2: 'name'}
 prescrape_scrapers_tuple = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'folders')
@@ -129,9 +128,6 @@ def trakt_sync_interval():
 
 def lists_sort_order(setting):
 	return int(get_setting('fenlight.sort.%s' % setting, '0'))
-
-def use_minimal_media_info():
-	return get_setting('fenlight.use_minimal_media_info', 'true') == 'true'
 
 def single_ep_display_format(is_external):
 	if is_external: setting, default = 'fenlight.single_ep_display_widget', '1'
@@ -263,12 +259,8 @@ def calendar_sort_order():
 def date_offset():
 	return int(get_setting('fenlight.datetime.offset', '0')) + 5
 
-def extras_open_action(media_type):
-	return int(get_setting('fenlight.extras.open_action', '0')) in extras_open_action_dict[media_type]
-
-def extras_open_collection(open_extras):
-	if not open_extras: return False
-	return get_setting('extras.open_collection', '0') == 'true'
+def media_open_action(media_type):
+	return int(get_setting('fenlight.media_open_action_%s' % media_type, '0'))
 
 def watched_indicators():
 	if not trakt_user_active(): return 0

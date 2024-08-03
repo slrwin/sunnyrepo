@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 from windows.base_window import open_window, create_window
 from caches.base_cache import refresh_cached_data
@@ -14,7 +15,7 @@ show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.sh
 external_scraper_settings, kodi_refresh, autoscrape_next_episode = kodi_utils.external_scraper_settings, kodi_utils.kodi_refresh, settings.autoscrape_next_episode
 json, select_dialog, autoplay_next_episode, quality_filter = kodi_utils.json, kodi_utils.select_dialog, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window
-poster_empty, parse_qsl, get_infolabel, audio_filters = kodi_utils.empty_poster, kodi_utils.parse_qsl, kodi_utils.get_infolabel, settings.audio_filters
+poster_empty, audio_filters = kodi_utils.empty_poster, settings.audio_filters
 extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 quality_filter, date_offset, extras_videos_default, trakt_user_active = settings.quality_filter, settings.date_offset, settings.extras_videos_default, settings.trakt_user_active
@@ -342,8 +343,8 @@ def extras_buttons_choice(params):
 	return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
 
 def extras_lists_choice(params={}):
-	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('Reviews', 2052), ('Comments', 2053), ('Trivia', 2054), ('Blunders', 2055), ('Parental Guide', 2056),
-				('Videos', 2057), ('More from Year', 2058), ('More from Genres', 2059),	('More from Networks', 2060), ('More from Collection', 2061)]
+	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('More Like This', 2052), ('Reviews', 2053), ('Comments', 2054), ('Trivia', 2055), ('Blunders', 2056),
+		('Parental Guide', 2057), ('Videos', 2058), ('More from Year', 2059), ('More from Genres', 2060),	('More from Networks', 2061), ('More from Collection', 2062)]
 	list_items = [{'line1': i[0]} for i in choices]
 	current_settings = extras_enabled_menus()
 	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]
@@ -551,17 +552,11 @@ def extras_menu_choice(params):
 	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_external=params.get('is_external', 'true' if external() else 'false'),
 															options_media_type=media_type, starting_position=params.get('starting_position', None))
 
-def custom_key_extras_menu_choice(params):
-	try:
-		params = dict(parse_qsl(get_infolabel('ListItem.Property(fenlight.extras_params)').split('plugin://plugin.video.fenlight/?')[1], keep_blank_values=True))
-		if params: extras_menu_choice(params)
-	except: pass
+def open_movieset_choice(params):
+	hide_busy_dialog()
+	window_function = activate_window if params['is_external'] in (True, 'True', 'true') else container_update
+	return window_function({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': params['key_id'], 'name': params['name']})
 
-def custom_key_options_menu_choice(params):
-	try:
-		params = dict(parse_qsl(get_infolabel('ListItem.Property(fenlight.options_params)').split('plugin://plugin.video.fenlight/?')[1], keep_blank_values=True))
-		if params: options_menu_choice(params)
-	except: pass
 
 def media_extra_info_choice(params):
 	media_type, meta = params.get('media_type'), params.get('meta')
