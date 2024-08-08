@@ -171,9 +171,9 @@ class Navigator:
 		self.add({'mode': 'navigator.tips'}, 'Tips for Use', 'settings2')
 		if get_setting('fenlight.use_viewtypes', 'true') == 'true':
 			self.add({'mode': 'navigator.set_view_modes'}, 'Set Views', 'settings2')
+		self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
 		self.add({'mode': 'build_next_episode_manager'}, 'TV Shows Progress Manager', 'settings2')
 		self.add({'mode': 'navigator.shortcut_folders'}, 'Shortcut Folders Manager', 'settings2')
-		self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
 		self.add({'mode': 'navigator.maintenance'}, 'Database & Cache Maintenance', 'settings2')
 		self.add({'mode': 'navigator.update_utils'}, 'Update Utilities', 'settings2')
 		self.add({'mode': 'toggle_language_invoker', 'isFolder': 'false'}, 'Toggle Language Invoker (ADVANCED!!)', 'settings2')

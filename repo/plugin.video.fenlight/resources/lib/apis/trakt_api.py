@@ -11,7 +11,7 @@ from modules.utils import sort_list, sort_for_article, make_thread_list, get_dat
 json, monitor, sleep, random = kodi_utils.json, kodi_utils.monitor, kodi_utils.sleep, kodi_utils.random
 logger, notification, player, confirm_dialog, get_property = kodi_utils.logger, kodi_utils.notification, kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.get_property
 dialog, unquote, addon_installed, addon_enabled, addon = kodi_utils.dialog, kodi_utils.unquote, kodi_utils.addon_installed, kodi_utils.addon_enabled, kodi_utils.addon
-path_check, get_icon, clear_property = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.clear_property
+path_check, get_icon, clear_property, remove_keys = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.clear_property, kodi_utils.remove_keys
 requests, execute_builtin, select_dialog, kodi_refresh = kodi_utils.requests, kodi_utils.execute_builtin, kodi_utils.select_dialog, kodi_utils.kodi_refresh
 progress_dialog, external, trakt_user_active = kodi_utils.progress_dialog, kodi_utils.external, settings.trakt_user_active
 lists_sort_order, trakt_client, trakt_secret, tmdb_api_key = settings.lists_sort_order, settings.trakt_client, settings.trakt_secret, settings.tmdb_api_key
@@ -403,6 +403,19 @@ def trakt_favorites(media_type, dummy_arg):
 	params = {'path': 'users/me/favorites/%s/%s', 'path_insert': (media_type, 'title'), 'with_auth': True, 'pagination': False}
 	return cache_trakt_object(_process, string, params)
 
+def trakt_lists_with_media(media_type, imdb_id):
+	def _process(foo):
+		removals = ('description', 'privacy', 'type', 'share_link', 'display_numbers', 'allow_comments', 'sort_by', 'sort_how', 'created_at', 'updated_at', 'comment_count', 'likes')
+		data = [i for i in get_trakt(params) if i['item_count'] > 0 and i['ids']['slug'] not in ('', 'None', None) and i['privacy'] == 'public']
+		return [remove_keys(i, removals) for i in data]
+	results = []
+	results_append = results.append
+	template = '[B]%02d. [I]%s - %s likes[/I]'
+	media_type = 'movies' if media_type in ('movie', 'movies') else 'shows'
+	string = 'trakt_lists_with_media_%s' % imdb_id
+	params = {'path': '%s/%s/lists/personal', 'path_insert': (media_type, imdb_id), 'params': {'limit': 100}, 'pagination': False}
+	return cache_object(_process, string, 'foo', False, 168)
+
 def get_trakt_list_contents(list_type, user, slug, with_auth):
 	def _process(params):
 		return [{'media_ids': i[i['type']]['ids'], 'title': i[i['type']]['title'], 'type': i['type'], 'order': c} \
@@ -506,21 +519,23 @@ def trakt_remove_from_list(params):
 def trakt_like_a_list(params):
 	user = params['user']
 	list_slug = params['list_slug']
+	refresh = params.get('refresh', 'true') == 'true'
 	try:
 		call_trakt('/users/%s/lists/%s/like' % (user, list_slug), method='post')
-		notification('Success', 3000)
+		notification('Success - Trakt List Liked', 3000)
 		trakt_sync_activities()
-		kodi_refresh()
+		if refresh: kodi_refresh()
 	except: notification('Error', 3000)
 
 def trakt_unlike_a_list(params):
 	user = params['user']
 	list_slug = params['list_slug']
+	refresh = params.get('refresh', 'true') == 'true'
 	try:
 		call_trakt('/users/%s/lists/%s/like' % (user, list_slug), method='delete')
-		notification('Success', 3000)
+		notification('Success - Trakt List Unliked', 3000)
 		trakt_sync_activities()
-		kodi_refresh()
+		if refresh: kodi_refresh()
 	except: notification('Error', 3000)
 
 def get_trakt_movie_id(item):

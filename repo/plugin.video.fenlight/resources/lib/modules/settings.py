@@ -129,6 +129,9 @@ def trakt_sync_interval():
 def lists_sort_order(setting):
 	return int(get_setting('fenlight.sort.%s' % setting, '0'))
 
+def show_specials():
+	return get_setting('fenlight.show_specials', 'false') == 'true'
+
 def single_ep_display_format(is_external):
 	if is_external: setting, default = 'fenlight.single_ep_display_widget', '1'
 	else: setting, default = 'fenlight.single_ep_display', ''

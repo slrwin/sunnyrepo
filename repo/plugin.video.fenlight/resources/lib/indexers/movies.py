@@ -151,6 +151,8 @@ class Movies:
 			cm_append(('[B]Browse Recommended[/B]', self.window_command % \
 					build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_recommendations', 'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})))
 			cm_append(('[B]Browse More Like This[/B]', self.window_command % more_like_this_params))
+			if imdb_id: cm_append(('[B]In Trakt Lists[/B]', self.window_command % \
+							build_url({'mode': 'trakt.list.get_trakt_lists_with_media', 'media_type': 'movie', 'imdb_id': imdb_id, 'category_name': '%s In Trakt Lists' % title})))
 			cm_append(('[B]Trakt Lists Manager[/B]', run_plugin % \
 				build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': 'None', 'media_type': 'movie', 'icon': poster})))
 			cm_append(('[B]Favorites Manager[/B]', run_plugin % \
@@ -166,6 +168,8 @@ class Movies:
 				cm_append(('[B]Clear Progress[/B]', run_plugin % build_url({'mode': 'watched_status.erase_bookmark', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'refresh': 'true'})))
 			if self.is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			else: cm_append(('[B]Exit Movie List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
+
+
 			info_tag = listitem.getVideoInfoTag()
 			info_tag.setMediaType('movie'), info_tag.setTitle(title), info_tag.setOriginalTitle(meta_get('original_title')), info_tag.setGenres(meta_get('genre'))
 			info_tag.setDuration(meta_get('duration')), info_tag.setPlaycount(playcount), info_tag.setPlot(meta_get('plot'))

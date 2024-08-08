@@ -13,7 +13,6 @@ from modules.episode_tools import EpisodeTools
 # logger = kodi_utils.logger
 
 Thread, get_icon, close_all_dialog = kodi_utils.Thread, kodi_utils.get_icon, kodi_utils.close_all_dialog
-backup_cast_thumbnail = get_icon('genre_family')
 addon_fanart, empty_poster = kodi_utils.default_addon_fanart, kodi_utils.empty_poster
 extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extras_button_label_values, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
@@ -39,10 +38,11 @@ youtube_check = 'plugin.video.youtube'
 setting_base, label_base, ratings_icon_base = 'fenlight.extras.%s.button', 'button%s.label', 'fenlight_flags/ratings/%s'
 separator = '[B]  •  [/B]'
 button_ids = (10, 11, 12, 13, 14, 15, 16, 17, 50)
-plot_id, cast_id, recommended_id, more_like_this_id, reviews_id, comments_id, trivia_id, blunders_id, parentsguide_id = 2000, 2050, 2051, 2052, 2053, 2054, 2055, 2056, 2057
-videos_id, year_id, genres_id, networks_id, collection_id = 2058, 2059, 2060, 2061, 2062
+plot_id, cast_id, recommended_id, more_like_this_id, reviews_id, comments_id, trivia_id = 2000, 2050, 2051, 2052, 2053, 2054, 2055
+blunders_id, parentsguide_id, in_lists_id, videos_id, year_id, genres_id, networks_id, collection_id = 2056, 2057, 2058, 2059, 2060, 2061, 2062, 2063
 items_list_ids = (recommended_id, more_like_this_id, year_id, genres_id, networks_id, collection_id)
 text_list_ids = (reviews_id, trivia_id, blunders_id, parentsguide_id, comments_id)
+open_folder_list_ids = (in_lists_id,)
 finished_tvshow = ('', 'Ended', 'Canceled')
 parentsguide_icons = {'Sex & Nudity': get_icon('sex_nudity'), 'Violence & Gore': get_icon('genre_war'), 'Profanity': get_icon('bad_language'),
 						'Alcohol, Drugs & Smoking': get_icon('drugs_alcohol'), 'Frightening & Intense Scenes': get_icon('genre_horror')}
@@ -58,7 +58,7 @@ class Extras(BaseDialog):
 		self.set_starting_constants(kwargs)
 		self.set_properties()
 		self.tasks = (self.set_artwork, self.set_infoline1, self.set_infoline2, self.make_ratings, self.make_cast, self.make_recommended,
-					self.make_more_like_this, self.make_reviews, self.make_comments, self.make_trivia, self.make_blunders, self.make_parentsguide,
+					self.make_more_like_this, self.make_reviews, self.make_comments, self.make_in_lists, self.make_trivia, self.make_blunders, self.make_parentsguide,
 					self.make_videos, self.make_year, self.make_genres, self.make_network, self.make_collection)
 
 	def onInit(self):
@@ -106,6 +106,10 @@ class Extras(BaseDialog):
 			if focus_id == cast_id:
 				person_name = self.get_listitem(focus_id).getProperty(self.item_action_dict[focus_id])
 				return person_search(person_name)
+			elif focus_id == in_lists_id:
+				try: chosen = self.get_attribute(self, self.get_listitem(focus_id).getProperty(self.item_action_dict[focus_id]))[self.get_position(focus_id)]
+				except: return self.notification('Error Liking List')
+				return self.run_addon({'mode': 'trakt.trakt_like_a_list', 'user': chosen['user']['ids']['slug'], 'list_slug': chosen['ids']['slug'], 'refresh': 'false'})
 			else: return
 		if not self.control_id: return
 		if action in self.selection_actions:
@@ -130,6 +134,17 @@ class Extras(BaseDialog):
 			elif self.control_id in text_list_ids:
 				if self.control_id == parentsguide_id: return self.show_text_media(text=chosen_var)
 				else: return self.select_item(self.control_id, self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=position))
+			elif self.control_id in open_folder_list_ids:
+				try: chosen_var = self.get_listitem(self.control_id).getProperty(self.item_action_dict[self.control_id])
+				except: return
+				if not chosen_var: return
+				try:
+					self.close_all()
+					chosen = self.get_attribute(self, chosen_var)[position]
+					list_name, user, slug = chosen['name'], chosen['user']['ids']['slug'], chosen['ids']['slug']
+					self.selected = self.folder_runner({'mode': 'trakt.list.build_trakt_list', 'user': user, 'slug': slug, 'list_type': 'user_lists', 'list_name': list_name})
+					self.close()
+				except: return
 			else: return
 
 	def make_ratings(self, win_prop=4000):
@@ -158,13 +173,14 @@ class Extras(BaseDialog):
 			for item in self.meta_get('cast'):
 				try:
 					listitem = self.make_listitem()
-					thumbnail = item['thumbnail'] or backup_cast_thumbnail
+					thumbnail = item['thumbnail'] or icon
 					listitem.setProperty('name', item['name'])
 					listitem.setProperty('role', item['role'])
 					listitem.setProperty('thumbnail', thumbnail)
 					yield listitem
 				except: pass
 		try:
+			icon = get_icon('genre_family')
 			item_list = list(builder())
 			self.setProperty('cast.number', count_insert % len(item_list))
 			self.item_action_dict[cast_id] = 'name'
@@ -241,6 +257,26 @@ class Extras(BaseDialog):
 			self.setProperty('trakt_comments.number', count_insert % len(item_list))
 			self.item_action_dict[comments_id] = 'content_list'
 			self.add_items(comments_id, item_list)
+		except: pass
+
+	def make_in_lists(self):
+		if not in_lists_id in self.enabled_lists: return
+		def builder():
+			for count, item in enumerate(self.all_in_lists, 1):
+				try:
+					listitem = self.make_listitem()
+					name = template % (count, item['name'].upper(), item['user']['ids']['slug'], item['item_count'])
+					listitem.setProperty('name', name)
+					listitem.setProperty('content_list', 'all_in_lists')
+					yield listitem
+				except: pass
+		try:
+			template = '[B]%02d.[CR]%s[/B][CR][CR]by %s[CR](x%02d)'
+			self.all_in_lists = trakt_api.trakt_lists_with_media(self.media_type, self.imdb_id)
+			item_list = list(builder())
+			self.setProperty('trakt_in_lists.number', count_insert % len(item_list))
+			self.item_action_dict[in_lists_id] = 'content_list'
+			self.add_items(in_lists_id, item_list)
 		except: pass
 
 	def make_trivia(self):
@@ -576,6 +612,13 @@ class Extras(BaseDialog):
 		self.close_all()
 		mode = 'build_movie_list' if self.media_type == 'movie' else 'build_tvshow_list'
 		self.selected = self.folder_runner({'mode': mode, 'action': 'imdb_more_like_this', 'key_id': self.imdb_id, 'name': 'More Like This based on %s' % self.title})
+		self.close()
+
+	def show_in_trakt_lists(self):
+		self.close_all()
+		media_type = 'movies' if self.media_type == 'movie' else 'shows'
+		self.selected = self.folder_runner({'mode': 'trakt.list.get_trakt_lists_with_media', 'media_type': media_type,
+											'imdb_id': self.imdb_id, 'category_name': '%s In Trakt Lists' % self.title})
 		self.close()
 
 	def show_trakt_manager(self):

@@ -15,6 +15,7 @@ nextpage_landscape, get_property, clear_property, focus_index = kodi_utils.nextp
 set_category, home, folder_path = kodi_utils.set_category, kodi_utils.home, kodi_utils.folder_path
 trakt_trending_popular_lists, trakt_get_lists, trakt_search_lists = trakt_api.trakt_trending_popular_lists, trakt_api.trakt_get_lists, trakt_api.trakt_search_lists
 trakt_fetch_collection_watchlist, get_trakt_list_contents = trakt_api.trakt_fetch_collection_watchlist, trakt_api.get_trakt_list_contents
+trakt_lists_with_media = trakt_api.trakt_lists_with_media
 
 def search_trakt_lists(params):
 	def _builder():
@@ -146,6 +147,38 @@ def get_trakt_trending_popular_lists(params):
 		add_items(handle, list(_process()))
 		add_dir({'mode': 'trakt.list.get_trakt_trending_popular_lists', 'list_type': 'trending', 'new_page': new_page},
 				'Next Page (%s) >>' % new_page, handle, 'nextpage', nextpage_landscape)
+	except: pass
+	set_content(handle, 'files')
+	set_category(handle, params.get('category_name', 'Trakt Lists'))
+	end_directory(handle)
+	set_view_mode('view.main')
+
+def get_trakt_lists_with_media(params):
+	def _process():
+		for item in lists:
+			try:
+				cm = []
+				cm_append = cm.append
+				item_count = item.get('item_count', 0)
+				list_name, user, slug = item['name'], item['user']['ids']['slug'], item['ids']['slug']
+				list_name_upper = list_name.upper()
+				display = '%s | [I]%s (x%s)[/I]' % (list_name_upper, user, str(item_count))
+				url = build_url({'mode': 'trakt.list.build_trakt_list', 'user': user, 'slug': slug, 'list_type': 'user_lists', 'list_name': list_name})
+				listitem = make_listitem()
+				if not user == 'Trakt Official':
+					cm_append(('[B]Like List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.trakt_like_a_list', 'user': user, 'list_slug': slug})))
+					cm_append(('[B]Unlike List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.trakt_unlike_a_list', 'user': user, 'list_slug': slug})))
+				listitem.addContextMenuItems(cm)
+				listitem.setLabel(display)
+				listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
+				info_tag = listitem.getVideoInfoTag()
+				info_tag.setPlot(' ')
+				yield (url, listitem, True)
+			except: pass
+	handle = int(sys.argv[1])
+	try:
+		lists = trakt_lists_with_media(params['media_type'], params['imdb_id'])
+		add_items(handle, list(_process()))
 	except: pass
 	set_content(handle, 'files')
 	set_category(handle, params.get('category_name', 'Trakt Lists'))

@@ -19,8 +19,7 @@ poster_empty, audio_filters = kodi_utils.empty_poster, settings.audio_filters
 extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 quality_filter, date_offset, extras_videos_default, trakt_user_active = settings.quality_filter, settings.date_offset, settings.extras_videos_default, settings.trakt_user_active
-single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_fenlight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
-scraper_names = ['EXTERNAL SCRAPERS', 'EASYNEWS', 'RD CLOUD', 'PM CLOUD', 'AD CLOUD', 'FOLDERS 1-5']
+single_ep_list, scraper_names = kodi_utils.single_ep_list, kodi_utils.scraper_names
 
 def tmdb_api_check_choice(params):
 	from apis.tmdb_api import movie_details
@@ -343,8 +342,9 @@ def extras_buttons_choice(params):
 	return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
 
 def extras_lists_choice(params={}):
-	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('More Like This', 2052), ('Reviews', 2053), ('Comments', 2054), ('Trivia', 2055), ('Blunders', 2056),
-		('Parental Guide', 2057), ('Videos', 2058), ('More from Year', 2059), ('More from Genres', 2060),	('More from Networks', 2061), ('More from Collection', 2062)]
+	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('More Like This', 2052), ('Reviews', 2053), ('Comments', 2054), ('Trivia', 2055),
+			('Blunders', 2056), ('Parental Guide', 2057), ('In Trakt Lists', 2058), ('Videos', 2059), ('More from Year', 2060), ('More from Genres', 2061),
+			('More from Networks', 2062), ('More from Collection', 2063)]
 	list_items = [{'line1': i[0]} for i in choices]
 	current_settings = extras_enabled_menus()
 	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]
@@ -466,7 +466,6 @@ def options_menu_choice(params, meta=None):
 		if menu_type in ('movie', 'episode'): listing_append(('Playback Options', 'Scrapers Options', 'playback_choice'))
 		if trakt_user_active(): listing_append(('Trakt Lists Manager', '', 'trakt_manager'))
 		listing_append(('Favorites Manager', '', 'favorites_choice'))
-	if menu_type in single_ep_list: listing_append(('Browse', 'Browse %s' % title, 'browse'))
 	if menu_type == 'tvshow': listing_append(('Play Random', 'Based On %s' % rootname, 'random'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list:
 		base_str1, base_str2, on_str, off_str = '%s%s', 'Currently: [B]%s[/B]', 'On', 'Off'
@@ -517,10 +516,6 @@ def options_menu_choice(params, meta=None):
 		return external_scraper_settings()
 	if choice == 'playback_choice':
 		return playback_choice({'media_type': content, 'poster': poster, 'meta': meta, 'season': season, 'episode': episode})
-	if choice == 'browse':
-		return window_function({'mode': 'build_season_list', 'tmdb_id': tmdb_id})
-	if choice == 'browse_season':
-		return window_function({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': season})
 	if choice == 'nextep_manager':
 		return window_function({'mode': 'build_next_episode_manager'})
 	if choice == 'random':
@@ -556,7 +551,6 @@ def open_movieset_choice(params):
 	hide_busy_dialog()
 	window_function = activate_window if params['is_external'] in (True, 'True', 'true') else container_update
 	return window_function({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': params['key_id'], 'name': params['name']})
-
 
 def media_extra_info_choice(params):
 	media_type, meta = params.get('media_type'), params.get('meta')

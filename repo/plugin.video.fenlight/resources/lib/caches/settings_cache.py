@@ -239,6 +239,7 @@ def default_settings():
 {'setting_id': 'paginate.lists', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Within Addon Only', '2': 'Widgets Only', '3': 'Both'}},
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
+{'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_all_episodes', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'If Only One Season', '2': 'Always'}},
 {'setting_id': 'single_ep_display', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
 {'setting_id': 'single_ep_display_widget', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},

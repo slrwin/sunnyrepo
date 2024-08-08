@@ -8,7 +8,7 @@ from modules.watched_status import get_database, watched_info_season, get_watche
 poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
 sys, add_items, set_content, end_directory, set_view_mode = kodi_utils.sys, kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
 make_listitem, build_url, external, date_offset_info, tmdb_api_key = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.external, settings.date_offset, settings.tmdb_api_key
-watched_indicators_info, widget_hide_watched = settings.watched_indicators, settings.widget_hide_watched
+watched_indicators_info, widget_hide_watched, show_specials = settings.watched_indicators, settings.widget_hide_watched, settings.show_specials
 string, run_plugin, unaired_label, tmdb_poster = str, 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
 view_mode, content_type = 'view.seasons', 'seasons'
 season_name_str = 'Season %s'
@@ -37,6 +37,7 @@ def build_season_list(params):
 				if unaired or season_special:
 					progress, playcount, total_watched, total_unwatched = 0, 0, 0, aired_eps
 					if unaired: title = unaired_label % title
+					else: title = 'Specials'
 				else:
 					playcount, watched, unwatched = get_watched_status_season(watched_info.get(season_number, None), aired_eps)
 					progress = get_progress_status_season(watched, aired_eps)
@@ -84,7 +85,10 @@ def build_season_list(params):
 	episode_run_time, season_data, total_seasons = meta_get('duration'), meta_get('season_data'), meta_get('total_seasons')
 	show_poster, show_fanart = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty
 	show_clearlogo, show_landscape = meta_get('clearlogo') or '', meta_get('landscape') or ''
-	season_data.sort(key=lambda k: k['season_number'])
+	if show_specials(): season_data.sort(key=lambda i: (i['season_number'] == 0, i['season_number']))
+	else:
+		season_data = [i for i in season_data if not i['season_number'] == 0]
+		season_data.sort(key=lambda k: k['season_number'])
 	watched_info = watched_info_season(tmdb_id, get_database(watched_indicators))
 	add_items(handle, list(_process()))
 	category_name = show_title

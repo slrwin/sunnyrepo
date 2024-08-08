@@ -327,7 +327,7 @@ def episodes_meta(season, meta):
 	metacache_set_season(prop_string, data, expiration)
 	return data
 
-def all_episodes_meta(meta):
+def all_episodes_meta(meta, include_specials=False):
 	from modules.kodi_utils import Thread
 	def _get_tmdb_episodes(season):
 		try: data.extend(episodes_meta(season, meta))
@@ -335,7 +335,7 @@ def all_episodes_meta(meta):
 	try:
 		data = []
 		seasons = [i['season_number'] for i in meta['season_data']]
-		seasons = [i for i in seasons if not i == 0]
+		if not include_specials: seasons = [i for i in seasons if not i == 0]
 		threads = [Thread(target=_get_tmdb_episodes, args=(i,)) for i in seasons]
 		[i.start() for i in threads]
 		[i.join() for i in threads]

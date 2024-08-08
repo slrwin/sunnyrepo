@@ -13,7 +13,7 @@ nextep_airing_today, nextep_sort_key, nextep_sort_direction = settings.nextep_ai
 nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep_include_unaired, settings.single_ep_display_format, settings.widget_hide_watched
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
 get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
-watched_indicators_info, nextep_method = settings.watched_indicators, settings.nextep_method
+watched_indicators_info, nextep_method, show_specials = settings.watched_indicators, settings.nextep_method, settings.show_specials
 nextep_limit_history, nextep_limit, tmdb_api_key = settings.nextep_limit_history, settings.nextep_limit, settings.tmdb_api_key
 get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode = ws.get_watched_status_episode, ws.get_bookmarks_episode, ws.get_progress_status_episode
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
@@ -55,11 +55,11 @@ def build_episode_list(params):
 					progress = get_progress_status_episode(bookmarks, episode)
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
-				play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})
 				url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})
 				cm_append(('[B]Extras[/B]', run_plugin % extras_params))
 				cm_append(('[B]Options[/B]', run_plugin % options_params))
-				cm_append(('[B]Playback Options[/B]', run_plugin % play_options_params))
+				cm_append(('[B]Playback Options[/B]', run_plugin % \
+							build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})))
 				if not unaired and not season_special:
 					if playcount:
 						cm_append(('[B]Mark Unwatched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_episode', 'action': 'mark_as_unwatched',
@@ -106,7 +106,7 @@ def build_episode_list(params):
 	show_clearlogo = meta_get('clearlogo') or ''
 	show_landscape = meta_get('landscape') or ''
 	if season == 'all':
-		episodes_data = all_episodes_meta(meta)
+		episodes_data = all_episodes_meta(meta, show_specials())
 		season_poster = show_poster
 	else:
 		episodes_data = episodes_meta(season, meta)
@@ -202,11 +202,11 @@ def build_single_episode(list_type, params={}):
 			if not item_get('duration'): item['duration'] = meta_get('duration')
 			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
-			play_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})
 			url_params = build_url({'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode})
 			cm_append(('[B]Extras[/B]', run_plugin % extras_params))
 			cm_append(('[B]Options[/B]', run_plugin % options_params))
-			cm_append(('[B]Playback Options[/B]', run_plugin % play_options_params))
+			cm_append(('[B]Playback Options[/B]', run_plugin % \
+						build_url({'mode': 'playback_choice', 'media_type': 'episode', 'poster': show_poster, 'meta': tmdb_id, 'season': season, 'episode': episode})))
 			if not unaired:
 				if playcount:
 					cm_append(('[B]Mark Unwatched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_episode', 'action': 'mark_as_unwatched',
@@ -215,6 +215,7 @@ def build_single_episode(list_type, params={}):
 												'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season, 'episode': episode,  'title': title})))
 				if progress: cm_append(('[B]Clear Progress[/B]', run_plugin % build_url({'mode': 'watched_status.erase_bookmark', 'media_type': 'episode', 'tmdb_id': tmdb_id,
 												'season': season, 'episode': episode, 'refresh': 'true'})))
+			cm_append(('[B]Browse[/B]', window_command % build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id})))
 			if is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			info_tag = listitem.getVideoInfoTag()
 			info_tag.setMediaType('episode'), info_tag.setOriginalTitle(orig_title), info_tag.setTvShowTitle(title), info_tag.setTitle(display), info_tag.setGenres(genre)
@@ -240,6 +241,7 @@ def build_single_episode(list_type, params={}):
 	item_list, airing_today, unwatched = [], [], []
 	resinsert = ''
 	item_list_append = item_list.append
+	window_command = 'ActivateWindow(Videos,%s,return)' if is_external else 'Container.Update(%s)'
 	all_episodes, watched_indicators, display_format = default_all_episodes(), watched_indicators_info(), ep_display_format(is_external)
 	current_date, adjust_hours, hide_watched = get_datetime(), date_offset_info(), is_home and widget_hide_watched()
 	api_key = tmdb_api_key()

@@ -714,6 +714,14 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
+                        <property name="setting_label">Show Special Episodes When Available</property>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.show_specials)]</property>
+                        <property name="setting_description">Enable this and Fen Light will show TV Show Special Episodes</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=show_specials)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
                         <property name="setting_label">Flatten TV Show Seasons</property>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.default_all_episodes_name)]</property>

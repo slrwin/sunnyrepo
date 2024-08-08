@@ -40,17 +40,19 @@ myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2, 'none': 0}
 playlist_type_dict = {'music': 0, 'video': 1}
 tmdb_dict_removals = ('adult', 'backdrop_path', 'genre_ids', 'original_language', 'original_title', 'overview', 'popularity', 'vote_count', 'video', 'origin_country', 'original_name')
+single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_fenlight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
+scraper_names = ['EXTERNAL SCRAPERS', 'EASYNEWS', 'RD CLOUD', 'PM CLOUD', 'AD CLOUD', 'FOLDERS 1-5']
 extras_button_label_values = {
 				'movie':
 					{'movies_play': 'Playback', 'show_trailers': 'Trailer', 'show_images': 'Images',  'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
 					'show_director': 'Director', 'show_options': 'Options', 'show_recommended': 'Recommended', 'show_more_like_this': 'More Like This',
 					'show_trakt_manager': 'Trakt Manager', 'playback_choice': 'Playback Options', 'show_favorites_manager': 'Favorites Manager', 'show_plot': 'Plot',
-					'show_keywords': 'Keywords'},
+					'show_keywords': 'Keywords', 'show_in_trakt_lists': 'In Trakt Lists'},
 				'tvshow':
 					{'tvshow_browse': 'Browse', 'show_trailers': 'Trailer', 'show_images': 'Images', 'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
 					'play_nextep': 'Play Next', 'show_options': 'Options', 'show_recommended': 'Recommended', 'show_more_like_this': 'More Like This',
 					'show_trakt_manager': 'Trakt Manager', 'play_random_episode': 'Play Random', 'show_favorites_manager': 'Favorites Manager', 'show_plot': 'Plot',
-					'show_keywords': 'Keywords'}}
+					'show_keywords': 'Keywords', 'show_in_trakt_lists': 'In Trakt Lists'}}
 video_extensions = ('m4v', '3g2', '3gp', 'nsv', 'tp', 'ts', 'ty', 'pls', 'rm', 'rmvb', 'mpd', 'ifo', 'mov', 'qt', 'divx', 'xvid', 'bivx', 'vob', 'nrg', 'img', 'iso', 'udf', 'pva',
 					'wmv', 'asf', 'asx', 'ogm', 'm2v', 'avi', 'bin', 'dat', 'mpg', 'mpeg', 'mp4', 'mkv', 'mk3d', 'avc', 'vp3', 'svq3', 'nuv', 'viv', 'dv', 'fli', 'flv', 'wpl',
 					'xspf', 'vdr', 'dvr-ms', 'xsp', 'mts', 'm2t', 'm2ts', 'evo', 'ogv', 'sdp', 'avs', 'rec', 'url', 'pxml', 'vc1', 'h264', 'rcv', 'rss', 'mpls', 'mpl', 'webm',
@@ -130,6 +132,9 @@ def set_property(prop, value):
 
 def clear_property(prop):
 	return window.clearProperty(prop)
+
+def clear_all_properties():
+	return window.clearProperties()
 
 def addon(addon_id='plugin.video.fenlight'):
 	return xbmcaddon.Addon(id=addon_id)

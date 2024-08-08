@@ -185,7 +185,7 @@ def erase_bookmark(media_type, media_id, season='', episode='', refresh='false')
 		watched_db = get_database(watched_indicators)
 		if watched_indicators == 1:
 			try:
-				if media_type == 'episode': resume_id = get_bookmarks_episode(str(media_id), season, watched_db)[episode]['resume_id']
+				if media_type == 'episode': resume_id = get_bookmarks_episode(str(media_id), season, watched_db)[int(episode)]['resume_id']
 				else: resume_id = get_bookmarks_movie()[str(media_id)]['resume_id']
 				sleep(1000)
 				trakt_progress('clear_progress', media_type, media_id, 0, season, episode, resume_id)
@@ -203,9 +203,9 @@ def batch_erase_bookmark(watched_indicators, insert_list, action):
 			def _process():
 				for i in insert_list:
 					try:
-						media_id, season, episode = insert_list[1], insert_list[2], insert_list[3]
-						resume_id = get_bookmarks_episode(str(media_id), season, watched_db)[episode]['resume_id']
-						sleep(1100)
+						media_id, season, episode = i[1], i[2], i[3]
+						resume_id = get_bookmarks_episode(str(media_id), season, watched_db)[int(episode)]['resume_id']
+						sleep(1000)
 						trakt_progress('clear_progress', i[0], i[1], 0, i[2], i[3], resume_id)
 					except: pass
 			Thread(target=_process).start()

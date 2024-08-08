@@ -212,6 +212,9 @@ class BaseDialog(window_xml_dialog):
 	def open_window(self, import_info, skin_xml, **kwargs):
 		return open_window(import_info, skin_xml, **kwargs)
 
+	def run_addon(self, command):
+		run_plugin(command)
+
 	def sleep(self, time):
 		sleep(time)
 
