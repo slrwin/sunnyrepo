@@ -291,28 +291,26 @@
                                 </control>
                             </itemlayout>
                             <focusedlayout height="360" width="236">
-                                <control type="group">
-                                    <control type="image">
-                                        <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4050)">Conditional</animation>
-                                        <animation type="Focus" reversible="false">
-                                            <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
-                                            <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
-                                        </animation>
-                                        <left>0</left>
-                                        <top>0</top>
-                                        <height>360</height>
-                                        <width>236</width>
-                                        <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
-                                        <visible>Control.HasFocus(2050) | Control.HasFocus(4050)</visible>
-                                    </control>
-                                    <control type="image">
-                                        <left>8</left>
-                                        <top>8</top>
-                                        <height max="344">auto</height>
-                                        <width max="220">auto</width>
-                                        <aspectratio>scale</aspectratio>
-                                        <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
-                                    </control>
+                                <control type="image">
+                                    <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4050)">Conditional</animation>
+                                    <animation type="Focus" reversible="false">
+                                        <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
+                                        <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
+                                    </animation>
+                                    <left>0</left>
+                                    <top>0</top>
+                                    <height>360</height>
+                                    <width>236</width>
+                                    <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
+                                    <visible>Control.HasFocus(2050) | Control.HasFocus(4050)</visible>
+                                </control>
+                                <control type="image">
+                                    <left>8</left>
+                                    <top>8</top>
+                                    <height max="344">auto</height>
+                                    <width max="220">auto</width>
+                                    <aspectratio>scale</aspectratio>
+                                    <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                             </focusedlayout>
                         </control>
@@ -393,28 +391,26 @@
                                 </control>
                             </itemlayout>
                             <focusedlayout height="360" width="236">
-                                <control type="group">
-                                    <control type="image">
-                                        <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4051)">Conditional</animation>
-                                        <animation type="Focus" reversible="false">
-                                            <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
-                                            <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
-                                        </animation>
-                                        <left>0</left>
-                                        <top>0</top>
-                                        <height>360</height>
-                                        <width>236</width>
-                                        <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
-                                        <visible>Control.HasFocus(2051) | Control.HasFocus(4051)</visible>
-                                    </control>
-                                    <control type="image">
-                                        <left>8</left>
-                                        <top>8</top>
-                                        <height max="344">auto</height>
-                                        <width max="220">auto</width>
-                                        <aspectratio>scale</aspectratio>
-                                        <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
-                                    </control>
+                                <control type="image">
+                                    <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4051)">Conditional</animation>
+                                    <animation type="Focus" reversible="false">
+                                        <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
+                                        <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
+                                    </animation>
+                                    <left>0</left>
+                                    <top>0</top>
+                                    <height>360</height>
+                                    <width>236</width>
+                                    <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
+                                    <visible>Control.HasFocus(2051) | Control.HasFocus(4051)</visible>
+                                </control>
+                                <control type="image">
+                                    <left>8</left>
+                                    <top>8</top>
+                                    <height max="344">auto</height>
+                                    <width max="220">auto</width>
+                                    <aspectratio>scale</aspectratio>
+                                    <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                             </focusedlayout>
                         </control>
@@ -587,26 +583,24 @@
                                 </control>
                             </itemlayout>
                             <focusedlayout height="360" width="392">
-                                <control type="group">
-                                    <control type="image">
-                                        <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4053)">Conditional</animation>
-                                        <animation type="Focus" reversible="false">
-                                            <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
-                                            <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
-                                        </animation>
-                                        <width>392</width>
-                                        <height>360</height>
-                                        <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
-                                        <visible>Control.HasFocus(2053) | Control.HasFocus(4053)</visible>
-                                    </control>
-                                    <control type="image">
-                                        <left>6</left>
-                                        <top>6</top>
-                                        <height>348</height>
-                                        <width>380</width>
-                                        <aspectratio>scale</aspectratio>
-                                        <texture border="12" diffuse="fenlight_diffuse/panel-256-box.png">$INFO[ListItem.Property(thumbnail)]</texture>
-                                    </control>
+                                <control type="image">
+                                    <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4053)">Conditional</animation>
+                                    <animation type="Focus" reversible="false">
+                                        <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
+                                        <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
+                                    </animation>
+                                    <width>392</width>
+                                    <height>360</height>
+                                    <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
+                                    <visible>Control.HasFocus(2053) | Control.HasFocus(4053)</visible>
+                                </control>
+                                <control type="image">
+                                    <left>6</left>
+                                    <top>6</top>
+                                    <height>348</height>
+                                    <width>380</width>
+                                    <aspectratio>scale</aspectratio>
+                                    <texture border="12" diffuse="fenlight_diffuse/panel-256-box.png">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                             </focusedlayout>
                         </control>
@@ -687,28 +681,26 @@
                                 </control>
                             </itemlayout>
                             <focusedlayout height="360" width="236">
-                                <control type="group">
-                                    <control type="image">
-                                        <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4054)">Conditional</animation>
-                                        <animation type="Focus" reversible="false">
-                                            <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
-                                            <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
-                                        </animation>
-                                        <left>0</left>
-                                        <top>0</top>
-                                        <height>360</height>
-                                        <width>236</width>
-                                        <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
-                                        <visible>Control.HasFocus(2054) | Control.HasFocus(4054)</visible>
-                                    </control>
-                                    <control type="image">
-                                        <left>8</left>
-                                        <top>8</top>
-                                        <height max="344">auto</height>
-                                        <width max="220">auto</width>
-                                        <aspectratio>scale</aspectratio>
-                                        <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
-                                    </control>
+                                <control type="image">
+                                    <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4054)">Conditional</animation>
+                                    <animation type="Focus" reversible="false">
+                                        <effect type="zoom" end="105" time="75" tween="sine" easing="out" center="auto" />
+                                        <effect type="zoom" end="95" time="225" tween="sine" delay="100" easing="out" center="auto" />
+                                    </animation>
+                                    <left>0</left>
+                                    <top>0</top>
+                                    <height>360</height>
+                                    <width>236</width>
+                                    <texture colordiffuse="FFCCCCCC" border="12" background="true">fenlight_common/panel-256-box.png</texture>
+                                    <visible>Control.HasFocus(2054) | Control.HasFocus(4054)</visible>
+                                </control>
+                                <control type="image">
+                                    <left>8</left>
+                                    <top>8</top>
+                                    <height max="344">auto</height>
+                                    <width max="220">auto</width>
+                                    <aspectratio>scale</aspectratio>
+                                    <texture diffuse="fenlight_diffuse/poster_w217_h320.png" background="true">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                             </focusedlayout>
                         </control>

@@ -6,7 +6,7 @@ from indexers import dialogs, people
 from indexers.images import Images
 from modules import kodi_utils, settings, watched_status
 from modules.sources import Sources
-from modules.utils import change_image_resolution, adjust_premiered_date, get_datetime, make_thread_list_enumerate
+from modules.utils import change_image_resolution, adjust_premiered_date, get_datetime, make_thread_list_enumerate, batch_replace
 from modules.meta_lists import networks, movie_genres, tvshow_genres
 from modules.metadata import movieset_meta, episodes_meta, movie_meta, tvshow_meta
 from modules.episode_tools import EpisodeTools
@@ -265,13 +265,14 @@ class Extras(BaseDialog):
 			for count, item in enumerate(self.all_in_lists, 1):
 				try:
 					listitem = self.make_listitem()
-					name = template % (count, item['name'].upper(), item['user']['ids']['slug'], item['item_count'])
-					listitem.setProperty('name', name)
+					listitem.setProperty('name', template % (count, batch_replace(item['name'].upper(), replacements), item['user']['ids']['slug'], item['item_count']))
 					listitem.setProperty('content_list', 'all_in_lists')
+					listitem.setProperty('thumbnail', icon)
 					yield listitem
 				except: pass
 		try:
-			template = '[B]%02d.[CR]%s[/B][CR][CR]by %s[CR](x%02d)'
+			icon = get_icon('trakt')
+			template, replacements = '[B]%02d.[CR]%s[/B][CR][CR]by %s[CR](x%02d)', (('-', ' '), ('_', ' '), ('.', ' '))
 			self.all_in_lists = trakt_api.trakt_lists_with_media(self.media_type, self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('trakt_in_lists.number', count_insert % len(item_list))

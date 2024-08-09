@@ -8,7 +8,7 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta_external_id, tvshow_meta_external_id
 from modules.utils import sort_list, sort_for_article, make_thread_list, get_datetime, timedelta, replace_html_codes, copy2clip, title_key, jsondate_to_datetime as js2date
 
-json, monitor, sleep, random = kodi_utils.json, kodi_utils.monitor, kodi_utils.sleep, kodi_utils.random
+json, monitor, sleep, random, with_media_removals = kodi_utils.json, kodi_utils.monitor, kodi_utils.sleep, kodi_utils.random, kodi_utils.with_media_removals
 logger, notification, player, confirm_dialog, get_property = kodi_utils.logger, kodi_utils.notification, kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.get_property
 dialog, unquote, addon_installed, addon_enabled, addon = kodi_utils.dialog, kodi_utils.unquote, kodi_utils.addon_installed, kodi_utils.addon_enabled, kodi_utils.addon
 path_check, get_icon, clear_property, remove_keys = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.clear_property, kodi_utils.remove_keys
@@ -405,9 +405,8 @@ def trakt_favorites(media_type, dummy_arg):
 
 def trakt_lists_with_media(media_type, imdb_id):
 	def _process(foo):
-		removals = ('description', 'privacy', 'type', 'share_link', 'display_numbers', 'allow_comments', 'sort_by', 'sort_how', 'created_at', 'updated_at', 'comment_count', 'likes')
 		data = [i for i in get_trakt(params) if i['item_count'] > 0 and i['ids']['slug'] not in ('', 'None', None) and i['privacy'] == 'public']
-		return [remove_keys(i, removals) for i in data]
+		return [remove_keys(i, with_media_removals) for i in data]
 	results = []
 	results_append = results.append
 	template = '[B]%02d. [I]%s - %s likes[/I]'
