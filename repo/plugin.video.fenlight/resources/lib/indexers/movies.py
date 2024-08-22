@@ -11,10 +11,10 @@ string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, k
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.set_property
 sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
-movie_meta, add_item, home = movie_meta, kodi_utils.add_item, kodi_utils.home
+add_item, home = kodi_utils.add_item, kodi_utils.home
 watched_indicators, widget_hide_next_page = settings.watched_indicators, settings.widget_hide_next_page
 widget_hide_watched, media_open_action, page_limit, paginate = settings.widget_hide_watched, settings.media_open_action, settings.page_limit, settings.paginate
-tmdb_api_key = settings.tmdb_api_key
+tmdb_api_key, mpaa_region = settings.tmdb_api_key, settings.mpaa_region
 run_plugin = 'RunPlugin(%s)'
 main = ('tmdb_movies_popular', 'tmdb_movies_popular_today','tmdb_movies_blockbusters','tmdb_movies_in_theaters', 'tmdb_movies_upcoming', 'tmdb_movies_latest_releases',
 'tmdb_movies_premieres', 'tmdb_movies_oscar_winners')
@@ -112,7 +112,7 @@ class Movies:
 		
 	def build_movie_content(self, _position, _id):
 		try:
-			meta = movie_meta(self.id_type, _id, self.tmdb_api_key, self.current_date, self.current_time)
+			meta = movie_meta(self.id_type, _id, self.tmdb_api_key, self.mpaa_region, self.current_date, self.current_time)
 			if not meta or 'blank_entry' in meta: return
 			listitem = make_listitem()
 			cm = []
@@ -125,6 +125,7 @@ class Movies:
 			tmdb_id, imdb_id = meta_get('tmdb_id'), meta_get('imdb_id')
 			str_tmdb_id = string(tmdb_id)
 			poster, fanart, clearlogo, landscape = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or '', meta_get('landscape') or ''
+			thumb = poster or landscape or fanart
 			movieset_id, movieset_name = meta_get('extra_info').get('collection_id', None), meta_get('extra_info').get('collection_name', None)
 			first_airdate = jsondate_to_datetime(premiered, '%Y-%m-%d', True)
 			if not first_airdate or self.current_date < first_airdate: unaired = True
@@ -168,8 +169,6 @@ class Movies:
 				cm_append(('[B]Clear Progress[/B]', run_plugin % build_url({'mode': 'watched_status.erase_bookmark', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'refresh': 'true'})))
 			if self.is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			else: cm_append(('[B]Exit Movie List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
-
-
 			info_tag = listitem.getVideoInfoTag()
 			info_tag.setMediaType('movie'), info_tag.setTitle(title), info_tag.setOriginalTitle(meta_get('original_title')), info_tag.setGenres(meta_get('genre'))
 			info_tag.setDuration(meta_get('duration')), info_tag.setPlaycount(playcount), info_tag.setPlot(meta_get('plot'))
@@ -184,14 +183,15 @@ class Movies:
 				set_properties({'WatchedProgress': progress})
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)
-			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape})
+			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': thumb})
 			set_properties({'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params,
 							'belongs_to_collection': belongs_to_movieset, 'fenlight.more_like_this_params': more_like_this_params})
 			self.append(((url_params, listitem, False), _position))
 		except: pass
 
 	def worker(self):
-		self.current_date, self.current_time, self.watched_indicators, self.tmdb_api_key = get_datetime(), get_current_timestamp(), watched_indicators(), tmdb_api_key()
+		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), watched_indicators()
+		self.tmdb_api_key, self.mpaa_region = tmdb_api_key(), mpaa_region()
 		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'Fen Light'
 		watched_db = get_database(self.watched_indicators)
 		self.watched_info, self.bookmarks = watched_info_movie(watched_db), get_bookmarks_movie(watched_db)

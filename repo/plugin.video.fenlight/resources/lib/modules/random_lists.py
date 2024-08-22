@@ -20,6 +20,7 @@ movie_main = ('tmdb_movies_popular', 'tmdb_movies_popular_today','tmdb_movies_bl
 movie_trakt_main = ('trakt_movies_trending', 'trakt_movies_trending_recent', 'trakt_movies_most_watched', 'trakt_movies_most_favorited',
 'trakt_movies_top10_boxoffice', 'trakt_recommendations')
 movie_trakt_personal = ('trakt_collection_lists', 'trakt_watchlist_lists')
+discover_personal = ('tmdb_movies_discover', 'tmdb_tv_discover')
 movie_meta_list_dict = {'tmdb_movies_languages': meta_lists.languages, 'tmdb_movies_providers': meta_lists.watch_providers_movies, 'tmdb_movies_year': meta_lists.years_movies,
 'tmdb_movies_decade': meta_lists.decades_movies, 'tmdb_movies_certifications': meta_lists.movie_certifications, 'tmdb_movies_genres': meta_lists.movie_genres}
 tvshow_main = ('tmdb_tv_popular', 'tmdb_tv_popular_today', 'tmdb_tv_premieres', 'tmdb_tv_airing_today','tmdb_tv_on_the_air','tmdb_tv_upcoming')
@@ -64,6 +65,7 @@ class RandomLists():
 	def run_random(self):
 		if self.mode == 'build_trakt_lists': return self.random_trakt_lists()
 		if self.mode == 'build_trakt_my_lists_contents': return self.trakt_my_lists_contents()
+		if self.action in discover_personal: return self.random_discover()
 		if self.action in movie_main: return self.random_main()
 		if self.action in movie_trakt_main: return self.random_trakt_main()
 		if self.action in movie_trakt_personal: return self.random_trakt_personal_lists()
@@ -72,9 +74,25 @@ class RandomLists():
 		if self.action in tvshow_trakt_personal: return self.function(self.params).fetch_list()
 		return self.random_special_main()
 
+	def get_sample(self, max_range, sample_size):
+		return random.sample(range(1, max_range), sample_size)
+
+	def random_discover(self):
+		url = self.params_get('url', None)
+		if not url: return
+		list_function = self.get_function()
+		threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(url, x)['results']), self.get_sample(10, 3)))
+		[i.join() for i in threads]
+		random_list = random.sample(self.random_results, min(len(self.random_results), 20))
+		self.params['list'] = [i['id'] for i in random_list]
+		self.list_items = self.function(self.params).worker()
+		self.category_name = self.params_get('category_name', None) or self.base_list_name or ''
+		self.set_property()
+		self.make_directory()
+
 	def random_main(self):
 		list_function = self.get_function()
-		threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(x)['results']), range(1, 6)))
+		threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(x)['results']), self.get_sample(10, 3)))
 		[i.join() for i in threads]
 		random_list = random.sample(self.random_results, min(len(self.random_results), 20))
 		self.params['list'] = [i['id'] for i in random_list]
@@ -85,7 +103,7 @@ class RandomLists():
 	def random_trakt_main(self):
 		function_key, list_key = ('movies', 'movie') if self.menu_type == 'movie' else ('shows', 'show')
 		list_function = self.get_function()
-		threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(x)), [function_key,] if self.action == 'trakt_recommendations' else range(1, 6)))
+		threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(x)), [function_key,] if self.action == 'trakt_recommendations' else self.get_sample(10, 3)))
 		[i.join() for i in threads]
 		random_list = random.sample(self.random_results, min(len(self.random_results), 20))
 		try: self.params['list'] = [i[list_key]['ids'] for i in random_list]
@@ -101,8 +119,10 @@ class RandomLists():
 		info = random.choice(choice_list[self.action])
 		list_name = self.action.split('_')[-1]
 		if not list_name.endswith('s'): list_name += 's'
-		if self.action == 'trakt_tv_certifications': threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(info['id'], x)), range(1, 6)))			
-		else: threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(info['id'], x)['results']), range(1, 6)))
+		if self.action == 'trakt_tv_certifications':
+			threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(info['id'], x)), self.get_sample(10, 3)))			
+		else:
+			threads = list(make_thread_list(lambda x: self.random_results.extend(list_function(info['id'], x)['results']), self.get_sample(10, 3)))
 		[i.join() for i in threads]
 		random_list = random.sample(self.random_results, min(len(self.random_results), 20))
 		if self.action == 'trakt_tv_certifications': self.params.update({'id_type': 'trakt_dict', 'list': [i['show']['ids'] for i in random_list]})
@@ -158,7 +178,7 @@ def random_shortcut_folders(folder_name, random_results):
 	else: random_list = random_results[0]
 	random_list.update({'folder_name': folder_name, 'mode': random_list['mode'].replace('random.', '')})
 	list_name = random_list.get('list_name', None) or random_list.get('name', None) or 'Random'
-	if random_list.get('random')== 'true': return RandomLists(random_list).run_random()
+	if random_list.get('random') == 'true': return RandomLists(random_list).run_random()
 	menu_type = random_valid_type_check[random_list['mode']]
 	if external(): set_property('fenlight.%s' % folder_name, list_name)
 	if menu_type == 'movie':

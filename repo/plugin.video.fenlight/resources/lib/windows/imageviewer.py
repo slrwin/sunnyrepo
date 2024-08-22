@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from windows.base_window import BaseDialog, window_manager, json, select_dialog
 from indexers.people import person_data_dialog
+from indexers.dialogs import favorites_choice
 from modules.settings import download_directory
 from modules.kodi_utils import default_addon_fanart, get_icon, nextpage
 # from modules.kodi_utils import logger
@@ -44,7 +45,9 @@ class ThumbImageViewer(BaseDialog):
 				elif mode == 'person_data_dialog':
 					person_data_dialog(thumb_params)
 		elif action in self.context_actions:
-			choice = self.make_context_menu(enable_delete=chosen_listitem.getProperty('delete') == 'true')
+			in_favorites = chosen_listitem.getProperty('in_favorites') == 'true'
+			enable_favorite = chosen_listitem.getProperty('fav_enabled') == 'true' or in_favorites
+			choice = self.make_context_menu(enable_delete=chosen_listitem.getProperty('delete') == 'true', enable_favorite=enable_favorite)
 			if choice:
 				if choice == 'delete_image': return self.reset_after_delete(chosen_listitem, position)
 				elif choice == 'download_image':
@@ -52,6 +55,12 @@ class ThumbImageViewer(BaseDialog):
 					if not path: return self.notification('No Image Path to Download')
 					params = {'mode': 'downloader.runner', 'action': 'image', 'name': name, 'thumb_url': thumb, 'image_url': path, 'media_type': 'image', 'image': path}
 					self.execute_code('RunPlugin(%s)' % self.build_url(params))
+				elif choice == 'manage_favorite':
+					actor_id = chosen_listitem.getProperty('actor_id')
+					actor_image = chosen_listitem.getProperty('actor_image') or chosen_listitem.getProperty('path')
+					title = '%s|%s|%s' % (chosen_listitem.getProperty('actor_name'), chosen_listitem.getProperty('thumb'), actor_image)
+					action = favorites_choice({'media_type': 'people', 'tmdb_id': actor_id, 'title': title, 'refresh': 'false'})
+					if in_favorites and action == 'Remove From Favorites?': self.reset_after_favorite_delete(position)
 				else:#exit_image
 					return self.close()
 
@@ -63,11 +72,12 @@ class ThumbImageViewer(BaseDialog):
 			self.setFocusId(self.window_id)
 		except: pass
 
-	def make_context_menu(self, enable_delete):
+	def make_context_menu(self, enable_delete, enable_favorite):
 		choices = []
 		choices_append = choices.append
 		if enable_delete: choices_append(('Delete', 'delete_image'))
 		else: choices_append(('Download File', 'download_image'))
+		if enable_favorite: choices_append(('Favorites Manager', 'manage_favorite'))
 		if self.current_page > 1: choices_append(('Exit Images', 'exit_image'))
 		list_items = [{'line1': i[0]} for i in choices]
 		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
@@ -104,6 +114,12 @@ class ThumbImageViewer(BaseDialog):
 		self.ImagesInstance.delete_image(choice.getProperty('path'), choice.getProperty('thumb'))
 		self.reset_window(self.window_id)
 		self.list_items = self.ImagesInstance.browser_image(download_directory('image'), return_items=True)
+		self.make_page()
+		self.select_item(self.window_id, position)
+
+	def reset_after_favorite_delete(self, position):
+		self.reset_window(self.window_id)
+		self.list_items = self.ImagesInstance.favorite_people_list_image_results(return_items=True)
 		self.make_page()
 		self.select_item(self.window_id, position)
 

@@ -16,6 +16,7 @@ BASE_DELETE = 'DELETE FROM %s'
 TC_BASE_GET = 'SELECT data FROM trakt_data WHERE id = ?'
 TC_BASE_SET = 'INSERT OR REPLACE INTO trakt_data (id, data) VALUES (?, ?)'
 TC_BASE_DELETE = 'DELETE FROM trakt_data WHERE id = ?'
+DELETE_LISTS_WITH_MEDIA = 'SELECT id FROM maincache WHERE id LIKE %s'
 
 class TraktCache:	
 	def get(self, string):
@@ -148,6 +149,13 @@ def clear_all_trakt_cache_data(silent=False, refresh=True):
 	try:
 		start = silent or confirm_dialog()
 		if not start: return False
+		from caches.main_cache import main_cache
+		main_cache_dbcon = connect_database('maincache_db')
+		lists_with_media = main_cache_dbcon.execute(DELETE_LISTS_WITH_MEDIA % "'trakt_lists_with_media_%'").fetchall()
+		for item in lists_with_media:
+			try: main_cache.delete(item[0])
+			except: pass
+		main_cache.clean_database()
 		dbcon = connect_database('trakt_db')
 		for table in ('trakt_data', 'progress', 'watched', 'watched_status'): dbcon.execute(BASE_DELETE % table)
 		dbcon.execute('VACUUM')

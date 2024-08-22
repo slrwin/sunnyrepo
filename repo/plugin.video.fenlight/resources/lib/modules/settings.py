@@ -250,6 +250,9 @@ def default_all_episodes():
 def get_meta_filter():
 	return get_setting('fenlight.meta_filter', 'true')
 
+def mpaa_region():
+	return get_setting('fenlight.mpaa_region', 'US')
+
 def widget_hide_next_page():
 	return get_setting('fenlight.widget_hide_next_page', 'false') == 'true'
 

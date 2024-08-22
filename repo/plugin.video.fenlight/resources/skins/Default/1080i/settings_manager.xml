@@ -712,6 +712,18 @@
                         <property name="setting_description">Choose the limit of pagination for Fen Light widgets</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=paginate.limit_widgets)</onclick>
                     </item>
+
+
+                    <item>
+                        <visible>Container(2000).HasFocus(30)</visible>
+                        <property name="setting_label">Set MPAA Region</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.mpaa_region_display_name)]</property>
+                        <property name="setting_description">Choose the region from which the MPAA advisories will be displayed</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=mpaa_region_choice)</onclick>
+                    </item>
+
+
                     <item>
                         <visible>Container(2000).HasFocus(30)</visible>
                         <property name="setting_label">Show Special Episodes When Available</property>

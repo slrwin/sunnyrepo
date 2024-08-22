@@ -107,6 +107,33 @@ language_choices =  {
 'Vietnamese': 'vie'
 	}
 
+regions = [
+{'id': 'AF', 'name': 'Afghanistan'},        {'id': 'AL', 'name': 'Albania'},          {'id': 'DZ', 'name': 'Algeria'},
+{'id': 'AQ', 'name': 'Antarctica'},         {'id': 'AR', 'name': 'Argentina'},        {'id': 'AM', 'name': 'Armenia'},
+{'id': 'AU', 'name': 'Australia'},          {'id': 'AT', 'name': 'Austria'},          {'id': 'BD', 'name': 'Bangladesh'},
+{'id': 'BY', 'name': 'Belarus'},            {'id': 'BE', 'name': 'Belgium'},          {'id': 'BR', 'name': 'Brazil'},
+{'id': 'BG', 'name': 'Bulgaria'},           {'id': 'KH', 'name': 'Cambodia'},         {'id': 'CA', 'name': 'Canada'},
+{'id': 'CL', 'name': 'Chile'},              {'id': 'CN', 'name': 'China'},            {'id': 'HR', 'name': 'Croatia'},
+{'id': 'CZ', 'name': 'Czech Republic'},     {'id': 'DK', 'name': 'Denmark'},          {'id': 'DE', 'name': 'Egypt'},
+{'id': 'FR', 'name': 'Finland'},            {'id': 'FI', 'name': 'France'},           {'id': 'EG', 'name': 'Germany'},
+{'id': 'GR', 'name': 'Greece'},             {'id': 'HK', 'name': 'Hong Kong'},        {'id': 'HU', 'name': 'Hungary'},
+{'id': 'IS', 'name': 'Iceland'},            {'id': 'IN', 'name': 'India'},            {'id': 'ID', 'name': 'Indonesia'},
+{'id': 'IR', 'name': 'Iran'},               {'id': 'IQ', 'name': 'Iraq'},             {'id': 'IE', 'name': 'Ireland'},
+{'id': 'IL', 'name': 'Israel'},             {'id': 'IT', 'name': 'Italy'},            {'id': 'JP', 'name': 'Japan'},
+{'id': 'MY', 'name': 'Malaysia'},           {'id': 'NP', 'name': 'Nepal'},            {'id': 'NL', 'name': 'Netherlands'},
+{'id': 'NZ', 'name': 'New Zealand'},        {'id': 'NO', 'name': 'Norway'},           {'id': 'PK', 'name': 'Pakistan'},
+{'id': 'PY', 'name': 'Paraguay'},           {'id': 'PE', 'name': 'Peru'},             {'id': 'PH', 'name': 'Philippines'},
+{'id': 'PL', 'name': 'Poland'},             {'id': 'PT', 'name': 'Portugal'},         {'id': 'PR', 'name': 'Puerto Rico'},
+{'id': 'RO', 'name': 'Romania'},            {'id': 'RU', 'name': 'Russia'},           {'id': 'SA', 'name': 'Saudi Arabia'},
+{'id': 'RS', 'name': 'Serbia'},             {'id': 'SG', 'name': 'Singapore'},        {'id': 'SK', 'name': 'Slovakia'},
+{'id': 'SI', 'name': 'Slovenia'},           {'id': 'ZA', 'name': 'South Africa'},     {'id': 'ES', 'name': 'Spain'},
+{'id': 'LK', 'name': 'Sri Lanka'},          {'id': 'SE', 'name': 'Sweden'},           {'id': 'CH', 'name': 'Switzerland'},
+{'id': 'TH', 'name': 'Thailand'},           {'id': 'TR', 'name': 'Turkey'},           {'id': 'UA', 'name': 'Ukraine'},
+{'id': 'AE', 'name': 'UAE'},                {'id': 'GB', 'name': 'UK'},               {'id': 'US', 'name': 'USA'},
+{'id': 'UY', 'name': 'Uruguay'},            {'id': 'VE', 'name': 'Venezuela'},        {'id': 'VN', 'name': 'Viet Nam'},
+{'id': 'YE', 'name': 'Yemen'},              {'id': 'ZW', 'name': 'Zimbabwe'}
+	]
+
 movie_genres = [
 {'name': 'Action', 'id': '28', 'icon': 'genre_action'}, {'name': 'Adventure', 'id': '12', 'icon': 'genre_adventure'}, {'name': 'Animation', 'id': '16', 'icon': 'genre_animation'},
 {'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'}, {'name': 'Documentary', 'id': '99', 'icon': 'genre_documentary'},
@@ -356,13 +383,15 @@ movie_sorts = [
 {'name': 'Release Date (asc)', 'id': '&sort_by=primary_release_date.asc'}, {'name': 'Release Date (desc)', 'id': '&sort_by=primary_release_date.desc'},
 {'name': 'Total Revenue (asc)', 'id': '&sort_by=revenue.asc'}, {'name': 'Total Revenue (desc)', 'id': '&sort_by=revenue.desc'},
 {'name': 'Title (asc)', 'id': '&sort_by=original_title.asc'}, {'name': 'Title (desc)', 'id': '&sort_by=original_title.desc'},
-{'name': 'Rating (asc)', 'id': '&sort_by=vote_average.asc'}, {'name': 'Rating (desc)', 'id': '&sort_by=vote_average.desc'}
+{'name': 'Rating (asc)', 'id': '&sort_by=vote_average.asc'}, {'name': 'Rating (desc)', 'id': '&sort_by=vote_average.desc'},
+{'name': 'Random', 'id': '[random]'}
 		]
 
 tvshow_sorts = [
 {'name': 'Popularity (asc)', 'id': '&sort_by=popularity.asc'}, {'name': 'Popularity (desc)', 'id': '&sort_by=popularity.desc'},
 {'name': 'First Aired (asc)', 'id': '&sort_by=first_air_date.asc'}, {'name': 'First Aired (desc)', 'id': '&sort_by=first_air_date.desc'},
-{'name': 'Rating (asc)', 'id': '&sort_by=vote_average.asc'}, {'name': 'Rating (desc)', 'id': '&sort_by=vote_average.desc'}
+{'name': 'Rating (asc)', 'id': '&sort_by=vote_average.asc'}, {'name': 'Rating (desc)', 'id': '&sort_by=vote_average.desc'},
+{'name': 'Random', 'id': '[random]'}
 		]
 
 discover_items = {

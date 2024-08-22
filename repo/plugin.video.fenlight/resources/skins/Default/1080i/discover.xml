@@ -42,9 +42,9 @@
                 <texture colordiffuse="FFCCCCCC">fenlight_common/fenlight.png</texture>
             </control>
             <control type="label">
-                <width max="1096">auto</width>
+                <width max="1635">auto</width>
                 <top>12</top>
-                <left>72</left>
+                <left>30</left>
                 <height>20</height>
                 <font>font12</font> <!-- FENLIGHT_26 -->
                 <textcolor>FFCCCCCC</textcolor>

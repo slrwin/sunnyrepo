@@ -7,12 +7,13 @@ from modules.watched_status import get_database, watched_info_tvshow, get_watche
 # logger = kodi_utils.logger
 
 string, sys, external, add_items, add_dir = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir
-sleep, meta_function, add_item, xbmc_actor, home, tmdb_api_key = kodi_utils.sleep, tvshow_meta, kodi_utils.add_item, kodi_utils.xbmc_actor, kodi_utils.home, settings.tmdb_api_key
+sleep, add_item, xbmc_actor, home, tmdb_api_key = kodi_utils.sleep, kodi_utils.add_item, kodi_utils.xbmc_actor, kodi_utils.home, settings.tmdb_api_key
 set_category, json, make_listitem, build_url, set_property = kodi_utils.set_category, kodi_utils.json, kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.set_property
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
 poster_empty, fanart_empty, nextpage_landscape = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.nextpage_landscape
 media_open_action, default_all_episodes, page_limit, paginate = settings.media_open_action, settings.default_all_episodes, settings.page_limit, settings.paginate
 widget_hide_next_page, widget_hide_watched, watched_indicators = settings.widget_hide_next_page, settings.widget_hide_watched, settings.watched_indicators
+mpaa_region = settings.mpaa_region
 run_plugin, container_update = 'RunPlugin(%s)', 'Container.Update(%s)'
 main = ('tmdb_tv_popular', 'tmdb_tv_popular_today', 'tmdb_tv_premieres', 'tmdb_tv_airing_today','tmdb_tv_on_the_air','tmdb_tv_upcoming')
 special = ('tmdb_tv_languages', 'tmdb_tv_networks', 'tmdb_tv_providers', 'tmdb_tv_year', 'tmdb_tv_decade', 'tmdb_tv_recommendations', 'tmdb_tv_genres',
@@ -115,7 +116,7 @@ class TVShows:
 
 	def build_tvshow_content(self, _position, _id):
 		try:
-			meta = meta_function(self.id_type, _id, self.tmdb_api_key, self.current_date, self.current_time)
+			meta = tvshow_meta(self.id_type, _id, self.tmdb_api_key, self.mpaa_region, self.current_date, self.current_time)
 			if not meta or 'blank_entry' in meta: return
 			cm = []
 			cm_append = cm.append
@@ -126,6 +127,7 @@ class TVShows:
 			trailer, title, year = meta_get('trailer'), meta_get('title'), meta_get('year') or '2050'
 			tvdb_id, imdb_id = meta_get('tvdb_id'), meta_get('imdb_id')
 			poster, fanart, clearlogo, landscape = meta_get('poster') or poster_empty, meta_get('fanart') or fanart_empty, meta_get('clearlogo') or '', meta_get('landscape') or ''
+			thumb = poster or landscape or fanart
 			tmdb_id, total_seasons, total_aired_eps = meta_get('tmdb_id'), meta_get('total_seasons'), meta_get('total_aired_eps')
 			unaired = total_aired_eps == 0
 			if unaired: progress, playcount, total_watched, total_unwatched = 0, 0, 0, total_aired_eps
@@ -170,7 +172,7 @@ class TVShows:
 			else: cm_append(('[B]Exit TV Show List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)
-			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': landscape, 'icon': landscape,
+			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': thumb, 'icon': landscape,
 							'tvshow.poster': poster, 'tvshow.clearlogo': clearlogo})
 			info_tag = listitem.getVideoInfoTag()
 			info_tag.setMediaType('tvshow'), info_tag.setTitle(title), info_tag.setTvShowTitle(title), info_tag.setOriginalTitle(meta_get('original_title'))
@@ -186,7 +188,8 @@ class TVShows:
 		except: pass
 
 	def worker(self):
-		self.current_date, self.current_time, self.tmdb_api_key = get_datetime(), get_current_timestamp(), tmdb_api_key()
+		self.current_date, self.current_time = get_datetime(), get_current_timestamp()
+		self.tmdb_api_key, self.mpaa_region = tmdb_api_key(), mpaa_region()
 		self.all_episodes, self.open_extras = default_all_episodes(), media_open_action('tvshow') == 1
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = watched_indicators()

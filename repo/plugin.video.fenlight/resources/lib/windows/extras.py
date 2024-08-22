@@ -16,9 +16,9 @@ Thread, get_icon, close_all_dialog = kodi_utils.Thread, kodi_utils.get_icon, kod
 addon_fanart, empty_poster = kodi_utils.default_addon_fanart, kodi_utils.empty_poster
 extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extras_button_label_values, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
-extras_enable_scrollbars, omdb_api_key, date_offset = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset
 default_all_episodes, extras_enabled_menus, tmdb_api_key = settings.default_all_episodes, settings.extras_enabled_menus, settings.tmdb_api_key
 enable_extra_ratings, nextep_method, watched_indicators = settings.extras_enable_extra_ratings, settings.nextep_method, settings.watched_indicators
+extras_enable_scrollbars, omdb_api_key, date_offset, mpaa_region = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset, settings.mpaa_region
 options_menu_choice, extras_menu_choice, imdb_videos_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice, dialogs.imdb_videos_choice
 trakt_manager_choice, random_choice, playback_choice, favorites_choice = dialogs.trakt_manager_choice, dialogs.random_choice, dialogs.playback_choice, dialogs.favorites_choice
 get_next_episodes, get_watched_status_movie, watched_info_movie = watched_status.get_next_episodes, watched_status.get_watched_status_movie, watched_status.watched_info_movie
@@ -32,7 +32,7 @@ tmdb_movies_recommendations, tmdb_tv_recommendations, tmdb_company_id = tmdb_api
 tmdb_movies_companies, tmdb_tv_networks = tmdb_api.tmdb_movies_companies, tmdb_api.tmdb_tv_networks
 imdb_reviews, imdb_trivia, imdb_blunders = imdb_api.imdb_reviews, imdb_api.imdb_trivia, imdb_api.imdb_blunders
 imdb_parentsguide, imdb_videos = imdb_api.imdb_parentsguide, imdb_api.imdb_videos
-fetch_ratings_info, trakt_comments = omdb_api.fetch_ratings_info, trakt_api.trakt_comments
+fetch_ratings_info, trakt_comments, like_a_list, unlike_a_list = omdb_api.fetch_ratings_info, trakt_api.trakt_comments, trakt_api.trakt_like_a_list, trakt_api.trakt_unlike_a_list
 tmdb_image_base, count_insert = 'https://image.tmdb.org/t/p/%s%s', 'x%s'
 youtube_check = 'plugin.video.youtube'
 setting_base, label_base, ratings_icon_base = 'fenlight.extras.%s.button', 'button%s.label', 'fenlight_flags/ratings/%s'
@@ -66,11 +66,7 @@ class Extras(BaseDialog):
 		for i in self.tasks: Thread(target=i).start()
 		self.set_default_focus()
 		if self.starting_position:
-			try:
-				window_id, focus = self.starting_position
-				self.sleep(750)
-				self.setFocusId(window_id)
-				self.select_item(window_id, focus)
+			try: self.set_returning_focus(*self.starting_position)
 			except: self.set_default_focus()
 
 	def set_default_focus(self):
@@ -78,6 +74,13 @@ class Extras(BaseDialog):
 		except:
 			self.close_all()
 			self.close()
+
+	def set_returning_focus(self, window_id, focus, sleep_time=750):
+		try:
+			self.sleep(sleep_time)
+			self.setFocusId(window_id)
+			self.select_item(window_id, focus)
+		except: self.set_default_focus()
 
 	def run(self):
 		self.doModal()
@@ -98,7 +101,7 @@ class Extras(BaseDialog):
 			from modules.metadata import movie_meta, tvshow_meta
 			chosen_listitem = self.get_listitem(focus_id)
 			function = movie_meta if self.media_type == 'movie' else tvshow_meta
-			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), self.tmdb_api_key, self.current_date)
+			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), self.tmdb_api_key, self.mpaa_region, self.current_date)
 			hide_busy_dialog()
 			self.show_extrainfo(self.media_type, meta, meta.get('poster', empty_poster))
 		elif action in self.context_actions:
@@ -107,9 +110,16 @@ class Extras(BaseDialog):
 				person_name = self.get_listitem(focus_id).getProperty(self.item_action_dict[focus_id])
 				return person_search(person_name)
 			elif focus_id == in_lists_id:
-				try: chosen = self.get_attribute(self, self.get_listitem(focus_id).getProperty(self.item_action_dict[focus_id]))[self.get_position(focus_id)]
+				try:
+					list_item, position = self.get_listitem(focus_id), self.get_position(focus_id)
+					chosen = self.get_attribute(self, list_item.getProperty(self.item_action_dict[focus_id]))[self.get_position(focus_id)]
+					user, list_slug = chosen['user']['ids']['slug'], chosen['ids']['slug']
+					function = like_a_list if list_item.getProperty('liked_status') == 'false' else unlike_a_list
 				except: return self.notification('Error Liking List')
-				return self.run_addon({'mode': 'trakt.trakt_like_a_list', 'user': chosen['user']['ids']['slug'], 'list_slug': chosen['ids']['slug'], 'refresh': 'false'})
+				self.reset_window(focus_id)
+				show_busy_dialog()
+				function({'user': user, 'list_slug': list_slug, 'refresh': 'false'})
+				return self.make_in_lists(position)
 			else: return
 		if not self.control_id: return
 		if action in self.selection_actions:
@@ -191,7 +201,7 @@ class Extras(BaseDialog):
 		if not more_like_this_id in self.enabled_lists: return
 		def builder(position, item):
 			try:
-				details = function('imdb_id', item, self.tmdb_api_key, self.current_date, current_time=None)					
+				details = function('imdb_id', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
 				listitem = self.make_listitem()
 				listitem.setProperty('name', details['title'])
 				listitem.setProperty('release_date', details['year'])
@@ -259,25 +269,37 @@ class Extras(BaseDialog):
 			self.add_items(comments_id, item_list)
 		except: pass
 
-	def make_in_lists(self):
+	def make_in_lists(self, position=None):
 		if not in_lists_id in self.enabled_lists: return
 		def builder():
 			for count, item in enumerate(self.all_in_lists, 1):
 				try:
 					listitem = self.make_listitem()
-					listitem.setProperty('name', template % (count, batch_replace(item['name'].upper(), replacements), item['user']['ids']['slug'], item['item_count']))
+					compare = (item['ids']['slug'], item['user']['ids']['slug'])
+					if compare in liked_lists: liked = 'true'
+					else: liked = 'false'
+					likes = item.get('likes', '')
+					likes_insert = '[CR]%s %s' % (likes, 'Likes' if likes > 1 else 'Like') if likes else '' 
+					listitem.setProperty('name', template % (count, batch_replace(item['name'].upper(), replacements), likes_insert, item['user']['ids']['slug'], item['item_count']))
 					listitem.setProperty('content_list', 'all_in_lists')
 					listitem.setProperty('thumbnail', icon)
+					listitem.setProperty('liked_status', liked)
 					yield listitem
 				except: pass
 		try:
 			icon = get_icon('trakt')
-			template, replacements = '[B]%02d.[CR]%s[/B][CR][CR]by %s[CR](x%02d)', (('-', ' '), ('_', ' '), ('.', ' '))
+			try: liked_lists = [(i['list']['ids']['slug'], i['list']['user']['ids']['slug']) for i in trakt_api.trakt_get_lists('liked_lists')]
+			except: liked_lists = []
+			template, replacements = '%02d.[CR][B]%s[/B]%s[CR][CR]by %s[CR](x%02d)', (('-', ' '), ('_', ' '), ('.', ' '))
 			self.all_in_lists = trakt_api.trakt_lists_with_media(self.media_type, self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('trakt_in_lists.number', count_insert % len(item_list))
 			self.item_action_dict[in_lists_id] = 'content_list'
 			self.add_items(in_lists_id, item_list)
+			if position != None:
+				hide_busy_dialog()
+				self.sleep(100)
+				self.set_returning_focus(in_lists_id, position)
 		except: pass
 
 	def make_trivia(self):
@@ -671,13 +693,14 @@ class Extras(BaseDialog):
 		self.tmdb_id, self.imdb_id = self.meta_get('tmdb_id'), self.meta_get('imdb_id')
 		self.folder_runner = activate_window if self.is_external == 'true' else container_update
 		self.enabled_lists, self.enable_scrollbars = extras_enabled_menus(), extras_enable_scrollbars()
-		self.tmdb_api_key, self.omdb_api = tmdb_api_key(), omdb_api_key()
+		self.tmdb_api_key, self.omdb_api, self.mpaa_region = tmdb_api_key(), omdb_api_key(), mpaa_region()
 		self.display_extra_ratings = self.imdb_id and self.omdb_api not in ('empty_setting', '') and enable_extra_ratings()
 		self.title, self.year, self.rootname = self.meta_get('title'), str(self.meta_get('year')), self.meta_get('rootname')
 		self.poster = self.meta_get('poster') or empty_poster
 		self.fanart = self.meta_get('fanart') or addon_fanart
 		self.clearlogo = self.meta_get('clearlogo') or ''
 		self.landscape = self.meta_get('landscape') or ''
+		self.spoken_language = self.meta_get('spoken_language')
 		self.rating = str(round(self.meta_get('rating'), 1)) if self.meta_get('rating') not in (0, 0.0, None) else None
 		self.mpaa, self.genre, self.network = self.meta_get('mpaa'), self.meta_get('genre'), self.meta_get('studio') or ''
 		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(float(self.meta_get('duration'))/60)
@@ -698,7 +721,8 @@ class Extras(BaseDialog):
 		return status_str
 
 	def set_infoline1(self, remove_rating=False):
-		self.set_label(2001, separator.join([i for i in (self.year, None if remove_rating else self.rating, self.mpaa, self.get_duration(), self.status_infoline_value) if i]))
+		self.set_label(2001, separator.join([i for i in (self.year, None if remove_rating else self.rating, self.mpaa, self.spoken_language,
+											self.get_duration(), self.status_infoline_value) if i]))
 
 	def set_infoline2(self):
 		if self.media_type == 'movie':

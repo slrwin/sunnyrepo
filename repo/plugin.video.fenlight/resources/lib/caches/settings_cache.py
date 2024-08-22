@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from modules import kodi_utils
 from caches.base_cache import connect_database
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 json, numeric_input = kodi_utils.json, kodi_utils.numeric_input
 dialog, ok_dialog, select_dialog, confirm_dialog = kodi_utils.dialog, kodi_utils.ok_dialog, kodi_utils.select_dialog, kodi_utils.confirm_dialog
@@ -45,6 +45,7 @@ class SettingsCache:
 		return all_settings
 
 	def set(self, setting_id, setting_value=None):
+		logger(setting_id, setting_value)
 		dbcon = connect_database('settings_db')
 		setting_info = default_setting_values(setting_id)
 		setting_type, setting_default = setting_info['setting_type'], setting_info['setting_default']
@@ -239,6 +240,7 @@ def default_settings():
 {'setting_id': 'paginate.lists', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Within Addon Only', '2': 'Widgets Only', '3': 'Both'}},
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
+{'setting_id': 'mpaa_region', 'setting_type': 'string', 'setting_default': 'US'},
 {'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_all_episodes', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'If Only One Season', '2': 'Always'}},
 {'setting_id': 'single_ep_display', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
@@ -402,6 +404,7 @@ def default_settings():
 #=========================================================================================#
 #======================================HIDDEN=============================================#
 #=========================================================================================#
+{'setting_id': 'mpaa_region_display_name', 'setting_type': 'string', 'setting_default': 'United States'},
 {'setting_id': 'external_scraper.module', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'trakt.expires', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.refresh', 'setting_type': 'string', 'setting_default': '0'},

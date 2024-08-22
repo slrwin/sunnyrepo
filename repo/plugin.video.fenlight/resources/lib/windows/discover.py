@@ -89,7 +89,7 @@ class Discover(BaseDialog):
 
 	def selection_action(self):
 		current_value = self.get_attribute(self, self.chosen_item['display_key'])
-		if not current_value: return True
+		if not current_value or self.chosen_item['key'] in ('with_released', 'with_adult'): return True
 		clear_value = kodi_utils.confirm_dialog(heading='Discover', text='Value of [B]%s[/B] already exists.[CR]Change current value or Clear current value?' % current_value,
 												ok_label='Clear', cancel_label='Change', default_control=11)
 		if not clear_value: return True
@@ -178,17 +178,12 @@ class Discover(BaseDialog):
 		if choice != None: self.set_key_values(self.chosen_item['url_insert'] % choice['id'], choice['name'])
 
 	def released(self):
-		current_attribute_value = self.get_attribute(self, self.chosen_item['display_key'])
-		current_date = tmdb_api.get_current_date()
-		if not current_attribute_value or current_attribute_value == 'False': choice = {'name': 'True', 'id': current_date}
-		else: choice = {'name': 'False', 'id': current_date}
-		self.set_key_values(self.chosen_item['url_insert_%s' % self.media_type] % choice['id'], choice['name'])
+		if not self.get_attribute(self, self.chosen_item['display_key']): self.set_key_values(self.chosen_item['url_insert_%s' % self.media_type] % '[current_date]', 'True')
+		else: self.set_key_values('', '')
 
 	def adult(self):
-		current_attribute_value = self.get_attribute(self, self.chosen_item['display_key'])
-		if not current_attribute_value or current_attribute_value == 'True': choice = {'name': 'False', 'id': 'false'}
-		else: choice = {'name': 'True', 'id': 'true'}
-		self.set_key_values(self.chosen_item['url_insert'] % choice['id'], choice['name'])
+		if not self.get_attribute(self, self.chosen_item['display_key']): self.set_key_values(self.chosen_item['url_insert'] % 'true', 'True')
+		else: self.set_key_values('', '')
 
 	def get_active_attributes(self):
 		return {key: discover_items[key] for key in [i for i in discover_items if self.get_attribute(self, i)]}

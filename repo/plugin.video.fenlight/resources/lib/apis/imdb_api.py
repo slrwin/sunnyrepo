@@ -8,9 +8,7 @@ from modules.kodi_utils import requests, json, sleep
 from modules.utils import remove_accents, replace_html_codes
 # from modules.kodi_utils import logger
 
-# headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'}
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
-# headers = {'User-Agent': 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543 Safari/419.3'}
 base_url = 'https://www.imdb.com/%s'
 more_like_this_url = 'title/%s'
 reviews_url = 'title/%s/reviews/_ajax?paginationKey=%s'

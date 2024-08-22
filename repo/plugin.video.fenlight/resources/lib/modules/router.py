@@ -213,6 +213,9 @@ def routing(sys):
 	if mode == 'person_data_dialog':
 		from indexers.people import person_data_dialog
 		return person_data_dialog(params)
+	if mode == 'favorite_people':
+		from indexers.people import favorite_people
+		return favorite_people()
 	if mode == 'manual_add_magnet_to_cloud':
 		from modules.debrid import manual_add_magnet_to_cloud
 		return manual_add_magnet_to_cloud(params)

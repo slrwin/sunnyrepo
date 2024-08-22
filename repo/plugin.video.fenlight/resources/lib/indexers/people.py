@@ -18,6 +18,9 @@ def tmdb_people(params):
 def person_search(key_id=None):
 	return Images().run({'mode': 'tmdb_people_search_image_results', 'key_id': unquote(key_id), 'page_no': 1})
 
+def favorite_people():
+	return Images().run({'mode': 'favorite_people_list_image_results'})
+
 def person_data_dialog(params):
 	if 'key_id' in params: key_id = unquote(params.get('key_id'))
 	elif 'query' in params: key_id = unquote(params.get('query'))

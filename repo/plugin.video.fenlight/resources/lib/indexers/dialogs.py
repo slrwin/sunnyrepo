@@ -10,12 +10,12 @@ from modules.utils import get_datetime, title_key, adjust_premiered_date, append
 # logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
-set_property, get_icon, dialog, open_settings = kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings
+set_property, get_icon, dialog, open_settings, folder_path = kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings, kodi_utils.folder_path
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
 external_scraper_settings, kodi_refresh, autoscrape_next_episode = kodi_utils.external_scraper_settings, kodi_utils.kodi_refresh, settings.autoscrape_next_episode
 json, select_dialog, autoplay_next_episode, quality_filter = kodi_utils.json, kodi_utils.select_dialog, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window
-poster_empty, audio_filters = kodi_utils.empty_poster, settings.audio_filters
+poster_empty, audio_filters, mpaa_region = kodi_utils.empty_poster, settings.audio_filters, settings.mpaa_region
 extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 quality_filter, date_offset, extras_videos_default, trakt_user_active = settings.quality_filter, settings.date_offset, settings.extras_videos_default, settings.trakt_user_active
@@ -168,7 +168,7 @@ def playback_choice(params):
 	except: pass
 	if not isinstance(meta, dict):
 		function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
-		meta = function('tmdb_id', meta, tmdb_api_key(), get_datetime())
+		meta = function('tmdb_id', meta, tmdb_api_key(), mpaa_region(), get_datetime())
 	aliases = get_aliases_titles(make_alias_dict(meta, meta['title']))
 	items = [{'line': 'Select Source', 'function': 'scrape'},
 			{'line': 'Rescrape & Select Source', 'function': 'clear_and_rescrape'},
@@ -408,7 +408,7 @@ def results_format_choice(params={}):
 	if choice: set_setting('results.list_format', choice)
 
 def clear_favorites_choice(params={}):
-	fl = [('Clear Movies Favorites', 'movie'), ('Clear TV Show Favorites', 'tvshow')]
+	fl = [('Clear Movies Favorites', 'movie'), ('Clear TV Show Favorites', 'tvshow'), ('Clear People Favorites', 'people')]
 	list_items = [{'line1': item[0]} for item in fl]
 	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
 	media_type = select_dialog([item[1] for item in fl], **kwargs)
@@ -419,18 +419,25 @@ def clear_favorites_choice(params={}):
 	notification('Success', 3000)
 
 def favorites_choice(params):
-	media_type, tmdb_id, title = params.get('media_type'), params.get('tmdb_id'), params.get('title')
 	from caches.favorites_cache import favorites_cache
+	media_type, tmdb_id, title = params.get('media_type'), params.get('tmdb_id'), params.get('title')
 	current_favorites = favorites_cache.get_favorites(media_type)
-	if any(i['tmdb_id'] == tmdb_id for i in current_favorites): function, text, refresh = favorites_cache.delete_favourite, 'Remove From Favorites?', 'true'
-	else: function, text, refresh = favorites_cache.set_favourite, 'Add To Favorites?', 'false'
-	if not confirm_dialog(heading=title, text=text): return
+	people_favorite = media_type == 'people'
+	current_favorite = any(i['tmdb_id'] == tmdb_id for i in current_favorites)
+	if current_favorite:
+		function, text = favorites_cache.delete_favourite, 'Remove From Favorites?'
+		param_refresh = params.get('refresh', None)
+		if param_refresh == None: refresh = any(i in folder_path() for i in ('action=favorites_movies', 'action=favorites_tvshows'))
+		else: refresh = param_refresh == 'true'
+	else: function, text, refresh = favorites_cache.set_favourite, 'Add To Favorites?', False
+	heading = title.split('|')[0] if people_favorite else title
+	if not confirm_dialog(heading=heading, text=text): return
 	success = function(media_type, tmdb_id, title)
-	refresh = params.get('refresh', refresh)
 	if success:
-		if refresh == 'true': kodi_refresh()
+		if refresh: kodi_refresh()
 		notification('Success', 3500)
 	else: notification('Error', 3500)
+	if people_favorite and success: return text
 
 def scraper_color_choice(params):
 	setting = params.get('setting_id')
@@ -445,6 +452,18 @@ def scraper_color_choice(params):
 def color_choice(params):
 	return open_window(('windows.color', 'SelectColor'), 'color.xml', current_setting=params.get('current_setting', None))
 
+def mpaa_region_choice(params={}):
+	from modules.meta_lists import regions
+	regions.sort(key=lambda x: x['name'])
+	list_items = [{'line1': i['name']} for i in regions]
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Set MPAA Region', 'narrow_window': 'true'}
+	choice = select_dialog(regions, **kwargs)
+	if choice == None: return None
+	from caches.meta_cache import delete_meta_cache
+	set_setting('mpaa_region', choice['id'])
+	set_setting('mpaa_region_display_name', choice['name'])
+	delete_meta_cache(silent=True)
+
 def options_menu_choice(params, meta=None):
 	params_get = params.get
 	tmdb_id, content, poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None)
@@ -454,7 +473,7 @@ def options_menu_choice(params, meta=None):
 	if content.startswith('episode.'): content = 'episode'
 	if not meta:
 		function = metadata.movie_meta if content == 'movie' else metadata.tvshow_meta
-		meta = function('tmdb_id', tmdb_id, tmdb_api_key(), get_datetime())
+		meta = function('tmdb_id', tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
 	meta_get = meta.get
 	if menu_type == 'movie': collection_id, collection_name = meta_get('extra_info').get('collection_id', None), meta_get('extra_info').get('collection_name', None)
 	else: collection_id, collection_name = None, None
@@ -542,7 +561,7 @@ def extras_menu_choice(params):
 	if not stacked: show_busy_dialog()
 	media_type = params['media_type']
 	function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
-	meta = function('tmdb_id', params['tmdb_id'], tmdb_api_key(), get_datetime())
+	meta = function('tmdb_id', params['tmdb_id'], tmdb_api_key(), mpaa_region(), get_datetime())
 	if not stacked: hide_busy_dialog()
 	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_external=params.get('is_external', 'true' if external() else 'false'),
 															options_media_type=media_type, starting_position=params.get('starting_position', None))

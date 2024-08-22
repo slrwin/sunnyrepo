@@ -89,6 +89,7 @@ class Navigator:
 	def favorites(self):
 		self.add({'mode': 'build_movie_list', 'action': 'favorites_movies', 'name': 'Movies'}, 'Movies', 'movies')
 		self.add({'mode': 'build_tvshow_list', 'action': 'favorites_tvshows', 'name': 'TV Shows'}, 'TV Shows', 'tv')
+		self.add({'mode': 'favorite_people', 'isFolder': 'false', 'name': 'People'}, 'People', 'genre_family')
 		self.end_directory()
 
 	def my_content(self):
@@ -369,10 +370,14 @@ class Navigator:
 			if media_type == 'movie': mode, action = 'build_movie_list', 'tmdb_movies_discover'
 			else: mode, action = 'build_tvshow_list', 'tmdb_tv_discover'
 			for item in results:
-				name = item['id']
+				name, data = item['id'], item['data']
 				cm_items = [('[B]Remove from history[/B]', 'RunPlugin(%s)' % build_url({'mode': 'navigator.discover_contents', 'action':'delete_one', 'name': name})),
 							('[B]Clear All History[/B]', 'RunPlugin(%s)' % build_url({'mode': 'navigator.discover_contents', 'action':'clear_cache', 'media_type': media_type}))]
-				self.add({'mode': mode, 'action': action, 'name': name, 'url': item['data']}, name, 'discover', cm_items=cm_items)
+				if '[random]' in data:
+					self.add({'mode': 'random.%s' % mode, 'action': action, 'name': name, 'url': data, 'new_page': 'random', 'random': 'true'},
+								name, 'discover', cm_items=cm_items)
+				else:
+					self.add({'mode': mode, 'action': action, 'name': name, 'url': data}, name, 'discover', cm_items=cm_items)
 			self.end_directory()
 		else:
 			if action == 'delete_one': discover_cache.delete_one(self.params_get('name'))

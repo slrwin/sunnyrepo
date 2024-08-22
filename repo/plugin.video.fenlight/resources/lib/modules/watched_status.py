@@ -11,7 +11,7 @@ from modules.utils import get_datetime, adjust_premiered_date, sort_for_article,
 sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
 notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
 watched_indicators_function, lists_sort_order, date_offset, nextep_method = settings.watched_indicators, settings.lists_sort_order, settings.date_offset, settings.nextep_method
-tmdb_api_key = settings.tmdb_api_key
+tmdb_api_key, mpaa_region = settings.tmdb_api_key, settings.mpaa_region
 progress_db_string = 'fenlight_hidden_progress_items'
 indicators_dict = {0: 'watched_db', 1: 'trakt_db'}
 
@@ -61,14 +61,14 @@ def refresh_container(refresh=True):
 def active_tvshows_information(status_type):
 	def _process(item):
 		media_id = item['media_id']
-		meta = metadata.tvshow_meta('tmdb_id', media_id, api_key, get_datetime())
+		meta = metadata.tvshow_meta('tmdb_id', media_id, api_key, mpaa_region_value, get_datetime())
 		watched_status = get_watched_status_tvshow(watched_info[media_id], meta.get('total_aired_eps'))
 		if watched_status[0] == status_check: results_append(item)
 	results = []
 	results_append = results.append
 	watched_indicators = watched_indicators_function()
 	watched_info = watched_info_tvshow()
-	api_key = tmdb_api_key()
+	api_key, mpaa_region_value = tmdb_api_key(), mpaa_region()
 	data = [v for k, v in watched_info.items()]
 	if status_type == 'progress': status_check = 0
 	else: status_check = 1
@@ -257,7 +257,7 @@ def mark_tvshow(params):
 	current_date = get_datetime()
 	insert_list = []
 	insert_append = insert_list.append
-	meta = metadata.tvshow_meta('tmdb_id', tmdb_id, tmdb_api_key(), get_datetime())
+	meta = metadata.tvshow_meta('tmdb_id', tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
 	season_data = meta['season_data']
 	season_data = [i for i in season_data if i['season_number'] > 0]
 	total = len(season_data)
@@ -292,7 +292,7 @@ def mark_season(params):
 		clear_trakt_collection_watchlist_data('watchlist', 'tvshow')
 	progressDialogBG.create('[B]Please Wait..[/B]', '')
 	current_date = get_datetime()
-	meta = metadata.tvshow_meta('tmdb_id', tmdb_id, tmdb_api_key(), get_datetime())
+	meta = metadata.tvshow_meta('tmdb_id', tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
 	ep_data = metadata.episodes_meta(season, meta)
 	last_played = get_last_played_value(watched_indicators)
 	for count, item in enumerate(ep_data, 1):

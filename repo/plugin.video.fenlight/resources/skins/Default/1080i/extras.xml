@@ -35,7 +35,7 @@
                         <left>1590</left>
                         <width max="300">auto</width>
                         <height>20</height>
-                        <font>font_clock_small</font> <!-- FENLIGHT_38 -->
+                        <font>font37</font> <!-- FENLIGHT_38 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <align>right</align>
                         <aligny>center</aligny>
@@ -84,6 +84,18 @@
                         <aligny>top</aligny>
                         <label>[I]Press Context Button To [B]Like List[/B] [/I]</label>
                         <visible>Control.HasFocus(2058)</visible>
+                        <visible>String.IsEqual(Container(2058).ListItem.Property(liked_status),false)</visible>
+                    </control>
+                    <control type="label">
+                        <width max="500">auto</width>
+                        <height>20</height>
+                        <font>font12</font> <!-- FENLIGHT_26 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>right</align>
+                        <aligny>top</aligny>
+                        <label>[I]Press Context Button To [B]UnLike List[/B] [/I]</label>
+                        <visible>Control.HasFocus(2058)</visible>
+                        <visible>String.IsEqual(Container(2058).ListItem.Property(liked_status),true)</visible>
                     </control>
                     <control type="label">
                         <width max="500">auto</width>
@@ -140,7 +152,7 @@
                 <control type="label">
                     <width max="1150">auto</width>
                     <height>25</height>
-                    <font>font_clock_small</font> <!-- FENLIGHT_38 -->
+                    <font>font37</font> <!-- FENLIGHT_38 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                     <label>[I]$INFO[Window.Property(genre)][/I]</label>
@@ -150,7 +162,7 @@
                     <top>55</top>
                     <width max="1150">auto</width>
                     <height>25</height>
-                    <font>font_clock_small</font> <!-- FENLIGHT_38 -->
+                    <font>font37</font> <!-- FENLIGHT_38 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                 </control>
@@ -159,7 +171,7 @@
                     <top>105</top>
                     <width max="1150">auto</width>
                     <height>25</height>
-                    <font>font_clock_small</font> <!-- FENLIGHT_38 -->
+                    <font>font37</font> <!-- FENLIGHT_38 -->
                     <textcolor>FFCCCCCC</textcolor>
                     <align>center</align>
                 </control>
@@ -1303,7 +1315,7 @@
                                     <width>430</width>
                                     <height>430</height>
                                     <aspectratio>keep</aspectratio>
-                                    <texture colordiffuse="1AFFFFFF">$INFO[ListItem.Property(thumbnail)]</texture>
+                                    <texture colordiffuse="0DFFFFFF">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>5</left>
@@ -1316,6 +1328,14 @@
                                     <textcolor>FFCCCCCC</textcolor>
                                     <label>$INFO[ListItem.Property(name)]</label>
                                     <autoscroll>false</autoscroll>
+                                </control>
+                                <control type="image">
+                                    <top>-300</top>
+                                    <left>90</left>
+                                    <width>50</width>
+                                    <aspectratio>keep</aspectratio>
+                                    <texture colordiffuse="red">fenlight_common/overlay_selected.png</texture>
+                                    <visible>String.IsEqual(ListItem.Property(liked_status),true)</visible>
                                 </control>
                             </itemlayout>
                             <focusedlayout height="360" width="236">
@@ -1331,14 +1351,6 @@
                                     <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
                                     <visible>Control.HasFocus(2058) | Control.HasFocus(4058)</visible>
                                     <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4058)">Conditional</animation>
-                                </control>
-                                <control type="image">
-                                    <left>-100</left>
-                                    <top>-35</top>
-                                    <width>430</width>
-                                    <height>430</height>
-                                    <aspectratio>keep</aspectratio>
-                                    <texture colordiffuse="1A1F2020">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>5</left>
@@ -1365,6 +1377,14 @@
                                     <label>$INFO[ListItem.Property(name)]</label>
                                     <autoscroll>false</autoscroll>
                                     <visible>![Control.HasFocus(2058) | Control.HasFocus(4058)]</visible>
+                                </control>
+                                <control type="image">
+                                    <top>-300</top>
+                                    <left>90</left>
+                                    <width>50</width>
+                                    <aspectratio>keep</aspectratio>
+                                    <texture colordiffuse="red">fenlight_common/overlay_selected.png</texture>
+                                    <visible>String.IsEqual(ListItem.Property(liked_status),true)</visible>
                                 </control>
                             </focusedlayout>
                         </control>

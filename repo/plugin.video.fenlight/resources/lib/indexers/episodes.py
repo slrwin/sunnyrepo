@@ -12,9 +12,9 @@ date_offset_info, default_all_episodes, nextep_include_unwatched = settings.date
 nextep_airing_today, nextep_sort_key, nextep_sort_direction = settings.nextep_airing_today, settings.nextep_sort_key, settings.nextep_sort_direction
 nextep_include_unaired, ep_display_format, widget_hide_watched = settings.nextep_include_unaired, settings.single_ep_display_format, settings.widget_hide_watched
 make_listitem, build_url, xbmc_actor, set_category = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.xbmc_actor, kodi_utils.set_category
+nextep_limit_history, nextep_limit, tmdb_api_key, mpaa_region = settings.nextep_limit_history, settings.nextep_limit, settings.tmdb_api_key, settings.mpaa_region
 get_property, nextep_include_airdate, calendar_sort_order = kodi_utils.get_property, settings.nextep_include_airdate, settings.calendar_sort_order
 watched_indicators_info, nextep_method, show_specials = settings.watched_indicators, settings.nextep_method, settings.show_specials
-nextep_limit_history, nextep_limit, tmdb_api_key = settings.nextep_limit_history, settings.nextep_limit, settings.tmdb_api_key
 get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode = ws.get_watched_status_episode, ws.get_bookmarks_episode, ws.get_progress_status_episode
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
 get_hidden_progress_items, get_database, watched_info_episode, get_next = ws.get_hidden_progress_items, ws.get_database, ws.watched_info_episode, ws.get_next
@@ -95,7 +95,7 @@ def build_episode_list(params):
 	watched_indicators, adjust_hours = watched_indicators_info(), date_offset_info()
 	current_date, hide_watched = get_datetime(), is_home and widget_hide_watched()
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
-	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), tmdb_api_key(), current_date)
+	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), tmdb_api_key(), mpaa_region(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, tvshow_plot, orig_title = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot'), meta_get('original_title')
 	title, show_year, rootname, show_duration, show_status = meta_get('title'), meta_get('year') or '2050', meta_get('rootname'), meta_get('duration'), meta_get('status')
@@ -133,7 +133,7 @@ def build_single_episode(list_type, params={}):
 	def _process(_position, ep_data):
 		try:
 			ep_data_get = ep_data.get
-			meta = tvshow_meta('trakt_dict', ep_data_get('media_ids'), api_key, current_date)
+			meta = tvshow_meta('trakt_dict', ep_data_get('media_ids'), api_key, mpaa_region_value, current_date)
 			if not meta: return
 			meta_get = meta.get
 			cm = []
@@ -244,7 +244,7 @@ def build_single_episode(list_type, params={}):
 	window_command = 'ActivateWindow(Videos,%s,return)' if is_external else 'Container.Update(%s)'
 	all_episodes, watched_indicators, display_format = default_all_episodes(), watched_indicators_info(), ep_display_format(is_external)
 	current_date, adjust_hours, hide_watched = get_datetime(), date_offset_info(), is_home and widget_hide_watched()
-	api_key = tmdb_api_key()
+	api_key, mpaa_region_value = tmdb_api_key(), mpaa_region()
 	watched_db = get_database(watched_indicators)
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
 	show_all_episodes = all_episodes in (1, 2)

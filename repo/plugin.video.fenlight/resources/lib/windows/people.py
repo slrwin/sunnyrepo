@@ -10,11 +10,11 @@ from modules.utils import calculate_age, get_datetime
 
 addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.default_addon_fanart, kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
 notification, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.notification, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
-extras_enable_scrollbars, tmdb_api_key, easynews_authorized = settings.extras_enable_scrollbars, settings.tmdb_api_key, settings.easynews_authorized
+extras_enable_scrollbars, tmdb_api_key, easynews_authorized, mpaa_region = settings.extras_enable_scrollbars, settings.tmdb_api_key, settings.easynews_authorized, settings.mpaa_region
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'
 backup_cast_thumbnail = get_icon('genre_family')
 roles_exclude = ('himself', 'herself', 'self', 'narrator', 'voice', 'voice (voice)')
-button_ids = [10, 11, 12, 50]
+button_ids = [10, 11, 12, 13, 50]
 genres_exclude = (10763, 10764, 10767)		
 gender_dict = {0: '', 1: 'Female', 2: 'Male', 3: ''}
 more_from_movies_id, more_from_tvshows_id, trivia_id, videos_id, more_from_director_id = 2050, 2051, 2052, 2053, 2054
@@ -38,17 +38,19 @@ class People(BaseDialog):
 		for i in self.tasks: Thread(target=i).start()
 		self.set_default_focus()
 		if self.starting_position:
-			try:
-				window_id, focus = self.starting_position
-				self.sleep(750)
-				self.setFocusId(window_id)
-				self.select_item(window_id, focus)
+			try: self.set_returning_focus(*self.starting_position)
 			except: self.set_default_focus()
-		else: self.set_default_focus()
 
 	def set_default_focus(self):
 		try: self.setFocusId(10)
 		except: self.close()
+
+	def set_returning_focus(self, window_id, focus, sleep_time=750):
+		try:
+			self.sleep(sleep_time)
+			self.setFocusId(window_id)
+			self.select_item(window_id, focus)
+		except: self.set_default_focus()
 
 	def run(self):
 		self.doModal()
@@ -63,7 +65,10 @@ class People(BaseDialog):
 				_images({'mode': 'tmdb_people_tagged_image_results', 'actor_name': self.person_name, 'actor_id': self.person_id})
 			elif controlID == 12:
 				_images({'mode': 'easynews_image_results', 'key_id': self.person_name, 'page_no': 1})
-			elif controlID == 50:
+			elif controlID == 13:
+				title = '%s|%s|%s' % (self.person_name, self.person_thumb, self.person_image)
+				dialogs.favorites_choice({'media_type': 'people', 'tmdb_id': str(self.person_id), 'title': title, 'refresh': 'false'})
+			else:#controlID
 				self.show_text_media(text=self.person_biography)
 		else: self.control_id = controlID
 
@@ -78,7 +83,7 @@ class People(BaseDialog):
 			chosen_listitem = self.get_listitem(focus_id)
 			media_type = 'movie' if focus_id in (more_from_movies_id, more_from_director_id) else 'tvshow'
 			function = movie_meta if media_type == 'movie' else tvshow_meta
-			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), tmdb_api_key(), get_datetime())
+			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), tmdb_api_key(), mpaa_region(), get_datetime())
 			hide_busy_dialog()
 			self.show_extrainfo(media_type, meta, meta.get('poster', empty_poster))
 		if not self.control_id: return
@@ -145,8 +150,11 @@ class People(BaseDialog):
 		self.person_imdb_id = person_info['imdb_id']
 		self.person_name = person_info['name']
 		image_path = person_info['profile_path']
-		if image_path: self.person_image = tmdb_image_base % ('h632', image_path)
-		else: self.person_image = backup_cast_thumbnail
+		if image_path:
+			self.person_thumb = tmdb_image_base % ('w185', image_path)
+			self.person_image = tmdb_image_base % ('h632', image_path)
+		else:
+			self.person_thumb = self.person_image = backup_cast_thumbnail
 		try: self.person_gender = gender_dict[person_info.get('gender')]
 		except: self.person_gender = ''
 		place_of_birth = person_info.get('place_of_birth')

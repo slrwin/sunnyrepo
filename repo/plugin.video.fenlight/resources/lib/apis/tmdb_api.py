@@ -7,7 +7,7 @@ from modules.settings import get_meta_filter, tmdb_api_key
 from modules.kodi_utils import make_session, tmdb_dict_removals, remove_keys, notification
 # from modules.kodi_utils import logger
 
-EXPIRY_4_HOURS, EXPIRY_1_WEEK = 4, 168
+EXPIRY_4_HOURS, EXPIRY_ONE_DAY, EXPIRY_1_WEEK = 4, 24, 168
 base_url = 'https://api.themoviedb.org/3'
 movies_append = 'external_ids,videos,credits,release_dates,alternative_titles,translations,images'
 tvshows_append = 'external_ids,videos,credits,content_ratings,alternative_titles,translations,images'
@@ -146,8 +146,10 @@ def tmdb_media_videos(media_type, tmdb_id):
 def tmdb_movies_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
+	if '[current_date]' in query: query = query.replace('[current_date]', get_current_date())
+	if '[random]' in query: query = query.replace('[random]', '')
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return lists_cache_object(get_tmdb, string, url, True)
+	return lists_cache_object(get_tmdb, string, url, True, EXPIRY_ONE_DAY)
 
 def tmdb_movies_popular(page_no):
 	api_key = tmdb_api_key()
@@ -285,8 +287,10 @@ def tmdb_movies_reviews(tmdb_id, page_no):
 def tmdb_tv_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
+	if '[current_date]' in query: query = query.replace('[current_date]', get_current_date())
+	if '[random]' in query: query = query.replace('[random]', '')
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return lists_cache_object(get_tmdb, string, url, True)
+	return lists_cache_object(get_tmdb, string, url, True, EXPIRY_ONE_DAY)
 
 def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
