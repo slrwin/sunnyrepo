@@ -1,5 +1,8 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 1.0.69[/B][/COLOR]
+- Quick fix for Trakt Lists Liking/Unliking in Extras window.
+
 [COLOR dodgerblue][B]Version 1.0.67/68[/B][/COLOR]
 - Added "People" option to Favorites to go along with Movies and TV Shows.
 - Added spoken language info to Extras. Metacache will need to be cleared to see this.

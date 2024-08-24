@@ -524,7 +524,10 @@ def trakt_like_a_list(params):
 		notification('Success - Trakt List Liked', 3000)
 		trakt_sync_activities()
 		if refresh: kodi_refresh()
-	except: notification('Error', 3000)
+		return True
+	except:
+		notification('Error', 3000)
+		return False
 
 def trakt_unlike_a_list(params):
 	user = params['user']
@@ -535,7 +538,10 @@ def trakt_unlike_a_list(params):
 		notification('Success - Trakt List Unliked', 3000)
 		trakt_sync_activities()
 		if refresh: kodi_refresh()
-	except: notification('Error', 3000)
+		return True
+	except:
+		notification('Error', 3000)
+		return False
 
 def get_trakt_movie_id(item):
 	if item['tmdb']: return item['tmdb']

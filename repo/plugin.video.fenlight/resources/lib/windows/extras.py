@@ -110,16 +110,16 @@ class Extras(BaseDialog):
 				person_name = self.get_listitem(focus_id).getProperty(self.item_action_dict[focus_id])
 				return person_search(person_name)
 			elif focus_id == in_lists_id:
+				show_busy_dialog()
 				try:
 					list_item, position = self.get_listitem(focus_id), self.get_position(focus_id)
 					chosen = self.get_attribute(self, list_item.getProperty(self.item_action_dict[focus_id]))[self.get_position(focus_id)]
 					user, list_slug = chosen['user']['ids']['slug'], chosen['ids']['slug']
-					function = like_a_list if list_item.getProperty('liked_status') == 'false' else unlike_a_list
-				except: return self.notification('Error Liking List')
-				self.reset_window(focus_id)
-				show_busy_dialog()
-				function({'user': user, 'list_slug': list_slug, 'refresh': 'false'})
-				return self.make_in_lists(position)
+					function, new_value = (like_a_list, 'true') if list_item.getProperty('liked_status') == 'false' else (unlike_a_list, 'false')
+					new_value = 'true' if list_item.getProperty('liked_status') == 'false' else 'false'
+					if function({'user': user, 'list_slug': list_slug, 'refresh': 'false'}): list_item.setProperty('liked_status', new_value)
+				except: return self.notification('Error with Trakt List')
+				hide_busy_dialog()
 			else: return
 		if not self.control_id: return
 		if action in self.selection_actions:
@@ -269,7 +269,7 @@ class Extras(BaseDialog):
 			self.add_items(comments_id, item_list)
 		except: pass
 
-	def make_in_lists(self, position=None):
+	def make_in_lists(self):
 		if not in_lists_id in self.enabled_lists: return
 		def builder():
 			for count, item in enumerate(self.all_in_lists, 1):
@@ -296,10 +296,6 @@ class Extras(BaseDialog):
 			self.setProperty('trakt_in_lists.number', count_insert % len(item_list))
 			self.item_action_dict[in_lists_id] = 'content_list'
 			self.add_items(in_lists_id, item_list)
-			if position != None:
-				hide_busy_dialog()
-				self.sleep(100)
-				self.set_returning_focus(in_lists_id, position)
 		except: pass
 
 	def make_trivia(self):
