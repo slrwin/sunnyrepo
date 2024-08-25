@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from windows.base_window import BaseDialog, window_manager, window_player
 from apis.tmdb_api import tmdb_people_info, tmdb_people_full_info
-from apis.imdb_api import imdb_videos, imdb_people_trivia
+from apis.imdb_api import imdb_people_trivia
 from indexers import dialogs
 from indexers.images import Images
 from modules import kodi_utils, settings
 from modules.utils import calculate_age, get_datetime
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.default_addon_fanart, kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
 notification, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.notification, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
@@ -17,7 +17,7 @@ roles_exclude = ('himself', 'herself', 'self', 'narrator', 'voice', 'voice (voic
 button_ids = [10, 11, 12, 13, 50]
 genres_exclude = (10763, 10764, 10767)		
 gender_dict = {0: '', 1: 'Female', 2: 'Male', 3: ''}
-more_from_movies_id, more_from_tvshows_id, trivia_id, videos_id, more_from_director_id = 2050, 2051, 2052, 2053, 2054
+more_from_movies_id, more_from_tvshows_id, trivia_id, more_from_director_id = 2050, 2051, 2052, 2053
 tmdb_list_ids = (more_from_movies_id, more_from_tvshows_id, more_from_director_id)
 empty_check = (None, 'None', '')
 separator, count_insert = '[B]  •  [/B]', 'x%s'
@@ -31,7 +31,7 @@ class People(BaseDialog):
 		self.set_starting_constants(kwargs)
 		self.make_person_data()
 		self.set_properties()
-		self.tasks = (self.set_infoline1, self.make_trivia, self.make_videos, self.make_movies, self.make_tvshows, self.make_director)
+		self.tasks = (self.set_infoline1, self.make_trivia, self.make_movies, self.make_tvshows, self.make_director)
 
 	def onInit(self):
 		self.set_home_property('window_loaded', 'true')
@@ -99,13 +99,6 @@ class People(BaseDialog):
 			elif self.control_id == trivia_id:
 				end_index = self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=self.get_position(self.control_id))
 				self.select_item(self.control_id, end_index)
-			elif self.control_id == videos_id:
-				thumb = chosen_listitem.getProperty('thumbnail')
-				chosen = dialogs.imdb_videos_choice({'videos': self.get_attribute(self, chosen_var)[self.get_position(self.control_id)]['videos'], 'poster': thumb})
-				if not chosen: return
-				self.set_current_params()
-				self.window_player_url = chosen
-				return window_player(self)
 
 	def set_infoline1(self):
 		gender, age = self.person_gender or None, '%syo' % self.person_age if self.person_age else None
@@ -147,6 +140,7 @@ class People(BaseDialog):
 			notification('No Results')
 			return self.close()
 		person_info = tmdb_people_full_info(self.person_id)
+		logger('person_info', person_info)
 		self.person_imdb_id = person_info['imdb_id']
 		self.person_name = person_info['name']
 		image_path = person_info['profile_path']
@@ -198,22 +192,6 @@ class People(BaseDialog):
 			self.setProperty('more_from_%s.number' % media_type, count_insert % len(item_list))
 			self.item_action_dict[_id] = 'tmdb_id'
 			self.add_items(_id, item_list)
-		except: pass
-
-	def make_videos(self):
-		def builder():
-			for item in self.all_videos:
-				try:
-					listitem = self.make_listitem()
-					listitem.setProperties({'name': item['title'], 'thumbnail': item['poster'], 'content_list': 'all_videos'})
-					yield listitem
-				except: pass
-		try:
-			self.all_videos = imdb_videos(self.imdb_id)
-			item_list = list(builder())
-			self.setProperty('imdb_videos.number', count_insert % len(item_list))
-			self.item_action_dict[videos_id] = 'content_list'
-			self.add_items(videos_id, item_list)
 		except: pass
 
 	def make_trivia(self):

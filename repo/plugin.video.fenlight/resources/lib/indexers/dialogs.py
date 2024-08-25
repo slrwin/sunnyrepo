@@ -18,7 +18,7 @@ numeric_input, container_update, activate_window = kodi_utils.numeric_input, kod
 poster_empty, audio_filters, mpaa_region = kodi_utils.empty_poster, settings.audio_filters, settings.mpaa_region
 extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
-quality_filter, date_offset, extras_videos_default, trakt_user_active = settings.quality_filter, settings.date_offset, settings.extras_videos_default, settings.trakt_user_active
+quality_filter, date_offset, trakt_user_active = settings.quality_filter, settings.date_offset, settings.trakt_user_active
 single_ep_list, scraper_names = kodi_utils.single_ep_list, kodi_utils.scraper_names
 
 def tmdb_api_check_choice(params):
@@ -68,34 +68,6 @@ def audio_filters_choice(params={}):
 	if selection == []: set_setting('filter_audio', 'empty_setting')
 	else: set_setting('filter_audio', ', '.join(selection))
 
-def trailer_choice(params):
-	media_type, poster, tmdb_id, trailer_url, all_trailers = params['media_type'], params['poster'], params['tmdb_id'], params['trailer_url'], params['all_trailers']
-	if not trailer_url and not all_trailers:
-		show_busy_dialog()
-		from apis.tmdb_api import tmdb_media_videos
-		try: all_trailers = tmdb_media_videos(media_type, tmdb_id)['results']
-		except: pass
-		hide_busy_dialog()
-	if all_trailers:
-		if len(all_trailers) == 1: video_id = all_trailers[0].get('key')
-		else:
-			from modules.utils import clean_file_name
-			def _sort_trailers():
-				official_trailers = [i for i in all_trailers if i['type'] == 'Trailer' and i['name'].lower() == 'official trailer']
-				other_official_trailers = [i for i in all_trailers if i['type'] == 'Trailer' and 'official' in i['name'].lower() and not i in official_trailers]
-				other_trailers = [i for i in all_trailers if i['type'] == 'Trailer' and not i in official_trailers  and not i in other_official_trailers]
-				teaser_trailers = [i for i in all_trailers if i['type'] == 'Teaser']
-				full_trailers = official_trailers + other_official_trailers + other_trailers + teaser_trailers
-				features = [i for i in all_trailers if not i in full_trailers]
-				return full_trailers + features
-			sorted_trailers = _sort_trailers()
-			list_items = [{'line1': clean_file_name(i['name']), 'icon': poster} for i in sorted_trailers]
-			kwargs = {'items': json.dumps(list_items)}
-			video_id = select_dialog([i['key'] for i in sorted_trailers], **kwargs)
-			if video_id == None: return 'canceled'
-		trailer_url = 'plugin://plugin.video.youtube/play/?video_id=%s' % video_id
-	return trailer_url
-
 def genres_choice(params):
 	genres_list, genres, poster = params['genres_list'], params['genres'], params['poster']
 	genre_list = [i for i in genres_list if i['name'] in genres]
@@ -121,20 +93,6 @@ def keywords_choice(params):
 	list_items = [{'line1': i['name'], 'icon': poster} for i in results]
 	kwargs = {'items': json.dumps(list_items)}
 	return select_dialog([i['id'] for i in results], **kwargs)
-
-def imdb_videos_choice(params):
-	videos, poster = params['videos'], params['poster']
-	try: videos = json.loads(videos)
-	except: pass
-	default_quality = extras_videos_default()
-	if default_quality:
-		quality = {1: '1080p', 2: '720p', 3: '480p', 4: '360p'}[default_quality]
-		chosen_video = next((i for i in videos if i['quality'] == quality), None)
-		if chosen_video: return chosen_video['url']
-	videos.sort(key=lambda x: x['quality_rank'])
-	list_items = [{'line1': i['quality'], 'icon': poster} for i in videos]
-	kwargs = {'items': json.dumps(list_items)}
-	return select_dialog([i['url'] for i in videos], **kwargs)
 
 def random_choice(params):
 	meta, poster, return_choice = params.get('meta'), params.get('poster'), params.get('return_choice', 'false')

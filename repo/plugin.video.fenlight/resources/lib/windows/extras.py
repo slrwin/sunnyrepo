@@ -19,19 +19,17 @@ container_update, activate_window, clear_property = kodi_utils.container_update,
 default_all_episodes, extras_enabled_menus, tmdb_api_key = settings.default_all_episodes, settings.extras_enabled_menus, settings.tmdb_api_key
 enable_extra_ratings, nextep_method, watched_indicators = settings.extras_enable_extra_ratings, settings.nextep_method, settings.watched_indicators
 extras_enable_scrollbars, omdb_api_key, date_offset, mpaa_region = settings.extras_enable_scrollbars, settings.omdb_api_key, settings.date_offset, settings.mpaa_region
-options_menu_choice, extras_menu_choice, imdb_videos_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice, dialogs.imdb_videos_choice
+options_menu_choice, extras_menu_choice = dialogs.options_menu_choice, dialogs.extras_menu_choice
 trakt_manager_choice, random_choice, playback_choice, favorites_choice = dialogs.trakt_manager_choice, dialogs.random_choice, dialogs.playback_choice, dialogs.favorites_choice
 get_next_episodes, get_watched_status_movie, watched_info_movie = watched_status.get_next_episodes, watched_status.get_watched_status_movie, watched_status.watched_info_movie
 watched_info_episode, get_database, get_next = watched_status.watched_info_episode, watched_status.get_database, watched_status.get_next
 get_progress_status_movie, get_bookmarks_movie = watched_status.get_progress_status_movie, watched_status.get_bookmarks_movie
-trailer_choice, media_extra_info, genres_choice, random_choice = dialogs.trailer_choice, dialogs.media_extra_info_choice, dialogs.genres_choice, dialogs.random_choice
-keywords_choice = dialogs.keywords_choice
+media_extra_info, genres_choice, random_choice, keywords_choice = dialogs.media_extra_info_choice, dialogs.genres_choice, dialogs.random_choice, dialogs.keywords_choice
 person_search, person_data_dialog = people.person_search, people.person_data_dialog
 tmdb_movies_year, tmdb_tv_year, tmdb_movies_genres, tmdb_tv_genres = tmdb_api.tmdb_movies_year, tmdb_api.tmdb_tv_year, tmdb_api.tmdb_movies_genres, tmdb_api.tmdb_tv_genres
 tmdb_movies_recommendations, tmdb_tv_recommendations, tmdb_company_id = tmdb_api.tmdb_movies_recommendations, tmdb_api.tmdb_tv_recommendations, tmdb_api.tmdb_company_id
 tmdb_movies_companies, tmdb_tv_networks = tmdb_api.tmdb_movies_companies, tmdb_api.tmdb_tv_networks
-imdb_reviews, imdb_trivia, imdb_blunders = imdb_api.imdb_reviews, imdb_api.imdb_trivia, imdb_api.imdb_blunders
-imdb_parentsguide, imdb_videos = imdb_api.imdb_parentsguide, imdb_api.imdb_videos
+imdb_reviews, imdb_trivia, imdb_blunders, imdb_parentsguide = imdb_api.imdb_reviews, imdb_api.imdb_trivia, imdb_api.imdb_blunders, imdb_api.imdb_parentsguide
 fetch_ratings_info, trakt_comments, like_a_list, unlike_a_list = omdb_api.fetch_ratings_info, trakt_api.trakt_comments, trakt_api.trakt_like_a_list, trakt_api.trakt_unlike_a_list
 tmdb_image_base, count_insert = 'https://image.tmdb.org/t/p/%s%s', 'x%s'
 youtube_check = 'plugin.video.youtube'
@@ -50,6 +48,7 @@ meta_ratings_values = (('metascore', 1), ('tomatometer', 2), ('tomatousermeter',
 ratings_null = ('', '%')
 missing_image_check = ('', None, empty_poster, addon_fanart)
 _images = Images().run
+youtube_thumb_url, youtube_url = 'https://img.youtube.com/vi/%s/0.jpg', 'plugin://plugin.video.youtube/play/?video_id=%s'
 
 class Extras(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -136,10 +135,8 @@ class Extras(BaseDialog):
 				self.new_params = {'mode': 'person_data_dialog', 'key_id': chosen_var, 'reference_tmdb_id': self.tmdb_id, 'is_external': self.is_external, 'stacked': 'true'}
 				return window_manager(self)
 			elif self.control_id == videos_id:
-				chosen = imdb_videos_choice({'videos': self.get_attribute(self, chosen_var)[position]['videos'], 'poster': self.poster})
-				if not chosen: return
-				self.set_current_params()
-				self.window_player_url = chosen
+				self.set_current_params(set_starting_position=False)
+				self.window_player_url = youtube_url % chosen_var
 				return window_player(self)
 			elif self.control_id in text_list_ids:
 				if self.control_id == parentsguide_id: return self.show_text_media(text=chosen_var)
@@ -361,20 +358,30 @@ class Extras(BaseDialog):
 
 	def make_videos(self):
 		if not videos_id in self.enabled_lists: return
+		if not self.youtube_installed_check(): return
+		def _sort_trailers(trailers):
+			official_trailers = [i for i in trailers if i['type'] == 'Trailer' and i['name'].lower() == 'official trailer']
+			other_official_trailers = [i for i in trailers if i['type'] == 'Trailer' and 'official' in i['name'].lower() and not i in official_trailers]
+			other_trailers = [i for i in trailers if i['type'] == 'Trailer' and not i in official_trailers  and not i in other_official_trailers]
+			teaser_trailers = [i for i in trailers if i['type'] == 'Teaser']
+			full_trailers = official_trailers + other_official_trailers + other_trailers + teaser_trailers
+			features = [i for i in trailers if not i in full_trailers]
+			return full_trailers + features
 		def builder():
-			for item in self.all_videos:
+			for item in all_trailers:
 				try:
 					listitem = self.make_listitem()
-					listitem.setProperty('name', item['title'])
-					listitem.setProperty('thumbnail', item['poster'])
-					listitem.setProperty('content_list', 'all_videos')
+					key = item['key']
+					listitem.setProperty('name', item['name'])
+					listitem.setProperty('thumbnail', youtube_thumb_url % key)
+					listitem.setProperty('key_id', key)
 					yield listitem
 				except: pass
 		try:
-			self.all_videos = imdb_videos(self.imdb_id)
+			all_trailers = _sort_trailers(self.meta_get('all_trailers', []))
 			item_list = list(builder())
-			self.setProperty('imdb_videos.number', count_insert % len(item_list))
-			self.item_action_dict[videos_id] = 'content_list'
+			self.setProperty('youtube_videos.number', count_insert % len(item_list))
+			self.item_action_dict[videos_id] = 'key_id'
 			self.add_items(videos_id, item_list)
 		except: pass
 
@@ -564,12 +571,8 @@ class Extras(BaseDialog):
 
 	def show_trailers(self):
 		if not self.youtube_installed_check(): return self.notification('Youtube Plugin needed for playback')
-		chosen = trailer_choice({'media_type': self.media_type, 'poster': self.poster, 'tmdb_id': self.tmdb_id,
-								'trailer_url': self.meta_get('trailer'), 'all_trailers': self.meta_get('all_trailers', [])})
-		if not chosen: return ok_dialog()
-		elif chosen == 'canceled': return
 		self.set_current_params(set_starting_position=False)
-		self.window_player_url = chosen
+		self.window_player_url = self.meta_get('trailer')
 		return window_player(self)
 
 	def show_images(self):

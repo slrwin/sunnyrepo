@@ -222,7 +222,6 @@ def default_settings():
 #==================== Extras
 {'setting_id': 'extras.enable_extra_ratings', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'extras.enable_scrollbars', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'extras.videos_default', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Choose', '1': '1080p', '2': '720p', '3': '480p', '4': '360p'}},
 #==================== Special Open Actions
 {'setting_id': 'media_open_action_movie', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Open Extras', '2': 'Open Movie Set', '3': 'Both'}},
 {'setting_id': 'media_open_action_tvshow', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Open Extras'}},

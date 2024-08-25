@@ -1,5 +1,8 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 1.0.70[/B][/COLOR]
+- Quick fix for Extras Videos.
+
 [COLOR dodgerblue][B]Version 1.0.69[/B][/COLOR]
 - Quick fix for Trakt Lists Liking/Unliking in Extras window.
 

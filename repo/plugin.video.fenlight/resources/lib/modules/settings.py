@@ -155,9 +155,6 @@ def extras_enable_extra_ratings():
 def extras_enable_scrollbars():
 	return get_setting('fenlight.extras.enable_scrollbars', 'true')
 
-def extras_videos_default():
-	return int(get_setting('fenlight.extras.videos_default', '0'))
-
 def extras_enabled_menus():
 	setting = get_setting('fenlight.extras.enabled', '2000,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062')
 	if setting in ('', None, 'noop', []): return []
