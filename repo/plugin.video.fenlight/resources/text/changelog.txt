@@ -1,5 +1,8 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 1.0.71[/B][/COLOR]
+- Quick fix for choosing Easynews language filters.
+
 [COLOR dodgerblue][B]Version 1.0.70[/B][/COLOR]
 - Quick fix for Extras Videos.
 

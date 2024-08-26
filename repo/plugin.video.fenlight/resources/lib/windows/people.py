@@ -6,7 +6,7 @@ from indexers import dialogs
 from indexers.images import Images
 from modules import kodi_utils, settings
 from modules.utils import calculate_age, get_datetime
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.default_addon_fanart, kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
 notification, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.notification, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
@@ -140,7 +140,6 @@ class People(BaseDialog):
 			notification('No Results')
 			return self.close()
 		person_info = tmdb_people_full_info(self.person_id)
-		logger('person_info', person_info)
 		self.person_imdb_id = person_info['imdb_id']
 		self.person_name = person_info['name']
 		image_path = person_info['profile_path']

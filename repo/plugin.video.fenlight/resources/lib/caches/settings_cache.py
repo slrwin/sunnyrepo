@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from modules import kodi_utils
 from caches.base_cache import connect_database
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 json, numeric_input = kodi_utils.json, kodi_utils.numeric_input
 dialog, ok_dialog, select_dialog, confirm_dialog = kodi_utils.dialog, kodi_utils.ok_dialog, kodi_utils.select_dialog, kodi_utils.confirm_dialog
@@ -45,7 +45,6 @@ class SettingsCache:
 		return all_settings
 
 	def set(self, setting_id, setting_value=None):
-		logger(setting_id, setting_value)
 		dbcon = connect_database('settings_db')
 		setting_info = default_setting_values(setting_id)
 		setting_type, setting_default = setting_info['setting_type'], setting_info['setting_default']

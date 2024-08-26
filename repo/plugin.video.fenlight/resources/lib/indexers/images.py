@@ -17,6 +17,7 @@ class Images():
 		self.list_items = []
 		self.params = params
 		self.mode = self.params.pop('mode')
+		self.direct_search_result = False
 		if self.mode == 'imageviewer': return self.imageviewer()
 		if self.mode == 'delete_image': return self.delete_image()
 		if self.mode == 'tmdb_people_list_image_results': self.tmdb_people_list_image_results()
@@ -29,6 +30,7 @@ class Images():
 		elif self.mode == 'easynews_image_results': self.easynews_image_results()
 		elif self.mode == 'browser_image': self.browser_image()
 		hide_busy_dialog()
+		if self.direct_search_result: return
 		if len(self.list_items) == 0: return notification('None Found')
 		if not 'in_progress' in params: self.open_window_xml()
 		else: return self.list_items, self.next_page_params
@@ -58,7 +60,7 @@ class Images():
 
 	def tmdb_people_search_image_results(self):
 		def builder():
-			for item in person_info['results']:
+			for item in results:
 				try:
 					name, actor_id = item['name'], item['id']
 					p_path = item['profile_path']
@@ -75,10 +77,16 @@ class Images():
 				except: pass
 		page_no = self.params['page_no']
 		key_id = self.params.get('key_id') or self.params.get('query')
-		try: person_info = tmdb_people_info(key_id, page_no)
+		try: data = tmdb_people_info(key_id, page_no)
 		except: return
+		results = data['results']
+		if len(results) == 1:
+			self.direct_search_result = True
+			item = results[0]
+			return open_window(('windows.people', 'People'), 'people.xml', key_id=None, actor_name=item['name'], actor_id=item['id'],
+					actor_image=tmdb_image_base % ('h632', item['profile_path']) if item['profile_path'] else get_icon('genre_family'))
 		self.list_items = list(builder())
-		if person_info['total_pages'] > page_no: page_no += 1
+		if data['total_pages'] > page_no: page_no += 1
 		else: page_no = 'final_page'
 		self.next_page_params = {'mode': 'tmdb_people_search_image_results', 'key_id': key_id, 'page_no': page_no}
 

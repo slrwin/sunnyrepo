@@ -316,23 +316,20 @@ def extras_lists_choice(params={}):
 
 def set_language_filter_choice(params):
 	from modules.meta_lists import language_choices
-	filter_setting = params.get('filter_setting')
-	multi_choice = params.get('multi_choice', 'false')
-	include_none = params.get('include_none', 'false')
+	filter_setting_id, multi_choice, include_none = params.get('filter_setting_id'), params.get('multi_choice', 'false'), params.get('include_none', 'false')
 	lang_choices = language_choices
 	if include_none == 'false': lang_choices.pop('None')
-	dl = list(lang_choices.keys())
-	fl = list(lang_choices.values())
-	try: preselect = [fl.index(i) for i in get_setting('fenlight.%s' % filter_setting).split(', ')]
+	dl, fl = list(lang_choices.keys()), list(lang_choices.values())
+	try: preselect = [fl.index(i) for i in get_setting('fenlight.%s' % filter_setting_id).split(', ')]
 	except: preselect = []
 	list_items = [{'line1': item} for item in dl]
 	kwargs = {'items': json.dumps(list_items), 'multi_choice': multi_choice, 'preselect': preselect}
 	choice = select_dialog(fl, **kwargs)
 	if choice == None: return
 	if multi_choice == 'true':
-		if choice == []: set_setting(filter_setting, 'eng')
-		else: set_setting(filter_setting, ', '.join(choice))
-	else: set_setting(filter_setting, choice)
+		if choice == []: set_setting(filter_setting_id, 'eng')
+		else: set_setting(filter_setting_id, ', '.join(choice))
+	else: set_setting(filter_setting_id, choice)
 
 def enable_scrapers_choice(params={}):
 	icon = params.get('icon', None) or get_icon('fenlight')

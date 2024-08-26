@@ -5,7 +5,7 @@ from modules.sources import Sources
 from modules.metadata import episodes_meta, all_episodes_meta
 from modules.watched_status import get_next_episodes, get_hidden_progress_items, watched_info_episode, get_next
 from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 Thread, get_property, set_property, add_items = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.add_items
 make_listitem, set_content, end_directory, set_view_mode = kodi_utils.make_listitem, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
@@ -96,13 +96,11 @@ class EpisodeTools:
 
 	def play_random_continual(self, first_run=True):
 		url_params = self.get_random_episode(continual=True, first_run=first_run)
-		logger('play_random_continual url_params', url_params)
 		if url_params == 'error': return notification('Continual Random Play Error', 3000)
 		return Sources().playback_prep(url_params)
 
 	def auto_nextep(self):
 		url_params = self.next_episode_info()
-		logger('auto_nextep url_params', url_params)
 		if url_params == 'error': return notification('Next Episode Error', 3000)
 		elif url_params == 'no_next_episode': return
 		return Sources().playback_prep(url_params)
