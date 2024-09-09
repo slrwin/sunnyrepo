@@ -181,13 +181,22 @@ def easynews_language_filter():
 	return enabled, filters
 
 def results_sort_order():
+	# return (
+	# 		lambda k: (k['quality_rank'], k['provider_rank'], -k['size']), #Quality, Provider, Size
+	# 		lambda k: (k['quality_rank'], -k['size'], k['provider_rank']), #Quality, Size, Provider
+	# 		lambda k: (k['provider_rank'], k['quality_rank'], -k['size']), #Provider, Quality, Size
+	# 		lambda k: (k['provider_rank'], -k['size'], k['quality_rank']), #Provider, Size, Quality
+	# 		lambda k: (-k['size'], k['quality_rank'], k['provider_rank']), #Size, Quality, Provider
+	# 		lambda k: (-k['size'], k['provider_rank'], k['quality_rank'])  #Size, Provider, Quality
+	# 		)[int(get_setting('fenlight.results.sort_order', '1'))]
+	sort_direction = -1 if get_setting('fenlight.results.size_sort_direction') == '0' else 1
 	return (
-			lambda k: (k['quality_rank'], k['provider_rank'], -k['size']), #Quality, Provider, Size
-			lambda k: (k['quality_rank'], -k['size'], k['provider_rank']), #Quality, Size, Provider
-			lambda k: (k['provider_rank'], k['quality_rank'], -k['size']), #Provider, Quality, Size
-			lambda k: (k['provider_rank'], -k['size'], k['quality_rank']), #Provider, Size, Quality
-			lambda k: (-k['size'], k['quality_rank'], k['provider_rank']), #Size, Quality, Provider
-			lambda k: (-k['size'], k['provider_rank'], k['quality_rank'])  #Size, Provider, Quality
+			lambda k: (k['quality_rank'], k['provider_rank'], sort_direction*k['size']), #Quality, Provider, Size
+			lambda k: (k['quality_rank'], sort_direction*k['size'], k['provider_rank']), #Quality, Size, Provider
+			lambda k: (k['provider_rank'], k['quality_rank'], sort_direction*k['size']), #Provider, Quality, Size
+			lambda k: (k['provider_rank'], sort_direction*k['size'], k['quality_rank']), #Provider, Size, Quality
+			lambda k: (sort_direction*k['size'], k['quality_rank'], k['provider_rank']), #Size, Quality, Provider
+			lambda k: (sort_direction*k['size'], k['provider_rank'], k['quality_rank'])  #Size, Provider, Quality
 			)[int(get_setting('fenlight.results.sort_order', '1'))]
 
 def active_internal_scrapers():

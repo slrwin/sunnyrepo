@@ -435,6 +435,7 @@ def options_menu_choice(params, meta=None):
 	params_get = params.get
 	tmdb_id, content, poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None)
 	is_external, from_extras = params_get('is_external') in (True, 'True', 'true'), params_get('from_extras', 'false') == 'true'
+	season, episode = params_get('season', ''), params_get('episode', '')
 	if not content: content = container_content()[:-1]
 	menu_type = content
 	if content.startswith('episode.'): content = 'episode'

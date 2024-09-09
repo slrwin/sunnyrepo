@@ -1565,6 +1565,24 @@
                         <property name="setting_description">Choose the priority ordering performed by Fen Light before displaying source results</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=results_sorting_choice)</onclick>
                     </item>
+
+
+
+
+
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <property name="setting_label">Results Size Sort Direction</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.size_sort_direction_name)]</property>
+                        <property name="setting_description">Choose the sort direction with regards to results size</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.size_sort_direction)</onclick>
+                    </item>
+
+
+
+
+
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">Filter Results by Size</property>
