@@ -32,6 +32,18 @@ def clear_sources_folder_choice(params):
 	setting_id = params['setting_id']
 	set_default(['%s.display_name' % setting_id, '%s.movies_directory' % setting_id, '%s.tv_shows_directory' % setting_id])
 
+def widget_refresh_timer_choice(params):
+	choices = [{'name': 'OFF', 'value': '0'}]
+	choices.extend([{'name': 'Every %s Minutes' % i, 'value': str(i)} for i in range(5,25,5)])
+	choices.extend([{'name': 'Every %s Minutes' % i, 'value': str(i)} for i in range(30,65,10)])
+	choices.extend([{'name': 'Every %s Hours' % (float(i)/60), 'value': str(i)} for i in range(90,720,30)])
+	list_items = [{'line1': i['name']} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
+	choice = select_dialog(choices, **kwargs)
+	if choice == None: return
+	set_setting('widget_refresh_timer', choice['value'])
+	set_setting('widget_refresh_timer_name', choice['name'])
+
 def external_scraper_choice(params):
 	try: results = jsonrpc_get_addons('xbmc.python.module')
 	except: return
@@ -430,8 +442,6 @@ def options_menu_choice(params, meta=None):
 		function = metadata.movie_meta if content == 'movie' else metadata.tvshow_meta
 		meta = function('tmdb_id', tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
 	meta_get = meta.get
-	if menu_type == 'movie': collection_id, collection_name = meta_get('extra_info').get('collection_id', None), meta_get('extra_info').get('collection_name', None)
-	else: collection_id, collection_name = None, None
 	rootname, title, imdb_id, tvdb_id = meta_get('rootname', None), meta_get('title'), meta_get('imdb_id', None), meta_get('tvdb_id', None)
 	window_function = activate_window if is_external else container_update
 	listing = []

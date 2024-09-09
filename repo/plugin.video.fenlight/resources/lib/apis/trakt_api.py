@@ -8,7 +8,7 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta_external_id, tvshow_meta_external_id
 from modules.utils import sort_list, sort_for_article, make_thread_list, get_datetime, timedelta, replace_html_codes, copy2clip, title_key, jsondate_to_datetime as js2date
 
-json, monitor, sleep, random, with_media_removals = kodi_utils.json, kodi_utils.monitor, kodi_utils.sleep, kodi_utils.random, kodi_utils.with_media_removals
+json, monitor, sleep, with_media_removals = kodi_utils.json, kodi_utils.monitor, kodi_utils.sleep, kodi_utils.with_media_removals
 logger, notification, player, confirm_dialog, get_property = kodi_utils.logger, kodi_utils.notification, kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.get_property
 dialog, unquote, addon_installed, addon_enabled, addon = kodi_utils.dialog, kodi_utils.unquote, kodi_utils.addon_installed, kodi_utils.addon_enabled, kodi_utils.addon
 path_check, get_icon, clear_property, remove_keys = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.clear_property, kodi_utils.remove_keys
@@ -17,6 +17,7 @@ progress_dialog, external, trakt_user_active = kodi_utils.progress_dialog, kodi_
 lists_sort_order, trakt_client, trakt_secret, tmdb_api_key = settings.lists_sort_order, settings.trakt_client, settings.trakt_secret, settings.tmdb_api_key
 clear_all_trakt_cache_data, cache_trakt_object, clear_trakt_calendar = trakt_cache.clear_all_trakt_cache_data, trakt_cache.cache_trakt_object, trakt_cache.clear_trakt_calendar
 trakt_watched_cache, reset_activity, clear_trakt_list_contents_data = trakt_cache.trakt_watched_cache, trakt_cache.reset_activity, trakt_cache.clear_trakt_list_contents_data
+clear_daily_cache = trakt_cache.clear_daily_cache
 clear_trakt_collection_watchlist_data, clear_trakt_hidden_data = trakt_cache.clear_trakt_collection_watchlist_data, trakt_cache.clear_trakt_hidden_data
 clear_trakt_recommendations, clear_trakt_list_data = trakt_cache.clear_trakt_recommendations, trakt_cache.clear_trakt_list_data
 clear_trakt_favorites = trakt_cache.clear_trakt_favorites
@@ -284,20 +285,18 @@ def trakt_progress(action, media, media_id, percent, season=None, episode=None, 
 		call_trakt(url, data=data)
 	if refresh_trakt: trakt_sync_activities()
 
-def trakt_collection_lists(media_type, list_type):
-	limit = 20
+def trakt_collection_lists(media_type, list_type=None):
 	data = trakt_fetch_collection_watchlist('collection', media_type)
-	if list_type == 'recent': data.sort(key=lambda k: k['collected_at'], reverse=True)
-	elif list_type == 'random': random.shuffle(data)
-	data = data[:limit]
+	if list_type == 'recent':
+		data.sort(key=lambda k: k['collected_at'], reverse=True)
+		data = data[:20]
 	return data
 
-def trakt_watchlist_lists(media_type, list_type):
-	limit = 20
+def trakt_watchlist_lists(media_type, list_type=None):
 	data = trakt_fetch_collection_watchlist('watchlist', media_type)
-	if list_type == 'recent': data.sort(key=lambda k: k['collected_at'], reverse=True)
-	elif list_type == 'random': random.shuffle(data)
-	data = data[:limit]
+	if list_type == 'recent':
+		data.sort(key=lambda k: k['collected_at'], reverse=True)
+		data = data[:20]
 	return data
 
 def trakt_collection(media_type, dummy_arg):
@@ -740,18 +739,18 @@ def trakt_sync_activities(force_update=False):
 		try: result = _get_timestamp(js2date(latest, res_format)) > _get_timestamp(js2date(cached, res_format))
 		except: result = True
 		return result
+	def _check_daily_expiry():
+		return int(time.time()) >= int(get_setting('fenlight.trakt.next_daily_clear', '0'))
 	if force_update: clear_all_trakt_cache_data(silent=True, refresh=False)
-	clear_trakt_calendar()
-	clear_trakt_list_contents_data('user_lists')
-	clear_trakt_list_contents_data('liked_lists')
-	clear_trakt_list_contents_data('my_lists')
+	elif _check_daily_expiry():
+		clear_daily_cache()
+		set_setting('trakt.next_daily_clear', str(int(time.time()) + (24*3600)))
 	if not trakt_user_active and not force_update: return 'no account'
 	try: latest = trakt_get_activity()
 	except: return 'failed'
 	cached = reset_activity(latest)
 	if not _compare(latest['all'], cached['all']): return 'not needed'
-	clear_list_contents, lists_actions = False, []
-	refresh_movies_progress, refresh_shows_progress, clear_tvshow_watched_cache = False, False, False
+	lists_actions, refresh_movies_progress, refresh_shows_progress, clear_tvshow_watched_cache = [], False, False, False
 	cached_movies, latest_movies = cached['movies'], latest['movies']
 	cached_shows, latest_shows = cached['shows'], latest['shows']
 	cached_episodes, latest_episodes = cached['episodes'], latest['episodes']
@@ -774,12 +773,8 @@ def trakt_sync_activities(force_update=False):
 		# clear_tvshow_watched_cache = True
 	if _compare(latest_movies['paused_at'], cached_movies['paused_at']): refresh_movies_progress = True
 	if _compare(latest_episodes['paused_at'], cached_episodes['paused_at']): refresh_shows_progress = True
-	if _compare(latest_lists['updated_at'], cached_lists['updated_at']):
-		clear_list_contents = True
-		lists_actions.append('my_lists')
-	if _compare(latest_lists['liked_at'], cached_lists['liked_at']):
-		clear_list_contents = True
-		lists_actions.append('liked_lists')
+	if _compare(latest_lists['updated_at'], cached_lists['updated_at']): lists_actions.append('my_lists')
+	if _compare(latest_lists['liked_at'], cached_lists['liked_at']): lists_actions.append('liked_lists')
 	if refresh_movies_progress or refresh_shows_progress:
 		progress_info = trakt_playback_progress()
 		if refresh_movies_progress:
@@ -788,7 +783,7 @@ def trakt_sync_activities(force_update=False):
 		if refresh_shows_progress:
 			clear_properties('episode')
 			trakt_progress_tv(progress_info)
-	if clear_list_contents:
+	if lists_actions:
 		for item in lists_actions:
 			clear_trakt_list_data(item)
 			clear_trakt_list_contents_data(item)

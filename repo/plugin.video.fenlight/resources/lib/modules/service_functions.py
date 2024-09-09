@@ -9,8 +9,8 @@ from modules import kodi_utils, settings
 
 run_addon, pause_services_prop, xbmc_monitor, xbmc_player = kodi_utils.run_addon, kodi_utils.pause_services_prop, kodi_utils.xbmc_monitor, kodi_utils.xbmc_player
 firstrun_update_prop, get_property, set_property, clear_property = kodi_utils.firstrun_update_prop, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
-logger, kodi_version, ok_dialog = kodi_utils.logger, kodi_utils.kodi_version, kodi_utils.ok_dialog
-kodi_refresh, current_skin_prop, auto_start_fenlight = kodi_utils.kodi_refresh, kodi_utils.current_skin_prop, settings.auto_start_fenlight
+logger, kodi_version, ok_dialog, notification, home = kodi_utils.logger, kodi_utils.kodi_version, kodi_utils.ok_dialog, kodi_utils.notification, kodi_utils.home
+run_plugin, current_skin_prop, auto_start_fenlight = kodi_utils.run_plugin, kodi_utils.current_skin_prop, settings.auto_start_fenlight
 trakt_sync_interval, update_action, update_delay = settings.trakt_sync_interval, settings.update_action, settings.update_delay
 trakt_service_string = 'TraktMonitor Service Update %s - %s'
 trakt_success_line_dict = {'success': 'Trakt Update Performed', 'no account': '(Unauthorized) Trakt Update Performed'}
@@ -74,7 +74,7 @@ class TraktMonitor:
 				else:
 					if status in ('success', 'no account'): logger('Fen Light', trakt_service_string % ('Success. %s' % trakt_success_line_dict[status], next_update_string))
 					else: logger('Fen Light', trakt_service_string % ('Success. No Changes Needed', next_update_string))# 'not needed'
-					if status == 'success' and get_setting('fenlight.trakt.refresh_widgets', 'false') == 'true': kodi_refresh()
+					if status == 'success' and get_setting('fenlight.trakt.refresh_widgets', 'false') == 'true': run_plugin({'mode': 'kodi_refresh'})
 			except Exception as e: logger('Fen Light', trakt_service_string % ('Failed', 'The following Error Occured: %s' % str(e)))
 			wait_for_abort(wait_time)
 		try: del monitor
@@ -101,6 +101,37 @@ class UpdateCheck:
 		try: del player
 		except: pass
 		return logger('Fen Light', 'UpdateCheck Service Finished')
+
+class WidgetRefresher:
+	def run(self):
+		logger('Fen Light', 'WidgetRefresher Service Starting')
+		monitor = xbmc_monitor()
+		wait_for_abort = monitor.waitForAbort
+		set_property('fenlight.refresh_widgets', 'true')
+		self.set_next_refresh()
+		wait_for_abort(20)
+		while not monitor.abortRequested():
+			clear_property('fenlight.refresh_widgets')
+			offset = int(get_setting('fenlight.widget_refresh_timer', '60'))
+			if offset != self.offset: self.set_next_refresh()
+			if self.next_refresh < time():
+				run_plugin({'mode': 'refresh_widgets', 'show_notification': get_setting('fenlight.widget_refresh_notification', 'false')}, block=True)
+				logger('Fen Light', 'WidgetRefresher Service - Widgets Refreshed')
+				self.set_next_refresh()
+			wait_for_abort(10)
+		try: del monitor
+		except: pass
+		return logger('Fen Light', 'WidgetRefresher Service Finished')
+
+	def long_pause_check(self):
+		if self.next_refresh == None or self.is_playing() or get_property(pause_services_prop) == 'true': return True
+		if not home() or get_property('fenlight.window_loaded') == 'true' or get_property('fenlight.window_stack'): return True
+		return False
+
+	def set_next_refresh(self):
+		self.offset = int(get_setting('fenlight.widget_refresh_timer', '60'))
+		if self.offset: self.next_refresh = time() + (self.offset*60)
+		else: self.next_refresh = None
 
 class AutoStart:
 	def run(self):

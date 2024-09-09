@@ -168,7 +168,9 @@ class TVShows:
 																			'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id})))
 				set_properties({'watchedepisodes': string(total_watched), 'unwatchedepisodes': string(total_unwatched)})
 			set_properties({'watchedprogress': string(visible_progress), 'totalepisodes': string(total_aired_eps), 'totalseasons': string(total_seasons)})
-			if self.is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
+			if self.is_home:
+				cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'refresh_widgets'})))
+				cm_append(('[B]Reload Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			else: cm_append(('[B]Exit TV Show List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)

@@ -47,6 +47,7 @@ def window_manager(obj):
 		obj.close()
 		clear_property('fenlight.window_loaded')
 		clear_property('fenlight.window_stack')
+
 	def monitor():
 		timer = 0
 		while not get_property('fenlight.window_loaded') == 'true' and timer <= 5:
@@ -55,6 +56,7 @@ def window_manager(obj):
 		hide_busy_dialog()
 		obj.close()
 		clear_property('fenlight.window_loaded')
+
 	def runner(params):
 		try:
 			mode = params['mode']
@@ -66,13 +68,16 @@ def window_manager(obj):
 				person_data_dialog(params)
 			else: close()
 		except: close()
+
 	def get_stack():
 		try: window_stack = json.loads(get_property('fenlight.window_stack'))
 		except: window_stack = []
 		return window_stack
+
 	def add_to_stack(params):
 		window_stack.append(params)
 		set_property('fenlight.window_stack', json.dumps(window_stack))
+
 	def remove_from_stack():
 		previous_params = window_stack.pop()
 		set_property('fenlight.window_stack', json.dumps(window_stack))
@@ -105,6 +110,7 @@ def window_player(obj):
 		hide_busy_dialog()
 		obj.close()
 		clear_property('fenlight.window_loaded')
+
 	def runner(params):
 		try:
 			mode = params['mode']

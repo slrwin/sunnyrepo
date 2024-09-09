@@ -576,7 +576,7 @@ class Extras(BaseDialog):
 		return window_player(self)
 
 	def show_images(self):
-		return _images({'mode': 'tmdb_media_image_results', 'media_type': self.media_type, 'tmdb_id': self.tmdb_id})
+		return _images({'mode': 'tmdb_media_image_results', 'media_type': self.media_type, 'tmdb_id': self.tmdb_id, 'rootname': self.rootname})
 
 	def show_extrainfo(self, media_type=None, meta=None, poster=None):
 		text = media_extra_info({'media_type': media_type or self.media_type, 'meta': meta or self.meta})

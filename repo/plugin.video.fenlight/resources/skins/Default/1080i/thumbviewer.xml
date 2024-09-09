@@ -74,7 +74,7 @@
                 <height>990</height>
                 <onup>2000</onup>
                 <ondown>2000</ondown>
-                <onleft>noop</onleft>
+                <onleft>2000</onleft>
                 <onright>2060</onright>
                 <scrolltime tween="sine">350</scrolltime>
                 <itemlayout height="330" width="330">

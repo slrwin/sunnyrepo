@@ -5,7 +5,7 @@ from modules import kodi_utils
 
 build_url, confirm_dialog, dialog, sleep, kodi_refresh = kodi_utils.build_url, kodi_utils.confirm_dialog, kodi_utils.dialog, kodi_utils.sleep, kodi_utils.kodi_refresh
 get_infolabel, select_dialog, notification, execute_builtin = kodi_utils.get_infolabel, kodi_utils.select_dialog, kodi_utils.notification, kodi_utils.execute_builtin
-json, parse_qsl, get_icon = kodi_utils.json, kodi_utils.parse_qsl, kodi_utils.get_icon
+json, parse_qsl, get_icon, random_valid_type_check = kodi_utils.json, kodi_utils.parse_qsl, kodi_utils.get_icon, kodi_utils.random_valid_type_check
 show_busy_dialog, hide_busy_dialog, unquote, get_directory = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.unquote, kodi_utils.jsonrpc_get_directory
 get_all_icon_vars = kodi_utils.get_all_icon_vars
 main_list_name_dict = {'RootList': 'Root', 'MovieList': 'Movies', 'TVShowList': 'TV Shows'}
@@ -140,9 +140,13 @@ class MenuEditor:
 		self._db_execute('make_new_shortcut_folder', new_folder_name, list_items)
 
 	def shortcut_folder_convert(self):
-		if '[COLOR red][RANDOM][/COLOR]' in self.name: new_folder_name = self.name.replace(' [COLOR red][RANDOM][/COLOR]', '')
-		else: new_folder_name = self.name + ' [COLOR red][RANDOM][/COLOR]'
 		list_items = navigator_cache.get_shortcut_folder_contents(self.name)
+		valid_random_items = [i for i in list_items if i.get('mode').replace('random.', '') in random_valid_type_check]
+		make_random = '[COLOR red][RANDOM][/COLOR]' not in self.name
+		if make_random:
+			if not valid_random_items: return notification('No random supported items in this list', 5000)
+			new_folder_name = self.name + ' [COLOR red][RANDOM][/COLOR]'
+		else: new_folder_name = self.name.replace(' [COLOR red][RANDOM][/COLOR]', '')
 		self._db_execute('delete', self.name, list_type='shortcut_folder', refresh=False)
 		self._db_execute('make_new_shortcut_folder', new_folder_name, list_items)
 

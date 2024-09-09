@@ -3,7 +3,7 @@ Within Fen Light, there are a couple of methods to achieve "random" widget conte
 The easiest method is to point widgets to any of the lists included in the "Random Lists" section of Fen Light. This section has 3 options: Movie Lists, TV Show Lists or Trakt Lists. Let us look at all 3 here...
 
 MOVIE/TV SHOW LISTS:
-In this menu you will find all of the generic movie/tvshow lists that are included within Fen Light. Lists like "Trending" and "Popular". Simply point your widget to one of these lists and they will populate your widget with a random list of 20 movies/tvshows based on the first 5 pages of that list.
+In this menu you will find all of the generic movie/tvshow lists that are included within Fen Light. Lists like "Trending" and "Popular". Simply point your widget to one of these lists and they will populate your widget with a random list of 20 movies/tvshows based on 3 of the first 10 pages of that list.
 You can name the widget anything you like for these lists, with some exceptions.....
 
 If you select a list from any of the movie/tvshow lists where there are normally extra choices (Genres, Providers, Languages, Years, Decades, Certifications or Networks), then you may want to display on your widget label the actual genre, provider etc that has currently been chosen from random. To do this, you will need to set a special value for the widget's label when making it.

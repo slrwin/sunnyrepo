@@ -195,12 +195,12 @@ def default_settings():
 #===============================================================================#
 #====================================GENERAL====================================#
 #===============================================================================#
-#==================== Manage Updates
-{'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
-{'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},
 #==================== General
 {'setting_id': 'auto_start_fenlight', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
+{'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
+#==================== Manage Updates
+{'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},
 #==================== Watched Indicators
 {'setting_id': 'watched_indicators', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Fen Light', '1': 'Trakt'}},
 #======+============= Trakt Cache
@@ -234,21 +234,28 @@ def default_settings():
 {'setting_id': 'sort.watched', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Recently Watched'}},
 {'setting_id': 'sort.collection', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Date Added', '2': 'Release Date'}},
 {'setting_id': 'sort.watchlist', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Date Added', '2': 'Release Date'}},
-#==================== Content
+#==================== Widgets
+{'setting_id': 'widget_refresh_timer', 'setting_type': 'string', 'setting_default': '0'},
+{'setting_id': 'widget_refresh_notification', 'setting_type': 'boolean', 'setting_default': 'true'},
+{'setting_id': 'widget_hide_watched', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'widget_hide_next_page', 'setting_type': 'boolean', 'setting_default': 'false'},
+#==================== General
 {'setting_id': 'paginate.lists', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Within Addon Only', '2': 'Widgets Only', '3': 'Both'}},
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'mpaa_region', 'setting_type': 'string', 'setting_default': 'US'},
 {'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_all_episodes', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'If Only One Season', '2': 'Always'}},
-{'setting_id': 'single_ep_display', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
-{'setting_id': 'single_ep_display_widget', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_viewtypes', 'setting_type': 'boolean', 'setting_default': 'true'},
-#======+============= Trakt Calendar
-{'setting_id': 'trakt.calendar_sort_order', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
-{'setting_id': 'trakt.calendar_previous_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
-{'setting_id': 'trakt.calendar_future_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
+
+
+#==================================================================================#
+#====================================CONTENT====================================#
+#==================================================================================#
+#==================== General
+{'setting_id': 'single_ep_display', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
+{'setting_id': 'single_ep_display_widget', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
 #==================== Next Episodes
 {'setting_id': 'nextep.method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Last Aired', '1': 'Last Watched'}},
 {'setting_id': 'nextep.sort_type', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recently Watched', '1': 'Airdate', '2': 'Title'}},
@@ -259,9 +266,10 @@ def default_settings():
 {'setting_id': 'nextep.include_airdate', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'nextep.airing_today', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'nextep.include_unaired', 'setting_type': 'boolean', 'setting_default': 'false'},
-#==================== Widgets
-{'setting_id': 'widget_hide_watched', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'widget_hide_next_page', 'setting_type': 'boolean', 'setting_default': 'false'},
+#======+============= Trakt Calendar
+{'setting_id': 'trakt.calendar_sort_order', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
+{'setting_id': 'trakt.calendar_previous_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
+{'setting_id': 'trakt.calendar_future_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
 
 
 #=====================================================================================#
@@ -319,7 +327,7 @@ def default_settings():
 {'setting_id': 'easynews_password', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'easynews.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'easynews.filter_lang', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'easynews.lang_filters', 'setting_type': 'string', 'setting_default': 'eng'},
+{'setting_id': 'easynews.lang_filters', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'check.easynews', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'en.priority', 'setting_type': 'action', 'setting_default': '7', 'min_value': '1', 'max_value': '10'},
 #=========+========== Folders
@@ -345,7 +353,8 @@ def default_settings():
 {'setting_id': 'results.line_speed', 'setting_type': 'action', 'setting_default': '25', 'min_value': '1'},
 {'setting_id': 'results.movie_size_max', 'setting_type': 'action', 'setting_default': '10000', 'min_value': '1'},
 {'setting_id': 'results.episode_size_max', 'setting_type': 'action', 'setting_default': '3000', 'min_value': '1'},
-{'setting_id': 'results.size_min', 'setting_type': 'action', 'setting_default': '0', 'min_value': '0'},
+{'setting_id': 'results.movie_size_min', 'setting_type': 'action', 'setting_default': '0', 'min_value': '0'},
+{'setting_id': 'results.episode_size_min', 'setting_type': 'action', 'setting_default': '0', 'min_value': '0'},
 {'setting_id': 'results.size_unknown', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'results.include.unknown.size', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'include_prerelease_results', 'setting_type': 'boolean', 'setting_default': 'true'},
@@ -402,8 +411,10 @@ def default_settings():
 #=========================================================================================#
 #======================================HIDDEN=============================================#
 #=========================================================================================#
+{'setting_id': 'widget_refresh_timer_name', 'setting_type': 'string', 'setting_default': 'Off'},
 {'setting_id': 'mpaa_region_display_name', 'setting_type': 'string', 'setting_default': 'United States'},
 {'setting_id': 'external_scraper.module', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'trakt.next_daily_clear', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.expires', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.refresh', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.token', 'setting_type': 'string', 'setting_default': '0'},

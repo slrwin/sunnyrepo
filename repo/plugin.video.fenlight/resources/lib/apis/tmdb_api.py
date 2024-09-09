@@ -415,21 +415,21 @@ def tmdb_popular_people(page_no):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_popular_%s' % page_no
 	url = '%s/person/popular?api_key=%s&language=en&page=%s' % (base_url, api_key, page_no)
-	return cache_function(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url, EXPIRY_ONE_DAY)
 
 def tmdb_trending_people_day(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_trending_day_%s' % page_no
 	url = '%s/trending/person/day?api_key=%s&page=%s' % (base_url, api_key, page_no)
-	return cache_function(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url, EXPIRY_ONE_DAY)
 
 def tmdb_trending_people_week(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_trending_week_%s' % page_no
 	url = '%s/trending/person/week?api_key=%s&page=%s' % (base_url, api_key, page_no)
-	return cache_function(get_tmdb, string, url)
+	return cache_function(get_tmdb, string, url, EXPIRY_ONE_DAY)
 
 def tmdb_people_full_info(actor_id):
 	api_key = tmdb_api_key()

@@ -340,16 +340,15 @@ class Navigator:
 		list_name = self.params_get('name')
 		is_random = random_test in list_name
 		contents = get_shortcut_folder_contents(list_name)
+		if is_random:
+			from modules.random_lists import random_shortcut_folders
+			return random_shortcut_folders(list_name.replace(' [COLOR red][RANDOM][/COLOR]', ''), contents)
 		if contents:
-			if is_random:
-				from modules.random_lists import random_shortcut_folders
-				return random_shortcut_folders(list_name.replace(' [COLOR red][RANDOM][/COLOR]', ''), contents)
 			for count, item in enumerate(contents):
 				item_get = item.get
 				iconImage = item_get('iconImage', None)
 				if iconImage: icon, original_image = iconImage, True if iconImage.startswith('http') else False
 				else: icon, original_image = folder_icon, False
-				
 				cm_items = [
 					('[B]Move[/B]', run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'move'})),
 					('[B]Remove[/B]' , run_plugin % build_url({'mode': 'menu_editor.shortcut_folder_edit', 'active_list': list_name, 'position': count, 'action': 'remove'})),

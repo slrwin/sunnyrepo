@@ -69,7 +69,7 @@ def get_trakt_lists(params):
 				list_name, user, slug, item_count = item['name'], item['user']['ids']['slug'], item['ids']['slug'], item['item_count']
 				list_name_upper = " ".join(w.capitalize() for w in list_name.split())
 				mode = 'random.build_trakt_my_lists_contents' if randomize_contents == 'true' else 'trakt.list.build_trakt_list'
-				url = build_url({'mode': mode, 'user': user, 'slug': slug, 'list_type': list_type, 'list_name': list_name, 'random': randomize_contents})
+				url = build_url({'mode': mode, 'user': user, 'slug': slug, 'list_type': list_type, 'list_name': list_name})
 				if list_type == 'liked_lists':
 					display = '%s | [I]%s (x%s)[/I]' % (list_name_upper, user, str(item_count))
 					cm_append(('[B]Unlike List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.trakt_unlike_a_list', 'user': user, 'list_slug': slug})))
@@ -189,7 +189,7 @@ def build_trakt_list(params):
 	def _process(function, _list):
 		item_list_extend(function(_list).worker())
 	def _paginate_list(data, page_no, paginate_start):
-		if is_random and not is_random_full: total_pages = 1
+		if use_result: total_pages = 1
 		elif paginate_enabled:
 			limit = page_limit(is_home)
 			data, total_pages = paginate_list(data, page_no, limit, paginate_start)
@@ -199,16 +199,17 @@ def build_trakt_list(params):
 	handle, is_external, is_home, content, list_name = int(sys.argv[1]), external(), home(), 'movies', params.get('list_name')
 	try:
 		threads, item_list = [], []
+		user, slug, list_type = '', '', ''
 		item_list_extend = item_list.extend
 		paginate_enabled = paginate(is_home)
-		is_random, is_random_full = params.get('random', 'false') == 'true', params.get('random_full', 'false') == 'true'
-		user, slug, list_type = params.get('user'), params.get('slug'), params.get('list_type')
+		use_result = 'result' in params
 		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
 		if page_no == 1 and not is_external: set_property('fenlight.exit_params', folder_path())
-		with_auth = list_type == 'my_lists'
-		result = get_trakt_list_contents(list_type, user, slug, with_auth)
-		if is_random_full: random.shuffle(result)
-		elif is_random: result = random.sample(result, min(len(result), 20))
+		if use_result: result = params.get('result', [])
+		else:
+			user, slug, list_type = params.get('user'), params.get('slug'), params.get('list_type')
+			with_auth = list_type == 'my_lists'
+			result = get_trakt_list_contents(list_type, user, slug, with_auth)
 		process_list, total_pages, paginate_start = _paginate_list(result, page_no, paginate_start)
 		movie_list = {'list': [(i['order'], i['media_ids']) for i in process_list if i['type'] == 'movie'], 'id_type': 'trakt_dict', 'custom_order': 'true'}
 		tvshow_list = {'list': [(i['order'], i['media_ids']) for i in process_list if i['type'] == 'show'], 'id_type': 'trakt_dict', 'custom_order': 'true'}
@@ -219,11 +220,8 @@ def build_trakt_list(params):
 			threaded_object.start()
 			threads.append(threaded_object)
 		[i.join() for i in threads]
-		if is_random:
-			random.shuffle(item_list)
-			if is_random_full: return (paginate_start, page_no, total_pages, [i[0] for i in item_list])
-			return [i[0] for i in item_list]
 		item_list.sort(key=lambda k: k[1])
+		if use_result: return [i[0] for i in item_list]
 		add_items(handle, [i[0] for i in item_list])
 		if total_pages > page_no:
 			new_page = str(page_no + 1)

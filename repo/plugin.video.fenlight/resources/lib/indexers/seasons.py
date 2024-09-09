@@ -59,7 +59,9 @@ def build_season_list(params):
 					set_properties({'watchedepisodes': string(watched), 'unwatchedepisodes': string(unwatched)})
 				set_properties({'totalepisodes': string(aired_eps), 'watchedprogress': string(visible_progress),
 								'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params})
-				if is_home: cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
+				if is_home:
+					cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'refresh_widgets'})))
+					cm_append(('[B]Reload Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 				info_tag = listitem.getVideoInfoTag()
 				info_tag.setMediaType('season'), info_tag.setTitle(title), info_tag.setOriginalTitle(orig_title), info_tag.setTvShowTitle(show_title), info_tag.setIMDBNumber(imdb_id)
 				info_tag.setSeason(season_number), info_tag.setPlot(plot), info_tag.setDuration(episode_run_time), info_tag.setPlaycount(playcount), info_tag.setGenres(genre)

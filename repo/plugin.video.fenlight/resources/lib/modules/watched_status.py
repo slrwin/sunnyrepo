@@ -8,12 +8,10 @@ from modules import kodi_utils, settings, metadata
 from modules.utils import get_datetime, adjust_premiered_date, sort_for_article, make_thread_list
 # logger = kodi_utils.logger
 
-sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
-notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
 watched_indicators_function, lists_sort_order, date_offset, nextep_method = settings.watched_indicators, settings.lists_sort_order, settings.date_offset, settings.nextep_method
-tmdb_api_key, mpaa_region = settings.tmdb_api_key, settings.mpaa_region
-progress_db_string = 'fenlight_hidden_progress_items'
-indicators_dict = {0: 'watched_db', 1: 'trakt_db'}
+sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
+notification, kodi_refresh, tmdb_api_key, mpaa_region = kodi_utils.notification, kodi_utils.kodi_refresh, settings.tmdb_api_key, settings.mpaa_region
+progress_db_string, indicators_dict = 'fenlight_hidden_progress_items', {0: 'watched_db', 1: 'trakt_db'}
 
 def get_database(watched_indicators=None):
 	return connect_database(indicators_dict[watched_indicators or watched_indicators_function()])

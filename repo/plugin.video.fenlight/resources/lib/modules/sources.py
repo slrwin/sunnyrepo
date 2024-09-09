@@ -186,7 +186,7 @@ class Sources():
 		results = [i for i in results if i['quality'] in self.quality_filter]
 		if not self.include_3D_results: results = [i for i in results if not '3D' in i['extraInfo']]
 		if self.filter_size_method:
-			min_size = string_to_float(get_setting('fenlight.results.size_min', '0'), '0') / 1000
+			min_size = string_to_float(get_setting('fenlight.results.%s_size_min' % self.media_type, '0'), '0') / 1000
 			if min_size == 0.0 and not self.include_unknown_size: min_size = 0.02
 			if self.filter_size_method == 1:
 				duration = self.meta['duration'] or (5400 if self.media_type == 'movie' else 2400)

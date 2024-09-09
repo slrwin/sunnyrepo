@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from caches.base_cache import connect_database
 from modules.kodi_utils import sleep, confirm_dialog, close_all_dialog, Thread
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 SELECT = 'SELECT id FROM trakt_data'
 DELETE = 'DELETE FROM trakt_data WHERE id=?'
@@ -96,6 +96,10 @@ def reset_activity(latest_activities):
 		trakt_cache.set(string, latest_activities)
 	except: cached_data = default_activities()
 	return cached_data
+
+def clear_daily_cache():
+	clear_trakt_calendar()
+	clear_trakt_list_contents_data('user_lists')
 
 def clear_trakt_hidden_data(list_type):
 	string = 'trakt_hidden_items_%s' % list_type

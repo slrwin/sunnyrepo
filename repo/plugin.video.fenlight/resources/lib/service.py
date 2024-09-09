@@ -17,6 +17,7 @@ class FenLightMonitor(xbmc_monitor):
 		Thread(target=service_functions.CustomFonts().run).start()
 		Thread(target=service_functions.TraktMonitor().run).start()
 		Thread(target=service_functions.UpdateCheck().run).start()
+		Thread(target=service_functions.WidgetRefresher().run).start()
 		service_functions.AutoStart().run()
 
 	def onNotification(self, sender, method, data):

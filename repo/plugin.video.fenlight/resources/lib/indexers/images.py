@@ -115,13 +115,14 @@ class Images():
 					listitem.setProperties({'thumb': item[2], 'path': item[0], 'name': item[1], 'action': image_action})
 					yield listitem
 				except: pass
+		rootname = self.params['rootname']
 		all_images = []
 		results = tmdb_media_images(self.params['media_type'], self.params['tmdb_id'])
 		try:
 			posters, clearlogos = [i for i in results['posters']], [dict(i, **{'file_path': '%s.png' % i['file_path'].split('.')[0]}) for i in results['logos']]
 			fanarts, landscapes = [i for i in results['backdrops'] if not i['iso_639_1']], [i for i in results['backdrops'] if i['iso_639_1']]
-			for item in ((posters, 'Poster_%03d'), (fanarts, 'Fanart_%03d'), (landscapes, 'Landscape_%03d'), (clearlogos, 'Clearlogo_%03d')):
-				if item[0]: all_images.extend([(tmdb_image_base % ('original', i['file_path']), item[1] % count, tmdb_image_base % ('w300', i['file_path'])) \
+			for item in ((posters, '%s _Poster_%03d'), (fanarts, '%s _Fanart_%03d'), (landscapes, '%s _Landscape_%03d'), (clearlogos, '%s _Clearlogo_%03d')):
+				if item[0]: all_images.extend([(tmdb_image_base % ('original', i['file_path']), item[1] % (rootname, count), tmdb_image_base % ('w300', i['file_path'])) \
 												for count, i in enumerate(item[0], 1)])
 		except: pass
 		image_action = json.dumps({'mode': 'imageviewer', 'all_images': all_images})
