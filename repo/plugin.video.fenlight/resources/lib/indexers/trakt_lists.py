@@ -69,7 +69,10 @@ def get_trakt_lists(params):
 				list_name, user, slug, item_count = item['name'], item['user']['ids']['slug'], item['ids']['slug'], item['item_count']
 				list_name_upper = " ".join(w.capitalize() for w in list_name.split())
 				mode = 'random.build_trakt_my_lists_contents' if randomize_contents == 'true' else 'trakt.list.build_trakt_list'
-				url = build_url({'mode': mode, 'user': user, 'slug': slug, 'list_type': list_type, 'list_name': list_name})
+				url_params = {'mode': mode, 'user': user, 'slug': slug, 'list_type': list_type, 'list_name': list_name}
+				if randomize_contents: url_params['random'] = 'true'
+				elif shuffle: url_params['shuffle'] = 'true'
+				url = build_url(url_params)
 				if list_type == 'liked_lists':
 					display = '%s | [I]%s (x%s)[/I]' % (list_name_upper, user, str(item_count))
 					cm_append(('[B]Unlike List[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.trakt_unlike_a_list', 'user': user, 'list_slug': slug})))

@@ -34,13 +34,17 @@ tvshow_meta_list_dict = {'tmdb_tv_languages': meta_lists.languages, 'tmdb_tv_net
 memory_str = 'fenlight.%s'
 
 def get_persistent_content(menu_type, key, remake_widgets, is_external):
-	if remake_widgets: return None, True
+	if remake_widgets:
+		clear_property(memory_str % menu_type)
+		return None, True
 	if not is_external: return None, False
 	try:
 		menu_type_content = json.loads(get_property(memory_str % menu_type))
 		cached_content = menu_type_content.get(key)
 		return cached_content, False
-	except: return None, True
+	except:
+		clear_property(memory_str % menu_type)
+		return None, True
 
 def set_persistent_content(menu_type, key, data):
 	sleep(random.randrange(50, 500, 50))
@@ -239,20 +243,14 @@ def random_shortcut_folders(folder_name, random_results):
 		else: random_list = random_results[0]
 		random_list.update({'folder_name': folder_name, 'mode': random_list['mode'].replace('random.', '')})
 		if cache_to_memory: set_persistent_content('random_shortcut_folders',  folder_name, random_list)
-	if random_list.get('random') == 'true': return RandomLists(random_list).run_random()
+	if random_list.get('random') == 'true' or random_list.get('shuffle') == 'true': return RandomLists(random_list).run_random()
 	menu_type = random_valid_type_check[random_list['mode']]
 	list_name = random_list.get('list_name', None) or random_list.get('name', None) or 'Random'
 	if is_external: set_property('fenlight.%s' % folder_name, list_name)
-	if menu_type == 'movie':
-		return Movies(random_list).fetch_list()
-	if menu_type == 'tvshow':
-		return TVShows(random_list).fetch_list()
-	if menu_type == 'season':
-		return build_season_list(random_list)
-	if menu_type == 'episode':
-		return build_episode_list(random_list)
-	if menu_type == 'single_episode':
-		return build_single_episode(random_episodes_check[random_list['mode']], random_list)
-	if menu_type == 'trakt_list':
-		return build_trakt_list(random_list)
+	if menu_type == 'movie': return Movies(random_list).fetch_list()
+	if menu_type == 'tvshow': return TVShows(random_list).fetch_list()
+	if menu_type == 'season': return build_season_list(random_list)
+	if menu_type == 'episode': return build_episode_list(random_list)
+	if menu_type == 'single_episode': return build_single_episode(random_episodes_check[random_list['mode']], random_list)
+	if menu_type == 'trakt_list': return build_trakt_list(random_list)
 	return end_directory(int(sys.argv[1]))

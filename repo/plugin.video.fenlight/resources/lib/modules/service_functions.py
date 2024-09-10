@@ -109,22 +109,21 @@ class WidgetRefresher:
 		wait_for_abort, self.is_playing = monitor.waitForAbort, player.isPlayingVideo
 		set_property('fenlight.refresh_widgets', 'true')
 		self.set_next_refresh()
-		wait_for_abort(30)
+		wait_for_abort(20)
 		while not monitor.abortRequested():
-			clear_property('fenlight.refresh_widgets')
-			offset = int(get_setting('fenlight.widget_refresh_timer', '60'))
-			if offset != self.offset:
-				self.set_next_refresh()
+			try:
 				wait_for_abort(10)
-				continue
-			if self.condition_check():
-				wait_for_abort(10)
-				continue
-			if self.next_refresh < time():
-				run_plugin({'mode': 'refresh_widgets', 'show_notification': get_setting('fenlight.widget_refresh_notification', 'false')}, block=True)
-				logger('Fen Light', 'WidgetRefresher Service - Widgets Refreshed')
-				self.set_next_refresh()
-			wait_for_abort(10)
+				clear_property('fenlight.refresh_widgets')
+				offset = int(get_setting('fenlight.widget_refresh_timer', '60'))
+				if offset != self.offset:
+					self.set_next_refresh()
+					continue
+				if self.condition_check(): continue
+				if self.next_refresh < time():
+					run_plugin({'mode': 'refresh_widgets', 'show_notification': get_setting('fenlight.widget_refresh_notification', 'false')}, block=True)
+					logger('Fen Light', 'WidgetRefresher Service - Widgets Refreshed')
+					self.set_next_refresh()
+			except: pass
 		try: del monitor
 		except: pass
 		return logger('Fen Light', 'WidgetRefresher Service Finished')
