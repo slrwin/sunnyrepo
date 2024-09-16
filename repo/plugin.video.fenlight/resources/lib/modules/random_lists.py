@@ -118,7 +118,6 @@ class RandomLists():
 		else: self.params['list'] = [i['id'] for i in result]
 		self.list_items = self.function(self.params).worker()
 		self.category_name = list_name
-		self.set_property()
 		self.make_directory()
 
 	def random_discover(self):
@@ -134,7 +133,6 @@ class RandomLists():
 		self.params['list'] = [i['id'] for i in random_list]
 		self.list_items = self.function(self.params).worker()
 		self.category_name = self.params_get('category_name', None) or self.base_list_name or ''
-		self.set_property()
 		self.make_directory()
 
 	def random_trakt_main(self):
@@ -176,7 +174,6 @@ class RandomLists():
 			url_params = {'base_list_name':list_type_name, 'list_name': list_name, 'result': result}
 			self.list_items = build_trakt_list(url_params)
 		self.category_name = list_name
-		self.set_property()
 		self.make_directory()
 
 	def trakt_my_lists_contents(self):
@@ -198,7 +195,6 @@ class RandomLists():
 			url_params = {'base_list_name':list_type_name, 'list_name': list_name, 'result': result}
 			self.list_items = build_trakt_list(url_params)
 		self.category_name = list_name
-		self.set_property()
 		self.make_directory()
 
 	def random_trakt_personal_lists(self):
@@ -212,16 +208,7 @@ class RandomLists():
 		self.params['id_type'] = 'trakt_dict'
 		self.list_items = self.function(self.params).worker()
 		self.category_name = self.base_list_name
-		self.set_property()
 		self.make_directory()
-
-	def set_property(self):
-		if self.is_external: 
-			if self.folder_name: set_property('fenlight.%s' % self.folder_name, self.category_name)
-			else: set_property('fenlight.%s' % self.base_list_name, self.category_name)
-
-	def get_function(self):
-		return manual_function_import('apis.%s_api' % self.action.split('_')[0], self.action)
 
 	def make_directory(self, next_page_params={}):
 		add_items(self.handle, self.list_items)
@@ -229,12 +216,19 @@ class RandomLists():
 		set_content(self.handle, self.content_type)
 		set_category(self.handle, self.category_name)
 		end_directory(self.handle, cacheToDisc=False if self.is_external else True)
-		if not self.is_external: set_view_mode(self.view_mode, self.content_type, self.is_external)
+		if self.is_external:
+			if self.folder_name: set_property('fenlight.%s' % self.folder_name, self.category_name)
+			else: set_property('fenlight.%s' % self.base_list_name, self.category_name)
+		else: set_view_mode(self.view_mode, self.content_type, self.is_external)
+
+	def get_function(self):
+		return manual_function_import('apis.%s_api' % self.action.split('_')[0], self.action)
 
 	def get_sample(self, max_range, sample_size):
 		return random.sample(range(1, max_range), sample_size)
 
 def random_shortcut_folders(folder_name, random_results):
+	random_results = [i for i in random_results if i['mode'].replace('random.', '') in random_valid_type_check]
 	is_external = external()
 	remake_widgets = is_external and get_property('fenlight.refresh_widgets') == 'true'
 	random_list, cache_to_memory = get_persistent_content('random_shortcut_folders', folder_name, remake_widgets, is_external)
@@ -244,6 +238,7 @@ def random_shortcut_folders(folder_name, random_results):
 		random_list.update({'folder_name': folder_name, 'mode': random_list['mode'].replace('random.', '')})
 		if cache_to_memory: set_persistent_content('random_shortcut_folders',  folder_name, random_list)
 	if random_list.get('random') == 'true' or random_list.get('shuffle') == 'true': return RandomLists(random_list).run_random()
+	if random_list.get('action') in discover_personal: return RandomLists(random_list).run_random()
 	menu_type = random_valid_type_check[random_list['mode']]
 	list_name = random_list.get('list_name', None) or random_list.get('name', None) or 'Random'
 	if is_external: set_property('fenlight.%s' % folder_name, list_name)

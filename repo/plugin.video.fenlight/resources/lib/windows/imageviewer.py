@@ -45,6 +45,7 @@ class ThumbImageViewer(BaseDialog):
 				elif mode == 'person_data_dialog':
 					person_data_dialog(thumb_params)
 		elif action in self.context_actions:
+			if chosen_listitem.getProperty('next_page_item') == 'true': return
 			in_favorites = chosen_listitem.getProperty('in_favorites') == 'true'
 			enable_favorite = chosen_listitem.getProperty('fav_enabled') == 'true' or in_favorites
 			choice = self.make_context_menu(enable_delete=chosen_listitem.getProperty('delete') == 'true', enable_favorite=enable_favorite)

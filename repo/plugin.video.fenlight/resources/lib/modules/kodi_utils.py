@@ -257,6 +257,7 @@ def kodi_refresh():
 
 def refresh_widgets(show_notification='false'):
 	set_property('fenlight.refresh_widgets', 'true')
+	sleep(250)
 	run_plugin({'mode': 'kodi_refresh'}, block=True)
 	if show_notification == 'true': notification('Widgets Refreshed', 2500)
 	sleep(5000)

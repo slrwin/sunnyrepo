@@ -6,6 +6,7 @@ from modules.utils import jsondate_to_datetime, subtract_dates
 
 movie_details, tvshow_details, season_episodes_details = tmdb_api.movie_details, tmdb_api.tvshow_details, tmdb_api.season_episodes_details
 movie_set_details, movie_external_id, tvshow_external_id = tmdb_api.movie_set_details, tmdb_api.movie_external_id, tmdb_api.tvshow_external_id
+episode_groups_details = tmdb_api.episode_groups_details
 metacache_get, metacache_set, metacache_get_season, metacache_set_season = meta_cache.get, meta_cache.set, meta_cache.get_season, meta_cache.set_season
 writer_credits = ('Author', 'Writer', 'Screenplay', 'Characters')
 alt_titles_check, trailers_check, finished_show_check, empty_value_check = ('US', 'GB', 'UK', ''), ('Trailer', 'Teaser'), ('Ended', 'Canceled'), ('', 'None', None)
@@ -349,6 +350,9 @@ def all_episodes_meta(meta, include_specials=False):
 		[i.join() for i in threads]
 	except: pass
 	return data
+
+def episode_groups(media_id):
+	return episode_groups_details(media_id)
 
 def movie_meta_external_id(external_source, external_id, api_key):
 	return movie_external_id(external_source, external_id, api_key)
