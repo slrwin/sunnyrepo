@@ -61,11 +61,11 @@
                     <top>0</top>
                     <left>0</left>
                     <width>1920</width>
-                    <height>90</height>
+                    <height>70</height>
                     <texture colordiffuse="80302F2F">fenlight_common/white.png</texture>
                 </control>
                 <control type="image">
-                    <top>15</top>
+                    <top>5</top>
                     <left>5</left>
                     <width>60</width>
                     <height>60</height>
@@ -73,31 +73,9 @@
                     <texture>fenlight_common/fenlight.png</texture>
                 </control>
                 <control type="label">
-                    <top>20</top>
-                    <left>1590</left>
-                    <width max="300">auto</width>
-                    <height>20</height>
-                    <font>font37</font> <!-- FENLIGHT_38 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <align>right</align>
-                    <aligny>center</aligny>
-                    <label>[B]$INFO[System.Time][/B]</label>
-                </control>
-                <control type="label">
-                    <top>50</top>
-                    <left>1540</left>
-                    <width max="350">auto</width>
-                    <height>20</height>
-                    <font>font10</font> <!-- FENLIGHT_21 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <align>right</align>
-                    <aligny>center</aligny>
-                    <label>$INFO[System.Date]</label>
-                </control>
-                <control type="label">
-                    <left>80</left>
-                    <top>32</top>
-                    <width>1520</width>
+                    <left>75</left>
+                    <top>25</top>
+                    <width>1770</width>
                     <height>20</height>
                     <font>font10</font> <!-- FENLIGHT_21 -->
                     <textcolor>FFFFFFFF</textcolor>

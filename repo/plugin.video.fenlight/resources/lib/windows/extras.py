@@ -68,19 +68,6 @@ class Extras(BaseDialog):
 			try: self.set_returning_focus(*self.starting_position)
 			except: self.set_default_focus()
 
-	def set_default_focus(self):
-		try: self.setFocusId(10)
-		except:
-			self.close_all()
-			self.close()
-
-	def set_returning_focus(self, window_id, focus, sleep_time=750):
-		try:
-			self.sleep(sleep_time)
-			self.setFocusId(window_id)
-			self.select_item(window_id, focus)
-		except: self.set_default_focus()
-
 	def run(self):
 		self.doModal()
 		self.clearProperties()
@@ -102,7 +89,7 @@ class Extras(BaseDialog):
 			function = movie_meta if self.media_type == 'movie' else tvshow_meta
 			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), self.tmdb_api_key, self.mpaa_region, self.current_date)
 			hide_busy_dialog()
-			self.show_extrainfo(self.media_type, meta, meta.get('poster', empty_poster))
+			self.show_extrainfo(meta)
 		elif action in self.context_actions:
 			focus_id = self.getFocusId()
 			if focus_id == cast_id:
@@ -578,8 +565,12 @@ class Extras(BaseDialog):
 	def show_images(self):
 		return _images({'mode': 'tmdb_media_image_results', 'media_type': self.media_type, 'tmdb_id': self.tmdb_id, 'rootname': self.rootname})
 
-	def show_extrainfo(self, media_type=None, meta=None, poster=None):
-		text = media_extra_info({'media_type': media_type or self.media_type, 'meta': meta or self.meta})
+	def show_extrainfo(self, meta=None):
+		if meta:
+			text = separator.join([i for i in (meta.get('year'), str(round(meta.get('rating'), 1)) if meta.get('rating') not in (0, 0.0, None) else None,
+									meta.get('mpaa'), meta.get('spoken_language')) if i]) + '[CR][CR]%s' % meta.get('plot')
+			poster = meta.get('poster', empty_poster)
+		else: text, poster = media_extra_info({'media_type': self.media_type, 'meta': self.meta}), self.poster
 		return self.show_text_media(text=text, poster=poster)
 
 	def show_genres(self):
@@ -654,10 +645,6 @@ class Extras(BaseDialog):
 		params = {'media_type': self.media_type, 'poster': self.poster, 'meta': self.meta, 'season': None, 'episode': None}
 		playback_choice(params)
 
-	def close_all(self):
-		clear_property('fenlight.window_stack')
-		close_all_dialog()
-
 	def assign_buttons(self):
 		setting_id_base = setting_base % self.media_type
 		for item in button_ids[:-1]:
@@ -672,6 +659,19 @@ class Extras(BaseDialog):
 			self.setProperty(label_base % item, button_label)
 			self.button_action_dict[item] = button_action
 		self.button_action_dict[50] = 'show_plot'
+
+	def set_default_focus(self):
+		try: self.setFocusId(10)
+		except:
+			self.close_all()
+			self.close()
+
+	def set_returning_focus(self, window_id, focus, sleep_time=750):
+		try:
+			self.sleep(sleep_time)
+			self.setFocusId(window_id)
+			self.select_item(window_id, focus)
+		except: self.set_default_focus()
 
 	def set_current_params(self, set_starting_position=True):
 		self.current_params = {'mode': 'extras_menu_choice', 'tmdb_id': self.tmdb_id, 'media_type': self.media_type, 'is_external': self.is_external}
@@ -710,6 +710,7 @@ class Extras(BaseDialog):
 		self.assign_buttons()
 		self.setProperty('media_type', self.media_type), self.setProperty('title', self.title), self.setProperty('year', self.year), self.setProperty('plot', self.plot)
 		self.setProperty('genre', ', '.join(self.genre)), self.setProperty('network', ', '.join(self.network)), self.setProperty('enable_scrollbars', self.enable_scrollbars)
+		self.setProperty('display_extra_ratings', 'true' if self.display_extra_ratings else 'false')
 
 	def make_status_infoline(self):
 		status_str = self.status
@@ -738,6 +739,10 @@ class Extras(BaseDialog):
 		if not self.addon_installed(youtube_check): return False
 		if not self.addon_enabled(youtube_check): return False
 		return True
+
+	def close_all(self):
+		clear_property('fenlight.window_stack')
+		close_all_dialog()
 
 class ShowTextMedia(BaseDialog):
 	def __init__(self, *args, **kwargs):

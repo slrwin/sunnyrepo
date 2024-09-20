@@ -18,7 +18,7 @@
             <animation type="WindowOpen" reversible="false">
                 <effect type="fade" end="100" time="400" delay="500" />
             </animation>
-            <!-- Logo and Tips/Clock & Date --> 
+            <!-- Fen Light Logo and Tips/Clock & Date --> 
             <control type="group">
                 <left>5</left>
                 <control type="image">
@@ -54,11 +54,11 @@
                     </control>
                 </control>
                 <control type="group">
-                    <left>1335</left>
+                    <left>1250</left>
                     <top>25</top>
                     <control type="image">
                         <top>0</top>
-                        <left>510</left>
+                        <left>610</left>
                         <width>35</width>
                         <height>35</height>
                         <aspectratio>keep</aspectratio>
@@ -66,46 +66,46 @@
                         <visible>Control.HasFocus(2050) | Control.HasFocus(2051) | Control.HasFocus(2052) | Control.HasFocus(2058) | Control.HasFocus(2060) | Control.HasFocus(2061) | Control.HasFocus(2062) | Control.HasFocus(2063)</visible>
                     </control>
                     <control type="label">
-                        <width max="500">auto</width>
+                        <width max="600">auto</width>
                         <height>20</height>
-                        <font>font12</font> <!-- FENLIGHT_26 -->
+                        <font>font10</font> <!-- FENLIGHT_21 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <align>right</align>
-                        <aligny>top</aligny>
-                        <label>[I]Press Context Button for [B]Search[/B][/I]</label>
+                        <aligny>bottom</aligny>
+                        <label>Press Info Button for [B]More Info[/B]</label>
+                        <visible>Control.HasFocus(2051) | Control.HasFocus(2052) | Control.HasFocus(2060) | Control.HasFocus(2061) | Control.HasFocus(2062) | Control.HasFocus(2063)</visible>
+                    </control>
+                    <control type="label">
+                        <width max="600">auto</width>
+                        <height>20</height>
+                        <font>font10</font> <!-- FENLIGHT_21 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>right</align>
+                        <aligny>bottom</aligny>
+                        <label>Press Context Button for [B]Search[/B]</label>
                         <visible>Control.HasFocus(2050)</visible>
                     </control>
                     <control type="label">
-                        <width max="500">auto</width>
+                        <width max="600">auto</width>
                         <height>20</height>
-                        <font>font12</font> <!-- FENLIGHT_26 -->
+                        <font>font10</font> <!-- FENLIGHT_21 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <align>right</align>
-                        <aligny>top</aligny>
-                        <label>[I]Press Context Button To [B]Like List[/B] [/I]</label>
+                        <aligny>bottom</aligny>
+                        <label>Press Context Button To [B]Like List[/B]</label>
                         <visible>Control.HasFocus(2058)</visible>
                         <visible>String.IsEqual(Container(2058).ListItem.Property(liked_status),false)</visible>
                     </control>
                     <control type="label">
-                        <width max="500">auto</width>
+                        <width max="600">auto</width>
                         <height>20</height>
-                        <font>font12</font> <!-- FENLIGHT_26 -->
+                        <font>font10</font> <!-- FENLIGHT_21 -->
                         <textcolor>FFCCCCCC</textcolor>
                         <align>right</align>
-                        <aligny>top</aligny>
-                        <label>[I]Press Context Button To [B]UnLike List[/B] [/I]</label>
+                        <aligny>bottom</aligny>
+                        <label>Press Context Button To [B]UnLike List[/B]</label>
                         <visible>Control.HasFocus(2058)</visible>
                         <visible>String.IsEqual(Container(2058).ListItem.Property(liked_status),true)</visible>
-                    </control>
-                    <control type="label">
-                        <width max="500">auto</width>
-                        <height>20</height>
-                        <font>font12</font> <!-- FENLIGHT_26 -->
-                        <textcolor>FFCCCCCC</textcolor>
-                        <align>right</align>
-                        <aligny>top</aligny>
-                        <label>[I]Press Info Button for [B]More Info[/B][/I]</label>
-                        <visible>Control.HasFocus(2051) | Control.HasFocus(2052) | Control.HasFocus(2060) | Control.HasFocus(2061) | Control.HasFocus(2062) | Control.HasFocus(2063)</visible>
                     </control>
                 </control>
             </control>
@@ -124,7 +124,7 @@
                         <top>35</top>
                         <left>70</left>
                         <height max="250">auto</height>
-                        <width max="1130">auto</width>
+                        <width max="1110">auto</width>
                         <aspectratio>keep</aspectratio>
                         <align>center</align>
                         <aligny>bottom</aligny>
@@ -148,37 +148,39 @@
                 <animation effect="fade" start="100" end="0" time="0" condition="!Control.HasFocus(10) + !Control.HasFocus(11) + !Control.HasFocus(12) + !Control.HasFocus(13) + !Control.HasFocus(14) + !Control.HasFocus(15) + !Control.HasFocus(16) + !Control.HasFocus(17)">Conditional</animation>
                 <top>295</top>
                 <left>50</left>
-                <!-- Line 1 -->
-                <control type="label">
-                    <width max="1150">auto</width>
-                    <height>25</height>
-                    <font>font37</font> <!-- FENLIGHT_38 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <align>center</align>
-                    <label>[I]$INFO[Window.Property(genre)][/I]</label>
-                </control>
-                <!-- Line 2 -->
-                <control type="label" id="2001">
-                    <top>55</top>
-                    <width max="1150">auto</width>
-                    <height>25</height>
-                    <font>font37</font> <!-- FENLIGHT_38 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <align>center</align>
-                </control>
-                <!-- Line 3 -->
-                <control type="label" id="3001">
-                    <top>105</top>
-                    <width max="1150">auto</width>
-                    <height>25</height>
-                    <font>font37</font> <!-- FENLIGHT_38 -->
-                    <textcolor>FFCCCCCC</textcolor>
-                    <align>center</align>
-                </control>
-                <!-- Line 4 -->
-                <control type="grouplist">
-                    <top>170</top>
-                    <width>1110</width>
+                <control type="group">
+                    <animation effect="slide" end="0,25" time="0" condition="String.IsEqual(Window.Property(display_extra_ratings),false)">Conditional</animation>
+                    <!-- Line 1 -->
+                    <control type="label">
+                        <width max="1150">auto</width>
+                        <height>25</height>
+                        <font>font14</font> <!-- FENLIGHT_33 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>center</align>
+                        <label>[I]$INFO[Window.Property(genre)][/I]</label>
+                    </control>
+                    <!-- Line 2 -->
+                    <control type="label" id="2001">
+                        <top>55</top>
+                        <width max="1150">auto</width>
+                        <height>25</height>
+                        <font>font14</font> <!-- FENLIGHT_33 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>center</align>
+                    </control>
+                    <!-- Line 3 -->
+                    <control type="label" id="3001">
+                        <top>105</top>
+                        <width max="1150">auto</width>
+                        <height>25</height>
+                        <font>font14</font> <!-- FENLIGHT_33 -->
+                        <textcolor>FFCCCCCC</textcolor>
+                        <align>center</align>
+                    </control>
+                    <!-- Line 4 -->
+                    <control type="grouplist">
+                    <top>165</top>
+                    <width max="1110">auto</width>
                     <orientation>horizontal</orientation>
                     <itemgap>30</itemgap>
                     <align>center</align>
@@ -293,13 +295,15 @@
                         </control>
                     </control>
                 </control>
+                </control>
             </control>
             <!-- Body -->
             <control type="grouplist">
                 <animation effect="slide" end="0,-220" time="0" reversible="true" condition="[!Control.HasFocus(10) + !Control.HasFocus(11) + !Control.HasFocus(12) + !Control.HasFocus(13) + !Control.HasFocus(14) + !Control.HasFocus(15) + !Control.HasFocus(16) + !Control.HasFocus(17)]">Conditional</animation>
                 <top>520</top>
-                <left>50</left>
-                <width>1920</width>
+                <left>30</left>
+                <!-- <width>1870</width> -->
+                <width>1190</width>
                 <height>780</height>
                 <orientation>vertical</orientation>
                 <scrolltime tween="sine">500</scrolltime>
@@ -585,7 +589,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -593,7 +597,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -685,7 +689,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -693,7 +697,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -785,7 +789,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -793,7 +797,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -827,12 +831,12 @@
                             <itemlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -846,12 +850,12 @@
                             <focusedlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -865,7 +869,7 @@
                         </control>
                         <control type="scrollbar" id="4053">
                             <top>432</top>
-                            <width>1160</width>
+                            <width>1170</width>
                             <height>15</height>
                             <onup>2053</onup>
                             <ondown>2054</ondown>
@@ -878,7 +882,7 @@
                         </control>
                         <control type="image">
                             <top>225</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -920,12 +924,12 @@
                             <itemlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -939,12 +943,12 @@
                             <focusedlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -958,7 +962,7 @@
                         </control>
                         <control type="scrollbar" id="4054">
                             <top>432</top>
-                            <width>1160</width>
+                            <width>1170</width>
                             <height>15</height>
                             <onup>2054</onup>
                             <ondown>2055</ondown>
@@ -971,7 +975,7 @@
                         </control>
                         <control type="image">
                             <top>225</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1013,12 +1017,12 @@
                             <itemlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -1032,12 +1036,12 @@
                             <focusedlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -1051,7 +1055,7 @@
                         </control>
                         <control type="scrollbar" id="4055">
                             <top>432</top>
-                            <width>1160</width>
+                            <width>1170</width>
                             <height>15</height>
                             <onup>2055</onup>
                             <ondown>2056</ondown>
@@ -1064,7 +1068,7 @@
                         </control>
                         <control type="image">
                             <top>225</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1106,12 +1110,12 @@
                             <itemlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -1125,12 +1129,12 @@
                             <focusedlayout height="380" width="590">
                                 <control type="image">
                                     <height>360</height>
-                                    <width>570</width>
+                                    <width>580</width>
                                     <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
-                                    <left>15</left>
+                                    <left>20</left>
                                     <width>540</width>
                                     <height>308</height>
                                     <font>font12</font> <!-- FENLIGHT_26 -->
@@ -1144,7 +1148,7 @@
                         </control>
                         <control type="scrollbar" id="4056">
                             <top>432</top>
-                            <width>1160</width>
+                            <width>1170</width>
                             <height>15</height>
                             <onup>2056</onup>
                             <ondown>2057</ondown>
@@ -1157,7 +1161,7 @@
                         </control>
                         <control type="image">
                             <top>225</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1404,7 +1408,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1412,7 +1416,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -1503,7 +1507,7 @@
                         </control>
                         <control type="image">
                             <top>230</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1511,7 +1515,7 @@
                         </control>
                         <control type="image">
                             <top>230</top>
-                            <left>1140</left>
+                            <left>1125</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -1603,7 +1607,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1611,7 +1615,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -1703,7 +1707,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1711,7 +1715,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -1803,7 +1807,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>10</left>
+                            <left>20</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1811,7 +1815,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1145</left>
+                            <left>1135</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
@@ -1937,7 +1941,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>470</left>
+                            <left>480</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
@@ -1945,7 +1949,7 @@
                         </control>
                         <control type="image">
                             <top>215</top>
-                            <left>1135</left>
+                            <left>1120</left>
                             <width>25</width>
                             <height>25</height>
                             <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>

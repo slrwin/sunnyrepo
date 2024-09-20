@@ -1,5 +1,9 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 1.0.77[/B][/COLOR]
+- Small adjustments to Extras and People windows.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.76[/B][/COLOR]
 - More fine tuning of random widgets, mainly concerning the shortcuts folder. This is quickly becoming messy code though, which I'm not a fan of.
 - Other changes/fixes.

@@ -85,7 +85,7 @@ class People(BaseDialog):
 			function = movie_meta if media_type == 'movie' else tvshow_meta
 			meta = function('tmdb_id', chosen_listitem.getProperty('tmdb_id'), tmdb_api_key(), mpaa_region(), get_datetime())
 			hide_busy_dialog()
-			self.show_extrainfo(media_type, meta, meta.get('poster', empty_poster))
+			self.show_extrainfo(meta)
 		if not self.control_id: return
 		if action in self.selection_actions:
 			chosen_listitem = self.get_listitem(self.control_id)
@@ -115,8 +115,10 @@ class People(BaseDialog):
 	def make_director(self):
 		self.make_more_from('director')
 
-	def show_extrainfo(self, media_type, meta, poster):
-		text = dialogs.media_extra_info_choice({'media_type': media_type, 'meta': meta})
+	def show_extrainfo(self, meta):
+		text = separator.join([i for i in (meta.get('year'), str(round(meta.get('rating'), 1)) if meta.get('rating') not in (0, 0.0, None) else None,
+								meta.get('mpaa'), meta.get('spoken_language')) if i]) + '[CR][CR]%s' % meta.get('plot')
+		poster = meta.get('poster', empty_poster)
 		return self.show_text_media(text=text, poster=poster)
 
 	def make_person_data(self):
