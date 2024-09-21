@@ -430,7 +430,7 @@ class Sources():
 			results = [i for i in results if not key in i['extraInfo'] or i['quality_rank'] >= hevc_max_quality]
 		if enable_setting == 1:
 			if key == '[B]D/VISION[/B]' and filter_status('hdr') in (0, 2):
-				results = [i for i in results if all(x in i['extraInfo'] for x in (key, self.hdr_filter_key)) or not key in i['extraInfo']]
+				results = [i for i in results if all(x in i['extraInfo'] for x in (key, '[B]HDR[/B]')) or not key in i['extraInfo']]
 			else: results = [i for i in results if not key in i['extraInfo']]
 		elif enable_setting == 2 and self.autoplay:
 			priority_list = [i for i in results if key in i['extraInfo']]
