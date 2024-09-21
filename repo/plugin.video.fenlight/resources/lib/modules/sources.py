@@ -163,9 +163,9 @@ class Sources():
 			self.filters_ignored = True
 			results = self.sort_results(results)
 		else:
+			results = self.sort_results(results)
 			results = self.filter_results(results)
 			for file_type in filter_keys: results = self._special_filter(results, file_type)
-		results = self.sort_results(results)
 		results = self._sort_first(results)
 		return results
 
