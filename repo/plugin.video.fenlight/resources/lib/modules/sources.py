@@ -35,6 +35,7 @@ cloud_scrapers, folder_scrapers = ('rd_cloud', 'pm_cloud', 'ad_cloud'), ('folder
 default_internal_scrapers = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'folders')
 main_line = '%s[CR]%s[CR]%s'
 scraper_timeout = 25
+filter_keys = {'audio': '', 'hdr': '[B]HDR[/B]', 'dv': '[B]D/VISION[/B]', 'av1': '[B]AV1[/B]', 'hevc': '[B]HEVC[/B]', 'enhanced_upscaled': '[B]AI ENHANCED/UPSCALED[/B]'}
 
 class Sources():
 	def __init__(self):
@@ -81,13 +82,8 @@ class Sources():
 		self.get_meta()
 		self.determine_scrapers_status()
 		self.sleep_time, self.provider_sort_ranks, self.scraper_settings = 100, provider_sort_ranks(), scraping_settings()
-		self.include_prerelease_results, self.ignore_results_filter, self.limit_resolve = include_prerelease_results(), ignore_results_filter(), limit_resolve()
-		self.filter_hevc, self.filter_hdr = filter_status('hevc'), filter_status('hdr')
-		self.filter_dv, self.filter_av1, self.filter_audio = filter_status('dv'), filter_status('av1'), 3
-		self.hevc_filter_key, self.hdr_filter_key, self.dolby_vision_filter_key, self.av1_filter_key = '[B]HEVC[/B]', '[B]HDR[/B]', '[B]D/VISION[/B]', '[B]AV1[/B]'
-		self.audio_filter_key = audio_filters()
+		self.include_prerelease_results, self.ignore_results_filter, self.limit_resolve = include_prerelease_results(), ignore_results_filter(), limit_resolve()		
 		self.sort_function, self.quality_filter = results_sort_order(), self._quality_filter()
-		self.hybrid_allowed = self.filter_hdr in (0, 2)
 		self.include_unknown_size = get_setting('fenlight.results.size_unknown', 'false') == 'true'
 		self.include_3D_results = get_setting('fenlight.include_3d_results', 'true') == 'true'
 		self.make_search_info()
@@ -166,16 +162,11 @@ class Sources():
 		if self.ignore_scrape_filters:
 			self.filters_ignored = True
 			results = self.sort_results(results)
-			results = self._sort_first(results)
 		else:
 			results = self.filter_results(results)
-			results = self.sort_results(results)
-			results = self._special_filter(results, self.audio_filter_key, self.filter_audio)
-			results = self._special_filter(results, self.hdr_filter_key, self.filter_hdr)
-			results = self._special_filter(results, self.dolby_vision_filter_key, self.filter_dv)
-			results = self._special_filter(results, self.av1_filter_key, self.filter_av1)
-			results = self._special_filter(results, self.hevc_filter_key, self.filter_hevc)
-			results = self._sort_first(results)
+			for file_type in filter_keys: results = self._special_filter(results, file_type)
+		results = self.sort_results(results)
+		results = self._sort_first(results)
 		return results
 
 	def filter_results(self, results):
@@ -431,19 +422,20 @@ class Sources():
 		cached = [i for i in results if not i in uncached]
 		return cached + uncached
 
-	def _special_filter(self, results, key, enable_setting):
-		if key == self.hevc_filter_key and enable_setting in (0,2):
+	def _special_filter(self, results, file_type):
+		if file_type == 'audio': return [i for i in results if not any(x in i['extraInfo'] for x in audio_filters())]
+		enable_setting, key = filter_status(file_type), filter_keys[file_type]
+		if key == '[B]HEVC[/B]' and enable_setting in (0,2):
 			hevc_max_quality = self._get_quality_rank(get_setting('fenlight.filter_hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
 			results = [i for i in results if not key in i['extraInfo'] or i['quality_rank'] >= hevc_max_quality]
 		if enable_setting == 1:
-			if key == self.dolby_vision_filter_key and self.hybrid_allowed:
+			if key == '[B]D/VISION[/B]' and filter_status('hdr') in (0, 2):
 				results = [i for i in results if all(x in i['extraInfo'] for x in (key, self.hdr_filter_key)) or not key in i['extraInfo']]
 			else: results = [i for i in results if not key in i['extraInfo']]
 		elif enable_setting == 2 and self.autoplay:
 			priority_list = [i for i in results if key in i['extraInfo']]
 			remainder_list = [i for i in results if not i in priority_list]
 			results = priority_list + remainder_list
-		elif enable_setting == 3: results = [i for i in results if not any(x in i['extraInfo'] for x in key)]
 		return results
 
 	def get_meta(self):

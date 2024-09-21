@@ -1565,11 +1565,6 @@
                         <property name="setting_description">Choose the priority ordering performed by Fen Light before displaying source results</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=results_sorting_choice)</onclick>
                     </item>
-
-
-
-
-
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">Results Size Sort Direction</property>
@@ -1578,11 +1573,6 @@
                         <property name="setting_description">Choose the sort direction with regards to results size</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.size_sort_direction)</onclick>
                     </item>
-
-
-
-
-
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">Filter Results by Size</property>
@@ -1711,6 +1701,14 @@
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_av1_name)]</property>
                         <property name="setting_description">Choose how to handle AV1 source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_av1)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <property name="setting_label">AI Enhanced/Upscaled Files Filter</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_enhanced_upscaled_name)]</property>
+                        <property name="setting_description">Choose how to handle AI Enhanced/Upscaled source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_enhanced_upscaled)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>

@@ -366,6 +366,7 @@ def default_settings():
 {'setting_id': 'filter_hdr', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Include', '1': 'Exclude', '2': 'Prefer (Autoplay)'}},
 {'setting_id': 'filter_dv', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Include', '1': 'Exclude', '2': 'Prefer (Autoplay)'}},
 {'setting_id': 'filter_av1', 'setting_type': 'action', 'setting_default': '0', 'settings_options':{'0': 'Include', '1': 'Exclude', '2': 'Prefer (Autoplay)'}},
+{'setting_id': 'filter_enhanced_upscaled', 'setting_type': 'action', 'setting_default': '0', 'settings_options':{'0': 'Include', '1': 'Exclude', '2': 'Prefer (Autoplay)'}},
 {'setting_id': 'filter_audio', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== Results Color Highlights
 {'setting_id': 'highlight.type', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Provider', '1': 'Quality', '2': 'Single Color'}},
