@@ -363,11 +363,12 @@ def tvshow_meta_external_id(external_source, external_id, api_key):
 def movie_expiry(current_date, meta):
 	try:
 		difference = subtract_dates(current_date, jsondate_to_datetime(meta['premiered'], date_format, remove_time=True))
-		if difference < 0: expiration = (abs(difference) + 1)*24
+		if difference < 0: expiration = abs(difference) + 1
 		elif difference <= 14: expiration = EXPIRES_7_DAYS
 		elif difference <= 30: expiration = EXPIRES_14_DAYS
-		else: expiration = EXPIRES_30_DAYS
-	except: return EXPIRES_7_DAYS
+		elif difference <= 180: expiration = EXPIRES_30_DAYS
+		else: expiration = EXPIRES_182_DAYS
+	except: return EXPIRES_30_DAYS
 	return max(expiration, EXPIRES_7_DAYS)
 
 def tvshow_expiry(current_date, meta):

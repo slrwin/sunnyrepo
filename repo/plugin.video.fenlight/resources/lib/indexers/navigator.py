@@ -356,7 +356,7 @@ class Navigator:
 		is_random = random_test in list_name
 		contents = get_shortcut_folder_contents(list_name)
 		if is_random:
-			from modules.random_lists import random_shortcut_folders
+			from indexers.random_lists import random_shortcut_folders
 			return random_shortcut_folders(list_name.replace(' [COLOR red][RANDOM][/COLOR]', ''), contents)
 		if contents:
 			for count, item in enumerate(contents):
