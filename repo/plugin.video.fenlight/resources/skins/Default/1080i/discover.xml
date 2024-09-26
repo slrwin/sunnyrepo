@@ -163,7 +163,7 @@
                     <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
                 </control>
                 <control type="label">
-                    <top>30</top>
+                    <top>10</top>
                     <left>30</left>
                     <width>1635</width>
                     <height>20</height>
@@ -172,6 +172,19 @@
                     <label>[UPPERCASE]$INFO[Window.Property(list_label)][/UPPERCASE]</label>
                     <align>center</align>
                     <aligny>center</aligny>
+                    <scroll>true</scroll>
+                </control>
+                <control type="label">
+                    <top>45</top>
+                    <left>30</left>
+                    <width>1635</width>
+                    <height>20</height>
+                    <font>font10</font> <!-- FENLIGHT_21 -->
+                    <textcolor>FFCCCCCC</textcolor>
+                    <label>[UPPERCASE][I]$INFO[Window.Property(url_label)][/I][/UPPERCASE]</label>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <scroll>true</scroll>
                 </control>
                 <control type="group">
                     <top>4</top>

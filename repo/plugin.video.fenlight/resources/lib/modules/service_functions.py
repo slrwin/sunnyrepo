@@ -126,6 +126,8 @@ class WidgetRefresher:
 			except: pass
 		try: del monitor
 		except: pass
+		try: del player
+		except: pass
 		return logger('Fen Light', 'WidgetRefresher Service Finished')
 
 	def condition_check(self):

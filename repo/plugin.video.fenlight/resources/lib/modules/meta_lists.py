@@ -153,6 +153,13 @@ tvshow_genres = [
 {'name': 'War & Politics', 'id': '10768', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
+anime_genres = [
+{'name': 'Action & Adventure', 'id': '10759', 'icon': 'genre_action'}, {'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'},
+{'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Kids', 'id': '10762', 'icon': 'genre_kids'},
+{'name': 'Mystery', 'id': '9648', 'icon': 'genre_mystery'}, {'name': 'Sci-Fi & Fantasy', 'id': '10765', 'icon': 'genre_scifi'},
+{'name': 'War & Politics', 'id': '10768', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
+	]
+
 networks = [
 {'id': 54, 'name': 'Disney Channel', 'icon': 'network_disney'},                                  {'id': 44, 'name': 'Disney XD', 'icon': 'network_disneyxd'},
 {'id': 2, 'name': 'ABC', 'icon': 'network_abc'},                                                 {'id': 493, 'name': 'BBC America', 'icon': 'network_bbcamerica'},

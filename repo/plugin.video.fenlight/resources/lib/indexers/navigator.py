@@ -16,7 +16,7 @@ log_loc, old_log_loc = tp('special://logpath/kodi.log'), tp('special://logpath/k
 folder_icon = get_icon('folder')
 random_test = '[COLOR red][RANDOM][/COLOR]'
 run_plugin = 'RunPlugin(%s)'
-random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'trakt': nc.random_trakt_lists}
+random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'anime': nc.random_anime_lists, 'trakt': nc.random_trakt_lists}
 search_mode_dict = {'movie': ('movie_queries', {'mode': 'search.get_key_id', 'media_type': 'movie', 'isFolder': 'false'}),
 				'tvshow': ('tvshow_queries', {'mode': 'search.get_key_id', 'media_type': 'tv_show', 'isFolder': 'false'}),
 				'people': ('people_queries', {'mode': 'search.get_key_id', 'search_type': 'people', 'isFolder': 'false'}),
@@ -38,8 +38,7 @@ class Navigator:
 		if self.params_get('full_list', 'false') == 'true': browse_list = get_main_lists(self.list_name)[0]
 		else: browse_list = currently_used_list(self.list_name)
 		for count, item in enumerate(browse_list):
-			item_get = item.get
-			iconImage = item_get('iconImage')
+			iconImage = item.get('iconImage')
 			icon, original_image = (iconImage, True) if iconImage.startswith('http') else (iconImage, False)
 			cm_items = [('[B]Move[/B]', run_plugin % build_url({'mode': 'menu_editor.move', 'active_list': self.list_name, 'position': count})),
 						('[B]Remove[/B]', run_plugin % build_url({'mode': 'menu_editor.remove', 'active_list': self.list_name, 'position': count})),
@@ -48,7 +47,7 @@ class Navigator:
 						('[B]Check for New Menu Items[/B]', run_plugin % build_url({'mode': 'menu_editor.update', 'active_list': self.list_name, 'position': count})),
 						('[B]Reload Menu[/B]', run_plugin % build_url({'mode': 'menu_editor.reload', 'active_list': self.list_name, 'position': count})),
 						('[B]Browse Removed items[/B]', run_plugin % build_url({'mode': 'menu_editor.browse', 'active_list': self.list_name, 'position': count}))]
-			self.add(item, item_get('name', ''), icon, original_image, cm_items=cm_items)
+			self.add(item, item.get('name', ''), icon, original_image, cm_items=cm_items)
 		self.end_directory()
 
 	def discover(self):
@@ -109,6 +108,7 @@ class Navigator:
 	def random_lists(self):
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'movie'}, 'Movie Lists', 'movies')
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'tvshow'}, 'TV Show Lists', 'tv')
+		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'anime'}, 'Anime Lists', 'genre_anime')
 		if trakt_user_active(): self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'trakt'}, 'Trakt Lists', 'trakt')
 		self.end_directory()
 
@@ -226,7 +226,10 @@ class Navigator:
 	def certifications(self):
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, certifications = 'build_movie_list', 'tmdb_movies_certifications', ml.movie_certifications
-		else: mode, action, certifications = 'build_tvshow_list', 'trakt_tv_certifications', ml.tvshow_certifications
+		else:
+			if menu_type == 'tvshow': action = 'trakt_tv_certifications'
+			else: action = 'trakt_anime_certifications'
+			mode, certifications = 'build_tvshow_list', ml.tvshow_certifications
 		for i in certifications: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'certifications')
 		self.end_directory()
 
@@ -240,14 +243,20 @@ class Navigator:
 	def years(self):
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, years = 'build_movie_list', 'tmdb_movies_year', ml.years_movies
-		else: mode, action, years = 'build_tvshow_list', 'tmdb_tv_year', ml.years_tvshows
+		else:
+			if menu_type == 'tvshow': action = 'tmdb_tv_year'
+			else: action = 'tmdb_anime_year'
+			mode, years = 'build_tvshow_list', ml.years_tvshows
 		for i in years: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'calender')
 		self.end_directory()
 
 	def decades(self):
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, decades = 'build_movie_list', 'tmdb_movies_decade', ml.decades_movies
-		else: mode, action, decades = 'build_tvshow_list', 'tmdb_tv_decade', ml.decades_tvshows
+		else:
+			if menu_type == 'tvshow': action = 'tmdb_tv_decade'
+			else: action = 'tmdb_anime_decade'
+			mode, decades = 'build_tvshow_list', ml.decades_tvshows
 		for i in decades: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'calendar_decades')
 		self.end_directory()
 
@@ -262,14 +271,20 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		image_insert = 'https://image.tmdb.org/t/p/original/%s'
 		if menu_type == 'movie': mode, action, providers = 'build_movie_list', 'tmdb_movies_providers', ml.watch_providers_movies
-		else: mode, action, providers = 'build_tvshow_list', 'tmdb_tv_providers', ml.watch_providers_tvshows
+		else:
+			if menu_type == 'tvshow': action = 'tmdb_tv_providers'
+			else: action = 'tmdb_anime_providers'
+			mode, providers = 'build_tvshow_list', ml.watch_providers_tvshows
 		for i in providers: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], image_insert % i['icon'], original_image=True)
 		self.end_directory()
 
 	def genres(self):
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': genre_list, mode, action = ml.movie_genres, 'build_movie_list', 'tmdb_movies_genres'
-		else: genre_list, mode, action = ml.tvshow_genres, 'build_tvshow_list', 'tmdb_tv_genres'
+		else:
+			if menu_type == 'tvshow': genre_list, action = ml.tvshow_genres, 'tmdb_tv_genres'
+			else: genre_list, action = ml.anime_genres, 'tmdb_anime_genres'
+			mode = 'build_tvshow_list'
 		for i in genre_list: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'])
 		self.end_directory()
 
@@ -417,7 +432,7 @@ class Navigator:
 
 	def build_random_lists(self):
 		menu_type = self.params_get('menu_type')
-		self.category_name = 'Movie Lists' if menu_type == 'movie' else 'TV Show Lists' if menu_type == 'tvshow' else 'Trakt Lists'
+		self.category_name = 'Movie Lists' if menu_type == 'movie' else 'TV Show Lists' if menu_type == 'tvshow' else 'Anime Lists' if menu_type == 'anime' else 'Trakt Lists'
 		for item in random_list_dict[menu_type](): self.add(item, item['name'], item['iconImage'])
 		self.end_directory()
 

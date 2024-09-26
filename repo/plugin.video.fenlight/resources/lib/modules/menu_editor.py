@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from caches.navigator_cache import navigator_cache, main_menus, default_menu_items
+from caches.navigator_cache import navigator_cache, main_menus
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
@@ -8,7 +8,7 @@ get_infolabel, select_dialog, notification, execute_builtin = kodi_utils.get_inf
 json, parse_qsl, get_icon, random_valid_type_check = kodi_utils.json, kodi_utils.parse_qsl, kodi_utils.get_icon, kodi_utils.random_valid_type_check
 show_busy_dialog, hide_busy_dialog, unquote, get_directory = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.unquote, kodi_utils.jsonrpc_get_directory
 get_all_icon_vars = kodi_utils.get_all_icon_vars
-main_list_name_dict = {'RootList': 'Root', 'MovieList': 'Movies', 'TVShowList': 'TV Shows'}
+main_list_name_dict = {'RootList': 'Root', 'MovieList': 'Movies', 'TVShowList': 'TV Shows', 'AnimeList': 'Animes'}
 default_path = 'plugin://plugin.video.fenlight?mode=navigator.main&full_list=true'
 
 class MenuEditor:
@@ -127,7 +127,7 @@ class MenuEditor:
 
 	def shortcut_folder_delete(self):
 		if not confirm_dialog(): return notification('Cancelled', 1500)
-		main_menu_items_list = [(i, navigator_cache.currently_used_list(i)) for i in default_menu_items]
+		main_menu_items_list = [(i, navigator_cache.currently_used_list(i)) for i in main_menus]
 		self._db_execute('delete', self.name, list_type='shortcut_folder')
 		self._remove_active_shortcut_folder(main_menu_items_list, self.name)
 

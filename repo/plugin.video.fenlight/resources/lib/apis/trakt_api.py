@@ -242,6 +242,33 @@ def trakt_tv_certifications(certification, page_no):
 	params = {'path': 'shows/collected/all%s', 'params': {'certifications': certification, 'limit': 20}, 'page_no': page_no}
 	return lists_cache_object(get_trakt, string, params)
 
+def trakt_anime_trending(page_no):
+	string = 'trakt_anime_trending_%s' % page_no
+	params = {'path': 'shows/trending/%s', 'params': {'genres': 'anime', 'limit': 20}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params)
+
+def trakt_anime_trending_recent(page_no):
+	current_year = get_datetime().year
+	years = '%s-%s' % (str(current_year-1), str(current_year))
+	string = 'trakt_anime_trending_recent_%s' % page_no
+	params = {'path': 'shows/trending/%s', 'params': {'genres': 'anime', 'limit': 20, 'years': years}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params)
+
+def trakt_anime_most_watched(page_no):
+	string = 'trakt_anime_most_watched_%s' % page_no
+	params = {'path': 'shows/watched/daily/%s', 'params': {'genres': 'anime', 'limit': 20}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params)
+
+def trakt_anime_most_favorited(page_no):
+	string = 'trakt_anime_most_favorited_%s' % page_no
+	params = {'path': 'shows/favorited/daily/%s', 'params': {'genres': 'anime', 'limit': 20}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params)
+
+def trakt_anime_certifications(certification, page_no):
+	string = 'trakt_anime_certifications_%s_%s' % (certification, page_no)
+	params = {'path': 'shows/collected/all%s', 'params': {'certifications': certification, 'genres': 'anime', 'limit': 20}, 'page_no': page_no}
+	return lists_cache_object(get_trakt, string, params)
+
 def trakt_get_hidden_items(list_type):
 	def _get_trakt_ids(item):
 		tmdb_id = get_trakt_tvshow_id(item['show']['ids'])

@@ -11,7 +11,9 @@ from modules.utils import get_datetime, adjust_premiered_date, sort_for_article,
 watched_indicators_function, lists_sort_order, date_offset, nextep_method = settings.watched_indicators, settings.lists_sort_order, settings.date_offset, settings.nextep_method
 sleep, progressDialogBG, Thread, get_video_database_path = kodi_utils.sleep, kodi_utils.progressDialogBG, kodi_utils.Thread, kodi_utils.get_video_database_path
 notification, kodi_refresh, tmdb_api_key, mpaa_region = kodi_utils.notification, kodi_utils.kodi_refresh, settings.tmdb_api_key, settings.mpaa_region
+tv_progress_location = settings.tv_progress_location
 progress_db_string, indicators_dict = 'fenlight_hidden_progress_items', {0: 'watched_db', 1: 'trakt_db'}
+finished_show_check = ('Ended', 'Canceled')
 
 def get_database(watched_indicators=None):
 	return connect_database(indicators_dict[watched_indicators or watched_indicators_function()])
@@ -60,16 +62,24 @@ def active_tvshows_information(status_type):
 	def _process(item):
 		media_id = item['media_id']
 		meta = metadata.tvshow_meta('tmdb_id', media_id, api_key, mpaa_region_value, get_datetime())
-		watched_status = get_watched_status_tvshow(watched_info[media_id], meta.get('total_aired_eps'))
-		if watched_status[0] == status_check: results_append(item)
+		watched_status = get_watched_status_tvshow(watched_info[media_id], meta.get('total_aired_eps'))[0]
+		airing_status = meta.get('status', '')
+		if status_type == 'watched':
+			if watched_status == 1:
+				if not include_other and airing_status not in finished_show_check: return
+				results_append(item)
+		else:
+			if watched_status == 0: results_append(item)
+			elif include_other and airing_status not in finished_show_check: results_append(item)
 	results = []
 	results_append = results.append
 	watched_indicators = watched_indicators_function()
 	watched_info = watched_info_tvshow()
 	api_key, mpaa_region_value = tmdb_api_key(), mpaa_region()
 	data = [v for k, v in watched_info.items()]
-	if status_type == 'progress': status_check = 0
-	else: status_check = 1
+	progress_location = tv_progress_location()
+	if status_type == 'watched': include_other = progress_location in (0, 2)
+	else: include_other = progress_location in (1, 2)
 	threads = list(make_thread_list(_process, data))
 	[i.join() for i in threads]
 	return results

@@ -35,6 +35,7 @@ notification_rollback_str = 'Fen Light Performing Rollback'
 result_str = 'Installed Version: [B]%s[/B][CR]Online Version: [B]%s[/B][CR][CR] %s'
 no_update_str = '[B]No Update Available[/B]'
 update_available_str = '[B]An Update is Available[/B][CR]Perform Update?'
+continue_confirm_str = 'Continue with Update After Viewing Changes?'
 success_str = '[CR]Success.[CR]Fen Light updated to version [B]%s[/B]'
 rollback_heading_str = 'Choose Rollback Version'
 success_rollback_str = '[CR]Success.[CR]Fen Light rolled back to version [B]%s[/B]'
@@ -82,8 +83,10 @@ def update_check(action=4):
 		if action == 4: return ok_dialog(heading=heading_str, text=result_str % (current_version, online_version, no_update_str))
 		return
 	if action in (0, 4):
-		if confirm_dialog(heading=heading_str, text=view_changes_str % online_version, ok_label='Yes', cancel_label='No'): get_changes(online_version)
 		if not confirm_dialog(heading=heading_str, text=result_str % (current_version, online_version, update_available_str), ok_label='Yes', cancel_label='No'): return
+		if confirm_dialog(heading=heading_str, text=view_changes_str % online_version, ok_label='Yes', cancel_label='No'):
+			get_changes(online_version)
+			if not confirm_dialog(heading=heading_str, text=continue_confirm_str, ok_label='Yes', cancel_label='No'): return
 	if action == 1: notification(notification_occuring_str, icon=downloads_icon)
 	elif action == 2: return notification(notification_available_str, icon=downloads_icon)
 	return update_addon(online_version, action)

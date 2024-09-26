@@ -160,6 +160,9 @@ def extras_enabled_menus():
 	if setting in ('', None, 'noop', []): return []
 	return [int(i) for i in setting.split(',')]
 
+def tv_progress_location():
+	return int(get_setting('fenlight.tv_progress_location', '0'))
+
 def check_prescrape_sources(scraper, media_type):
 	if scraper in prescrape_scrapers_tuple: return get_setting('fenlight.check.%s' % scraper) == 'true'
 	if get_setting('fenlight.check.%s' % scraper) == 'true' and auto_play(media_type): return True
@@ -181,14 +184,6 @@ def easynews_language_filter():
 	return enabled, filters
 
 def results_sort_order():
-	# return (
-	# 		lambda k: (k['quality_rank'], k['provider_rank'], -k['size']), #Quality, Provider, Size
-	# 		lambda k: (k['quality_rank'], -k['size'], k['provider_rank']), #Quality, Size, Provider
-	# 		lambda k: (k['provider_rank'], k['quality_rank'], -k['size']), #Provider, Quality, Size
-	# 		lambda k: (k['provider_rank'], -k['size'], k['quality_rank']), #Provider, Size, Quality
-	# 		lambda k: (-k['size'], k['quality_rank'], k['provider_rank']), #Size, Quality, Provider
-	# 		lambda k: (-k['size'], k['provider_rank'], k['quality_rank'])  #Size, Provider, Quality
-	# 		)[int(get_setting('fenlight.results.sort_order', '1'))]
 	sort_direction = -1 if get_setting('fenlight.results.size_sort_direction') == '0' else 1
 	return (
 			lambda k: (k['quality_rank'], k['provider_rank'], sort_direction*k['size']), #Quality, Provider, Size

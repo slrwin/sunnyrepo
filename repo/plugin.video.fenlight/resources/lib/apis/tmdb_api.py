@@ -2,7 +2,7 @@
 import datetime
 from caches.meta_cache import cache_function
 from caches.lists_cache import lists_cache_object
-from modules.meta_lists import oscar_winners
+from modules.meta_lists import oscar_winners, years_tvshows
 from modules.settings import get_meta_filter, tmdb_api_key
 from modules.kodi_utils import make_session, tmdb_dict_removals, remove_keys, notification
 # from modules.kodi_utils import logger
@@ -303,7 +303,7 @@ def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_popular_%s' % page_no
-	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&sort_by=popularity.desc&page=%s' \
+	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&without_genres=99,10767,10763,10764&page=%s' \
 							% (base_url, api_key, page_no)
 	return lists_cache_object(get_data, string, url)
 
@@ -401,6 +401,81 @@ def tmdb_tv_recommendations(tmdb_id, page_no):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_recommendations_%s_%s' % (tmdb_id, page_no)
 	url = '%s/tv/%s/recommendations?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, tmdb_id, api_key, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_popular(page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'tmdb_tv_anime_popular_%s' % page_no
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&page=%s' % (base_url, api_key, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_popular_recent(page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'tmdb_tv_anime_popular_recent_%s' % page_no
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&sort_by=first_air_date.desc&include_null_first_air_dates=false&first_air_date_year=%s&page=%s' \
+							% (base_url, api_key, years_tvshows[0]['id'], page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_premieres(page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	current_date, previous_date = get_dates(93, reverse=True)
+	string = 'tmdb_anime_premieres_%s' % page_no
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&include_null_first_air_dates=false&first_air_date.gte=%s&first_air_date.lte=%s&page=%s' \
+							% (base_url, api_key, previous_date, current_date, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_upcoming(page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	current_date, future_date = get_dates(93, reverse=False)
+	string = 'tmdb_anime_upcoming_%s' % page_no
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&first_air_date.gte=%s&first_air_date.lte=%s&sort_by=first_air_date.asc&page=%s' \
+							% (base_url, api_key, current_date, future_date, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_on_the_air(page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	current_date, future_date = get_dates(7, reverse=False)
+	string = 'tmdb_anime_on_the_air_%s' % page_no
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&air_date.gte=%s&air_date.lte=%s&page=%s' \
+							% (base_url, api_key, current_date, future_date, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_genres(genre_id, page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'tmdb_anime_genres_%s_%s' % (genre_id, page_no)
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&with_genres=%s&include_null_first_air_dates=false&first_air_date.lte=%s&page=%s' \
+							% (base_url, api_key, genre_id, get_current_date(), page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_providers(provider, page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'tmdb_anime_providers_%s_%s' % (provider, page_no)
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&watch_region=US&with_watch_providers=%s&include_null_first_air_dates=false&first_air_date.lte=%s&page=%s' \
+				% (base_url, api_key, provider, get_current_date(), page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_year(year, page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'tmdb_anime_year_%s_%s' % (year, page_no)
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&include_null_first_air_dates=false&first_air_date_year=%s&page=%s' % (base_url, api_key, year, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_anime_decade(decade, page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'tmdb_anime_decade_%s_%s' % (decade, page_no)
+	start = '%s-01-01' % decade
+	end = get_dates(2)[0] if decade == '2020' else '%s-12-31' % str(int(decade) + 9)
+	url = '%s/discover/tv?api_key=%s&with_keywords=210024&include_null_first_air_dates=false&first_air_date.gte=%s' \
+			'&first_air_date.lte=%s&page=%s' % (base_url, api_key, start, end, page_no)
 	return lists_cache_object(get_data, string, url)
 
 def tmdb_tv_search(query, page_no):

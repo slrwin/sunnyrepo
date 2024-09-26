@@ -69,7 +69,7 @@ class SettingsCache:
 		clear_property('fenlight.%s' % setting_id)
 
 	def setting_info(self, setting_id):
-		return [i for i in default_settings() if i['setting_id'] == setting_id][0]
+		return [i for i in default_settings if i['setting_id'] == setting_id][0]
 
 	def clean_database(self):
 		try:
@@ -94,9 +94,8 @@ def sync_settings(params={}):
 	insert_list = []
 	insert_list_append = insert_list.append
 	currentsettings = settings_cache.get_all()
-	defaultsettings = default_settings()
-	defaultsettings_ids = [i['setting_id'] for i in defaultsettings]
-	defaultsettings_names = [i['setting_id'] for i in defaultsettings if 'settings_options' in i]
+	defaultsettings_ids = [i['setting_id'] for i in default_settings]
+	defaultsettings_names = [i['setting_id'] for i in default_settings if 'settings_options' in i]
 	defaultsettings_ids.extend(['%s_name' % i for i in defaultsettings_names])
 	try:
 		obsoletesettings_ids = [k for k, v in currentsettings.items() if not k in defaultsettings_ids]
@@ -105,7 +104,7 @@ def sync_settings(params={}):
 	except: pass
 	if currentsettings:
 		for k, v  in currentsettings.items(): settings_cache.set_memory_cache(k, v)
-	for item in defaultsettings:
+	for item in default_settings:
 		setting_id = item['setting_id']
 		if setting_id in currentsettings: continue
 		setting_type = item['setting_type']
@@ -188,10 +187,9 @@ def restore_setting_default(params):
 		if not silent: ok_dialog(text='Error restoring default setting')
 
 def default_setting_values(setting_id):
-	return next((i for i in default_settings() if i['setting_id'] == setting_id), None)
+	return next((i for i in default_settings if i['setting_id'] == setting_id), None)
 
-def default_settings():
-	return [
+default_settings = [
 #===============================================================================#
 #====================================GENERAL====================================#
 #===============================================================================#
@@ -244,6 +242,7 @@ def default_settings():
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'mpaa_region', 'setting_type': 'string', 'setting_default': 'US'},
+{'setting_id': 'tv_progress_location', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Watched', '1': 'In Progress', '2': 'Both'}},
 {'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_all_episodes', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'If Only One Season', '2': 'Always'}},
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
@@ -251,7 +250,7 @@ def default_settings():
 
 
 #==================================================================================#
-#====================================CONTENT====================================#
+#====================================SINGLE EPISODE LISTS====================================#
 #==================================================================================#
 #==================== General
 {'setting_id': 'single_ep_display', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
@@ -273,7 +272,7 @@ def default_settings():
 
 
 #=====================================================================================#
-#====================================META ACCOUNTS====================================#
+#====================================ACCOUNTS====================================#
 #=====================================================================================#
 #==================== Trakt
 {'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
@@ -283,11 +282,6 @@ def default_settings():
 {'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': tmdb_default_api},
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-
-
-#=========================================================================================#
-#====================================PROVIDER ACCOUNTS====================================#
-#=========================================================================================#
 #==================== External
 {'setting_id': 'provider.external', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'external_scraper.name', 'setting_type': 'string', 'setting_default': 'empty_setting'},
