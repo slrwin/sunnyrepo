@@ -87,7 +87,8 @@ class EasyNewsAPI:
 
 	def process_image_files(self, files):
 		def _process():
-			for count, item in enumerate(files, 1):
+			count = 1
+			for item in files:
 				try:
 					post_hash, size, group, post_title, ext = item['0'], item['4'], item['9'], item['10'], item['11']
 					if ext == '.gif': continue
@@ -106,6 +107,7 @@ class EasyNewsAPI:
 							  'version': 'version2',
 							  'thumbnail': thumbnail,
 							  'group': group}
+					count += 1
 					yield result
 				except Exception as e:
 					from modules.kodi_utils import logger

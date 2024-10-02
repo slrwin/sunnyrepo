@@ -7,6 +7,7 @@ from indexers.movies import Movies
 from indexers.tvshows import TVShows
 from modules import meta_lists
 from modules import kodi_utils
+from modules.watched_status import get_recently_watched
 from modules.settings import paginate, page_limit
 from modules.utils import manual_function_import, make_thread_list, paginate_list
 # logger = kodi_utils.logger
@@ -21,7 +22,6 @@ movie_main = ('tmdb_movies_popular', 'tmdb_movies_popular_today','tmdb_movies_bl
 'tmdb_movies_premieres', 'tmdb_movies_oscar_winners')
 movie_trakt_main = ('trakt_movies_trending', 'trakt_movies_trending_recent', 'trakt_movies_most_watched', 'trakt_movies_most_favorited',
 'trakt_movies_top10_boxoffice', 'trakt_recommendations')
-movie_trakt_personal = ('trakt_collection_lists', 'trakt_watchlist_lists')
 discover_personal = ('tmdb_movies_discover', 'tmdb_tv_discover')
 movie_meta_list_dict = {'tmdb_movies_languages': meta_lists.languages, 'tmdb_movies_providers': meta_lists.watch_providers_movies, 'tmdb_movies_year': meta_lists.years_movies,
 'tmdb_movies_decade': meta_lists.decades_movies, 'tmdb_movies_certifications': meta_lists.movie_certifications, 'tmdb_movies_genres': meta_lists.movie_genres}
@@ -29,12 +29,12 @@ tvshow_main = ('tmdb_tv_popular', 'tmdb_tv_popular_today', 'tmdb_tv_premieres', 
 'tmdb_anime_popular', 'tmdb_anime_popular_recent', 'tmdb_anime_premieres', 'tmdb_anime_upcoming', 'tmdb_anime_on_the_air')
 tvshow_trakt_main = ('trakt_tv_trending', 'trakt_tv_trending_recent', 'trakt_recommendations', 'trakt_tv_most_watched', 'trakt_tv_most_favorited',
 'trakt_anime_trending', 'trakt_anime_trending_recent', 'trakt_anime_most_watched', 'trakt_anime_most_favorited')
-tvshow_trakt_personal = ('trakt_collection_lists', 'trakt_watchlist_lists')
 tvshow_meta_list_dict = {'tmdb_tv_languages': meta_lists.languages, 'tmdb_tv_networks': meta_lists.networks, 'tmdb_tv_providers': meta_lists.watch_providers_tvshows,
 'tmdb_tv_year': meta_lists.years_tvshows, 'tmdb_tv_decade': meta_lists.decades_tvshows, 'tmdb_tv_genres': meta_lists.tvshow_genres,
 'trakt_tv_certifications': meta_lists.tvshow_certifications, 'tmdb_anime_year': meta_lists.years_tvshows, 'tmdb_anime_decade': meta_lists.decades_tvshows,
 'tmdb_anime_genres': meta_lists.anime_genres, 'tmdb_anime_providers': meta_lists.watch_providers_tvshows, 'trakt_anime_certifications': meta_lists.tvshow_certifications}
 tvshow_trakt_special = ('trakt_tv_certifications', 'trakt_anime_certifications')
+trakt_personal = ('trakt_collection_lists', 'trakt_watchlist_lists')
 memory_str = 'fenlight.%s'
 
 def get_persistent_content(menu_type, key, remake_widgets, is_external):
@@ -85,10 +85,10 @@ class RandomLists():
 		if self.action in discover_personal: return self.random_discover()
 		if self.action in movie_main: return self.random_main()
 		if self.action in movie_trakt_main: return self.random_trakt_main()
-		if self.action in movie_trakt_personal: return self.random_trakt_personal_lists()
+		if self.action in trakt_personal: return self.random_trakt_personal_lists()
 		if self.action in tvshow_main: return self.random_main()
 		if self.action in tvshow_trakt_main: return self.random_trakt_main()
-		if self.action in tvshow_trakt_personal: return self.function(self.params).fetch_list()
+		if self.action == 'because_you_watched': return self.random_because_you_watched()
 		return self.random_special_main()
 
 	def random_main(self):
@@ -206,11 +206,31 @@ class RandomLists():
 		function = trakt_collection_lists if self.action == 'trakt_collection_lists' else trakt_watchlist_lists
 		random_list, cache_to_memory = get_persistent_content('random_trakt_personal_lists', '%s_%s' % (self.menu_type, self.action), self.remake_widgets, self.is_external)
 		if not random_list:
-			self.random_results = function(self.menu_type, None)
+			self.random_results = function('movies' if self.menu_type in ('movie', 'movies') else 'shows', None)
 			random_list = random.sample(self.random_results, min(len(self.random_results), 20))
 			if cache_to_memory: set_persistent_content('random_trakt_personal_lists',  '%s_%s' % (self.menu_type, self.action), random_list)
 		self.params['list'] = [i['media_ids'] for i in random_list]
 		self.params['id_type'] = 'trakt_dict'
+		self.list_items = self.function(self.params).worker()
+		self.category_name = self.base_list_name
+		self.make_directory()
+
+	def random_because_you_watched(self):
+		random_list, cache_to_memory = get_persistent_content('random_because_you_watched', '%s_%s' % (self.menu_type, self.action), self.remake_widgets, self.is_external)
+		if not random_list:
+			if self.menu_type == 'movie': mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations', 'movie'
+			else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations', 'episode'
+			recently_watched = get_recently_watched(media_type, short_list=0)
+			# logger('recently_watched', recently_watched)
+			recent_seeds = recently_watched[:5]
+			# logger('recent_seed', recent_seed)
+			recent_sample = random.sample(recent_seeds, min(3, len(recent_seeds)))
+			# logger('recent_sample', recent_sample)
+			# logger('test', [recent_seed.index(i) for i in recent_sample])
+			# Now we have 3 of the last 5 movies watched.
+			# We need to grab the 20 "recommended" for each of these (threaded) and then choose 20 from the 60 results to make our "random_list"
+			if cache_to_memory: set_persistent_content('random_because_you_watched',  '%s_%s' % (self.menu_type, self.action), random_list)
+		self.params['list'] = [i['media_ids'] for i in random_list]
 		self.list_items = self.function(self.params).worker()
 		self.category_name = self.base_list_name
 		self.make_directory()

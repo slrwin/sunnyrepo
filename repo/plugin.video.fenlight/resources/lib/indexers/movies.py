@@ -145,7 +145,7 @@ class Movies:
 			elif self.open_extras: url_params = extras_params
 			else: url_params = play_params
 			cm_append(('[B]Options[/B]', run_plugin % options_params))
-			cm_append(('[B]Playback Options[/B]', run_plugin % build_url({'mode': 'playback_choice', 'media_type': 'movie', 'poster': poster, 'meta': tmdb_id})))
+			cm_append(('[B]Playback Options[/B]', run_plugin % build_url({'mode': 'playback_choice', 'media_type': 'movie', 'meta': tmdb_id})))
 			if belongs_to_movieset == 'true' and not self.movieset_list_active and not self.open_movieset:
 				cm_append(('[B]Browse Movie Set[/B]', self.window_command % \
 					build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': movieset_id, 'name': movieset_name})))

@@ -63,6 +63,9 @@ def tv_show_directory():
 def download_directory(media_type):
 	return translate_path(get_setting(download_directories_dict[media_type]))
 
+def show_unaired_watchlist():
+	return get_setting('fenlight.show_unaired_watchlist', 'true') == 'true'
+
 def auto_start_fenlight():
 	return get_setting('fenlight.auto_start_fenlight', 'false') == 'true'
 

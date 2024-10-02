@@ -18,9 +18,10 @@ run_plugin, container_update = 'RunPlugin(%s)', 'Container.Update(%s)'
 main = ('tmdb_tv_popular', 'tmdb_tv_popular_today', 'tmdb_tv_premieres', 'tmdb_tv_airing_today','tmdb_tv_on_the_air','tmdb_tv_upcoming',
 'tmdb_anime_popular', 'tmdb_anime_popular_recent', 'tmdb_anime_premieres', 'tmdb_anime_upcoming', 'tmdb_anime_on_the_air')
 special = ('tmdb_tv_languages', 'tmdb_tv_networks', 'tmdb_tv_providers', 'tmdb_tv_year', 'tmdb_tv_decade', 'tmdb_tv_recommendations', 'tmdb_tv_genres',
-'tmdb_tv_search', 'tmdb_tv_keyword_results', 'tmdb_tv_keyword_results_direct', 'tmdb_anime_year', 'tmdb_anime_decade', 'tmdb_anime_genres', 'tmdb_anime_providers')
+'tmdb_tv_search', 'tmdb_tv_keyword_results', 'tmdb_tv_keyword_results_direct', 'tmdb_anime_year', 'tmdb_anime_decade', 'tmdb_anime_genres',
+'tmdb_anime_providers', 'tmdb_anime_search')
 personal = {'in_progress_tvshows': ('modules.watched_status', 'get_in_progress_tvshows'), 'favorites_tvshows': ('modules.favorites', 'get_favorites'),
-'watched_tvshows': ('modules.watched_status', 'get_watched_items')}
+'favorites_anime_tvshows': ('modules.favorites', 'get_favorites'), 'watched_tvshows': ('modules.watched_status', 'get_watched_items')}
 trakt_main = ('trakt_tv_trending', 'trakt_tv_trending_recent', 'trakt_recommendations', 'trakt_tv_most_watched', 'trakt_tv_most_favorited',
 'trakt_anime_trending', 'trakt_anime_trending_recent', 'trakt_anime_most_watched', 'trakt_anime_most_favorited')
 trakt_special = ('trakt_tv_certifications', 'trakt_anime_certifications')
@@ -34,6 +35,7 @@ class TVShows:
 		self.params_get = self.params.get
 		self.category_name = self.params_get('category_name', None) or self.params_get('name', None) or 'TV Shows'
 		self.id_type, self.list, self.action = self.params_get('id_type', 'tmdb_id'), self.params_get('list', []), self.params_get('action', None)
+		self.is_anime = '_anime_' in self.action
 		self.items, self.new_page, self.total_pages, self.is_external, self.is_home = [], {}, None, external(), home()
 		self.widget_hide_next_page = self.is_home and widget_hide_next_page()
 		self.widget_hide_watched = self.is_home and widget_hide_watched()
@@ -65,7 +67,7 @@ class TVShows:
 				self.list = [i['id'] for i in data['results']]
 				if not is_random and data['total_pages'] > page_no: self.new_page = {'new_page': string(page_no + 1), 'key_id': key_id}
 			elif self.action in personal:
-				data = function('tvshow', page_no)
+				data = function('anime' if self.is_anime else 'tvshow', page_no)
 				data, total_pages = self.paginate_list(data, page_no)
 				self.list = [i['media_id'] for i in data]
 				if total_pages > 2: self.total_pages = total_pages
@@ -103,8 +105,8 @@ class TVShows:
 				self.list = function(self.params_get('key_id'))
 			add_items(handle, self.worker())
 			if self.new_page and not self.widget_hide_next_page:
-							self.new_page.update({'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name})
-							add_dir(self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
+						self.new_page.update({'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name})
+						add_dir(self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], handle, 'nextpage', nextpage_landscape)
 		except: pass
 		set_content(handle, content_type)
 		set_category(handle, self.category_name)
@@ -135,8 +137,9 @@ class TVShows:
 				if total_watched: progress = get_progress_status_tvshow(total_watched, total_aired_eps)
 				else: progress = 0
 				visible_progress = 0 if progress == 100 else progress
-			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external})
-			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
+			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external, 'is_anime': self.is_anime})
+			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster,
+										'is_external': self.is_external, 'is_anime': self.is_anime})
 			more_like_this_params = build_url({'mode': 'build_tvshow_list', 'action': 'imdb_more_like_this', 'key_id': imdb_id,
 											'name': 'More Like This based on %s' % title, 'is_external': self.is_external})
 			if self.all_episodes:
@@ -156,7 +159,7 @@ class TVShows:
 			cm_append(('[B]Trakt Lists Manager[/B]', run_plugin % \
 				build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id, 'media_type': 'tvshow', 'icon': poster})))
 			cm_append(('[B]Favorites Manager[/B]', run_plugin % \
-				build_url({'mode': 'favorites_choice', 'media_type': 'tvshow', 'tmdb_id': tmdb_id, 'title': title})))
+				build_url({'mode': 'favorites_choice', 'media_type': 'tvshow', 'tmdb_id': tmdb_id, 'title': title, 'is_anime': self.is_anime})))
 			if playcount:
 				if self.widget_hide_watched: return
 			elif not unaired:

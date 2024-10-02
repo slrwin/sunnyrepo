@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from caches.base_cache import connect_database
 from modules.kodi_utils import sleep, confirm_dialog, close_all_dialog, Thread
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 SELECT = 'SELECT id FROM trakt_data'
 DELETE = 'DELETE FROM trakt_data WHERE id=?'
@@ -99,7 +99,7 @@ def reset_activity(latest_activities):
 
 def clear_daily_cache():
 	clear_trakt_calendar()
-	clear_trakt_list_contents_data('user_lists')
+	clear_trakt_list_contents_data('my_lists')
 	clear_trakt_list_contents_data('liked_lists')
 
 def clear_trakt_hidden_data(list_type):
@@ -118,6 +118,12 @@ def clear_trakt_collection_watchlist_data(list_type, media_type):
 		dbcon.execute(DELETE, (string,))
 	except: pass
 
+def clear_trakt_calendar():
+	try:
+		dbcon = connect_database('trakt_db')
+		dbcon.execute(DELETE_LIKE % 'trakt_get_my_calendar_%')
+	except: return
+
 def clear_trakt_list_contents_data(list_type):
 	string = 'trakt_list_contents_' + list_type + '_%'
 	try:
@@ -131,12 +137,6 @@ def clear_trakt_list_data(list_type):
 		dbcon = connect_database('trakt_db')
 		dbcon.execute(DELETE, (string,))
 	except: pass
-
-def clear_trakt_calendar():
-	try:
-		dbcon = connect_database('trakt_db')
-		dbcon.execute(DELETE_LIKE % 'trakt_get_my_calendar_%')
-	except: return
 
 def clear_trakt_recommendations():
 	try:

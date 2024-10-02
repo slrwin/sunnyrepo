@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from caches.main_cache import main_cache
 from caches.navigator_cache import navigator_cache as nc
 from caches.settings_cache import get_setting, set_setting
 from modules import meta_lists as ml, kodi_utils as k, settings as s
@@ -16,9 +17,11 @@ log_loc, old_log_loc = tp('special://logpath/kodi.log'), tp('special://logpath/k
 folder_icon = get_icon('folder')
 random_test = '[COLOR red][RANDOM][/COLOR]'
 run_plugin = 'RunPlugin(%s)'
-random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'anime': nc.random_anime_lists, 'trakt': nc.random_trakt_lists}
+random_list_dict = {'movie': nc.random_movie_lists, 'tvshow': nc.random_tvshow_lists, 'anime': nc.random_anime_lists, 'trakt': nc.random_trakt_lists,
+'because_you_watched': nc.random_because_you_watched_lists}
 search_mode_dict = {'movie': ('movie_queries', {'mode': 'search.get_key_id', 'media_type': 'movie', 'isFolder': 'false'}),
 				'tvshow': ('tvshow_queries', {'mode': 'search.get_key_id', 'media_type': 'tv_show', 'isFolder': 'false'}),
+				'anime': ('anime_queries', {'mode': 'search.get_key_id', 'media_type': 'anime', 'isFolder': 'false'}),
 				'people': ('people_queries', {'mode': 'search.get_key_id', 'search_type': 'people', 'isFolder': 'false'}),
 				'tmdb_keyword_movie': ('keyword_tmdb_movie_queries', {'mode': 'search.get_key_id', 'search_type': 'tmdb_keyword', 'media_type': 'movie', 'isFolder': 'false'}),
 				'tmdb_keyword_tvshow': ('keyword_tmdb_tvshow_queries', {'mode': 'search.get_key_id', 'search_type': 'tmdb_keyword', 'media_type': 'tvshow', 'isFolder': 'false'}),
@@ -88,6 +91,7 @@ class Navigator:
 	def favorites(self):
 		self.add({'mode': 'build_movie_list', 'action': 'favorites_movies', 'name': 'Movies'}, 'Movies', 'movies')
 		self.add({'mode': 'build_tvshow_list', 'action': 'favorites_tvshows', 'name': 'TV Shows'}, 'TV Shows', 'tv')
+		self.add({'mode': 'build_tvshow_list', 'action': 'favorites_anime_tvshows', 'name': 'Anime'}, 'Anime', 'anime')
 		self.add({'mode': 'favorite_people', 'isFolder': 'false', 'name': 'People'}, 'People', 'genre_family')
 		self.end_directory()
 
@@ -108,7 +112,8 @@ class Navigator:
 	def random_lists(self):
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'movie'}, 'Movie Lists', 'movies')
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'tvshow'}, 'TV Show Lists', 'tv')
-		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'anime'}, 'Anime Lists', 'genre_anime')
+		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'anime'}, 'Anime Lists', 'anime')
+		# self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'because_you_watched'}, 'Because You Watched', 'because_you_watched')
 		if trakt_user_active(): self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'trakt'}, 'Trakt Lists', 'trakt')
 		self.end_directory()
 
@@ -152,6 +157,7 @@ class Navigator:
 	def search(self):
 		self.add({'mode': 'navigator.search_history', 'action': 'movie', 'name': 'Search History Movies'}, 'Movies', 'search_movie')
 		self.add({'mode': 'navigator.search_history', 'action': 'tvshow', 'name': 'Search History TV Shows'}, 'TV Shows', 'search_tv')
+		self.add({'mode': 'navigator.search_history', 'action': 'anime', 'name': 'Search History Anime'}, 'Anime', 'search_anime')
 		self.add({'mode': 'navigator.search_history', 'action': 'people', 'name': 'Search History People'}, 'People', 'search_people')
 		self.add({'mode': 'navigator.search_history', 'action': 'tmdb_keyword_movie', 'name': 'Search History Keywords (Movies)'}, 'Keywords (Movies)', 'search_tmdb')
 		self.add({'mode': 'navigator.search_history', 'action': 'tmdb_keyword_tvshow', 'name': 'Search History Keywords (TV Shows)'}, 'Keywords (TV Shows)', 'search_tmdb')
@@ -227,9 +233,9 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': mode, action, certifications = 'build_movie_list', 'tmdb_movies_certifications', ml.movie_certifications
 		else:
+			mode, certifications = 'build_tvshow_list', ml.tvshow_certifications
 			if menu_type == 'tvshow': action = 'trakt_tv_certifications'
 			else: action = 'trakt_anime_certifications'
-			mode, certifications = 'build_tvshow_list', ml.tvshow_certifications
 		for i in certifications: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'certifications')
 		self.end_directory()
 
@@ -242,21 +248,21 @@ class Navigator:
 
 	def years(self):
 		menu_type = self.params_get('menu_type')
-		if menu_type == 'movie': mode, action, years = 'build_movie_list', 'tmdb_movies_year', ml.years_movies
+		if menu_type == 'movie': years, mode, action = ml.years_movies, 'build_movie_list', 'tmdb_movies_year'
 		else:
-			if menu_type == 'tvshow': action = 'tmdb_tv_year'
-			else: action = 'tmdb_anime_year'
-			mode, years = 'build_tvshow_list', ml.years_tvshows
+			mode = 'build_tvshow_list'
+			if menu_type == 'tvshow': years, action = ml.years_tvshows, 'tmdb_tv_year'
+			else: years, action = ml.years_anime, 'tmdb_anime_year'
 		for i in years: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'calender')
 		self.end_directory()
 
 	def decades(self):
 		menu_type = self.params_get('menu_type')
-		if menu_type == 'movie': mode, action, decades = 'build_movie_list', 'tmdb_movies_decade', ml.decades_movies
+		if menu_type == 'movie': decades, mode, action = ml.decades_movies, 'build_movie_list', 'tmdb_movies_decade'
 		else:
-			if menu_type == 'tvshow': action = 'tmdb_tv_decade'
-			else: action = 'tmdb_anime_decade'
-			mode, decades = 'build_tvshow_list', ml.decades_tvshows
+			mode = 'build_tvshow_list'
+			if menu_type == 'tvshow': decades, action = ml.decades_tvshows, 'tmdb_tv_decade'
+			else: decades, action = ml.decades_anime, 'tmdb_anime_decade'
 		for i in decades: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'calendar_decades')
 		self.end_directory()
 
@@ -272,9 +278,9 @@ class Navigator:
 		image_insert = 'https://image.tmdb.org/t/p/original/%s'
 		if menu_type == 'movie': mode, action, providers = 'build_movie_list', 'tmdb_movies_providers', ml.watch_providers_movies
 		else:
+			mode, providers = 'build_tvshow_list', ml.watch_providers_tvshows
 			if menu_type == 'tvshow': action = 'tmdb_tv_providers'
 			else: action = 'tmdb_anime_providers'
-			mode, providers = 'build_tvshow_list', ml.watch_providers_tvshows
 		for i in providers: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], image_insert % i['icon'], original_image=True)
 		self.end_directory()
 
@@ -282,14 +288,13 @@ class Navigator:
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': genre_list, mode, action = ml.movie_genres, 'build_movie_list', 'tmdb_movies_genres'
 		else:
+			mode = 'build_tvshow_list'
 			if menu_type == 'tvshow': genre_list, action = ml.tvshow_genres, 'tmdb_tv_genres'
 			else: genre_list, action = ml.anime_genres, 'tmdb_anime_genres'
-			mode = 'build_tvshow_list'
 		for i in genre_list: self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'])
 		self.end_directory()
 
 	def search_history(self):
-		from caches.main_cache import main_cache
 		setting_id, action_dict = search_mode_dict[self.list_name]
 		url_params = dict(action_dict)
 		data = main_cache.get(setting_id) or []
@@ -432,7 +437,8 @@ class Navigator:
 
 	def build_random_lists(self):
 		menu_type = self.params_get('menu_type')
-		self.category_name = 'Movie Lists' if menu_type == 'movie' else 'TV Show Lists' if menu_type == 'tvshow' else 'Anime Lists' if menu_type == 'anime' else 'Trakt Lists'
+		self.category_name = 'Movie Lists' if menu_type == 'movie' else 'TV Show Lists' if menu_type == 'tvshow' else 'Anime Lists' if menu_type == 'anime' \
+								else 'Trakt Lists' if menu_type == 'trakt' else 'Because You Watched Lists'
 		for item in random_list_dict[menu_type](): self.add(item, item['name'], item['iconImage'])
 		self.end_directory()
 

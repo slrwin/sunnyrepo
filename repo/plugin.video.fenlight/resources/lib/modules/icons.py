@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 alldebrid = 'UBjURaL'
+anime = '52QtOjB'
 audio = 'fDf9q4B'
 bad_language = 'tKJVTmq'
 because_you_watched = 'IFWDwai'
@@ -68,6 +69,7 @@ pm_qrcode = 'ARyznQq'
 ad_qrcode = 'jtIyMrl'
 trakt_qrcode = 'lMrS0mS'
 
+search_anime = 'nv2y3xo'
 search_history = 'y1DEuvk'
 search_imdb = 'z4C3PAx'
 search_movie = 'u8jgyN3'

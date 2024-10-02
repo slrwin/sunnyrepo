@@ -9,7 +9,8 @@ json, close_all_dialog, external = kodi_utils.json, kodi_utils.close_all_dialog,
 build_url, dialog, unquote, execute_builtin, select_dialog = kodi_utils.build_url, kodi_utils.dialog, kodi_utils.unquote, kodi_utils.execute_builtin, kodi_utils.select_dialog
 notification, kodi_refresh, numeric_input = kodi_utils.notification, kodi_utils.kodi_refresh, kodi_utils.numeric_input
 clear_history_list = [('Clear Movie Search History', 'movie_queries'),
-					('Clear TV Show Search History', 'tvshow_queries'), 
+					('Clear TV Show Search History', 'tvshow_queries'),
+					('Clear Anime Search History', 'anime_queries'),
 					('Clear People Search History', 'people_queries'),
 					('Clear Keywords Movie Search History', 'keyword_tmdb_movie_queries'),
 					('Clear Keywords TV Show Search History', 'keyword_tmdb_tvshow_queries'),
@@ -27,7 +28,10 @@ def get_key_id(params):
 	search_type = params.get('search_type', 'media_title')
 	string = None
 	if search_type == 'media_title':
-		mode, action, string = ('build_movie_list', 'tmdb_movies_search', 'movie_queries') if media_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_search', 'tvshow_queries')
+		if media_type == 'movie': mode, action, string = ('build_movie_list', 'tmdb_movies_search', 'movie_queries')
+		else:
+			action = 'tmdb_anime_search' if media_type == 'anime' else 'tmdb_tv_search'
+			mode, string = ('build_tvshow_list', 'tvshow_queries')
 		url_params = {'mode': mode, 'action': action}
 	elif search_type == 'people': string = 'people_queries'
 	elif search_type == 'tmdb_keyword':

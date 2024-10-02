@@ -6,7 +6,7 @@ from modules.utils import jsondate_to_datetime, subtract_dates
 
 movie_details, tvshow_details, season_episodes_details = tmdb_api.movie_details, tmdb_api.tvshow_details, tmdb_api.season_episodes_details
 movie_set_details, movie_external_id, tvshow_external_id = tmdb_api.movie_set_details, tmdb_api.movie_external_id, tmdb_api.tvshow_external_id
-episode_groups_details = tmdb_api.episode_groups_details
+episode_groups_data, episode_group_details = tmdb_api.episode_groups_data, tmdb_api.episode_group_details
 metacache_get, metacache_set, metacache_get_season, metacache_set_season = meta_cache.get, meta_cache.set, meta_cache.get_season, meta_cache.set_season
 writer_credits = ('Author', 'Writer', 'Screenplay', 'Characters')
 alt_titles_check, trailers_check, finished_show_check, empty_value_check = ('US', 'GB', 'UK', ''), ('Trailer', 'Teaser'), ('Ended', 'Canceled'), ('', 'None', None)
@@ -285,7 +285,7 @@ def episodes_meta(season, meta):
 			writer, director, guest_stars = [], [], []
 			ep_data_get = ep_data.get
 			title, plot, premiered = ep_data_get('name'), ep_data_get('overview'), ep_data_get('air_date')
-			season, episode = ep_data_get('season_number'), ep_data_get('episode_number')
+			season, episode, episode_id = ep_data_get('season_number'), ep_data_get('episode_number'), ep_data_get('id')
 			try:
 				if episode == 1:
 					if 'premiere' in season_type: episode_type = 'series_premiere'
@@ -315,8 +315,8 @@ def episodes_meta(season, meta):
 				except: pass
 				try: director = [i['name'] for i in crew if i['job'] == 'Director']
 				except: pass
-			yield {'writer': writer, 'director': director, 'mediatype': 'episode', 'episode_type': episode_type, 'title': title, 'plot': plot, 'duration': duration,
-					'premiered': premiered, 'season': season, 'episode': episode, 'rating': rating, 'votes': votes, 'thumb': thumb, 'guest_stars': guest_stars}
+			yield {'writer': writer, 'director': director, 'mediatype': 'episode', 'episode_type': episode_type, 'episode_id': episode_id, 'title': title, 'plot': plot,
+					'duration': duration, 'premiered': premiered, 'season': season, 'episode': episode, 'rating': rating, 'votes': votes, 'thumb': thumb, 'guest_stars': guest_stars}
 	media_id, data = meta['tmdb_id'], None
 	prop_string = '%s_%s' % (media_id, season)
 	data = metacache_get_season(prop_string)
@@ -352,7 +352,17 @@ def all_episodes_meta(meta, include_specials=False):
 	return data
 
 def episode_groups(media_id):
-	return episode_groups_details(media_id)
+	return episode_groups_data(media_id)
+
+def group_details(group_id):
+	return episode_group_details(group_id)
+
+def group_episode_data(details, episode_id=None, season_number=None, episode_number=None):
+	def _comparer(episode_item):
+		if episode_id: return episode_item['id'] == int(episode_id)
+		else: return episode_item['season_number'] == int(season_number) and episode_item['episode_number'] == int(episode_number)
+	episode_data = next(({'season': item['order'], 'episode': i['order'] + 1} for item in details['groups'] for i in item['episodes'] if _comparer(i)), None)
+	return episode_data
 
 def movie_meta_external_id(external_source, external_id, api_key):
 	return movie_external_id(external_source, external_id, api_key)

@@ -612,7 +612,8 @@ class Extras(BaseDialog):
 		window_manager(self)
 
 	def show_options(self):
-		params = {'content': self.options_media_type, 'tmdb_id': str(self.tmdb_id), 'poster': self.poster, 'is_external': self.is_external, 'from_extras': 'true'}
+		params = {'content': self.options_media_type, 'tmdb_id': str(self.tmdb_id), 'poster': self.poster,
+				'is_external': self.is_external, 'is_anime': self.is_anime, 'from_extras': 'true'}
 		return options_menu_choice(params, self.meta)
 
 	def show_recommended(self):
@@ -639,10 +640,10 @@ class Extras(BaseDialog):
 									'media_type': self.media_type, 'icon': self.poster})
 
 	def show_favorites_manager(self):
-		return favorites_choice({'media_type': self.media_type, 'tmdb_id': str(self.tmdb_id), 'title': self.title, 'refresh': 'false'})
+		return favorites_choice({'media_type': self.media_type, 'tmdb_id': str(self.tmdb_id), 'title': self.title, 'is_anime': self.is_anime, 'refresh': 'false'})
 
 	def playback_choice(self):
-		params = {'media_type': self.media_type, 'poster': self.poster, 'meta': self.meta, 'season': None, 'episode': None}
+		params = {'media_type': self.media_type, 'meta': self.meta, 'season': None, 'episode': None}
 		playback_choice(params)
 
 	def assign_buttons(self):
@@ -678,11 +679,12 @@ class Extras(BaseDialog):
 		if set_starting_position: self.current_params['starting_position'] = [self.control_id, self.get_position(self.control_id)]
 
 	def set_starting_constants(self, kwargs):
-		self.meta = kwargs['meta']
+		self.meta = kwargs.get('meta')
 		self.meta_get = self.meta.get
-		self.media_type, self.options_media_type = self.meta_get('mediatype'), kwargs['options_media_type']
+		self.media_type, self.options_media_type = self.meta_get('mediatype'), kwargs.get('options_media_type')
 		self.starting_position = kwargs.get('starting_position', None)
-		self.is_external = kwargs['is_external'].lower()
+		self.is_anime = kwargs.get('is_anime')
+		self.is_external = kwargs.get('is_external').lower()
 		self.item_action_dict, self.button_action_dict = {}, {}
 		self.selected = None
 		self.current_date = get_datetime()

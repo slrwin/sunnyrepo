@@ -4,16 +4,17 @@ from caches.meta_cache import cache_function
 from caches.lists_cache import lists_cache_object
 from modules.meta_lists import oscar_winners, years_tvshows
 from modules.settings import get_meta_filter, tmdb_api_key
+from modules.utils import make_thread_list_enumerate
 from modules.kodi_utils import make_session, tmdb_dict_removals, remove_keys, notification
 # from modules.kodi_utils import logger
 
-EXPIRY_4_HOURS, EXPIRY_ONE_DAY, EXPIRY_1_WEEK = 4, 24, 168
+EXPIRY_4_HOURS, EXPIRY_1_DAY, EXPIRY_1_WEEK = 4, 24, 168
 base_url = 'https://api.themoviedb.org/3'
 movies_append = 'external_ids,videos,credits,release_dates,alternative_titles,translations,images'
 tvshows_append = 'external_ids,videos,credits,content_ratings,alternative_titles,translations,images,episode_groups'
 empty_setting_check = (None, 'empty_setting', '')
-timeout = 20.0
 session = make_session(base_url)
+timeout = 20.0
 
 def no_api_key():
 	notification('Please set a valid TMDb API Key')
@@ -31,11 +32,18 @@ def tvshow_details(tmdb_id, api_key):
 		return get_tmdb(url).json()
 	except: return None
 
-def episode_groups_details(tmdb_id):
+def episode_groups_data(tmdb_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'episode_groups_details_%s' % tmdb_id
 	url = '%s/tv/%s/episode_groups?api_key=%s' % (base_url, tmdb_id, api_key)
+	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
+
+def episode_group_details(group_id):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	string = 'episode_groups_details_%s' % group_id
+	url = '%s/tv/episode_group/%s?api_key=%s' % (base_url, group_id, api_key)
 	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def movie_set_details(collection_id, api_key):
@@ -156,7 +164,7 @@ def tmdb_movies_discover(query, page_no):
 	if '[current_date]' in query: query = query.replace('[current_date]', get_current_date())
 	if '[random]' in query: query = query.replace('[random]', '')
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return lists_cache_object(get_tmdb, string, url, True, EXPIRY_ONE_DAY)
+	return lists_cache_object(get_tmdb, string, url, True, EXPIRY_1_DAY)
 
 def tmdb_movies_popular(page_no):
 	api_key = tmdb_api_key()
@@ -170,14 +178,14 @@ def tmdb_movies_popular_today(page_no):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_movies_popular_today_%s' % page_no
 	url = '%s/trending/movie/day?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, api_key, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_movies_blockbusters(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_movies_blockbusters_%s' % page_no
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&sort_by=revenue.desc&page=%s' % (base_url, api_key, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_in_theaters(page_no):
 	api_key = tmdb_api_key()
@@ -193,7 +201,7 @@ def tmdb_movies_upcoming(page_no):
 	string = 'tmdb_movies_upcoming_%s' % page_no
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&release_date.gte=%s&release_date.lte=%s&with_release_type=3|2|1&page=%s' \
 							% (base_url, api_key, current_date, future_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_movies_latest_releases(page_no):
 	api_key = tmdb_api_key()
@@ -202,7 +210,7 @@ def tmdb_movies_latest_releases(page_no):
 	string = 'tmdb_movies_latest_releases_%s' % page_no
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&release_date.gte=%s&release_date.lte=%s&with_release_type=4|5|6&page=%s' \
 							% (base_url, api_key, previous_date, current_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_movies_premieres(page_no):
 	api_key = tmdb_api_key()
@@ -211,7 +219,7 @@ def tmdb_movies_premieres(page_no):
 	string = 'tmdb_movies_premieres_%s' % page_no
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&release_date.gte=%s&release_date.lte=%s&with_release_type=1|3|2&page=%s' \
 							% (base_url, api_key, previous_date, current_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_movies_genres(genre_id, page_no):
 	api_key = tmdb_api_key()
@@ -219,7 +227,7 @@ def tmdb_movies_genres(genre_id, page_no):
 	string = 'tmdb_movies_genres_%s_%s' % (genre_id, page_no)
 	url = '%s/discover/movie?api_key=%s&with_genres=%s&language=en-US&region=US&with_original_language=en&release_date.lte=%s&page=%s' \
 			% (base_url, api_key, genre_id, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_languages(language, page_no):
 	api_key = tmdb_api_key()
@@ -227,7 +235,7 @@ def tmdb_movies_languages(language, page_no):
 	string = 'tmdb_movies_languages_%s_%s' % (language, page_no)
 	url = '%s/discover/movie?api_key=%s&language=en-US&with_original_language=%s&release_date.lte=%s&page=%s' \
 			% (base_url, api_key, language, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_certifications(certification, page_no):
 	api_key = tmdb_api_key()
@@ -235,7 +243,7 @@ def tmdb_movies_certifications(certification, page_no):
 	string = 'tmdb_movies_certifications_%s_%s' % (certification, page_no)
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&certification_country=US&certification=%s&sort_by=%s&release_date.lte=%s&page=%s' \
 							% (base_url, api_key, certification, 'popularity.desc', get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_year(year, page_no):
 	api_key = tmdb_api_key()
@@ -243,7 +251,7 @@ def tmdb_movies_year(year, page_no):
 	string = 'tmdb_movies_year_%s_%s' % (year, page_no)
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&certification_country=US&primary_release_year=%s&page=%s' \
 							% (base_url, api_key, year, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_decade(decade, page_no):
 	api_key = tmdb_api_key()
@@ -253,14 +261,14 @@ def tmdb_movies_decade(decade, page_no):
 	end = get_dates(2)[0] if decade == '2020' else '%s-12-31' % str(int(decade) + 9)
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&primary_release_date.gte=%s' \
 			'&primary_release_date.lte=%s&page=%s' % (base_url, api_key, start, end, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_providers(provider, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_movies_providers_%s_%s' % (provider, page_no)
 	url = '%s/discover/movie?api_key=%s&watch_region=US&with_watch_providers=%s&vote_count.gte=100&page=%s' % (base_url, api_key, provider, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_recommendations(tmdb_id, page_no):
 	api_key = tmdb_api_key()
@@ -283,7 +291,7 @@ def tmdb_movies_companies(company_id, page_no):
 	string = 'tmdb_movies_companies_%s_%s' % (company_id, page_no)
 	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&with_companies=%s&page=%s' \
 							% (base_url, api_key, company_id, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_movies_reviews(tmdb_id, page_no):
 	api_key = tmdb_api_key()
@@ -297,7 +305,7 @@ def tmdb_tv_discover(query, page_no):
 	if '[current_date]' in query: query = query.replace('[current_date]', get_current_date())
 	if '[random]' in query: query = query.replace('[random]', '')
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return lists_cache_object(get_tmdb, string, url, True, EXPIRY_ONE_DAY)
+	return lists_cache_object(get_tmdb, string, url, True, EXPIRY_1_DAY)
 
 def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
@@ -312,7 +320,7 @@ def tmdb_tv_popular_today(page_no):
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_popular_today_%s' % page_no
 	url = '%s/trending/tv/day?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, api_key, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_tv_premieres(page_no):
 	api_key = tmdb_api_key()
@@ -321,21 +329,21 @@ def tmdb_tv_premieres(page_no):
 	string = 'tmdb_tv_premieres_%s' % page_no
 	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&first_air_date.gte=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, previous_date, current_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_tv_airing_today(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_airing_today_%s' % page_no
 	url = '%s/tv/airing_today?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, api_key, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_tv_on_the_air(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_on_the_air_%s' % page_no
 	url = '%s/tv/on_the_air?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, api_key, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_tv_upcoming(page_no):
 	api_key = tmdb_api_key()
@@ -344,7 +352,7 @@ def tmdb_tv_upcoming(page_no):
 	string = 'tmdb_tv_upcoming_%s' % page_no
 	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&first_air_date.gte=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, current_date, future_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_tv_genres(genre_id, page_no):
 	api_key = tmdb_api_key()
@@ -352,7 +360,7 @@ def tmdb_tv_genres(genre_id, page_no):
 	string = 'tmdb_tv_genres_%s_%s' % (genre_id, page_no)
 	url = '%s/discover/tv?api_key=%s&with_genres=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, genre_id, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_tv_languages(language, page_no):
 	api_key = tmdb_api_key()
@@ -360,7 +368,7 @@ def tmdb_tv_languages(language, page_no):
 	string = 'tmdb_tv_languages_%s_%s' % (language, page_no)
 	url = '%s/discover/tv?api_key=%s&language=en-US&include_null_first_air_dates=false&with_original_language=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, language, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_tv_networks(network_id, page_no):
 	api_key = tmdb_api_key()
@@ -368,7 +376,7 @@ def tmdb_tv_networks(network_id, page_no):
 	string = 'tmdb_tv_networks_%s_%s' % (network_id, page_no)
 	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&with_networks=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, network_id, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_tv_providers(provider, page_no):
 	api_key = tmdb_api_key()
@@ -376,7 +384,7 @@ def tmdb_tv_providers(provider, page_no):
 	string = 'tmdb_tv_providers_%s_%s' % (provider, page_no)
 	url = '%s/discover/tv?api_key=%s&watch_region=US&with_watch_providers=%s&include_null_first_air_dates=false&vote_count.gte=100&first_air_date.lte=%s&page=%s' \
 				% (base_url, api_key, provider, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_tv_year(year, page_no):
 	api_key = tmdb_api_key()
@@ -384,7 +392,7 @@ def tmdb_tv_year(year, page_no):
 	string = 'tmdb_tv_year_%s_%s' % (year, page_no)
 	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&first_air_date_year=%s&page=%s' \
 							% (base_url, api_key, year, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_tv_decade(decade, page_no):
 	api_key = tmdb_api_key()
@@ -394,7 +402,7 @@ def tmdb_tv_decade(decade, page_no):
 	end = get_dates(2)[0] if decade == '2020' else '%s-12-31' % str(int(decade) + 9)
 	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false&first_air_date.gte=%s' \
 			'&first_air_date.lte=%s&page=%s' % (base_url, api_key, start, end, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_tv_recommendations(tmdb_id, page_no):
 	api_key = tmdb_api_key()
@@ -402,6 +410,20 @@ def tmdb_tv_recommendations(tmdb_id, page_no):
 	string = 'tmdb_tv_recommendations_%s_%s' % (tmdb_id, page_no)
 	url = '%s/tv/%s/recommendations?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, tmdb_id, api_key, page_no)
 	return lists_cache_object(get_data, string, url)
+
+def tmdb_tv_search(query, page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	meta_filter = get_meta_filter()
+	string = 'tmdb_tv_search_%s_%s_%s' % (query, meta_filter, page_no)
+	url = '%s/search/tv?api_key=%s&language=en-US&include_adult=%s&query=%s&page=%s' % (base_url, api_key, meta_filter, query, page_no)
+	return lists_cache_object(get_data, string, url)
+
+def tmdb_tv_reviews(tmdb_id, page_no):
+	api_key = tmdb_api_key()
+	if api_key in empty_setting_check: return no_api_key()
+	url = '%s/tv/%s/reviews?api_key=%s&page=%s' % (base_url, tmdb_id, api_key, page_no)
+	return get_tmdb(url).json()
 
 def tmdb_anime_popular(page_no):
 	api_key = tmdb_api_key()
@@ -425,7 +447,7 @@ def tmdb_anime_premieres(page_no):
 	string = 'tmdb_anime_premieres_%s' % page_no
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&include_null_first_air_dates=false&first_air_date.gte=%s&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, previous_date, current_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_anime_upcoming(page_no):
 	api_key = tmdb_api_key()
@@ -434,7 +456,7 @@ def tmdb_anime_upcoming(page_no):
 	string = 'tmdb_anime_upcoming_%s' % page_no
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&first_air_date.gte=%s&first_air_date.lte=%s&sort_by=first_air_date.asc&page=%s' \
 							% (base_url, api_key, current_date, future_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_anime_on_the_air(page_no):
 	api_key = tmdb_api_key()
@@ -443,7 +465,7 @@ def tmdb_anime_on_the_air(page_no):
 	string = 'tmdb_anime_on_the_air_%s' % page_no
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&air_date.gte=%s&air_date.lte=%s&page=%s' \
 							% (base_url, api_key, current_date, future_date, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_DAY)
 
 def tmdb_anime_genres(genre_id, page_no):
 	api_key = tmdb_api_key()
@@ -451,7 +473,7 @@ def tmdb_anime_genres(genre_id, page_no):
 	string = 'tmdb_anime_genres_%s_%s' % (genre_id, page_no)
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&with_genres=%s&include_null_first_air_dates=false&first_air_date.lte=%s&page=%s' \
 							% (base_url, api_key, genre_id, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_anime_providers(provider, page_no):
 	api_key = tmdb_api_key()
@@ -459,14 +481,14 @@ def tmdb_anime_providers(provider, page_no):
 	string = 'tmdb_anime_providers_%s_%s' % (provider, page_no)
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&watch_region=US&with_watch_providers=%s&include_null_first_air_dates=false&first_air_date.lte=%s&page=%s' \
 				% (base_url, api_key, provider, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_anime_year(year, page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_anime_year_%s_%s' % (year, page_no)
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&include_null_first_air_dates=false&first_air_date_year=%s&page=%s' % (base_url, api_key, year, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
 def tmdb_anime_decade(decade, page_no):
 	api_key = tmdb_api_key()
@@ -476,42 +498,48 @@ def tmdb_anime_decade(decade, page_no):
 	end = get_dates(2)[0] if decade == '2020' else '%s-12-31' % str(int(decade) + 9)
 	url = '%s/discover/tv?api_key=%s&with_keywords=210024&include_null_first_air_dates=false&first_air_date.gte=%s' \
 			'&first_air_date.lte=%s&page=%s' % (base_url, api_key, start, end, page_no)
-	return lists_cache_object(get_data, string, url)
+	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
 
-def tmdb_tv_search(query, page_no):
+def tmdb_anime_search(query, page_no):
+	def _process(foo):
+		data = get_data(url)
+		if data['results']:
+			threads = list(make_thread_list_enumerate(_anime_checker, data['results']))
+			[i.join() for i in threads]
+			anime_results.sort(key=lambda k: k[0])
+			data['results'] = [i[1] for i in anime_results]
+		return data
+	def _anime_checker(count, item):
+		if any([x['id'] == 210024 for x in tmdb_tv_keywords(item['id'])['results']]): anime_results_append((count, item))
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	meta_filter = get_meta_filter()
-	string = 'tmdb_tv_search_%s_%s_%s' % (query, meta_filter, page_no)
-	url = '%s/search/tv?api_key=%s&language=en-US&include_adult=%s&query=%s&page=%s' % (base_url, api_key, meta_filter, query, page_no)
-	return lists_cache_object(get_data, string, url)
-
-def tmdb_tv_reviews(tmdb_id, page_no):
-	api_key = tmdb_api_key()
-	if api_key in empty_setting_check: return no_api_key()
-	url = '%s/tv/%s/reviews?api_key=%s&page=%s' % (base_url, tmdb_id, api_key, page_no)
-	return get_tmdb(url).json()
+	string = 'tmdb_anime_search_%s_%s_%s' % (query, meta_filter, page_no)
+	url = '%s/search/tv?api_key=%s&include_adult=%s&query=%s&page=%s' % (base_url, api_key, meta_filter, query, page_no)
+	anime_results = []
+	anime_results_append = anime_results.append
+	return lists_cache_object(_process, string, url)
 
 def tmdb_popular_people(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_popular_%s' % page_no
 	url = '%s/person/popular?api_key=%s&language=en&page=%s' % (base_url, api_key, page_no)
-	return cache_function(get_tmdb, string, url, EXPIRY_ONE_DAY)
+	return cache_function(get_tmdb, string, url, EXPIRY_1_DAY)
 
 def tmdb_trending_people_day(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_trending_day_%s' % page_no
 	url = '%s/trending/person/day?api_key=%s&page=%s' % (base_url, api_key, page_no)
-	return cache_function(get_tmdb, string, url, EXPIRY_ONE_DAY)
+	return cache_function(get_tmdb, string, url, EXPIRY_1_DAY)
 
 def tmdb_trending_people_week(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_people_trending_week_%s' % page_no
 	url = '%s/trending/person/week?api_key=%s&page=%s' % (base_url, api_key, page_no)
-	return cache_function(get_tmdb, string, url, EXPIRY_ONE_DAY)
+	return cache_function(get_tmdb, string, url, EXPIRY_1_WEEK)
 
 def tmdb_people_full_info(actor_id):
 	api_key = tmdb_api_key()

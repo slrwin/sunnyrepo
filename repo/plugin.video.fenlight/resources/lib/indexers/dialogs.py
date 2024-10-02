@@ -131,24 +131,26 @@ def trakt_manager_choice(params):
 	else: trakt_api.trakt_remove_from_list(params)
 
 def playback_choice(params):
-	media_type, poster = params.get('media_type'), params.get('poster')
-	season, episode = params.get('season', ''), params.get('episode', '')
+	media_type, season, episode = params.get('media_type'), params.get('season', ''), params.get('episode', '')
+	episode_id = params.get('episode_id', None)
 	meta = params.get('meta')
 	try: meta = json.loads(meta)
 	except: pass
 	if not isinstance(meta, dict):
 		function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
 		meta = function('tmdb_id', meta, tmdb_api_key(), mpaa_region(), get_datetime())
+	poster = meta.get('poster') or empty_poster
 	aliases = get_aliases_titles(make_alias_dict(meta, meta['title']))
 	items = [{'line': 'Select Source', 'function': 'scrape'},
 			{'line': 'Rescrape & Select Source', 'function': 'clear_and_rescrape'},
 			{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'},
 			{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'},
 			{'line': 'Scrape With All Filters Ignored', 'function': 'scrape_with_filters_ignored'}]
+	if media_type == 'episode' and episode_id: items.append({'line': 'Scrape with Custom Episode Groups Value', 'function': 'scrape_with_episode_group'})
 	if aliases: items.append({'line': 'Scrape with an Alias', 'function': 'scrape_with_aliases'})
 	items.append({'line': 'Scrape with Custom Values', 'function': 'scrape_with_custom_values'})
 	list_items = [{'line1': i['line'], 'icon': poster} for i in items]
-	kwargs = {'items': json.dumps(list_items), 'heading': 'Playback'}
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Playback Options'}
 	choice = select_dialog([i['function'] for i in items], **kwargs)
 	if choice == None: return notification('Cancelled', 2500)
 	if choice in ('clear_and_rescrape', 'scrape_with_custom_values'):
@@ -180,10 +182,28 @@ def playback_choice(params):
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season,
 							'episode': episode, 'ignore_scrape_filters': 'true', 'prescrape': 'false', 'autoplay': 'false'}
 		set_property('fs_filterless_search', 'true')
+	elif choice == 'scrape_with_episode_group':
+		base_groups = metadata.episode_groups(meta['tmdb_id'])
+		groups = base_groups['results']
+		if not groups:
+			notification('No Episode Groups to choose from. Try a different method.')
+			return playback_choice(params)
+		episode_group_types = {1: 'Original Air Date', 2: 'Absolute', 3: 'DVD', 4: 'Digital', 5: 'Story Arc', 6: 'Production', 7: 'TV'}
+		list_items = [{'line1': '%s | %s | %02d episodes' % (item['name'], episode_group_types[item['type']], item['episode_count']), 'line2': item['description'], 'icon': poster} \
+					for item in groups]
+		kwargs = {'items': json.dumps(list_items), 'heading': 'Episode Groups', 'multi_line': 'true'}
+		choice = select_dialog([i['id'] for i in groups], **kwargs)
+		if choice == None: return notification('Cancelled', 2500)
+		details = metadata.group_details(choice)
+		episode_details = metadata.group_episode_data(details, episode_id, season, episode)
+		if not episode_details:
+			notification('No matching episode')
+			return playback_choice(params)
+		play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false',
+		'custom_season': episode_details['season'], 'custom_episode': episode_details['episode']}
 	elif choice == 'scrape_with_aliases':
 		if len(aliases) == 1: custom_title = aliases[0]
 		else:
-			poster = meta.get('poster') or meta.get('poster') or poster_empty
 			list_items = [{'line1': i, 'icon': poster} for i in aliases]
 			kwargs = {'items': json.dumps(list_items)}
 			custom_title = select_dialog(aliases, **kwargs)
@@ -200,7 +220,6 @@ def playback_choice(params):
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false'}
 		if aliases:
 			if len(aliases) == 1: alias_title = aliases[0]
-			poster = meta.get('poster') or poster_empty
 			list_items = [{'line1': i, 'icon': poster} for i in aliases]
 			kwargs = {'items': json.dumps(list_items)}
 			alias_title = select_dialog(aliases, **kwargs)
@@ -375,7 +394,7 @@ def results_format_choice(params={}):
 	if choice: set_setting('results.list_format', choice)
 
 def clear_favorites_choice(params={}):
-	fl = [('Clear Movies Favorites', 'movie'), ('Clear TV Show Favorites', 'tvshow'), ('Clear People Favorites', 'people')]
+	fl = [('Clear Movies Favorites', 'movie'), ('Clear TV Show Favorites', 'tvshow'), ('Clear Anime Favorites', 'anime'), ('Clear People Favorites', 'people')]
 	list_items = [{'line1': item[0]} for item in fl]
 	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
 	media_type = select_dialog([item[1] for item in fl], **kwargs)
@@ -388,13 +407,14 @@ def clear_favorites_choice(params={}):
 def favorites_choice(params):
 	from caches.favorites_cache import favorites_cache
 	media_type, tmdb_id, title = params.get('media_type'), params.get('tmdb_id'), params.get('title')
+	if params.get('is_anime') in (True, 'True', 'true'): media_type = 'anime'
 	current_favorites = favorites_cache.get_favorites(media_type)
 	people_favorite = media_type == 'people'
 	current_favorite = any(i['tmdb_id'] == tmdb_id for i in current_favorites)
 	if current_favorite:
 		function, text = favorites_cache.delete_favourite, 'Remove From Favorites?'
 		param_refresh = params.get('refresh', None)
-		if param_refresh == None: refresh = any(i in folder_path() for i in ('action=favorites_movies', 'action=favorites_tvshows'))
+		if param_refresh == None: refresh = any(i in folder_path() for i in ('action=favorites_movies', 'action=favorites_tvshows', 'action=favorites_anime_tvshows'))
 		else: refresh = param_refresh == 'true'
 	else: function, text, refresh = favorites_cache.set_favourite, 'Add To Favorites?', False
 	heading = title.split('|')[0] if people_favorite else title
@@ -435,6 +455,7 @@ def options_menu_choice(params, meta=None):
 	params_get = params.get
 	tmdb_id, content, poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None)
 	is_external, from_extras = params_get('is_external') in (True, 'True', 'true'), params_get('from_extras', 'false') == 'true'
+	is_anime = params_get('is_anime') in (True, 'True', 'true')
 	season, episode = params_get('season', ''), params_get('episode', '')
 	if not content: content = container_content()[:-1]
 	menu_type = content
@@ -470,7 +491,8 @@ def options_menu_choice(params, meta=None):
 		listing_append((base_str1 % ('Quality Limit', ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
 		listing_append((base_str1 % ('', 'Enable Scrapers'), base_str2 % current_scrapers_status, 'enable_scrapers'))
 	if not from_extras:
-		if menu_type in ('movie', 'tvshow'): listing_append(('Re-Cache %s Info' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
+		if menu_type in ('movie', 'tvshow'):
+			listing_append(('Re-Cache %s Info' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
 		if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Clear Scrapers Cache', '', 'clear_scrapers_cache'))
 		if menu_type in ('tvshow', 'season', 'episode'): listing_append(('TV Shows Progress Manager', '', 'nextep_manager'))
 		listing_append(('Open Download Manager', '', 'open_download_manager'))
@@ -509,7 +531,7 @@ def options_menu_choice(params, meta=None):
 	if choice == 'trakt_manager':
 		return trakt_manager_choice({'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id or 'None', 'media_type': content, 'icon': poster})
 	if choice == 'favorites_choice':
-		return favorites_choice({'media_type': content if content in ('movie', 'tvshow') else 'tvshow', 'tmdb_id': tmdb_id, 'title': title})
+		return favorites_choice({'media_type': content if content in ('movie', 'tvshow') else 'tvshow', 'tmdb_id': tmdb_id, 'title': title, 'is_anime': is_anime})
 	if choice == 'toggle_autoplay':
 		set_setting('auto_play_%s' % content, autoplay_toggle)
 	elif choice == 'toggle_autoplay_next':
@@ -529,7 +551,7 @@ def extras_menu_choice(params):
 	function = metadata.movie_meta if media_type == 'movie' else metadata.tvshow_meta
 	meta = function('tmdb_id', params['tmdb_id'], tmdb_api_key(), mpaa_region(), get_datetime())
 	if not stacked: hide_busy_dialog()
-	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_external=params.get('is_external', 'true' if external() else 'false'),
+	open_window(('windows.extras', 'Extras'), 'extras.xml', meta=meta, is_external=params.get('is_external', 'true' if external() else 'false'), is_anime=params.get('is_anime', None),
 															options_media_type=media_type, starting_position=params.get('starting_position', None))
 
 def open_movieset_choice(params):
