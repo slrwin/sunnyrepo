@@ -35,13 +35,14 @@ class TVShows:
 		self.params_get = self.params.get
 		self.category_name = self.params_get('category_name', None) or self.params_get('name', None) or 'TV Shows'
 		self.id_type, self.list, self.action = self.params_get('id_type', 'tmdb_id'), self.params_get('list', []), self.params_get('action', None)
-		self.is_anime = '_anime_' in self.action
 		self.items, self.new_page, self.total_pages, self.is_external, self.is_home = [], {}, None, external(), home()
 		self.widget_hide_next_page = self.is_home and widget_hide_next_page()
 		self.widget_hide_watched = self.is_home and widget_hide_watched()
 		self.custom_order = self.params_get('custom_order', 'false') == 'true'
 		self.paginate_start = int(self.params_get('paginate_start', '0'))
 		self.append = self.items.append
+		try: self.is_anime = '_anime_' in self.action
+		except: self.is_anime = False
 	
 	def fetch_list(self):
 		handle = int(sys.argv[1])
