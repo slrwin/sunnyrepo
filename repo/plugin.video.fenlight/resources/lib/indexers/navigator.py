@@ -113,7 +113,7 @@ class Navigator:
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'movie'}, 'Movie Lists', 'movies')
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'tvshow'}, 'TV Show Lists', 'tv')
 		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'anime'}, 'Anime Lists', 'anime')
-		# self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'because_you_watched'}, 'Because You Watched', 'because_you_watched')
+		self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'because_you_watched'}, 'Because You Watched', 'because_you_watched')
 		if trakt_user_active(): self.add({'mode': 'navigator.build_random_lists', 'menu_type': 'trakt'}, 'Trakt Lists', 'trakt')
 		self.end_directory()
 
@@ -426,13 +426,18 @@ class Navigator:
 		self.end_directory()
 
 	def because_you_watched(self):
-		if self.params_get('menu_type') == 'movie': mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations', 'movie'
-		else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations', 'episode'
+		recommend_type = s.recommend_service()
+		menu_type = self.params_get('menu_type')
+		if menu_type == 'movie':
+			mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations' if recommend_type == 0 else 'imdb_more_like_this', 'movie'
+		else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations' if recommend_type == 0 else 'imdb_more_like_this', 'episode'
 		recently_watched = get_recently_watched(media_type, short_list=0)
 		for item in recently_watched:
 			if media_type == 'movie': name, tmdb_id = item['title'], item['media_id']
 			else: name, tmdb_id = '%s - %sx%s' % (item['title'], str(item['season']), str(item['episode'])), item['media_ids']['tmdb']
-			self.add({'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Because You Watched %s' % name}, name, 'because_you_watched')
+			params = {'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Because You Watched %s' % name}
+			if recommend_type == 1: params['get_imdb'] = 'true'
+			self.add(params, name, 'because_you_watched')
 		self.end_directory()
 
 	def build_random_lists(self):

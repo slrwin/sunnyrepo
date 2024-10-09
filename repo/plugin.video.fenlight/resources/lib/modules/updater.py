@@ -45,7 +45,7 @@ no_rollback_str = 'No previous versions found.[CR]Please install rollback manual
 error_update_str = 'Error Updating.[CR]Please install new update manually'
 error_rollback_str = 'Error rolling back.[CR]Please install rollback manually'
 changes_heading_str = 'New Online Release (v.%s) Changelog'
-view_changes_str = 'New release available [B](v.%s)[/B].[CR]Do you want to view the changelog for the new release before installing?'
+view_changes_str = 'Do you want to view the changelog for the new release before installing?'
 no_changes_str = 'You are running the current version of Fen Light.[CR][CR]There is no new version changelog to view.'
 
 def get_versions():

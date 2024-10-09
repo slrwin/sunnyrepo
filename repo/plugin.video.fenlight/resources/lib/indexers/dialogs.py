@@ -130,6 +130,19 @@ def trakt_manager_choice(params):
 	if choice == 'Add': trakt_api.trakt_add_to_list(params)
 	else: trakt_api.trakt_remove_from_list(params)
 
+def episode_groups_choice(params):
+	episode_group_types = {1: 'Original Air Date', 2: 'Absolute', 3: 'DVD', 4: 'Digital', 5: 'Story Arc', 6: 'Production', 7: 'TV'}
+	meta = params.get('meta')
+	poster = params.get('poster') or empty_poster
+	base_groups = metadata.episode_groups(meta['tmdb_id'])
+	groups = base_groups['results']
+	if not groups: return None
+	list_items = [{'line1': '%s | %s Order | %d Groups | %02d Episodes' % (item['name'], episode_group_types[item['type']], item['group_count'], item['episode_count']),
+					'line2': item['description'], 'icon': poster} for item in groups]
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Episode Groups', 'enable_context_menu': 'true', 'enumerate': 'true', 'multi_line': 'true'}
+	choice = select_dialog([i['id'] for i in groups], **kwargs)
+	return choice
+
 def playback_choice(params):
 	media_type, season, episode = params.get('media_type'), params.get('season', ''), params.get('episode', '')
 	episode_id = params.get('episode_id', None)
@@ -183,17 +196,10 @@ def playback_choice(params):
 							'episode': episode, 'ignore_scrape_filters': 'true', 'prescrape': 'false', 'autoplay': 'false'}
 		set_property('fs_filterless_search', 'true')
 	elif choice == 'scrape_with_episode_group':
-		base_groups = metadata.episode_groups(meta['tmdb_id'])
-		groups = base_groups['results']
-		if not groups:
+		choice = episode_groups_choice({'meta': meta, 'poster': poster})
+		if choice == None:
 			notification('No Episode Groups to choose from. Try a different method.')
 			return playback_choice(params)
-		episode_group_types = {1: 'Original Air Date', 2: 'Absolute', 3: 'DVD', 4: 'Digital', 5: 'Story Arc', 6: 'Production', 7: 'TV'}
-		list_items = [{'line1': '%s | %s | %02d episodes' % (item['name'], episode_group_types[item['type']], item['episode_count']), 'line2': item['description'], 'icon': poster} \
-					for item in groups]
-		kwargs = {'items': json.dumps(list_items), 'heading': 'Episode Groups', 'multi_line': 'true'}
-		choice = select_dialog([i['id'] for i in groups], **kwargs)
-		if choice == None: return notification('Cancelled', 2500)
 		details = metadata.group_details(choice)
 		episode_details = metadata.group_episode_data(details, episode_id, season, episode)
 		if not episode_details:

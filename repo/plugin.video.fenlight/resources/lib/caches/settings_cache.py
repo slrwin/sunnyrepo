@@ -207,10 +207,10 @@ default_settings = [
 #==================== UTC Time Offset
 {'setting_id': 'datetime.offset', 'setting_type': 'action', 'setting_default': '0', 'min_value': '-15', 'max_value': '15'},
 #==================== Downloads
-{'setting_id': 'movie_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fen/Movies Downloads/', 'browse_mode': '0'},
-{'setting_id': 'tvshow_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fen/TV Show Downloads/', 'browse_mode': '0'},
-{'setting_id': 'premium_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fen/Premium Downloads/', 'browse_mode': '0'},
-{'setting_id': 'image_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fen/Image Downloads/', 'browse_mode': '0'},
+{'setting_id': 'movie_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fenlight/Movies Downloads/', 'browse_mode': '0'},
+{'setting_id': 'tvshow_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fenlight/TV Show Downloads/', 'browse_mode': '0'},
+{'setting_id': 'premium_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fenlight/Premium Downloads/', 'browse_mode': '0'},
+{'setting_id': 'image_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.fenlight/Image Downloads/', 'browse_mode': '0'},
 
 
 #================================================================================#
@@ -241,6 +241,9 @@ default_settings = [
 {'setting_id': 'paginate.lists', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Within Addon Only', '2': 'Widgets Only', '3': 'Both'}},
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
+{'setting_id': 'recommend_service', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recommended (TMDb)', '1': 'More Like This (IMDb)'}},
+{'setting_id': 'recommend_seed', 'setting_type': 'action', 'setting_default': '5', 'settings_options': {'1': 'Last Watched Only', '2': 'Last 2 Watched',
+'3': 'Last 3 Watched', '4': 'Last 4 Watched', '5': 'Last 5 Watched'}},
 {'setting_id': 'mpaa_region', 'setting_type': 'string', 'setting_default': 'US'},
 {'setting_id': 'tv_progress_location', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Watched', '1': 'In Progress', '2': 'Both'}},
 {'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},

@@ -163,6 +163,12 @@ def extras_enabled_menus():
 	if setting in ('', None, 'noop', []): return []
 	return [int(i) for i in setting.split(',')]
 
+def recommend_service():
+	return int(get_setting('fenlight.recommend_service', '0'))
+
+def recommend_seed():
+	return int(get_setting('fenlight.recommend_seed', '5'))
+
 def tv_progress_location():
 	return int(get_setting('fenlight.tv_progress_location', '0'))
 

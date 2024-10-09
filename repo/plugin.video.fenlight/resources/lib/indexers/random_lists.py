@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from apis.trakt_api import trakt_get_lists, trakt_collection_lists, trakt_watchlist_lists, get_trakt_list_contents
+from apis.tmdb_api import tmdb_movies_recommendations, tmdb_tv_recommendations
+from apis.imdb_api import imdb_more_like_this
 from indexers.trakt_lists import build_trakt_list
 from indexers.seasons import build_season_list
 from indexers.episodes import build_episode_list, build_single_episode
@@ -7,9 +9,10 @@ from indexers.movies import Movies
 from indexers.tvshows import TVShows
 from modules import meta_lists
 from modules import kodi_utils
+from modules.metadata import movie_meta, tvshow_meta
 from modules.watched_status import get_recently_watched
-from modules.settings import paginate, page_limit
-from modules.utils import manual_function_import, make_thread_list, paginate_list
+from modules.settings import paginate, page_limit, tmdb_api_key, mpaa_region, recommend_service, recommend_seed
+from modules.utils import manual_function_import, make_thread_list, paginate_list, get_current_timestamp, get_datetime
 # logger = kodi_utils.logger
 
 external, home, end_directory, set_property, sys, random = kodi_utils.external, kodi_utils.home, kodi_utils.end_directory, kodi_utils.set_property, kodi_utils.sys, kodi_utils.random
@@ -203,9 +206,9 @@ class RandomLists():
 		self.make_directory()
 
 	def random_trakt_personal_lists(self):
-		function = trakt_collection_lists if self.action == 'trakt_collection_lists' else trakt_watchlist_lists
 		random_list, cache_to_memory = get_persistent_content('random_trakt_personal_lists', '%s_%s' % (self.menu_type, self.action), self.remake_widgets, self.is_external)
 		if not random_list:
+			function = trakt_collection_lists if self.action == 'trakt_collection_lists' else trakt_watchlist_lists
 			self.random_results = function('movies' if self.menu_type in ('movie', 'movies') else 'shows', None)
 			random_list = random.sample(self.random_results, min(len(self.random_results), 20))
 			if cache_to_memory: set_persistent_content('random_trakt_personal_lists',  '%s_%s' % (self.menu_type, self.action), random_list)
@@ -216,24 +219,30 @@ class RandomLists():
 		self.make_directory()
 
 	def random_because_you_watched(self):
-		random_list, cache_to_memory = get_persistent_content('random_because_you_watched', '%s_%s' % (self.menu_type, self.action), self.remake_widgets, self.is_external)
-		if not random_list:
-			if self.menu_type == 'movie': mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations', 'movie'
-			else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations', 'episode'
-			recently_watched = get_recently_watched(media_type, short_list=0)
-			# logger('recently_watched', recently_watched)
-			recent_seeds = recently_watched[:5]
-			# logger('recent_seed', recent_seed)
-			recent_sample = random.sample(recent_seeds, min(3, len(recent_seeds)))
-			# logger('recent_sample', recent_sample)
-			# logger('test', [recent_seed.index(i) for i in recent_sample])
-			# Now we have 3 of the last 5 movies watched.
-			# We need to grab the 20 "recommended" for each of these (threaded) and then choose 20 from the 60 results to make our "random_list"
-			if cache_to_memory: set_persistent_content('random_because_you_watched',  '%s_%s' % (self.menu_type, self.action), random_list)
-		self.params['list'] = [i['media_ids'] for i in random_list]
-		self.list_items = self.function(self.params).worker()
-		self.category_name = self.base_list_name
-		self.make_directory()
+		random_list, cache_to_memory = get_persistent_content('random_because_you_watched', self.menu_type, self.remake_widgets, self.is_external)
+		recommend_type = recommend_service()
+		try:
+			if not random_list:
+				if self.menu_type == 'movie': mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations', 'movie'
+				else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations', 'episode'
+				recently_watched = get_recently_watched(media_type, short_list=0)
+				recent_seed = random.choice(recently_watched[:recommend_seed()])
+				seed_tmdb_id = recent_seed['media_id'] if self.menu_type == 'movie' else recent_seed['media_ids']['tmdb']
+				list_name = 'Because You Watched... %s' % recent_seed['title']
+				if recommend_type == 0:
+					list_function = tmdb_movies_recommendations if self.menu_type == 'movie' else tmdb_tv_recommendations
+					result = list_function(seed_tmdb_id, 1)['results']
+				else:
+					meta_function = movie_meta if self.menu_type == 'movie' else tvshow_meta
+					result = imdb_more_like_this(meta_function('tmdb_id', seed_tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id'])
+				if cache_to_memory: set_persistent_content('random_because_you_watched',  self.menu_type, {'name': list_name, 'result': result})
+			else: list_name, result = random_list['name'], random_list['result']
+			if recommend_type == 0: self.params['list'] = [i['id'] for i in result]
+			else: self.params.update({'list': result, 'id_type': 'imdb_id'})
+			self.list_items = self.function(self.params).worker()
+			self.category_name =  list_name
+			self.make_directory()
+		except: clear_property(memory_str % 'random_because_you_watched')
 
 	def make_directory(self, next_page_params={}):
 		add_items(self.handle, self.list_items)

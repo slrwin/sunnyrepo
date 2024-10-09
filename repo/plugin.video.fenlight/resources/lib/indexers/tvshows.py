@@ -102,6 +102,8 @@ class TVShows:
 				self.list = [i['id'] for i in data['results']]
 				if data['total_pages'] > page_no: self.new_page = {'url': url, 'new_page': string(data['page'] + 1)}
 			elif self.action == 'imdb_more_like_this':
+				if self.params_get('get_imdb'):
+					self.params['key_id'] = tvshow_meta('tmdb_id', self.params_get('key_id'), tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id']
 				self.id_type = 'imdb_id'
 				self.list = function(self.params_get('key_id'))
 			add_items(handle, self.worker())
@@ -171,7 +173,7 @@ class TVShows:
 																			'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id})))
 				set_properties({'watchedepisodes': string(total_watched), 'unwatchedepisodes': string(total_unwatched)})
 			set_properties({'watchedprogress': string(visible_progress), 'totalepisodes': string(total_aired_eps), 'totalseasons': string(total_seasons)})
-			if self.is_home:
+			if self.is_external:
 				cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'refresh_widgets'})))
 				cm_append(('[B]Reload Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			else: cm_append(('[B]Exit TV Show List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))

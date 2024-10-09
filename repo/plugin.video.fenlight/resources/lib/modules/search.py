@@ -28,11 +28,9 @@ def get_key_id(params):
 	search_type = params.get('search_type', 'media_title')
 	string = None
 	if search_type == 'media_title':
-		if media_type == 'movie': mode, action, string = ('build_movie_list', 'tmdb_movies_search', 'movie_queries')
-		else:
-			action = 'tmdb_anime_search' if media_type == 'anime' else 'tmdb_tv_search'
-			mode, string = ('build_tvshow_list', 'tvshow_queries')
-		url_params = {'mode': mode, 'action': action}
+		if media_type == 'movie': url_params, string = {'mode': 'build_movie_list', 'action': 'tmdb_movies_search'}, 'movie_queries'
+		elif media_type == 'tv_show': url_params, string = {'mode': 'build_tvshow_list', 'action': 'tmdb_tv_search'}, 'tvshow_queries'
+		else: url_params, string = {'mode': 'build_tvshow_list', 'action': 'tmdb_anime_search'}, 'anime_queries'
 	elif search_type == 'people': string = 'people_queries'
 	elif search_type == 'tmdb_keyword':
 		url_params, string = {'mode': 'navigator.keyword_results', 'media_type': media_type}, 'keyword_tmdb_%s_queries' % media_type

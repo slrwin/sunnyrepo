@@ -326,7 +326,7 @@ class Extras(BaseDialog):
 					listitem = self.make_listitem()
 					name = item['title']
 					ranking = item['ranking'].upper()
-					if ranking == 'NONE': ranking - 'NO RANK'
+					if ranking == 'NONE': ranking = 'NO RANK'
 					if item['content']: ranking += ' (x%02d)' % item['total_count']
 					icon = parentsguide_icons[name]
 					listitem.setProperty('name', name)

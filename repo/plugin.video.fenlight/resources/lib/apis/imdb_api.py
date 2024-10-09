@@ -6,7 +6,7 @@ from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
 from modules.kodi_utils import requests, json, sleep
 from modules.utils import remove_accents, replace_html_codes
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
 base_url = 'https://www.imdb.com/%s'
@@ -183,11 +183,22 @@ def get_imdb(params):
 		spoiler_results = None
 		spoiler_list, final_list = [], []
 		spoiler_append, final_list_append, imdb_append = spoiler_list.append, final_list.append, imdb_list.append
-		result = requests.get(url, timeout=timeout)
-		result = remove_accents(result.text)
-		result = result.replace('\n', ' ')
-		results = parseDOM(result, 'section', attrs={'id': r'advisory-(.+?)'})
-		try: spoiler_results = parseDOM(result, 'section', attrs={'id': 'advisory-spoilers'})[0]
+		tester, count, result = '', 0, []
+		while count <= 2:
+			tester = requests.get(url, timeout=timeout, headers=headers)
+			if not 'opengraphprotocol' in tester:
+				result = tester
+				result = remove_accents(result.text)
+				result = result.replace('\n', ' ')
+				break
+			count += 1
+			sleep(100)
+		if not result:
+			logger('Parentsguide', 'All opengraphprotocol results')
+			return result, 0
+		try:
+			results = parseDOM(result, 'section', attrs={'id': r'advisory-(.+?)'})
+			spoiler_results = parseDOM(result, 'section', attrs={'id': 'advisory-spoilers'})[0]
 		except: pass
 		if spoiler_results:
 			results = [i for i in results if not i in spoiler_results]

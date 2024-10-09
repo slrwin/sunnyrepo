@@ -14,9 +14,6 @@ debrid_list_modules = [('Real-Debrid', RealDebridAPI), ('Premiumize.me', Premium
 def debrid_enabled():
 	return [i[0] for i in debrid_list if enabled_debrids_check(i[1])]
 
-def debrid_authed():
-	return [i[0] for i in debrid_list if authorized_debrid_check(i[1])]
-
 def manual_add_magnet_to_cloud(params):
 	show_busy_dialog()
 	function = [i[1] for i in debrid_list_modules if i[0] == params['provider']][0]

@@ -96,6 +96,8 @@ class Movies:
 				data = sorted(movieset_meta(self.params_get('key_id'), tmdb_api_key())['parts'], key=lambda k: k['release_date'] or '2050')
 				self.list = [i['id'] for i in data]
 			elif self.action == 'imdb_more_like_this':
+				if self.params_get('get_imdb'):
+					self.params['key_id'] = movie_meta('tmdb_id', self.params_get('key_id'), tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id']
 				self.id_type = 'imdb_id'
 				self.list = function(self.params_get('key_id'))
 			add_items(handle, self.worker())
@@ -167,7 +169,7 @@ class Movies:
 							'tmdb_id': tmdb_id, 'title': title})))
 			if progress:
 				cm_append(('[B]Clear Progress[/B]', run_plugin % build_url({'mode': 'watched_status.erase_bookmark', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'refresh': 'true'})))
-			if self.is_home:
+			if self.is_external:
 				cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'refresh_widgets'})))
 				cm_append(('[B]Reload Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))
 			else: cm_append(('[B]Exit Movie List[/B]', run_plugin % build_url({'mode': 'navigator.exit_media_menu'})))
