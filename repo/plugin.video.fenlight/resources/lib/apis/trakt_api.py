@@ -419,22 +419,11 @@ def hide_unhide_progress_items(params):
 	trakt_sync_activities()
 	kodi_refresh()
 
-# def trakt_search_lists(search_title, page_no):
-# 	def _process(dummy_arg):
-# 		return call_trakt('search', params={'type': 'list', 'fields': 'name,description', 'query': search_title, 'limit': 50}, pagination=True, page_no=page_no)
-# 	string = 'trakt_search_lists_%s_%s' % (search_title, page_no)
-# 	return cache_object(_process, string, 'dummy_arg', False, 4)
-
 def trakt_search_lists(search_title, page_no):
 	def _process(dummy_arg):
-		return call_trakt('search', params={'type': 'show', 'fields': 'title,translations,aliases', 'genres': 'anime', 'query': search_title, 'limit': 20},
-							pagination=True, page_no=page_no)
-	string = 'trakt_search_anime_%s_%s' % (search_title, page_no)
-	result = call_trakt('search', params={'type': 'show', 'fields': 'title,translations,aliases', 'genres': 'anime', 'query': search_title, 'limit': 20},
-						pagination=True, page_no=page_no)
-	logger('result', result)
-	return result
-	# return cache_object(_process, string, 'dummy_arg', False, 4)
+		return call_trakt('search', params={'type': 'list', 'fields': 'name,description', 'query': search_title, 'limit': 50}, pagination=True, page_no=page_no)
+	string = 'trakt_search_lists_%s_%s' % (search_title, page_no)
+	return cache_object(_process, string, 'dummy_arg', False, 4)
 
 def trakt_favorites(media_type, dummy_arg):
 	def _process(params):

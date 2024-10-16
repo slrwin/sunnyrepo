@@ -1,5 +1,11 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 1.0.86[/B][/COLOR]
+- FIXED UPDATER BUG. IT IS SAFE TO UPDATE TO THIS VERSION. IF YOU ARE ON VERSION 1.0.85, THEN DOWNGRADE FIRST BEFORE UPDATING.
+- Fixed searching Trakt user lists.
+- Fixed little filter error in fetching MPAA ratings.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 1.0.85[/B][/COLOR]
 - Added Settings->Content->General->"Service used for Because You Watched". Choose which service provides recommendations for the Because You Watched menus. Options are Recommended (TMDb) or More Like This (IMDb). TMDb by default.
 - Added "Because You Watched" section to the Random menu. This will take random media from up to the last 5 movies/episodes you have watched, select one of those at random, and display recommended media from that watched item.

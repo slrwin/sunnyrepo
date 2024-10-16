@@ -84,7 +84,7 @@ def update_check(action=4):
 		return
 	if action in (0, 4):
 		if not confirm_dialog(heading=heading_str, text=result_str % (current_version, online_version, update_available_str), ok_label='Yes', cancel_label='No'): return
-		if confirm_dialog(heading=heading_str, text=view_changes_str % online_version, ok_label='Yes', cancel_label='No'):
+		if confirm_dialog(heading=heading_str, text=view_changes_str, ok_label='Yes', cancel_label='No'):
 			get_changes(online_version)
 			if not confirm_dialog(heading=heading_str, text=continue_confirm_str, ok_label='Yes', cancel_label='No'): return
 	if action == 1: notification(notification_occuring_str, icon=downloads_icon)

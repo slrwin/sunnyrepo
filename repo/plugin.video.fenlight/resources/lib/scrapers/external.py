@@ -5,7 +5,7 @@ from caches.settings_cache import get_setting
 from modules import kodi_utils, source_utils
 from modules.debrid import RD_check, PM_check, AD_check, query_local_cache
 from modules.utils import clean_file_name
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 normalize, get_file_info, pack_enable_check, int_window_prop = source_utils.normalize, source_utils.get_file_info, source_utils.pack_enable_check, kodi_utils.int_window_prop
 sleep, monitor, get_property, set_property, random = kodi_utils.sleep, kodi_utils.monitor, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.random
@@ -206,7 +206,6 @@ class source:
 			final_results = []
 			results = list(_process_duplicates(results))
 			hash_list = list(set([i['hash'] for i in results]))
-			# logger('hash_list', hash_list)
 			cached_hashes = query_local_cache(hash_list)
 			debrid_check_threads = [Thread(target=_process_cache_check, args=debrid_runners[item], name=item) for item in self.active_debrid]
 			[i.start() for i in debrid_check_threads]

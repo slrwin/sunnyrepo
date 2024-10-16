@@ -81,7 +81,7 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 		release_dates = data_get('release_dates')
 		if release_dates:
 			try: mpaa = next(x['certification'] for i in release_dates['results'] for x in i['release_dates'] \
-									if i['iso_3166_1'] == mpaa_region and x['certification'] != '' and x['note'] == '')
+									if i['iso_3166_1'] == mpaa_region and x['certification'] != '')
 			except: pass
 		credits = data_get('credits')
 		if credits:
@@ -196,12 +196,8 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 			country = [i['name'] for i in production_countries]
 			country_codes = [i['iso_3166_1'] for i in production_countries]
 		content_ratings = data_get('content_ratings', None)
-		release_dates = data_get('release_dates', None)
 		if content_ratings:
 			try: mpaa = next(i['rating'] for i in content_ratings['results'] if i['iso_3166_1'] == mpaa_region)
-			except: pass
-		elif release_dates:
-			try: mpaa = next(i['release_dates'][0]['certification'] for i in release_dates['results'] if i['iso_3166_1'] == mpaa_region)
 			except: pass
 		spoken_languages = data_get('spoken_languages', [])
 		if spoken_languages:
