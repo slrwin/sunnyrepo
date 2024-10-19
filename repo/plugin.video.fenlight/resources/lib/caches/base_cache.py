@@ -4,10 +4,11 @@ import sqlite3 as database
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-kodi_refresh, sleep, userdata_path, path_join, translatePath = kodi_utils.kodi_refresh, kodi_utils.sleep, kodi_utils.userdata_path, kodi_utils.path_join, kodi_utils.translatePath
+kodi_refresh, sleep, path_join, translatePath, addon_profile = kodi_utils.kodi_refresh, kodi_utils.sleep, kodi_utils.path_join, kodi_utils.translatePath, kodi_utils.addon_profile
 delete_file, get_property, set_property, clear_property = kodi_utils.delete_file, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
 notification, confirm_dialog, ok_dialog, open_file, show_text = kodi_utils.notification, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.open_file, kodi_utils.show_text
 path_exists, list_dirs, progress_dialog, make_directory = kodi_utils.path_exists, kodi_utils.list_dirs, kodi_utils.progress_dialog, kodi_utils.make_directory
+userdata_path = addon_profile()
 databases_path = path_join(userdata_path, 'databases/')
 database_path_raw = path_join(userdata_path, 'databases')
 navigator_db = translatePath(path_join(database_path_raw, 'navigator.db'))

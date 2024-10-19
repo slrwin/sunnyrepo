@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import re
+import json
 import base64
+from urllib.parse import parse_qsl, quote, urlencode
 from caches.base_cache import connect_database
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
 from modules.utils import chunks
-from modules.kodi_utils import make_session, json, urlencode, quote, clear_property, parse_qsl
+from modules.kodi_utils import make_session, clear_property
 # from modules.kodi_utils import logger
 
 video_extensions = 'm4v, 3g2, 3gp, nsv, tp, ts, ty, pls, rm, rmvb, mpd, ifo, mov, qt, divx, xvid, bivx, vob, nrg, img, iso, udf, pva, wmv, asf, asx, ogm, m2v, avi, bin, dat,' \

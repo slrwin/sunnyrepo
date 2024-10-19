@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import ssl
+import json
+from threading import Thread
 from urllib.request import Request, urlopen
+from urllib.parse import parse_qsl, urlparse, unquote
 from caches.settings_cache import get_setting
 from modules import kodi_utils
 from modules.sources import Sources
@@ -10,10 +14,10 @@ from modules.source_utils import clean_title
 from modules.utils import clean_file_name, safe_string, remove_accents, normalize
 # logger = kodi_utils.logger
 
-video_extensions, image_extensions, get_icon, dialog, unquote = kodi_utils.video_extensions, kodi_utils.image_extensions, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.unquote
-add_items, set_sort_method, set_content, end_directory, sys = kodi_utils.add_items, kodi_utils.set_sort_method, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.sys
+video_extensions, image_extensions, get_icon, kodi_dialog = kodi_utils.video_extensions, kodi_utils.image_extensions, kodi_utils.get_icon, kodi_utils.kodi_dialog
+add_items, set_sort_method, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_sort_method, kodi_utils.set_content, kodi_utils.end_directory
 show_busy_dialog, hide_busy_dialog, make_directory, open_file = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.make_directory, kodi_utils.open_file
-json, Thread, urlparse, parse_qsl, notification = kodi_utils.json, kodi_utils.Thread, kodi_utils.urlparse, kodi_utils.parse_qsl, kodi_utils.notification
+notification = kodi_utils.notification
 confirm_dialog, ok_dialog, build_url, get_visibility = kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.build_url, kodi_utils.get_visibility
 sleep, set_category, poster_empty, select_dialog = kodi_utils.sleep, kodi_utils.set_category, kodi_utils.empty_poster, kodi_utils.select_dialog
 get_property, set_property, clear_property = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
@@ -47,7 +51,7 @@ def runner(params):
 		meta  = json.loads(chosen_list[0].get('meta'))
 		image = meta.get('poster') or poster_empty
 		default_name = '%s (%s)' % (clean_file_name(get_title(meta)), get_year(meta))
-		default_foldername = dialog.input('Title', defaultt=default_name)
+		default_foldername = kodi_dialog().input('Title', defaultt=default_name)
 		
 		multi_downloads = []
 		multi_downloads_append = multi_downloads.append
@@ -221,7 +225,7 @@ class Downloader:
 			self.final_destination = self.down_folder
 		elif self.action in ('meta.single', 'meta.pack'):
 			default_name = '%s (%s)' % (self.title, self.year)
-			if self.action == 'meta.single': folder_rootname = dialog.input('Title', defaultt=default_name)
+			if self.action == 'meta.single': folder_rootname = kodi_dialog().input('Title', defaultt=default_name)
 			else: folder_rootname = self.params_get('default_foldername', default_name)
 			if not folder_rootname: return False
 			if self.media_type == 'episode':

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 from windows.base_window import open_window
 from apis.tmdb_api import tmdb_people_info, tmdb_people_full_info, tmdb_popular_people, tmdb_trending_people_day, tmdb_trending_people_week, tmdb_media_images
 from apis.easynews_api import import_easynews
@@ -7,7 +8,7 @@ from modules.utils import paginate_list, chunks
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-json, notification, make_listitem, list_dirs, image_extensions = kodi_utils.json, kodi_utils.notification, kodi_utils.make_listitem, kodi_utils.list_dirs, kodi_utils.image_extensions
+notification, make_listitem, list_dirs, image_extensions = kodi_utils.notification, kodi_utils.make_listitem, kodi_utils.list_dirs, kodi_utils.image_extensions
 delete_file, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.delete_file, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'
 

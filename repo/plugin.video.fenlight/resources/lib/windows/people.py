@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from threading import Thread
 from windows.base_window import BaseDialog, window_manager, window_player
 from apis.tmdb_api import tmdb_people_info, tmdb_people_full_info
 from apis.imdb_api import imdb_people_trivia
@@ -8,7 +9,7 @@ from modules import kodi_utils, settings
 from modules.utils import calculate_age, get_datetime
 # logger = kodi_utils.logger
 
-addon_fanart, Thread, empty_poster, execute_builtin = kodi_utils.default_addon_fanart, kodi_utils.Thread, kodi_utils.empty_poster, kodi_utils.execute_builtin
+addon_fanart, empty_poster, execute_builtin = kodi_utils.addon_fanart(), kodi_utils.empty_poster, kodi_utils.execute_builtin
 notification, show_busy_dialog, hide_busy_dialog, get_icon = kodi_utils.notification, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.get_icon
 extras_enable_scrollbars, tmdb_api_key, easynews_authorized, mpaa_region = settings.extras_enable_scrollbars, settings.tmdb_api_key, settings.easynews_authorized, settings.mpaa_region
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'

@@ -333,7 +333,7 @@ def episodes_meta(season, meta):
 	return data
 
 def all_episodes_meta(meta, include_specials=False):
-	from modules.kodi_utils import Thread
+	from threading import Thread
 	def _get_tmdb_episodes(season):
 		try: data.extend(episodes_meta(season, meta))
 		except: pass

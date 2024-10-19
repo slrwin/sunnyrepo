@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import json
+from threading import Thread
 from apis.trakt_api import make_trakt_slug
 from caches.settings_cache import get_setting
 from modules import kodi_utils as ku, settings as st, watched_status as ws
 # logger = ku.logger
 
 set_property, clear_property, get_visibility, hide_busy_dialog, xbmc_actor = ku.set_property, ku.clear_property, ku.get_visibility, ku.hide_busy_dialog, ku.xbmc_actor
-Thread, json, xbmc_player, execute_builtin, sleep = ku.Thread, ku.json, ku.xbmc_player, ku.execute_builtin, ku.sleep
-make_listitem, volume_checker, get_infolabel = ku.make_listitem, ku.volume_checker, ku.get_infolabel
+xbmc_player, execute_builtin, sleep = ku.xbmc_player, ku.execute_builtin, ku.sleep
+make_listitem, volume_checker, get_infolabel, xbmc_monitor = ku.make_listitem, ku.volume_checker, ku.get_infolabel, ku.xbmc_monitor
 close_all_dialog, notification, poster_empty, fanart_empty = ku.close_all_dialog, ku.notification, ku.empty_poster, ku.get_addon_fanart()
 auto_resume, auto_nextep_settings = st.auto_resume, st.auto_nextep_settings
 set_bookmark, mark_movie, mark_episode = ws.set_bookmark, ws.mark_movie, ws.mark_episode
@@ -216,7 +218,7 @@ class FenLightPlayer(xbmc_player):
 		self.is_generic = self.sources_object == 'video'
 		if not self.is_generic:
 			self.meta = self.sources_object.meta
-			self.meta_get, self.kodi_monitor, self.playback_percent = self.meta.get, ku.monitor, self.sources_object.playback_percent or 0.0
+			self.meta_get, self.kodi_monitor, self.playback_percent = self.meta.get, xbmc_monitor(), self.sources_object.playback_percent or 0.0
 			self.playing_filename = self.sources_object.playing_filename
 			self.media_marked, self.nextep_info_gathered = False, False
 			self.playback_successful, self.cancel_all_playback = None, False

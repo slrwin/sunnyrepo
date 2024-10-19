@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 import time
 import hashlib
+import random
 import _strptime
 import unicodedata
 from html import unescape
+from threading import Thread
 from zipfile import ZipFile
 from importlib import import_module, reload as rel_module
 from datetime import datetime, timedelta, date
-from modules.kodi_utils import sys, translate_path, Thread, random, show_busy_dialog, hide_busy_dialog, path_exists
+from modules.kodi_utils import translate_path, show_busy_dialog, hide_busy_dialog, path_exists
 # from modules.kodi_utils import logger
 
 def change_image_resolution(image, replace_res):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from apis.trakt_api import trakt_watchlist, trakt_get_my_calendar
 from caches.favorites_cache import favorites_cache
 from modules import kodi_utils, settings, watched_status as ws
@@ -6,7 +7,7 @@ from modules.metadata import tvshow_meta, episodes_meta, all_episodes_meta
 from modules.utils import jsondate_to_datetime, adjust_premiered_date, make_day, get_datetime, title_key, date_difference, make_thread_list_enumerate
 # logger = kodi_utils.logger
 
-set_view_mode, external, home, sys = kodi_utils.set_view_mode, kodi_utils.external, kodi_utils.home, kodi_utils.sys
+set_view_mode, external, home = kodi_utils.set_view_mode, kodi_utils.external, kodi_utils.home
 add_items, set_content, set_sort_method, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.set_sort_method, kodi_utils.end_directory
 date_offset_info, default_all_episodes, nextep_include_unwatched = settings.date_offset, settings.default_all_episodes, settings.nextep_include_unwatched
 nextep_airing_today, nextep_sort_key, nextep_sort_direction = settings.nextep_airing_today, settings.nextep_sort_key, settings.nextep_sort_direction
@@ -19,7 +20,7 @@ get_watched_status_episode, get_bookmarks_episode, get_progress_status_episode =
 get_in_progress_episodes, get_next_episodes, get_recently_watched = ws.get_in_progress_episodes, ws.get_next_episodes, ws.get_recently_watched
 get_hidden_progress_items, get_database, watched_info_episode, get_next = ws.get_hidden_progress_items, ws.get_database, ws.watched_info_episode, ws.get_next
 string =  str
-poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.default_addon_fanart
+poster_empty, fanart_empty = kodi_utils.empty_poster, kodi_utils.addon_fanart()
 run_plugin, unaired_label, tmdb_poster = 'RunPlugin(%s)', '[COLOR red][I]%s[/I][/COLOR]', 'https://image.tmdb.org/t/p/w780%s'
 upper = string.upper
 content_type = 'episodes'

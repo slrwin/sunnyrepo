@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 import time
+import requests
+from urllib.parse import unquote
 from caches import trakt_cache
 from caches.settings_cache import get_setting, set_setting
 from caches.main_cache import cache_object
@@ -8,11 +11,11 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta_external_id, tvshow_meta_external_id
 from modules.utils import sort_list, sort_for_article, make_thread_list, get_datetime, timedelta, replace_html_codes, copy2clip, title_key, jsondate_to_datetime as js2date
 
-json, monitor, sleep, with_media_removals = kodi_utils.json, kodi_utils.monitor, kodi_utils.sleep, kodi_utils.with_media_removals
-logger, notification, player, confirm_dialog, get_property = kodi_utils.logger, kodi_utils.notification, kodi_utils.player, kodi_utils.confirm_dialog, kodi_utils.get_property
-dialog, unquote, addon_installed, addon_enabled, addon = kodi_utils.dialog, kodi_utils.unquote, kodi_utils.addon_installed, kodi_utils.addon_enabled, kodi_utils.addon
+sleep, with_media_removals, get_property = kodi_utils.sleep, kodi_utils.with_media_removals, kodi_utils.get_property
+logger, notification, xbmc_player, confirm_dialog = kodi_utils.logger, kodi_utils.notification, kodi_utils.xbmc_player, kodi_utils.confirm_dialog
+kodi_dialog, addon_installed, addon_enabled, addon = kodi_utils.kodi_dialog, kodi_utils.addon_installed, kodi_utils.addon_enabled, kodi_utils.addon
 path_check, get_icon, clear_property, remove_keys = kodi_utils.path_check, kodi_utils.get_icon, kodi_utils.clear_property, kodi_utils.remove_keys
-requests, execute_builtin, select_dialog, kodi_refresh = kodi_utils.requests, kodi_utils.execute_builtin, kodi_utils.select_dialog, kodi_utils.kodi_refresh
+execute_builtin, select_dialog, kodi_refresh = kodi_utils.execute_builtin, kodi_utils.select_dialog, kodi_utils.kodi_refresh
 progress_dialog, external, trakt_user_active, show_unaired_watchlist = kodi_utils.progress_dialog, kodi_utils.external, settings.trakt_user_active, settings.show_unaired_watchlist
 lists_sort_order, trakt_client, trakt_secret, tmdb_api_key = settings.lists_sort_order, settings.trakt_client, settings.trakt_secret, settings.tmdb_api_key
 clear_all_trakt_cache_data, cache_trakt_object, clear_trakt_calendar = trakt_cache.clear_all_trakt_cache_data, trakt_cache.cache_trakt_object, trakt_cache.clear_trakt_calendar
@@ -71,7 +74,7 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 	try: status_code = response.status_code
 	except: return None
 	if status_code == 401:
-		if player.isPlaying() == False:
+		if xbmc_player().isPlaying() == False:
 			if with_auth and confirm_dialog(heading='Authorize Trakt', text='You must authenticate with Trakt. Do you want to authenticate now?') and trakt_authenticate():
 				response = send_query()
 			else: pass
@@ -489,7 +492,7 @@ def get_trakt_list_selection(list_choice=None):
 	return selection
 
 def make_new_trakt_list(params):
-	list_title = dialog.input('')
+	list_title = kodi_dialog().input('')
 	if not list_title: return
 	list_name = unquote(list_title)
 	data = {'name': list_name, 'privacy': 'private', 'allow_comments': False}

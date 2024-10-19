@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 import re
+import json
+from urllib.parse import unquote, unquote_plus
 from modules import kodi_utils
 from modules.metadata import episodes_meta
 from modules.settings import date_offset
 from modules.utils import adjust_premiered_date, get_datetime, jsondate_to_datetime, subtract_dates
 # logger = kodi_utils.logger
 
-unquote, unquote_plus, supported_media, string, int_window_prop = kodi_utils.unquote, kodi_utils.unquote_plus, kodi_utils.supported_media, str, kodi_utils.int_window_prop
-json, set_property, notification = kodi_utils.json, kodi_utils.set_property, kodi_utils.notification
+supported_media, string = kodi_utils.supported_media, str
+set_property, notification = kodi_utils.set_property, kodi_utils.notification
 expiry_3hrs, expiry_1day, expiry_2days, expiry_3days, expiry_4days, expiry_7days, expiry_10days, expiry_14days, expiry_30days = 3, 24, 48, 72, 96, 168, 240, 336, 720
+int_window_prop = 'fenlight.internal_results.%s'
 RES_4K = ('.4k', 'hd4k', '4khd', '.uhd', 'ultrahd', 'ultra.hd', 'hd2160', '2160hd', '2160', '2160p', '216o', '216op')
 RES_1080 = ('1080', '1080p', '1080i', 'hd1080', '1080hd', 'hd1080p', 'm1080p', 'fullhd', 'full.hd', '1o8o', '1o8op', '108o', '108op', '1o80', '1o80p')
 RES_720 = ('720', '720p', '720i', 'hd720', '720hd', 'hd720p', '72o', '72op')

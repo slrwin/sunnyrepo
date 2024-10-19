@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+import requests
 import shutil
 import time
 import sqlite3 as database
@@ -10,9 +12,9 @@ from modules import kodi_utils
 
 translate_path, osPath, delete_file, execute_builtin, get_icon = kodi_utils.translate_path, kodi_utils.osPath, kodi_utils.delete_file, kodi_utils.execute_builtin, kodi_utils.get_icon
 update_kodi_addons_db, notification, show_text, confirm_dialog = kodi_utils.update_kodi_addons_db, kodi_utils.notification, kodi_utils.show_text, kodi_utils.confirm_dialog
-requests, addon_info, confirm_dialog, ok_dialog = kodi_utils.requests, kodi_utils.addon_info, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
+addon_version, confirm_dialog, ok_dialog = kodi_utils.addon_version, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
 update_local_addons, disable_enable_addon, close_all_dialog = kodi_utils.update_local_addons, kodi_utils.disable_enable_addon, kodi_utils.close_all_dialog
-json, select_dialog, show_busy_dialog, hide_busy_dialog = kodi_utils.json, kodi_utils.select_dialog, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
+select_dialog, show_busy_dialog, hide_busy_dialog = kodi_utils.select_dialog, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 
 packages_dir = translate_path('special://home/addons/packages/')
 home_addons_dir = translate_path('special://home/addons/')
@@ -53,7 +55,7 @@ def get_versions():
 		result = requests.get(versions_url % repo_location)
 		if result.status_code != 200: return None, None
 		online_version = result.text.replace('\n', '')
-		current_version = addon_info('version')
+		current_version = addon_version()
 		return current_version, online_version
 	except: return None, None
 

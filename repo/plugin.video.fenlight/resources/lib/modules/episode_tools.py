@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+import json
+import random
 from datetime import date
 from modules import kodi_utils, settings
 from modules.sources import Sources
@@ -7,10 +10,10 @@ from modules.watched_status import get_next_episodes, get_hidden_progress_items,
 from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
 # logger = kodi_utils.logger
 
-Thread, get_property, set_property, add_items = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.add_items
+get_property, set_property, add_items = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.add_items
 make_listitem, set_content, end_directory, set_view_mode = kodi_utils.make_listitem, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
-get_icon, addon_fanart, random = kodi_utils.get_icon, kodi_utils.get_addon_fanart(), kodi_utils.random
-sys, build_url, json, notification = kodi_utils.sys, kodi_utils.build_url, kodi_utils.json, kodi_utils.notification 
+get_icon, addon_fanart = kodi_utils.get_icon, kodi_utils.get_addon_fanart()
+build_url, notification = kodi_utils.build_url, kodi_utils.notification 
 watched_indicators, date_offset = settings.watched_indicators, settings.date_offset
 window_prop = 'fenlight.random_episode_history'
 

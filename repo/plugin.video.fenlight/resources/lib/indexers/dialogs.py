@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import json
 from windows.base_window import open_window, create_window
 from caches.base_cache import refresh_cached_data
 from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
@@ -10,11 +11,11 @@ from modules.utils import get_datetime, title_key, adjust_premiered_date, append
 # logger = kodi_utils.logger
 
 ok_dialog, container_content, close_all_dialog, external = kodi_utils.ok_dialog, kodi_utils.container_content, kodi_utils.close_all_dialog, kodi_utils.external
-set_property, get_icon, dialog, open_settings, folder_path = kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.dialog, kodi_utils.open_settings, kodi_utils.folder_path
+set_property, get_icon, kodi_dialog, open_settings = kodi_utils.set_property, kodi_utils.get_icon, kodi_utils.kodi_dialog, kodi_utils.open_settings
 show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.notification, kodi_utils.confirm_dialog
 external_scraper_settings, kodi_refresh, autoscrape_next_episode = kodi_utils.external_scraper_settings, kodi_utils.kodi_refresh, settings.autoscrape_next_episode
-json, select_dialog, autoplay_next_episode, quality_filter = kodi_utils.json, kodi_utils.select_dialog, settings.autoplay_next_episode, settings.quality_filter
-numeric_input, container_update, activate_window = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window
+select_dialog, autoplay_next_episode, quality_filter = kodi_utils.select_dialog, settings.autoplay_next_episode, settings.quality_filter
+numeric_input, container_update, activate_window, folder_path = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.folder_path
 poster_empty, audio_filters, mpaa_region = kodi_utils.empty_poster, settings.audio_filters, settings.mpaa_region
 extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
@@ -214,7 +215,7 @@ def playback_choice(params):
 			kwargs = {'items': json.dumps(list_items)}
 			custom_title = select_dialog(aliases, **kwargs)
 			if custom_title == None: return notification('Cancelled', 2500)
-		custom_title = dialog.input('Title', defaultt=custom_title)
+		custom_title = kodi_dialog().input('Title', defaultt=custom_title)
 		if not custom_title: return notification('Cancelled', 2500)
 		if media_type in ('movie', 'movies'): play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'],
 						'custom_title': custom_title, 'prescrape': 'false'}
@@ -229,19 +230,19 @@ def playback_choice(params):
 			list_items = [{'line1': i, 'icon': poster} for i in aliases]
 			kwargs = {'items': json.dumps(list_items)}
 			alias_title = select_dialog(aliases, **kwargs)
-			if alias_title: custom_title = dialog.input('Title', defaultt=alias_title)
-			else: custom_title = dialog.input('Title', defaultt=default_title)
-		else: custom_title = dialog.input('Title', defaultt=default_title)
+			if alias_title: custom_title = kodi_dialog().input('Title', defaultt=alias_title)
+			else: custom_title = kodi_dialog().input('Title', defaultt=default_title)
+		else: custom_title = kodi_dialog().input('Title', defaultt=default_title)
 		if not custom_title: return notification('Cancelled', 2500)
 		def _process_params(default_value, custom_value, param_value):
 			if custom_value and custom_value != default_value: play_params[param_value] = custom_value
 		_process_params(default_title, custom_title, 'custom_title')
-		custom_year = dialog.input('Year', type=numeric_input, defaultt=default_year)
+		custom_year = kodi_dialog().input('Year', type=numeric_input, defaultt=default_year)
 		_process_params(default_year, custom_year, 'custom_year')
 		if media_type == 'episode':
-			custom_season = dialog.input('Season', type=numeric_input, defaultt=season)
+			custom_season = kodi_dialog().input('Season', type=numeric_input, defaultt=season)
 			_process_params(season, custom_season, 'custom_season')
-			custom_episode = dialog.input('Episode', type=numeric_input, defaultt=episode)
+			custom_episode = kodi_dialog().input('Episode', type=numeric_input, defaultt=episode)
 			_process_params(episode, custom_episode, 'custom_episode')
 			if any(i in play_params for i in ('custom_season', 'custom_episode')):
 				if autoplay_next_episode(): _process_params('', 'true', 'disable_autoplay_next_episode')

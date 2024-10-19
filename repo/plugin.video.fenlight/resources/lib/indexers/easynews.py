@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
 from datetime import datetime
+from urllib.parse import unquote, urlencode, quote
 from modules.utils import jsondate_to_datetime
 from apis.easynews_api import import_easynews
 from indexers.images import Images
@@ -7,7 +9,7 @@ from modules import kodi_utils
 from modules.utils import clean_file_name
 # logger = kodi_utils.logger
 
-sys, build_url, unquote, urlencode, quote = kodi_utils.sys, kodi_utils.build_url, kodi_utils.unquote, kodi_utils.urlencode, kodi_utils.quote
+build_url = kodi_utils.build_url
 show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.show_text, kodi_utils.set_view_mode
 default_easynews_icon, get_addon_fanart, sleep = kodi_utils.get_icon('easynews'), kodi_utils.get_addon_fanart, kodi_utils.sleep
 add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory

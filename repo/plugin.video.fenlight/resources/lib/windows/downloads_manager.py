@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from windows.base_window import BaseDialog, json, select_dialog, confirm_dialog, ok_dialog
-from modules.kodi_utils import select_dialog
 # from modules.kodi_utils import logger
 
 status_property_string = 'download_status.%s'

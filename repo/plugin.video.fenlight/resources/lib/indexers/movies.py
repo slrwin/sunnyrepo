@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from modules import meta_lists
 from modules import kodi_utils, settings
 from modules.metadata import movie_meta, movieset_meta
@@ -7,10 +8,10 @@ from modules.watched_status import get_database, watched_info_movie, get_watched
 # logger = kodi_utils.logger
 
 make_listitem, build_url, nextpage_landscape = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.nextpage_landscape
-string, sys, external, add_items, add_dir, get_property = str, kodi_utils.sys, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, kodi_utils.get_property
+string, external, add_items, add_dir, get_property = str, kodi_utils.external, kodi_utils.add_items, kodi_utils.add_dir, kodi_utils.get_property
 set_content, end_directory, set_view_mode, folder_path = kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode, kodi_utils.folder_path
-poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.default_addon_fanart, kodi_utils.set_property
-sleep, xbmc_actor, set_category, json = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.json
+poster_empty, fanart_empty, set_property = kodi_utils.empty_poster, kodi_utils.addon_fanart(), kodi_utils.set_property
+sleep, xbmc_actor, set_category = kodi_utils.sleep, kodi_utils.xbmc_actor, kodi_utils.set_category
 add_item, home = kodi_utils.add_item, kodi_utils.home
 watched_indicators, widget_hide_next_page = settings.watched_indicators, settings.widget_hide_next_page
 widget_hide_watched, media_open_action, page_limit, paginate = settings.widget_hide_watched, settings.media_open_action, settings.page_limit, settings.paginate

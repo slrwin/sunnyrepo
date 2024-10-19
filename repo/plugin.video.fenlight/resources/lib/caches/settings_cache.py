@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
 from modules import kodi_utils
 from caches.base_cache import connect_database
 # logger = kodi_utils.logger
 
-json, numeric_input = kodi_utils.json, kodi_utils.numeric_input
-dialog, ok_dialog, select_dialog, confirm_dialog = kodi_utils.dialog, kodi_utils.ok_dialog, kodi_utils.select_dialog, kodi_utils.confirm_dialog
-default_addon_fanart, get_property, set_property, notification = kodi_utils.default_addon_fanart, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.notification
+numeric_input = kodi_utils.numeric_input
+kodi_dialog, ok_dialog, select_dialog, confirm_dialog = kodi_utils.kodi_dialog, kodi_utils.ok_dialog, kodi_utils.select_dialog, kodi_utils.confirm_dialog
+default_addon_fanart, get_property, set_property, notification = kodi_utils.addon_fanart(), kodi_utils.get_property, kodi_utils.set_property, kodi_utils.notification
 tmdb_default_api, trakt_default_id, trakt_default_secret = kodi_utils.tmdb_default_api, kodi_utils.trakt_default_id, kodi_utils.trakt_default_secret
 boolean_dict = {'true': 'false', 'false': 'true'}
 
@@ -131,7 +132,7 @@ def set_boolean(params):
 def set_string(params):
 	current_value = get_setting('fenlight.%s' % params['setting_id'])
 	current_value = current_value.replace('empty_setting', '')
-	new_value = dialog.input('', defaultt=current_value)
+	new_value = kodi_dialog().input('', defaultt=current_value)
 	if not new_value and not confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_string(params)
 	set_setting(params['setting_id'], new_value)
 
@@ -147,7 +148,7 @@ def set_numeric(params):
 		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Will this be a positive or negative number?'}
 		multiplier = select_dialog(multiplier_values, **kwargs)
 	else: multiplier = None
-	new_value = dialog.input('Range [B]%s - %s[/B].' % (min_value, max_value), type=numeric_input)
+	new_value = kodi_dialog().input('Range [B]%s - %s[/B].' % (min_value, max_value), type=numeric_input)
 	if not new_value: return
 	if multiplier: new_value = str(int(float(new_value) * multiplier[1]))
 	if int(new_value) < min_value or int(new_value) > max_value:
@@ -158,7 +159,7 @@ def set_numeric(params):
 def set_path(params):
 	setting_id = params['setting_id']
 	browse_mode = int(default_setting_values(setting_id)['browse_mode'])
-	new_value = dialog.browse(browse_mode, '', '', defaultt=get_setting('fenlight.%s' % setting_id))
+	new_value = kodi_dialog().browse(browse_mode, '', '', defaultt=get_setting('fenlight.%s' % setting_id))
 	set_setting(setting_id, new_value)
 
 def set_from_list(params):

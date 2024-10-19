@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from windows.base_window import BaseDialog, json
+import json
+from windows.base_window import BaseDialog
 # from modules.kodi_utils import logger
 
 ok_id, cancel_id, selectall_id, deselectall_id = 10, 11, 12, 13

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from threading import Thread
 from datetime import datetime, timedelta
 from windows.base_window import BaseDialog, window_manager, window_player, ok_dialog
 from apis import tmdb_api, imdb_api, omdb_api, trakt_api
@@ -12,8 +13,8 @@ from modules.metadata import movieset_meta, episodes_meta, movie_meta, tvshow_me
 from modules.episode_tools import EpisodeTools
 # logger = kodi_utils.logger
 
-Thread, get_icon, close_all_dialog = kodi_utils.Thread, kodi_utils.get_icon, kodi_utils.close_all_dialog
-addon_fanart, empty_poster = kodi_utils.default_addon_fanart, kodi_utils.empty_poster
+get_icon, close_all_dialog = kodi_utils.get_icon, kodi_utils.close_all_dialog
+addon_fanart, empty_poster = kodi_utils.addon_fanart(), kodi_utils.empty_poster
 extras_button_label_values, show_busy_dialog, hide_busy_dialog = kodi_utils.extras_button_label_values, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog
 container_update, activate_window, clear_property = kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.clear_property
 default_all_episodes, extras_enabled_menus, tmdb_api_key = settings.default_all_episodes, settings.extras_enabled_menus, settings.tmdb_api_key

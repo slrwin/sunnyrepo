@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
+import json
 import time
+import requests
+from threading import Thread
+from urllib.parse import urlencode
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
 from modules.utils import copy2clip
@@ -8,9 +12,9 @@ from modules.source_utils import supported_video_extensions, seas_ep_filter, EXT
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-notification, requests = kodi_utils.notification, kodi_utils.requests
-monitor, progress_dialog, dialog, urlencode, get_icon = kodi_utils.monitor, kodi_utils.progress_dialog, kodi_utils.dialog, kodi_utils.urlencode, kodi_utils.get_icon
-json, sleep, confirm_dialog, ok_dialog, Thread = kodi_utils.json, kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.Thread
+notification = kodi_utils.notification
+xbmc_monitor, progress_dialog, get_icon = kodi_utils.xbmc_monitor, kodi_utils.progress_dialog, kodi_utils.get_icon
+sleep, confirm_dialog, ok_dialog = kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
 base_url = 'https://www.premiumize.me/api/'
 client_id = '888228107'
 user_agent = 'Fen Light for Kodi'
@@ -159,6 +163,7 @@ class PremiumizeAPI:
 			else: ok_dialog(heading='Fen Light Cloud Transfer', text=message)
 			return False
 		show_busy_dialog()
+		monitor = xbmc_monitor()
 		extensions = supported_video_extensions()
 		transfer_id = self.create_transfer(magnet_url)
 		if not transfer_id['status'] == 'success':

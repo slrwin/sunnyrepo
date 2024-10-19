@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import json
+from urllib.parse import parse_qsl, unquote
 from caches.navigator_cache import navigator_cache, main_menus
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-build_url, confirm_dialog, dialog, sleep, kodi_refresh = kodi_utils.build_url, kodi_utils.confirm_dialog, kodi_utils.dialog, kodi_utils.sleep, kodi_utils.kodi_refresh
+build_url, confirm_dialog, kodi_dialog, sleep, kodi_refresh = kodi_utils.build_url, kodi_utils.confirm_dialog, kodi_utils.kodi_dialog, kodi_utils.sleep, kodi_utils.kodi_refresh
 get_infolabel, select_dialog, notification, execute_builtin = kodi_utils.get_infolabel, kodi_utils.select_dialog, kodi_utils.notification, kodi_utils.execute_builtin
-json, parse_qsl, get_icon, random_valid_type_check = kodi_utils.json, kodi_utils.parse_qsl, kodi_utils.get_icon, kodi_utils.random_valid_type_check
-show_busy_dialog, hide_busy_dialog, unquote, get_directory = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.unquote, kodi_utils.jsonrpc_get_directory
+get_icon, random_valid_type_check = kodi_utils.get_icon, kodi_utils.random_valid_type_check
+show_busy_dialog, hide_busy_dialog, get_directory = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.jsonrpc_get_directory
 get_all_icon_vars = kodi_utils.get_all_icon_vars
 main_list_name_dict = {'RootList': 'Root', 'MovieList': 'Movies', 'TVShowList': 'TV Shows', 'AnimeList': 'Animes'}
 default_path = 'plugin://plugin.video.fenlight?mode=navigator.main&full_list=true'
@@ -121,7 +123,7 @@ class MenuEditor:
 		self._db_execute('set', self.active_list, list_items, 'shortcut_folder')
 
 	def shortcut_folder_make(self):
-		list_name = dialog.input('')
+		list_name = kodi_dialog().input('')
 		if not list_name: return
 		self._db_execute('make_new_shortcut_folder', list_name, list_type='shortcut_folder')
 
@@ -199,7 +201,7 @@ class MenuEditor:
 		return [i for i in default_list_items if not i in list_items]
 
 	def _get_external_name_input(self, current_name):
-		new_name = dialog.input('', defaultt=current_name)
+		new_name = kodi_dialog().input('', defaultt=current_name)
 		if new_name == current_name: return None
 		return new_name
 

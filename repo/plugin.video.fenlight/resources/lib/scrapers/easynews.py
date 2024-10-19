@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from apis.easynews_api import import_easynews
 from modules import source_utils
 from modules.utils import clean_file_name, normalize

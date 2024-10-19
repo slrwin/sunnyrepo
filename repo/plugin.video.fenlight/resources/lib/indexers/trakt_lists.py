@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import sys
+import json
+import random
+from threading import Thread
 from apis import trakt_api
 from indexers.movies import Movies
 from indexers.tvshows import TVShows
@@ -7,10 +11,10 @@ from modules.utils import paginate_list
 from modules.settings import paginate, page_limit
 # logger = kodi_utils.logger
 
-add_dir, external, dialog, sleep, json, get_icon = kodi_utils.add_dir, kodi_utils.external, kodi_utils.dialog, kodi_utils.sleep, kodi_utils.json, kodi_utils.get_icon
-trakt_icon, fanart, add_item, set_property, random = get_icon('trakt'), kodi_utils.get_addon_fanart(), kodi_utils.add_item, kodi_utils.set_property, kodi_utils.random
+add_dir, external, sleep, get_icon = kodi_utils.add_dir, kodi_utils.external, kodi_utils.sleep, kodi_utils.get_icon
+trakt_icon, fanart, add_item, set_property = get_icon('trakt'), kodi_utils.get_addon_fanart(), kodi_utils.add_item, kodi_utils.set_property
 set_content, set_sort_method, set_view_mode, end_directory = kodi_utils.set_content, kodi_utils.set_sort_method, kodi_utils.set_view_mode, kodi_utils.end_directory
-sys, make_listitem, build_url, Thread, add_items = kodi_utils.sys, kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.Thread, kodi_utils.add_items
+make_listitem, build_url, add_items = kodi_utils.make_listitem, kodi_utils.build_url, kodi_utils.add_items
 nextpage_landscape, get_property, clear_property, focus_index = kodi_utils.nextpage_landscape, kodi_utils.get_property, kodi_utils.clear_property, kodi_utils.focus_index
 set_category, home, folder_path = kodi_utils.set_category, kodi_utils.home, kodi_utils.folder_path
 trakt_trending_popular_lists, trakt_get_lists, trakt_search_lists = trakt_api.trakt_trending_popular_lists, trakt_api.trakt_get_lists, trakt_api.trakt_search_lists

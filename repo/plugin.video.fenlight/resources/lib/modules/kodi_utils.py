@@ -1,33 +1,20 @@
 # -*- coding: utf-8 -*-
 # TRUMP WON
 import xbmc, xbmcgui, xbmcplugin, xbmcvfs, xbmcaddon
-import sys
-import json
-import random
-import requests
-import _strptime
 from os import path as osPath
-from threading import Thread, activeCount
-from urllib.parse import unquote, unquote_plus, urlencode, quote, parse_qsl, urlparse
+from urllib.parse import urlencode
 from modules import icons
-
 try: xbmc_actor = xbmc.Actor
 except: xbmc_actor = None
-addon_object = xbmcaddon.Addon('plugin.video.fenlight')
-player, xbmc_player, numeric_input, xbmc_monitor, translatePath = xbmc.Player(), xbmc.Player, 1, xbmc.Monitor, xbmcvfs.translatePath
+xbmc_player, numeric_input, xbmc_monitor, translatePath = xbmc.Player, 1, xbmc.Monitor, xbmcvfs.translatePath
 ListItem, getSkinDir, log, getCurrentWindowId, Window = xbmcgui.ListItem, xbmc.getSkinDir, xbmc.log, xbmcgui.getCurrentWindowId, xbmcgui.Window
 File, exists, copy, delete, rmdir, rename = xbmcvfs.File, xbmcvfs.exists, xbmcvfs.copy, xbmcvfs.delete, xbmcvfs.rmdir, xbmcvfs.rename
 get_infolabel, get_visibility, execute_JSON, window_xml_dialog = xbmc.getInfoLabel, xbmc.getCondVisibility, xbmc.executeJSONRPC, xbmcgui.WindowXMLDialog
 executebuiltin, xbmc_sleep, convertLanguage, getSupportedMedia, PlayList = xbmc.executebuiltin, xbmc.sleep, xbmc.convertLanguage, xbmc.getSupportedMedia, xbmc.PlayList
-monitor, window, dialog, progressDialog, progressDialogBG = xbmc_monitor(), Window(10000), xbmcgui.Dialog(), xbmcgui.DialogProgress(), xbmcgui.DialogProgressBG()
+progressDialogBG = xbmcgui.DialogProgressBG
 endOfDirectory, addSortMethod, listdir, mkdir, mkdirs = xbmcplugin.endOfDirectory, xbmcplugin.addSortMethod, xbmcvfs.listdir, xbmcvfs.mkdir, xbmcvfs.mkdirs
 addDirectoryItem, addDirectoryItems, setContent, setCategory = xbmcplugin.addDirectoryItem, xbmcplugin.addDirectoryItems, xbmcplugin.setContent, xbmcplugin.setPluginCategory
 path_join = osPath.join
-addon_info = addon_object.getAddonInfo
-addon_path = addon_info('path')
-userdata_path = translatePath(addon_info('profile'))
-addon_icon = translatePath(addon_info('icon'))
-default_addon_fanart = translatePath(addon_info('fanart'))
 img_url = 'https://i.imgur.com/%s.png'
 invoker_switch_dict = {'true': 'false', 'false': 'true'}
 empty_poster, nextpage = img_url % icons.box_office, img_url % icons.nextpage
@@ -35,8 +22,6 @@ nextpage_landscape = img_url % icons.nextpage_landscape
 tmdb_default_api = 'b370b60447737762ca38457bd77579b3'
 trakt_default_id = '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'
 trakt_default_secret = '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1'
-int_window_prop, pause_services_prop, firstrun_update_prop = 'fenlight.internal_results.%s', 'fenlight.pause_services', 'fenlight.firstrun_update'
-current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2, 'none': 0}
 playlist_type_dict = {'music': 0, 'video': 1}
@@ -65,11 +50,36 @@ video_extensions = ('m4v', '3g2', '3gp', 'nsv', 'tp', 'ts', 'ty', 'pls', 'rm', '
 image_extensions = ('jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'dib', 'png', 'gif', 'webp', 'tiff', 'tif',
 					'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2')
 
+def kodi_dialog():
+	return xbmcgui.Dialog()
+
+def addon_info(info):
+	return xbmcaddon.Addon('plugin.video.fenlight').getAddonInfo(info)
+
+def addon_version():
+	return get_property('fenlight.addon_version') or addon_info('version')
+
+def addon_path():
+	path = get_property('fenlight.addon_path')
+	logger('path', path)
+	if not path: path = addon_info('path')
+	return path
+	return get_property('fenlight.addon_path') or addon_info('path')
+
+def addon_profile():
+	return get_property('fenlight.addon_profile') or translatePath(addon_info('profile'))
+
+def addon_icon():
+	return get_property('fenlight.addon_icon') or addon_info('icon')
+
+def addon_fanart():
+	return get_property('fenlight.addon_fanart') or addon_info('fanart')
+
 def get_icon(image_name):
 	return img_url % getattr(icons, image_name, 'I1JJhji')
 
 def get_addon_fanart():
-	return get_property('fenlight.default_addon_fanart') or default_addon_fanart
+	return get_property('fenlight.default_addon_fanart') or addon_fanart()
 
 def build_url(url_params):
 	return 'plugin://plugin.video.fenlight/?%s' % urlencode(url_params)
@@ -124,22 +134,26 @@ def remove_keys(dict_item, dict_removals):
 	return dict_item
 
 def append_path(_path):
+	import sys
 	sys.path.append(translatePath(_path))
 
 def logger(heading, function):
 	log('###%s###: %s' % (heading, function), 1)
 
+def kodi_window():
+	return Window(10000)
+
 def get_property(prop):
-	return window.getProperty(prop)
+	return kodi_window().getProperty(prop)
 
 def set_property(prop, value):
-	return window.setProperty(prop, value)
+	return kodi_window().setProperty(prop, value)
 
 def clear_property(prop):
-	return window.clearProperty(prop)
+	return kodi_window().clearProperty(prop)
 
 def clear_all_properties():
-	return window.clearProperties()
+	return kodi_window().clearProperties()
 
 def addon(addon_id='plugin.video.fenlight'):
 	return xbmcaddon.Addon(id=addon_id)
@@ -157,6 +171,7 @@ def set_sort_method(handle, method):
 	addSortMethod(handle, sort_method_dict[method])
 
 def make_session(url='https://'):
+	import requests
 	session = requests.Session()
 	session.mount(url, requests.adapters.HTTPAdapter(pool_maxsize=100))
 	return session	
@@ -287,6 +302,7 @@ def replace_window(params, block=False):
 	return execute_builtin('ReplaceWindow(Videos,%s)' % params, block)
 
 def disable_enable_addon(addon_name='plugin.video.fenlight'):
+	import json
 	try:
 		execute_JSON(json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'Addons.SetAddonEnabled', 'params': {'addonid': addon_name, 'enabled': False}}))
 		execute_JSON(json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'Addons.SetAddonEnabled', 'params': {'addonid': addon_name, 'enabled': True}}))
@@ -307,6 +323,7 @@ def update_kodi_addons_db(addon_name='plugin.video.fenlight'):
 	except: pass
 
 def get_jsonrpc(request):
+	import json
 	response = execute_JSON(json.dumps(request))
 	result = json.loads(response)
 	return result.get('result', None)
@@ -339,9 +356,10 @@ def external_scraper_settings():
 		execute_builtin('Addon.OpenSettings(%s)' % external)
 	except: pass
 
-def progress_dialog(heading='', icon=addon_icon):
+def progress_dialog(heading='', icon=None):
+	from threading import Thread
 	from windows.base_window import create_window
-	progress_dialog = create_window(('windows.progress', 'Progress'), 'progress.xml', heading=heading, icon=icon)
+	progress_dialog = create_window(('windows.progress', 'Progress'), 'progress.xml', heading=heading, icon=icon or addon_icon())
 	Thread(target=progress_dialog.run).start()
 	return progress_dialog
 
@@ -375,8 +393,7 @@ def show_text(heading, text=None, file=None, font_size='small', kodi_log=False):
 	return open_window(('windows.textviewer', 'TextViewer'), 'textviewer.xml', heading=heading, text=text, font_size=font_size)
 
 def notification(line1, time=5000, icon=None):
-	icon = icon or addon_icon
-	dialog.notification('Fen Light', line1, icon, time)
+	kodi_dialog().notification('Fen Light', line1, icon or addon_icon(), time)
 
 def timeIt(func):
 	# Thanks to 123Venom
@@ -425,6 +442,8 @@ def toggle_language_invoker():
 	disable_enable_addon()
 
 def upload_logfile(params):
+	import json
+	import requests
 	log_files = [('Current Kodi Log', 'kodi.log'), ('Previous Kodi Log', 'kodi.old.log')]
 	list_items = [{'line1': i[0]} for i in log_files]
 	kwargs = {'items': json.dumps(list_items), 'heading': 'Choose Which Log File to Upload', 'narrow_window': 'true'}
@@ -438,7 +457,7 @@ def upload_logfile(params):
 	if not path_exists(log_file): return ok_dialog(text='Error. Log Upload Failed')
 	try:
 		with open_file(log_file) as f: text = f.read()
-		UserAgent = 'Fenlight %s' % addon_info('version')
+		UserAgent = 'Fenlight %s' % addon_version()
 		response = requests.post('%s%s' % (url, 'documents'), data=text.encode('utf-8', errors='ignore'), headers={'User-Agent': UserAgent}).json()
 		user_code = response['key']
 		if 'key' in response:

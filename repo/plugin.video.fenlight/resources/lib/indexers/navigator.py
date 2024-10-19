@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+import json
+from urllib.parse import unquote
 from caches.main_cache import main_cache
 from caches.navigator_cache import navigator_cache as nc
 from caches.settings_cache import get_setting, set_setting
@@ -6,11 +9,11 @@ from modules import meta_lists as ml, kodi_utils as k, settings as s
 from modules.watched_status import get_recently_watched
 # logger = k.logger
 
-tp, sys, build_url, notification, addon, make_listitem, list_dirs = k.translate_path, k.sys, k.build_url, k.notification, k.addon, k.make_listitem, k.list_dirs
+tp, build_url, notification, addon, make_listitem, list_dirs = k.translate_path, k.build_url, k.notification, k.addon, k.make_listitem, k.list_dirs
 add_item, set_content, end_directory, set_view_mode, add_items, get_infolabel = k.add_item, k.set_content, k.end_directory, k.set_view_mode, k.add_items, k.get_infolabel
 set_sort_method, set_category, container_refresh_input, current_window_object = k.set_sort_method, k.set_category, k.container_refresh_input, k.current_window_object
-json, close_all_dialog, sleep, home, get_property, set_property, fanart = k.json, k.close_all_dialog, k.sleep, k.home, k.get_property, k.set_property, k.get_addon_fanart()
-download_directory, easynews_authorized, get_icon, unquote, container_refresh = s.download_directory, s.easynews_authorized, k.get_icon, k.unquote, k.container_refresh
+close_all_dialog, sleep, home, get_property, set_property, fanart = k.close_all_dialog, k.sleep, k.home, k.get_property, k.set_property, k.get_addon_fanart()
+download_directory, easynews_authorized, get_icon, container_refresh = s.download_directory, s.easynews_authorized, k.get_icon, k.container_refresh
 get_shortcut_folders, currently_used_list, get_shortcut_folder_contents = nc.get_shortcut_folders, nc.currently_used_list, nc.get_shortcut_folder_contents
 get_main_lists, authorized_debrid_check, trakt_user_active = nc.get_main_lists, s.authorized_debrid_check, s.trakt_user_active
 log_loc, old_log_loc = tp('special://logpath/kodi.log'), tp('special://logpath/kodi.old.log')

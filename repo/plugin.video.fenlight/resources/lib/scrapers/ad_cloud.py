@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from apis.alldebrid_api import AllDebridAPI
 from modules import source_utils
-from modules.kodi_utils import Thread
+from threading import Thread
 from modules.utils import clean_file_name, normalize
 from modules.settings import enabled_debrids_check, filter_by_name
 # from modules.kodi_utils import logger

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+import json
+import random
 from apis.trakt_api import trakt_get_lists, trakt_collection_lists, trakt_watchlist_lists, get_trakt_list_contents
 from apis.tmdb_api import tmdb_movies_recommendations, tmdb_tv_recommendations
 from apis.imdb_api import imdb_more_like_this
@@ -15,9 +18,9 @@ from modules.settings import paginate, page_limit, tmdb_api_key, mpaa_region, re
 from modules.utils import manual_function_import, make_thread_list, paginate_list, get_current_timestamp, get_datetime
 # logger = kodi_utils.logger
 
-external, home, end_directory, set_property, sys, random = kodi_utils.external, kodi_utils.home, kodi_utils.end_directory, kodi_utils.set_property, kodi_utils.sys, kodi_utils.random
+external, home, end_directory, set_property = kodi_utils.external, kodi_utils.home, kodi_utils.end_directory, kodi_utils.set_property
 add_items, set_content, set_category, add_dir, set_view_mode = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.set_category, kodi_utils.add_dir, kodi_utils.set_view_mode
-nextpage_landscape, get_property, json, clear_property, sleep = kodi_utils.nextpage_landscape, kodi_utils.get_property, kodi_utils.json, kodi_utils.clear_property, kodi_utils.sleep
+nextpage_landscape, get_property, clear_property, sleep = kodi_utils.nextpage_landscape, kodi_utils.get_property, kodi_utils.clear_property, kodi_utils.sleep
 folder_path, random_valid_type_check = kodi_utils.folder_path, kodi_utils.random_valid_type_check
 random_episodes_check = {'build_in_progress_episode': 'episode.progress', 'build_recently_watched_episode': 'episode.recently_watched',
 'build_next_episode': 'episode.next', 'build_my_calendar': 'episode.trakt'}
@@ -202,7 +205,7 @@ class RandomLists():
 			list_name, result = random_list['name'], random_list['result']
 			url_params = {'base_list_name':list_type_name, 'list_name': list_name, 'result': result}
 			self.list_items = build_trakt_list(url_params)
-		self.category_name = list_name
+		self.category_name = self.base_list_name or list_name or ''
 		self.make_directory()
 
 	def random_trakt_personal_lists(self):
@@ -215,7 +218,7 @@ class RandomLists():
 		self.params['list'] = [i['media_ids'] for i in random_list]
 		self.params['id_type'] = 'trakt_dict'
 		self.list_items = self.function(self.params).worker()
-		self.category_name = self.base_list_name
+		self.category_name = self.base_list_name or ''
 		self.make_directory()
 
 	def random_because_you_watched(self):

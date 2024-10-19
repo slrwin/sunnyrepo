@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import json
+from urllib.parse import unquote
 from caches.main_cache import main_cache
 from indexers.people import person_search
 from indexers.easynews import search_easynews_image
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-json, close_all_dialog, external = kodi_utils.json, kodi_utils.close_all_dialog, kodi_utils.external
-build_url, dialog, unquote, execute_builtin, select_dialog = kodi_utils.build_url, kodi_utils.dialog, kodi_utils.unquote, kodi_utils.execute_builtin, kodi_utils.select_dialog
+close_all_dialog, external = kodi_utils.close_all_dialog, kodi_utils.external
+build_url, kodi_dialog, execute_builtin, select_dialog = kodi_utils.build_url, kodi_utils.kodi_dialog, kodi_utils.execute_builtin, kodi_utils.select_dialog
 notification, kodi_refresh, numeric_input = kodi_utils.notification, kodi_utils.kodi_refresh, kodi_utils.numeric_input
 clear_history_list = [('Clear Movie Search History', 'movie_queries'),
 					('Clear TV Show Search History', 'tvshow_queries'),
@@ -21,7 +23,7 @@ clear_history_list = [('Clear Movie Search History', 'movie_queries'),
 def get_key_id(params):
 	close_all_dialog()
 	params_key_id = params.get('key_id', None)
-	key_id = params_key_id or dialog.input('')
+	key_id = params_key_id or kodi_dialog().input('')
 	if not key_id: return
 	key_id = unquote(key_id)
 	media_type = params.get('media_type', '')

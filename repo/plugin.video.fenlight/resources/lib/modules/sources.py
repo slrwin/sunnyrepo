@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
 import time
+from threading import Thread
 from windows.base_window import open_window, create_window
 from caches.settings_cache import get_setting
 from scrapers import external, folders
@@ -9,10 +11,10 @@ from modules.source_utils import get_cache_expiry, make_alias_dict
 from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import, manual_module_import
 # logger = kodi_utils.logger
 
-get_icon, notification, sleep, int_window_prop = kodi_utils.get_icon, kodi_utils.notification, kodi_utils.sleep, kodi_utils.int_window_prop
+get_icon, notification, sleep, xbmc_monitor = kodi_utils.get_icon, kodi_utils.notification, kodi_utils.sleep, kodi_utils.xbmc_monitor
 select_dialog, confirm_dialog, close_all_dialog = kodi_utils.select_dialog, kodi_utils.confirm_dialog, kodi_utils.close_all_dialog
-json, show_busy_dialog, hide_busy_dialog, xbmc_player = kodi_utils.json, kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.xbmc_player
-Thread, get_property, set_property, clear_property = kodi_utils.Thread, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
+show_busy_dialog, hide_busy_dialog, xbmc_player = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.xbmc_player
+get_property, set_property, clear_property = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
 auto_play, active_internal_scrapers, provider_sort_ranks, audio_filters = settings.auto_play, settings.active_internal_scrapers, settings.provider_sort_ranks, settings.audio_filters
 check_prescrape_sources, external_scraper_info, auto_resume = settings.check_prescrape_sources, settings.external_scraper_info, settings.auto_resume
 store_resolved_to_cloud, source_folders_directory, watched_indicators = settings.store_resolved_to_cloud, settings.source_folders_directory, settings.watched_indicators
@@ -35,6 +37,7 @@ quality_ranks = {'4K': 1, '1080p': 2, '720p': 3, 'SD': 4, 'SCR': 5, 'CAM': 5, 'T
 cloud_scrapers, folder_scrapers = ('rd_cloud', 'pm_cloud', 'ad_cloud'), ('folder1', 'folder2', 'folder3', 'folder4', 'folder5')
 default_internal_scrapers = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'folders')
 main_line = '%s[CR]%s[CR]%s'
+int_window_prop = 'fenlight.internal_results.%s'
 scraper_timeout = 25
 filter_keys = {'audio': '', 'hdr': '[B]HDR[/B]', 'dv': '[B]D/VISION[/B]', 'av1': '[B]AV1[/B]', 'hevc': '[B]HEVC[/B]', 'enhanced_upscaled': '[B]AI ENHANCED/UPSCALED[/B]'}
 
@@ -293,7 +296,7 @@ class Sources():
 
 	def scrapers_dialog(self):
 		def _scraperDialog():
-			monitor = kodi_utils.monitor
+			monitor = xbmc_monitor()
 			start_time = time.time()
 			while not self.progress_dialog.iscanceled() and not monitor.abortRequested():
 				try:
@@ -571,7 +574,7 @@ class Sources():
 			if self.playback_percent == None: return self._kill_progress_dialog()
 			if not self.resolve_dialog_made: self._make_resolve_dialog()
 			if self.background: sleep(1000)
-			monitor = kodi_utils.monitor
+			monitor = xbmc_monitor()
 			url = None
 			for count, item in enumerate(items, 1):
 				try:

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+import json
 from datetime import datetime
 from apis.alldebrid_api import AllDebridAPI
 from modules import kodi_utils
@@ -6,7 +8,7 @@ from modules.source_utils import supported_video_extensions
 from modules.utils import clean_file_name, normalize
 # logger = kodi_utils.logger
 
-json, build_url, make_listitem, sys = kodi_utils.json, kodi_utils.build_url, kodi_utils.make_listitem, kodi_utils.sys
+build_url, make_listitem = kodi_utils.build_url, kodi_utils.make_listitem
 default_ad_icon, fanart, set_view_mode = kodi_utils.get_icon('alldebrid'), kodi_utils.get_addon_fanart(), kodi_utils.set_view_mode
 add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory
 show_busy_dialog, hide_busy_dialog, show_text = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.show_text

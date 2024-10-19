@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 import time
+import requests
+from threading import Thread
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
 from modules.utils import copy2clip
@@ -8,8 +11,8 @@ from modules.source_utils import supported_video_extensions, seas_ep_filter, EXT
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-requests, sleep, confirm_dialog, ok_dialog, monitor = kodi_utils.requests, kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.monitor
-progress_dialog, dialog, get_icon, notification, Thread = kodi_utils.progress_dialog, kodi_utils.dialog, kodi_utils.get_icon, kodi_utils.notification, kodi_utils.Thread
+sleep, confirm_dialog, ok_dialog, xbmc_monitor = kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.xbmc_monitor
+progress_dialog, get_icon, notification = kodi_utils.progress_dialog, kodi_utils.get_icon, kodi_utils.notification
 base_url = 'https://api.real-debrid.com/rest/1.0/'
 auth_url = 'https://api.real-debrid.com/oauth/v2/'
 device_url = 'device/code?%s'
@@ -341,6 +344,7 @@ class RealDebridAPI:
 			else: ok_dialog(heading='Fen Light Cloud Transfer', text=message)
 			return False
 		show_busy_dialog()
+		monitor = xbmc_monitor()
 		try:
 			active_count = self.torrents_activeCount()
 			if active_count['nb'] >= active_count['limit']:

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
+from urllib.parse import unquote
 from apis.tmdb_api import tmdb_people_info
 from windows.base_window import open_window
 from indexers.images import Images
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-get_icon, unquote, addon_fanart = kodi_utils.get_icon, kodi_utils.unquote, kodi_utils.get_addon_fanart()
+get_icon, addon_fanart = kodi_utils.get_icon, kodi_utils.get_addon_fanart()
 add_items, set_content, set_category, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.set_category, kodi_utils.end_directory
-build_url, make_listitem, sys = kodi_utils.build_url, kodi_utils.make_listitem, kodi_utils.sys
+build_url, make_listitem = kodi_utils.build_url, kodi_utils.make_listitem
 tmdb_image_base = 'https://image.tmdb.org/t/p/%s%s'
 default_image = get_icon('genre_family')
 

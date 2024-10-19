@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from windows.base_window import BaseDialog, window_manager, json, select_dialog
+import json
+from windows.base_window import BaseDialog, window_manager, select_dialog
 from indexers.people import person_data_dialog
 from indexers.dialogs import favorites_choice
 from modules.settings import download_directory
-from modules.kodi_utils import default_addon_fanart, get_icon, nextpage
+from modules.kodi_utils import addon_fanart, get_icon, nextpage
 # from modules.kodi_utils import logger
 
 backup_thumbnail = get_icon('genre_family')
@@ -126,7 +127,7 @@ class ThumbImageViewer(BaseDialog):
 
 	def set_properties(self):
 		self.setProperty('page_no', str(self.current_page))
-		self.setProperty('fanart', default_addon_fanart)
+		self.setProperty('fanart', addon_fanart())
 		self.setProperty('backup_thumbnail', backup_thumbnail)
 
 class ImageViewer(BaseDialog):
@@ -164,5 +165,5 @@ class ImageViewer(BaseDialog):
 		self.item_list = list(builder())
 
 	def set_properties(self):
-		self.setProperty('fanart', default_addon_fanart)
+		self.setProperty('fanart', addon_fanart())
 		self.setProperty('backup_thumbnail', backup_thumbnail)

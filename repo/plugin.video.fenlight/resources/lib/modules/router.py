@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from modules.kodi_utils import external, parse_qsl
+from modules.kodi_utils import external
+from urllib.parse import parse_qsl
 # from modules.kodi_utils import logger
 
 def sys_exit_check(): return external()

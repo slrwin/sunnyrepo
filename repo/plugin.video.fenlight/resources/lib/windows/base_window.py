@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import re
+import json
+from threading import Thread
 from xml.dom.minidom import parse as mdParse
 from modules import kodi_utils
 from caches.settings_cache import get_setting, set_setting, restore_setting_default
 from modules.utils import manual_function_import
 
-window_xml_dialog, logger, player, notification, delete_folder = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.player, kodi_utils.notification, kodi_utils.delete_folder
+window_xml_dialog, logger, xbmc_player, notification = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.xbmc_player, kodi_utils.notification
 make_listitem, sleep, open_file, path_exists, confirm_dialog = kodi_utils.make_listitem, kodi_utils.sleep, kodi_utils.open_file, kodi_utils.path_exists, kodi_utils.confirm_dialog
-current_skin_prop, current_font_prop, addon_installed, addon_path = kodi_utils.current_skin_prop, kodi_utils.current_font_prop, kodi_utils.addon_installed, kodi_utils.addon_path
-json, clear_property, run_plugin, Thread, get_visibility = kodi_utils.json, kodi_utils.clear_property, kodi_utils.run_plugin, kodi_utils.Thread, kodi_utils.get_visibility
+addon_installed, addon_path, delete_folder = kodi_utils.addon_installed, kodi_utils.addon_path, kodi_utils.delete_folder
+clear_property, run_plugin, get_visibility = kodi_utils.clear_property, kodi_utils.run_plugin, kodi_utils.get_visibility
 show_busy_dialog, hide_busy_dialog, addon_enabled, getSkinDir = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.addon_enabled, kodi_utils.getSkinDir
 build_url, execute_builtin, set_property, get_property = kodi_utils.build_url, kodi_utils.execute_builtin, kodi_utils.set_property, kodi_utils.get_property
 translate_path, get_infolabel, list_dirs, current_skin = kodi_utils.translate_path, kodi_utils.get_infolabel, kodi_utils.list_dirs, kodi_utils.current_skin
@@ -16,6 +18,7 @@ get_system_setting, select_dialog, ok_dialog = kodi_utils.jsonrpc_get_system_set
 extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
 needed_font_values = ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60'))
 addon_skins_folder = 'special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/'
+current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
 
 def open_window(import_info, skin_xml, **kwargs):
 	'''
@@ -35,7 +38,7 @@ def create_window(import_info, skin_xml, **kwargs):
 	'''
 	try:
 		function = manual_function_import(*import_info)
-		args = (skin_xml, addon_path)
+		args = (skin_xml, addon_path())
 		xml_window = function(*args, **kwargs)
 		return xml_window
 	except Exception as e:
@@ -127,6 +130,7 @@ def window_player(obj):
 			if not addon_installed('plugin.video.youtube') or not addon_enabled('plugin.video.youtube'): return
 		clear_property('fenlight.window_loaded')
 		current_params = obj.current_params
+		player = xbmc_player()
 		player.play(window_player_url)
 		sleep(2000)
 		while not player.isPlayingVideo(): sleep(100)
@@ -143,7 +147,7 @@ class BaseDialog(window_xml_dialog):
 	def __init__(self, *args):
 		window_xml_dialog.__init__(self, args)
 		self.args = args
-		self.player = player
+		self.player = xbmc_player()
 		self.left_action = 1
 		self.right_action = 2
 		self.up_action = 3

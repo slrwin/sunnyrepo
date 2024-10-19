@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+import json
+from threading import Thread
 from windows.base_window import BaseDialog, select_dialog, ok_dialog
 from modules.settings import provider_sort_ranks
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
-json, Thread, dialog = kodi_utils.json, kodi_utils.Thread, kodi_utils.dialog
-hide_busy_dialog, addon_fanart, empty_poster = kodi_utils.hide_busy_dialog, kodi_utils.default_addon_fanart, kodi_utils.empty_poster
+kodi_dialog = kodi_utils.kodi_dialog
+hide_busy_dialog, addon_fanart, empty_poster = kodi_utils.hide_busy_dialog, kodi_utils.addon_fanart(), kodi_utils.empty_poster
 get_icon, img_url = kodi_utils.get_icon, kodi_utils.img_url
 
 resume_dict = {10: 'resume', 11: 'start_over', 12: 'cancel'}
@@ -80,7 +82,7 @@ class SourcesResults(BaseDialog):
 				else: filtered_list = [i for i in self.item_list if i.getProperty(filter_type) == filter_value]
 			elif filter_type == 'special':
 				if filter_value == 'title':
-					keywords = dialog.input('Enter Keyword (Comma Separated for Multiple)')
+					keywords = kodi_dialog().input('Enter Keyword (Comma Separated for Multiple)')
 					if not keywords: return
 					keywords.replace(' ', '')
 					keywords = keywords.split(',')

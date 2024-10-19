@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from modules.kodi_utils import parse_qsl, get_infolabel, activate_window, container_update, hide_busy_dialog
+from urllib.parse import parse_qsl
+from modules.kodi_utils import get_infolabel, activate_window, container_update, hide_busy_dialog
 from indexers.dialogs import extras_menu_choice, options_menu_choice
 # from modules.kodi_utils import logger
 

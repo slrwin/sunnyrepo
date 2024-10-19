@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from datetime import datetime
 from modules.utils import datetime_workaround
 from apis.real_debrid_api import RealDebridAPI
@@ -11,7 +12,7 @@ show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_b
 add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory
 notification, execute_builtin, confirm_dialog = kodi_utils.notification, kodi_utils.execute_builtin, kodi_utils.confirm_dialog
 default_rd_icon, fanart = kodi_utils.get_icon('realdebrid'), kodi_utils.get_addon_fanart()
-sys, make_listitem, build_url = kodi_utils.sys, kodi_utils.make_listitem, kodi_utils.build_url
+make_listitem, build_url = kodi_utils.make_listitem, kodi_utils.build_url
 extensions = supported_video_extensions()
 RealDebrid = RealDebridAPI()
 
