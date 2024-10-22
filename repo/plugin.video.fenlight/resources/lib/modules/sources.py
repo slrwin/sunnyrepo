@@ -100,9 +100,9 @@ class Sources():
 		self.active_external = 'external' in self.active_internal_scrapers
 		if self.active_external:
 			self.debrid_enabled = debrid_enabled()
-			if not self.debrid_enabled: return self.disable_external()
+			if not self.debrid_enabled: return self.disable_external('No Debrid Services Enabled')
 			self.ext_folder, self.ext_name = external_scraper_info()
-			if not self.ext_folder or not self.ext_name: return self.disable_external()
+			if not self.ext_folder or not self.ext_name: return self.disable_external('Error Importing External Module')
 
 	def get_sources(self):
 		if not self.progress_dialog and not self.background: self._make_progress_dialog()
@@ -114,8 +114,7 @@ class Sources():
 		if not results:
 			self.prescrape = False
 			self.prepare_internal_scrapers()
-			if self.active_external:
-				self.activate_external_providers()
+			if self.active_external: self.activate_external_providers()
 			elif not self.active_internal_scrapers: self._kill_progress_dialog()
 			self.orig_results = self.collect_results()
 			if not self.orig_results and not self.active_external: self._kill_progress_dialog()
@@ -171,8 +170,8 @@ class Sources():
 			self.filters_ignored = True
 			results = self.sort_results(results)
 		else:
-			results = self.sort_results(results)
 			results = self.filter_results(results)
+			results = self.sort_results(results)
 			for file_type in filter_keys: results = self._special_filter(results, file_type)
 		results = self._sort_first(results)
 		return results
@@ -197,13 +196,12 @@ class Sources():
 		return results
 
 	def sort_results(self, results):
-		def _add_keys(item):
+		for item in results:
 			provider = item['scrape_provider']
 			if provider == 'external': account_type = item['debrid'].lower()
 			else: account_type = provider.lower()
 			item['provider_rank'] = self._get_provider_rank(account_type)
 			item['quality_rank'] = self._get_quality_rank(item.get('quality', 'SD'))
-		for item in results: _add_keys(item)
 		results.sort(key=self.sort_function)
 		results = self._sort_uncached_results(results)
 		return results

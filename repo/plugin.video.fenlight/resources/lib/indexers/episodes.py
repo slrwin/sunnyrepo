@@ -105,6 +105,7 @@ def build_episode_list(params):
 	title, show_year, rootname, show_duration, show_status = meta_get('title'), meta_get('year') or '2050', meta_get('rootname'), meta_get('duration'), meta_get('status')
 	cast, mpaa, trailer, genre, studio, country = meta_get('cast', []), meta_get('mpaa'), string(meta_get('trailer')), meta_get('genre'), meta_get('studio'), meta_get('country')
 	season = params['season']
+	is_anime = params.get('is_anime', 'False')
 	show_poster = meta_get('poster') or poster_empty
 	show_fanart = meta_get('fanart') or fanart_empty
 	show_clearlogo = meta_get('clearlogo') or ''

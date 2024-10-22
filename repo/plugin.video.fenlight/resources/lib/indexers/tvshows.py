@@ -147,9 +147,9 @@ class TVShows:
 			more_like_this_params = build_url({'mode': 'build_tvshow_list', 'action': 'imdb_more_like_this', 'key_id': imdb_id,
 											'name': 'More Like This based on %s' % title, 'is_external': self.is_external})
 			if self.all_episodes:
-				if self.all_episodes == 1 and total_seasons > 1: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id})
-				else: url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': 'all'})
-			else: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id})
+				if self.all_episodes == 1 and total_seasons > 1: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id, 'is_anime': self.is_anime})
+				else: url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': 'all', 'is_anime': self.is_anime})
+			else: url_params = build_url({'mode': 'build_season_list', 'tmdb_id': tmdb_id, 'is_anime': self.is_anime})
 			if self.open_extras:
 				cm_append(('[B]Browse[/B]', container_update % url_params))
 				url_params = extras_params

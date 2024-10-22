@@ -14,7 +14,7 @@ make_listitem, build_url = kodi_utils.make_listitem, kodi_utils.build_url
 add_items, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory
 show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.show_text, kodi_utils.set_view_mode
 confirm_dialog, ok_dialog, kodi_dialog = kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.kodi_dialog
-dialog, execute_builtin, default_pm_icon, fanart = kodi_utils.dialog, kodi_utils.execute_builtin, kodi_utils.get_icon('premiumize'), kodi_utils.get_addon_fanart()
+execute_builtin, default_pm_icon, fanart = kodi_utils.execute_builtin, kodi_utils.get_icon('premiumize'), kodi_utils.get_addon_fanart()
 extensions = supported_video_extensions()
 Premiumize = PremiumizeAPI()
 

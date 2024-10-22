@@ -6,6 +6,7 @@ from windows.base_window import BaseDialog
 ok_id, cancel_id, selectall_id, deselectall_id = 10, 11, 12, 13
 button_ids = (ok_id, cancel_id, selectall_id, deselectall_id)
 select_deselect_ids = (selectall_id, deselectall_id)
+confirm_dict = {10: True, 11: False}
 
 class Select(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -118,8 +119,7 @@ class Confirm(BaseDialog):
 		return self.selected
 
 	def onClick(self, controlID):
-		if controlID == 10: self.selected = True
-		elif controlID == 11: self.selected = False
+		self.selected = confirm_dict[controlID]
 		self.close()
 
 	def onAction(self, action):

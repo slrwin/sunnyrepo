@@ -1,5 +1,8 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 1.0.88[/B][/COLOR]
+- Quick fx for PM browsing.
+
 [COLOR dodgerblue][B]Version 1.0.87[/B][/COLOR]
 - Fixed incorrect aired episode totals in seasons container.
 - Optimizations to service procedures to help Fen Light start quicker on Kodi opening.
