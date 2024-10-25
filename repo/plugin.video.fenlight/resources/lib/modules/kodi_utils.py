@@ -60,10 +60,6 @@ def addon_version():
 	return get_property('fenlight.addon_version') or addon_info('version')
 
 def addon_path():
-	path = get_property('fenlight.addon_path')
-	logger('path', path)
-	if not path: path = addon_info('path')
-	return path
 	return get_property('fenlight.addon_path') or addon_info('path')
 
 def addon_profile():

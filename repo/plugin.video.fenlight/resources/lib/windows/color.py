@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from windows.base_window import BaseDialog, ok_dialog
 from modules.meta_lists import color_palette
-from modules.kodi_utils import dialog
+from modules.kodi_utils import kodi_dialog
 # from modules.kodi_utils import logger
 
 class SelectColor(BaseDialog):
@@ -52,7 +52,7 @@ class SelectColor(BaseDialog):
 		self.item_list = list(builder())
 
 	def color_input(self):
-		color_value = dialog.input('Enter Highight Color Value', defaultt=self.current_setting)
+		color_value = kodi_dialog().input('Enter Highight Color Value', defaultt=self.current_setting)
 		if not color_value: return None
 		color_value = color_value.upper()
 		if not color_value.isalnum() or not color_value.startswith('FF') or not len(color_value) == 8:

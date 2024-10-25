@@ -40,6 +40,7 @@ main_line = '%s[CR]%s[CR]%s'
 int_window_prop = 'fenlight.internal_results.%s'
 scraper_timeout = 25
 filter_keys = {'audio': '', 'hdr': '[B]HDR[/B]', 'dv': '[B]D/VISION[/B]', 'av1': '[B]AV1[/B]', 'hevc': '[B]HEVC[/B]', 'enhanced_upscaled': '[B]AI ENHANCED/UPSCALED[/B]'}
+preference_values = {0:100, 1:50, 2:20, 3:10, 4:5, 5:1}
 
 class Sources():
 	def __init__(self):
@@ -170,10 +171,22 @@ class Sources():
 			self.filters_ignored = True
 			results = self.sort_results(results)
 		else:
-			results = self.filter_results(results)
 			results = self.sort_results(results)
-			for file_type in filter_keys: results = self._special_filter(results, file_type)
-		results = self._sort_first(results)
+			results = self.filter_results(results)
+			for file_type in filter_keys: results = self.special_filter(results, file_type)
+		# results = self.sort_preferred(results)
+		results = self.sort_first(results)
+		return results
+
+	def sort_results(self, results):
+		for item in results:
+			provider = item['scrape_provider']
+			if provider == 'external': account_type = item['debrid'].lower()
+			else: account_type = provider.lower()
+			item['provider_rank'] = self._get_provider_rank(account_type)
+			item['quality_rank'] = self._get_quality_rank(item.get('quality', 'SD'))
+		results.sort(key=self.sort_function)
+		results = self._sort_uncached_results(results)
 		return results
 
 	def filter_results(self, results):
@@ -195,16 +208,46 @@ class Sources():
 		results += folder_results
 		return results
 
-	def sort_results(self, results):
-		for item in results:
-			provider = item['scrape_provider']
-			if provider == 'external': account_type = item['debrid'].lower()
-			else: account_type = provider.lower()
-			item['provider_rank'] = self._get_provider_rank(account_type)
-			item['quality_rank'] = self._get_quality_rank(item.get('quality', 'SD'))
-		results.sort(key=self.sort_function)
-		results = self._sort_uncached_results(results)
+	def special_filter(self, results, file_type):
+		if file_type == 'audio': return [i for i in results if not any(x in i['extraInfo'] for x in audio_filters())]
+		enable_setting, key = filter_status(file_type), filter_keys[file_type]
+		if key == '[B]HEVC[/B]' and enable_setting in (0,2):
+			hevc_max_quality = self._get_quality_rank(get_setting('fenlight.filter_hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
+			results = [i for i in results if not key in i['extraInfo'] or i['quality_rank'] >= hevc_max_quality]
+		if enable_setting == 1:
+			if key == '[B]D/VISION[/B]' and filter_status('hdr') in (0, 2):
+				results = [i for i in results if all(x in i['extraInfo'] for x in (key, '[B]HDR[/B]')) or not key in i['extraInfo']]
+			else: results = [i for i in results if not key in i['extraInfo']]
+		elif enable_setting == 2 and self.autoplay:
+			priority_list = [i for i in results if key in i['extraInfo']]
+			remainder_list = [i for i in results if not i in priority_list]
+			results = priority_list + remainder_list
 		return results
+
+	def sort_first(self, results):
+		try:
+			sort_first_scrapers = []
+			if 'folders' in self.all_scrapers and sort_to_top('folders'): sort_first_scrapers.append('folders')
+			sort_first_scrapers.extend([i for i in self.all_scrapers if i in cloud_scrapers and sort_to_top(i)])
+			if not sort_first_scrapers: return results
+			sort_first = [i for i in results if i['scrape_provider'] in sort_first_scrapers]
+			sort_first.sort(key=lambda k: (self._sort_folder_to_top(k['scrape_provider']), k['quality_rank']))
+			sort_last = [i for i in results if not i in sort_first]
+			results = sort_first + sort_last
+		except: pass
+		return results
+
+	def sort_preferred(self, results):
+		try:
+			preferences = ['3D', 'IMAX', 'MULTI-LANG', 'BLURAY']
+			if not preferences: return results
+			preference_results = [i for i in results if any(x in i['extraInfo'] for x in preferences)]
+			if not preference_results: return results
+			results = [i for i in results if not i in preference_results]
+			preference_results = sorted([dict(item, **{'pref_includes': sum([preference_values[preferences.index(x)] for x in [i for i in preferences if i in item['extraInfo']]])}) \
+						for item in preference_results], key=lambda k: k['pref_includes'], reverse=True)
+		except Exception as e: kodi_utils.logger('sort_preferred error', str(e))
+		return preference_results + results
 
 	def prepare_internal_scrapers(self):
 		if self.active_external and len(self.active_internal_scrapers) == 1: return
@@ -345,7 +388,8 @@ class Sources():
 		if self.autoplay: notification('Filters Ignored & Autoplay Disabled')
 		self.filters_ignored, self.autoplay = True, False
 		results = self.sort_results(self.orig_results)
-		results = self._sort_first(results)
+		# results = self.sort_preferred(results)
+		results = self.sort_first(results)
 		return self.play_source(results)
 
 	def _no_results(self):
@@ -406,19 +450,6 @@ class Sources():
 	def _get_provider_rank(self, account_type):
 		return self.provider_sort_ranks[account_type] or 11
 
-	def _sort_first(self, results):
-		try:
-			sort_first_scrapers = []
-			if 'folders' in self.all_scrapers and sort_to_top('folders'): sort_first_scrapers.append('folders')
-			sort_first_scrapers.extend([i for i in self.all_scrapers if i in cloud_scrapers and sort_to_top(i)])
-			if not sort_first_scrapers: return results
-			sort_first = [i for i in results if i['scrape_provider'] in sort_first_scrapers]
-			sort_first.sort(key=lambda k: (self._sort_folder_to_top(k['scrape_provider']), k['quality_rank']))
-			sort_last = [i for i in results if not i in sort_first]
-			results = sort_first + sort_last
-		except: pass
-		return results
-
 	def _sort_folder_to_top(self, provider):
 		if provider == 'folders': return 0
 		else: return 1
@@ -427,22 +458,6 @@ class Sources():
 		uncached = [i for i in results if 'Uncached' in i.get('cache_provider', '')]
 		cached = [i for i in results if not i in uncached]
 		return cached + uncached
-
-	def _special_filter(self, results, file_type):
-		if file_type == 'audio': return [i for i in results if not any(x in i['extraInfo'] for x in audio_filters())]
-		enable_setting, key = filter_status(file_type), filter_keys[file_type]
-		if key == '[B]HEVC[/B]' and enable_setting in (0,2):
-			hevc_max_quality = self._get_quality_rank(get_setting('fenlight.filter_hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
-			results = [i for i in results if not key in i['extraInfo'] or i['quality_rank'] >= hevc_max_quality]
-		if enable_setting == 1:
-			if key == '[B]D/VISION[/B]' and filter_status('hdr') in (0, 2):
-				results = [i for i in results if all(x in i['extraInfo'] for x in (key, '[B]HDR[/B]')) or not key in i['extraInfo']]
-			else: results = [i for i in results if not key in i['extraInfo']]
-		elif enable_setting == 2 and self.autoplay:
-			priority_list = [i for i in results if key in i['extraInfo']]
-			remainder_list = [i for i in results if not i in priority_list]
-			results = priority_list + remainder_list
-		return results
 
 	def get_meta(self):
 		if self.media_type == 'movie': self.meta = metadata.movie_meta('tmdb_id', self.tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
