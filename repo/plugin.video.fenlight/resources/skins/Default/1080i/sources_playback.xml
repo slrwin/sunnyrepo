@@ -11,13 +11,11 @@
             <control type="image">
                 <texture>$INFO[Window.Property(fanart)]</texture>
                 <aspectratio>scale</aspectratio>
-                <animation effect="fade" start="100" end="25">WindowOpen</animation>
+                <animation effect="fade" end="25">WindowOpen</animation>
             </control>
         </control>
         <control type="group">
-            <animation type="WindowOpen" reversible="false">
-                <effect type="fade" end="100" time="400" />
-            </animation>
+            <animation effect="fade" end="100" time="200">WindowOpen</animation>
             <!-- Logo & Directions -->
             <control type="group">
                 <control type="image">

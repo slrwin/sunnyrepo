@@ -11,13 +11,11 @@
             </control>
             <control type="image" id="202">
                 <aspectratio>scale</aspectratio>
-                <animation effect="fade" start="100" end="25" time="800">WindowOpen</animation>
+                <animation effect="fade" end="25" time="400">WindowOpen</animation>
             </control>
         </control>
         <control type="group">
-            <animation type="WindowOpen" reversible="false">
-                <effect type="fade" end="100" time="400" delay="500" />
-            </animation>
+            <animation effect="fade" end="100" time="200" delay="400">WindowOpen</animation>
             <!-- Fen Light Logo and Tips/Clock & Date --> 
             <control type="group">
                 <left>5</left>

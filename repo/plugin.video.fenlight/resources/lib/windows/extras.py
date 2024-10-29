@@ -509,9 +509,9 @@ class Extras(BaseDialog):
 		all_episodes = default_all_episodes()
 		show_all_episodes = True if all_episodes in (1, 2) else False
 		if show_all_episodes:
-			if all_episodes == 1 and total_seasons > 1: url_params = {'mode': 'build_season_list', 'tmdb_id': self.tmdb_id, 'is_anime': self.is_anime}
-			else: url_params = {'mode': 'build_episode_list', 'tmdb_id': self.tmdb_id, 'season': 'all', 'is_anime': self.is_anime}
-		else: url_params = {'mode': 'build_season_list', 'tmdb_id': self.tmdb_id, 'is_anime': self.is_anime}
+			if all_episodes == 1 and total_seasons > 1: url_params = {'mode': 'build_season_list', 'tmdb_id': self.tmdb_id}
+			else: url_params = {'mode': 'build_episode_list', 'tmdb_id': self.tmdb_id, 'season': 'all'}
+		else: url_params = {'mode': 'build_season_list', 'tmdb_id': self.tmdb_id}
 		return url_params
 
 	def remove_current_tmdb_mediaitem(self, data):
@@ -668,7 +668,7 @@ class Extras(BaseDialog):
 			self.close_all()
 			self.close()
 
-	def set_returning_focus(self, window_id, focus, sleep_time=750):
+	def set_returning_focus(self, window_id, focus, sleep_time=700):
 		try:
 			self.sleep(sleep_time)
 			self.setFocusId(window_id)

@@ -16,12 +16,10 @@
             <height>1080</height>
             <aspectratio>scale</aspectratio>
             <texture>$INFO[Window.Property(fanart)]</texture>
-            <animation effect="fade" end="35" time="0">WindowOpen</animation>
+            <animation effect="fade" end="35" time="120">WindowOpen</animation>
         </control>
         <control type="group">
-            <animation type="WindowOpen" reversible="false">
-                <effect type="fade" end="100" time="500" delay="200" />
-            </animation>
+            <animation effect="fade" end="100" time="200">WindowOpen</animation>
             <control type="list" id="5000">
                 <left>-90</left>
                 <top>0</top>
@@ -56,7 +54,6 @@
             </control>
             <!-- Logo, Info, Clock & Date -->
             <control type="group">
-                <animation effect="fade" start="0" end="100" delay="400" time="450">WindowOpen</animation>
                 <control type="image">
                     <top>0</top>
                     <left>0</left>

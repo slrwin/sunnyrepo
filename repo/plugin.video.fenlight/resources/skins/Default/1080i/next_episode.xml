@@ -2,9 +2,7 @@
 <window>
     <onload>Dialog.Close(fullscreeninfo,true)</onload>
     <onload>Dialog.Close(videoosd,true)</onload>
-    <animation type="WindowOpen" reversible="false">
-        <effect type="fade" end="100" time="600" />
-    </animation>
+    <animation effect="fade" end="100" time="600">WindowOpen</animation>
     <controls>
         <control type="image">
             <height>550</height>
@@ -29,7 +27,7 @@
                 <width>284</width>
                 <aspectratio>scale</aspectratio>
                 <texture diffuse="fenlight_diffuse/landscape_w284_h160.png">$INFO[Window.Property(thumb)]</texture>
-                <animation effect="fade" start="100" end="65" time="0">WindowOpen</animation>
+                <animation effect="fade" end="65">WindowOpen</animation>
             </control>
             <control type="image">
                 <top>80</top>
@@ -37,7 +35,7 @@
                 <width>140</width>
                 <texture>$INFO[Window.Property(clearlogo)]</texture>
                 <aspectratio>keep</aspectratio>
-                <animation effect="fade" start="100" end="80" time="0">WindowOpen</animation>
+                <animation effect="fade" end="80">WindowOpen</animation>
             </control>
             <!-- Episode Status -->
             <control type="group">

@@ -46,7 +46,7 @@ class People(BaseDialog):
 		try: self.setFocusId(10)
 		except: self.close()
 
-	def set_returning_focus(self, window_id, focus, sleep_time=750):
+	def set_returning_focus(self, window_id, focus, sleep_time=700):
 		try:
 			self.sleep(sleep_time)
 			self.setFocusId(window_id)

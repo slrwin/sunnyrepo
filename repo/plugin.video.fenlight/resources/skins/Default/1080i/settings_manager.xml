@@ -9,16 +9,12 @@
             <width>1920</width>
             <height>1080</height>
             <texture colordiffuse="FF000000">fenlight_common/white.png</texture>
-            <animation type="WindowOpen" reversible="false">
-                <effect type="fade" start="0" end="80" time="120" />
-            </animation>
+            <animation effect="fade" end="80" time="120">WindowOpen</animation>
         </control>
         <control type="group">
             <left>100</left>
             <top>25</top>
-            <animation type="WindowOpen" reversible="false">
-                <effect type="fade" end="100" time="200" />
-            </animation>
+            <animation effect="fade" end="100" time="200">WindowOpen</animation>
             <!-- Logo and Background-->
             <control type="group">
                 <control type="image">
@@ -1678,69 +1674,77 @@
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
-                        <property name="setting_label">Include 3D Results</property>
-                        <property name="setting_type">boolean</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.include_3d_results)]</property>
-                        <property name="setting_description">Enable this and Fen Light will include 3D results through the filter</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=include_3d_results)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
-                        <property name="setting_label">HEVC Files Filter</property>
+                        <property name="setting_label">3D Files Filter</property>
                         <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_hevc_name)]</property>
-                        <property name="setting_description">Choose how to handle HEVC source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_hevc)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.filter_hevc),0) | String.IsEqual(Window(10000).Property(fenlight.filter_hevc),2)</visible>
-                        <property name="setting_label">    - Max. HEVC Quality</property>
-                        <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_hevc.max_quality_name)]</property>
-                        <property name="setting_description">Choose the maximum quality allowed for HEVC files when allowing source select</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_hevc.max_quality)</onclick>
-                    </item>
-                    <item>
-                        <visible>Container(2000).HasFocus(60)</visible>
-                        <visible>String.IsEqual(Window(10000).Property(fenlight.filter_hevc),0) | String.IsEqual(Window(10000).Property(fenlight.filter_hevc),2)</visible>
-                        <property name="setting_label">    - Max. Autoplay HEVC Quality</property>
-                        <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_hevc.max_autoplay_quality_name)]</property>
-                        <property name="setting_description">Choose the maximum quality allowed for HEVC files being autoplayed</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_hevc.max_autoplay_quality)</onclick>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.3d_name)]</property>
+                        <property name="setting_description">Choose how to handle 3D source results. They can be INCLUDED or EXCLUDED</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.3d)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">HDR Files Filter</property>
                         <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_hdr_name)]</property>
-                        <property name="setting_description">Choose how to handle HDR source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_hdr)</onclick>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.hdr_name)]</property>
+                        <property name="setting_description">Choose how to handle HDR source results. They can be INCLUDED or EXCLUDED</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.hdr)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">Dolby Vision Files Filter</property>
                         <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_dv_name)]</property>
-                        <property name="setting_description">Choose how to handle DOLBY VISION source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_dv)</onclick>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.dv_name)]</property>
+                        <property name="setting_description">Choose how to handle DOLBY VISION source results. They can be INCLUDED or EXCLUDED</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.dv)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">AV1 Files Filter</property>
                         <property name="setting_type">action</property>
-                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_av1_name)]</property>
-                        <property name="setting_description">Choose how to handle AV1 source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
-                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_av1)</onclick>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.av1_name)]</property>
+                        <property name="setting_description">Choose how to handle AV1 source results. They can be INCLUDED or EXCLUDED</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.av1)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">AI Enhanced/Upscaled Files Filter</property>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter_enhanced_upscaled_name)]</property>
-                        <property name="setting_description">Choose how to handle AI Enhanced/Upscaled source results. They can be INCLUDED, EXCLUDED, or PREFERRED when using autoplay</property>
+                        <property name="setting_description">Choose how to handle AI Enhanced/Upscaled source results. They can be INCLUDED or EXCLUDED</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter_enhanced_upscaled)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <property name="setting_label">HEVC Files Filter</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.hevc_name)]</property>
+                        <property name="setting_description">Choose how to handle HEVC source results. They can be INCLUDED or EXCLUDED</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.hevc)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.filter.hevc),0) | String.IsEqual(Window(10000).Property(fenlight.filter.hevc),2)</visible>
+                        <property name="setting_label">    - Max. HEVC Quality</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.hevc.max_quality_name)]</property>
+                        <property name="setting_description">Choose the maximum quality allowed for HEVC files when allowing source select</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.hevc.max_quality)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.filter.hevc),0) | String.IsEqual(Window(10000).Property(fenlight.filter.hevc),2)</visible>
+                        <property name="setting_label">    - Max. Autoplay HEVC Quality</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.hevc.max_autoplay_quality_name)]</property>
+                        <property name="setting_description">Choose the maximum quality allowed for HEVC files being autoplayed</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.hevc.max_autoplay_quality)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <property name="setting_label">Custom Autoplay Sort To Top</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.preferred_autoplay)]</property>
+                        <property name="setting_description">Choose video and audio properties that will be sorted to the top of the sources list when using Autoplay. Choose up to 5 different parameters to be used, in order of importance. "Sort to Top" settings involving Debrid Cache and Folder Scraper results will take priority over these 5 params</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=preferred_autoplay_choice)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>

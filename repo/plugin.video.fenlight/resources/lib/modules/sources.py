@@ -22,7 +22,7 @@ quality_filter, sort_to_top, tmdb_api_key, mpaa_region = settings.quality_filter
 scraping_settings, include_prerelease_results, auto_rescrape_with_all = settings.scraping_settings, settings.include_prerelease_results, settings.auto_rescrape_with_all
 ignore_results_filter, results_sort_order, results_format, filter_status = settings.ignore_results_filter, settings.results_sort_order, settings.results_format, settings.filter_status
 autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
-debrid_enabled = debrid.debrid_enabled
+preferred_autoplay, debrid_enabled = settings.preferred_autoplay, debrid.debrid_enabled
 get_progress_status_movie, get_bookmarks_movie, erase_bookmark = watched_status.get_progress_status_movie, watched_status.get_bookmarks_movie, watched_status.erase_bookmark
 get_progress_status_episode, get_bookmarks_episode = watched_status.get_progress_status_episode, watched_status.get_bookmarks_episode
 internal_include_list = ['easynews', 'pm_cloud', 'rd_cloud', 'ad_cloud']
@@ -39,8 +39,8 @@ default_internal_scrapers = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'fo
 main_line = '%s[CR]%s[CR]%s'
 int_window_prop = 'fenlight.internal_results.%s'
 scraper_timeout = 25
-filter_keys = {'audio': '', 'hdr': '[B]HDR[/B]', 'dv': '[B]D/VISION[/B]', 'av1': '[B]AV1[/B]', 'hevc': '[B]HEVC[/B]', 'enhanced_upscaled': '[B]AI ENHANCED/UPSCALED[/B]'}
-preference_values = {0:100, 1:50, 2:20, 3:10, 4:5, 5:1}
+filter_keys = {'hevc': '[B]HEVC[/B]', '3d': '[B]3D[/B]', 'hdr': '[B]HDR[/B]', 'dv': '[B]D/VISION[/B]', 'av1': '[B]AV1[/B]', 'enhanced_upscaled': '[B]AI ENHANCED/UPSCALED[/B]'}
+preference_values = {0:100, 1:50, 2:20, 3:10, 4:5, 5:2}
 
 class Sources():
 	def __init__(self):
@@ -90,7 +90,6 @@ class Sources():
 		self.include_prerelease_results, self.ignore_results_filter, self.limit_resolve = include_prerelease_results(), ignore_results_filter(), limit_resolve()		
 		self.sort_function, self.quality_filter = results_sort_order(), self._quality_filter()
 		self.include_unknown_size = get_setting('fenlight.results.size_unknown', 'false') == 'true'
-		self.include_3D_results = get_setting('fenlight.include_3d_results', 'true') == 'true'
 		self.make_search_info()
 		if self.autoscrape: self.autoscrape_nextep_handler()
 		else: return self.get_sources()
@@ -173,8 +172,9 @@ class Sources():
 		else:
 			results = self.sort_results(results)
 			results = self.filter_results(results)
+			results = self.filter_audio(results)
 			for file_type in filter_keys: results = self.special_filter(results, file_type)
-		# results = self.sort_preferred(results)
+		results = self.sort_preferred_autoplay(results)
 		results = self.sort_first(results)
 		return results
 
@@ -195,7 +195,6 @@ class Sources():
 			results = [i for i in results if not i in folder_results]
 		else: folder_results = []
 		results = [i for i in results if i['quality'] in self.quality_filter]
-		if not self.include_3D_results: results = [i for i in results if not '3D' in i['extraInfo']]
 		if self.filter_size_method:
 			min_size = string_to_float(get_setting('fenlight.results.%s_size_min' % self.media_type, '0'), '0') / 1000
 			if min_size == 0.0 and not self.include_unknown_size: min_size = 0.02
@@ -208,20 +207,18 @@ class Sources():
 		results += folder_results
 		return results
 
+	def filter_audio(self, results):
+		return [i for i in results if not any(x in i['extraInfo'] for x in audio_filters())]
+
 	def special_filter(self, results, file_type):
-		if file_type == 'audio': return [i for i in results if not any(x in i['extraInfo'] for x in audio_filters())]
 		enable_setting, key = filter_status(file_type), filter_keys[file_type]
-		if key == '[B]HEVC[/B]' and enable_setting in (0,2):
-			hevc_max_quality = self._get_quality_rank(get_setting('fenlight.filter_hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
+		if key == '[B]HEVC[/B]' and enable_setting == 0:
+			hevc_max_quality = self._get_quality_rank(get_setting('fenlight.filter.hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
 			results = [i for i in results if not key in i['extraInfo'] or i['quality_rank'] >= hevc_max_quality]
 		if enable_setting == 1:
-			if key == '[B]D/VISION[/B]' and filter_status('hdr') in (0, 2):
+			if key == '[B]D/VISION[/B]' and filter_status('hdr') == 0:
 				results = [i for i in results if all(x in i['extraInfo'] for x in (key, '[B]HDR[/B]')) or not key in i['extraInfo']]
 			else: results = [i for i in results if not key in i['extraInfo']]
-		elif enable_setting == 2 and self.autoplay:
-			priority_list = [i for i in results if key in i['extraInfo']]
-			remainder_list = [i for i in results if not i in priority_list]
-			results = priority_list + remainder_list
 		return results
 
 	def sort_first(self, results):
@@ -237,17 +234,18 @@ class Sources():
 		except: pass
 		return results
 
-	def sort_preferred(self, results):
+	def sort_preferred_autoplay(self, results):
+		if not self.autoplay: return results
 		try:
-			preferences = ['3D', 'IMAX', 'MULTI-LANG', 'BLURAY']
+			preferences = preferred_autoplay()
 			if not preferences: return results
 			preference_results = [i for i in results if any(x in i['extraInfo'] for x in preferences)]
 			if not preference_results: return results
 			results = [i for i in results if not i in preference_results]
 			preference_results = sorted([dict(item, **{'pref_includes': sum([preference_values[preferences.index(x)] for x in [i for i in preferences if i in item['extraInfo']]])}) \
 						for item in preference_results], key=lambda k: k['pref_includes'], reverse=True)
-		except Exception as e: kodi_utils.logger('sort_preferred error', str(e))
-		return preference_results + results
+			return preference_results + results
+		except: return results
 
 	def prepare_internal_scrapers(self):
 		if self.active_external and len(self.active_internal_scrapers) == 1: return
@@ -388,7 +386,7 @@ class Sources():
 		if self.autoplay: notification('Filters Ignored & Autoplay Disabled')
 		self.filters_ignored, self.autoplay = True, False
 		results = self.sort_results(self.orig_results)
-		# results = self.sort_preferred(results)
+		results = self.sort_preferred_autoplay(results)
 		results = self.sort_first(results)
 		return self.play_source(results)
 

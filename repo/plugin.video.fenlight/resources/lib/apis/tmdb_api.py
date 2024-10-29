@@ -311,8 +311,7 @@ def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	string = 'tmdb_tv_popular_%s' % page_no
-	url = '%s/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&without_genres=99,10767,10763,10764&page=%s' \
-							% (base_url, api_key, page_no)
+	url = '%s/tv/popular?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (base_url, api_key, page_no)
 	return lists_cache_object(get_data, string, url)
 
 def tmdb_tv_popular_today(page_no):

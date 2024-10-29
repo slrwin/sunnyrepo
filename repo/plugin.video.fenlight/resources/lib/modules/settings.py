@@ -90,6 +90,11 @@ def audio_filters():
 	if setting in ('empty_setting', ''): return []
 	return setting.split(', ')
 
+def preferred_autoplay():
+	setting = get_setting('fenlight.preferred_autoplay')
+	if setting in ('empty_setting', ''): return []
+	return setting.split(', ')
+
 def include_prerelease_results():
 	return get_setting('fenlight.include_prerelease_results', 'true') == 'true'
 
@@ -119,7 +124,7 @@ def auto_nextep_settings(play_type):
 	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'alert_method': alert_method, 'default_action': default_action, 'use_chapters': use_chapters}
 
 def filter_status(filter_type):
-	return int(get_setting('fenlight.filter_%s' % filter_type, '0'))
+	return int(get_setting('fenlight.filter.%s' % filter_type, '0'))
 
 def ignore_results_filter():
 	return int(get_setting('fenlight.results.ignore_filter', '0'))

@@ -135,7 +135,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 		elif media_id.get('tvdb', None): id_type, media_id = 'tvdb_id', media_id['tvdb']
 		else: id_type, media_id = None, None
 	if media_id == None: return None
-	meta = metacache_get('tvshow', id_type, media_id, current_time)
+	meta, custom_episodes = metacache_get('tvshow', id_type, media_id, current_time)
 	if meta: return meta
 	try:
 		if id_type == 'tmdb_id': data = tvshow_details(media_id, api_key)
@@ -243,7 +243,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 				'alternative_titles': alternative_titles, 'duration': duration, 'rootname': rootname, 'imdbnumber': imdb_id, 'country': country, 'mpaa': mpaa, 'trailer': trailer,
 				'country_codes': country_codes, 'writer': writer, 'director': director, 'all_trailers': all_trailers, 'cast': cast, 'studio': studio, 'extra_info': extra_info,
 				'total_aired_eps': total_aired_eps, 'mediatype': 'tvshow', 'total_seasons': total_seasons, 'tvshowtitle': title, 'status': status, 'clearlogo': clearlogo,
-				'landscape': landscape, 'spoken_language': spoken_language}
+				'landscape': landscape, 'spoken_language': spoken_language, 'custom_episodes': custom_episodes}
 		metacache_set('tvshow', id_type, meta, tvshow_expiry(current_date, meta), current_time)
 	except: pass
 	return meta
@@ -348,7 +348,9 @@ def all_episodes_meta(meta, include_specials=False):
 	return data
 
 def episode_groups(media_id):
-	return episode_groups_data(media_id)
+	try: groups = episode_groups_data(media_id)['results']
+	except: groups = None
+	return groups or None
 
 def group_details(group_id):
 	return episode_group_details(group_id)

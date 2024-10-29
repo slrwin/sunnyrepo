@@ -4,7 +4,7 @@ from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
 from modules.utils import get_datetime, adjust_premiered_date
 from modules.watched_status import get_database, watched_info_season, get_watched_status_season, get_progress_status_season
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 poster_empty, fanart_empty, xbmc_actor, set_category, home = kodi_utils.empty_poster, kodi_utils.addon_fanart(), kodi_utils.xbmc_actor, kodi_utils.set_category, kodi_utils.home
 add_items, set_content, end_directory, set_view_mode = kodi_utils.add_items, kodi_utils.set_content, kodi_utils.end_directory, kodi_utils.set_view_mode
@@ -48,7 +48,7 @@ def build_season_list(params):
 					playcount, watched, unwatched = get_watched_status_season(watched_info.get(season_number, None), aired_eps)
 					progress = get_progress_status_season(watched, aired_eps)
 				visible_progress = 0 if progress == 100 else progress
-				url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': season_number, 'is_anime': is_anime})
+				url_params = build_url({'mode': 'build_episode_list', 'tmdb_id': tmdb_id, 'season': season_number})
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': is_external})
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'season', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				cm_append(('[B]Extras[/B]', run_plugin % extras_params))
@@ -84,9 +84,6 @@ def build_season_list(params):
 	watched_indicators, adjust_hours, hide_watched = watched_indicators_info(), date_offset_info(), is_home and widget_hide_watched()
 	current_date = get_datetime()
 	watched_title = 'Trakt' if watched_indicators == 1 else 'Fen Light'
-	is_anime = params.get('is_anime')
-	logger('is_anime', is_anime)
-	logger('is_anime', type(is_anime))
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], tmdb_api_key(), mpaa_region(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'

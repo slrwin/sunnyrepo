@@ -5,8 +5,8 @@ from windows.base_window import open_window, create_window
 from caches.base_cache import refresh_cached_data
 from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
 from modules.downloader import manager
-from modules import kodi_utils, source_utils, settings, metadata
-from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices
+from modules import kodi_utils, settings, metadata
+from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices, source_filters
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
 # logger = kodi_utils.logger
 
@@ -16,11 +16,55 @@ show_busy_dialog, hide_busy_dialog, notification, confirm_dialog = kodi_utils.sh
 external_scraper_settings, kodi_refresh, autoscrape_next_episode = kodi_utils.external_scraper_settings, kodi_utils.kodi_refresh, settings.autoscrape_next_episode
 select_dialog, autoplay_next_episode, quality_filter = kodi_utils.select_dialog, settings.autoplay_next_episode, settings.quality_filter
 numeric_input, container_update, activate_window, folder_path = kodi_utils.numeric_input, kodi_utils.container_update, kodi_utils.activate_window, kodi_utils.folder_path
-poster_empty, audio_filters, mpaa_region = kodi_utils.empty_poster, settings.audio_filters, settings.mpaa_region
+poster_empty, audio_filters, mpaa_region, preferred_autoplay = kodi_utils.empty_poster, settings.audio_filters, settings.mpaa_region, settings.preferred_autoplay
 extras_button_label_values, jsonrpc_get_addons, tmdb_api_key = kodi_utils.extras_button_label_values, kodi_utils.jsonrpc_get_addons, settings.tmdb_api_key
 extras_enabled_menus, active_internal_scrapers, auto_play = settings.extras_enabled_menus, settings.active_internal_scrapers, settings.auto_play
 quality_filter, date_offset, trakt_user_active = settings.quality_filter, settings.date_offset, settings.trakt_user_active
 single_ep_list, scraper_names = kodi_utils.single_ep_list, kodi_utils.scraper_names
+
+def preferred_autoplay_choice(params):
+	def _default_choices():
+		return [{'name': '1st Sort', 'value': 'Choose 1st Sort Param'}, {'name': '2nd Sort', 'value': 'Choose 2nd Sort Param'},
+				{'name': '3rd Sort', 'value': 'Choose 3rd Sort Param'}, {'name': '4th Sort', 'value': 'Choose 4th Sort Param'},
+				{'name': '5th Sort', 'value': 'Choose 5th Sort Param'}]
+	def _beginning_choices():
+		defaults = _default_choices()
+		for count, item in enumerate(preferred_autoplay()): defaults[count]['value'] = item
+		return defaults
+	def _rechoose_checker(choice):
+		if choice['value'].startswith('Choose'): return (choice, True)
+		clear_choice = confirm_dialog(heading='Current Param Active', text='This sort slot is already filled.[CR]Please choose what action to take.',
+						ok_label='Remake Slot', cancel_label='Clear Slot')
+		if clear_choice == None: new_default, ask_params = (choice, False)
+		else:
+			choice_index = choices.index(choice)
+			new_default = _default_choices()[choice_index]
+			choices[choice_index] = new_default
+		return (new_default, clear_choice)
+	def _param_choices(choice):
+		used_filters = [i['value'] for i in choices if not i['value'].startswith('Choose')]
+		unused_filters = [i for i in source_filters if not i[1] in used_filters]
+		param_list_items = [{'line1': i[0], 'line2': i[1]} for i in unused_filters]
+		param_kwargs = {'items': json.dumps(param_list_items), 'multi_line': 'true', 'heading': 'Choose Sort to Top Params for Autoplay', 'narrow_window': 'true'}
+		param_choice = select_dialog(unused_filters, **param_kwargs)
+		if param_choice == None: return ''
+		choice['value'] = param_choice[1]
+		return choice
+	def _make_settings():
+		new_settings = [i['value'] for i in choices if not i['value'].startswith('Choose')]
+		if not new_settings: set_setting('preferred_autoplay', 'empty_setting')
+		else: set_setting('preferred_autoplay', ', '.join(new_settings))
+	choices = params.get('choices') or _beginning_choices()
+	list_items = [{'line1': i['name'], 'line2': i['value']} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'multi_line': 'true', 'heading': 'Choose Sort to Top Params for Autoplay', 'narrow_window': 'true'}
+	choice = select_dialog(choices, **kwargs)
+	if choice == None: return _make_settings()
+	choice, ask_params = _rechoose_checker(choice)
+	if not ask_params: return preferred_autoplay_choice({'choices': choices})
+	param_choice = _param_choices(choice)
+	if not param_choice: return preferred_autoplay_choice({'choices': choices})
+	choices[choices.index(choice)] = param_choice
+	return preferred_autoplay_choice({'choices': choices})
 
 def tmdb_api_check_choice(params):
 	from apis.tmdb_api import movie_details
@@ -135,8 +179,7 @@ def episode_groups_choice(params):
 	episode_group_types = {1: 'Original Air Date', 2: 'Absolute', 3: 'DVD', 4: 'Digital', 5: 'Story Arc', 6: 'Production', 7: 'TV'}
 	meta = params.get('meta')
 	poster = params.get('poster') or empty_poster
-	base_groups = metadata.episode_groups(meta['tmdb_id'])
-	groups = base_groups['results']
+	groups = metadata.episode_groups(meta['tmdb_id'])
 	if not groups: return None
 	list_items = [{'line1': '%s | %s Order | %d Groups | %02d Episodes' % (item['name'], episode_group_types[item['type']], item['group_count'], item['episode_count']),
 					'line2': item['description'], 'icon': poster} for item in groups]
@@ -201,8 +244,7 @@ def playback_choice(params):
 		if choice == None:
 			notification('No Episode Groups to choose from. Try a different method.')
 			return playback_choice(params)
-		details = metadata.group_details(choice)
-		episode_details = metadata.group_episode_data(details, episode_id, season, episode)
+		episode_details = metadata.group_episode_data(metadata.group_details(choice), episode_id, season, episode)
 		if not episode_details:
 			notification('No matching episode')
 			return playback_choice(params)
