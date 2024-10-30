@@ -32,8 +32,9 @@ About the Desi Build Addons:
 
 <p>
 <ul>
- <li>9 Lives : Addon to watch Free Movies and TV Shows.</li>
+<li>Arctic Fusion2 : Now Desi Build uses this skin By Default</li>
 <li>Scrubs v2 : Addon to watch Free Movies and TV Shows.</li>
+<li>Fen Light : Debrid Only Addon for watching Premium Movies and TV Shows. Realdebrid subscription is needed</li>
 <li>Mad Titan Sports: Addon for watching live tv and sports.</li>
 <li>tvOne112: Addon for watching live tv and sports.</li>
 <li>Einthusan: Addon for Indian Movies.</li>
