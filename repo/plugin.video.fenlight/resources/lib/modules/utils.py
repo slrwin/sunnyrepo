@@ -7,11 +7,12 @@ import random
 import _strptime
 import unicodedata
 from html import unescape
-from threading import Thread
+from threading import Thread, activeCount
 from zipfile import ZipFile
 from importlib import import_module, reload as rel_module
 from datetime import datetime, timedelta, date
-from modules.kodi_utils import translate_path, show_busy_dialog, hide_busy_dialog, path_exists
+from modules.settings import max_threads
+from modules.kodi_utils import translate_path, sleep, show_busy_dialog, hide_busy_dialog, path_exists
 # from modules.kodi_utils import logger
 
 def change_image_resolution(image, replace_res):
@@ -30,19 +31,25 @@ def manual_module_import(location):
 	return import_module(location)
 
 def make_thread_list(_target, _list):
+	_max_threads = max_threads()
 	for item in _list:
+		while activeCount() > _max_threads: sleep(1)
 		threaded_object = Thread(target=_target, args=(item,))
 		threaded_object.start()
 		yield threaded_object
 
 def make_thread_list_multi_arg(_target, _list):
+	_max_threads = max_threads()
 	for item in _list:
+		while activeCount() > _max_threads: sleep(1)
 		threaded_object = Thread(target=_target, args=item)
 		threaded_object.start()
 		yield threaded_object
 
 def make_thread_list_enumerate(_target, _list):
+	_max_threads = max_threads()
 	for count, item in enumerate(_list):
+		while activeCount() > _max_threads: sleep(1)
 		threaded_object = Thread(target=_target, args=(count, item))
 		threaded_object.start()
 		yield threaded_object

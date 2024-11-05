@@ -3,6 +3,7 @@ import json
 import time
 from threading import Thread
 from windows.base_window import open_window, create_window
+from caches.episode_groups_cache import episode_groups_cache
 from caches.settings_cache import get_setting
 from scrapers import external, folders
 from modules import debrid, kodi_utils, settings, metadata, watched_status
@@ -22,7 +23,7 @@ quality_filter, sort_to_top, tmdb_api_key, mpaa_region = settings.quality_filter
 scraping_settings, include_prerelease_results, auto_rescrape_with_all = settings.scraping_settings, settings.include_prerelease_results, settings.auto_rescrape_with_all
 ignore_results_filter, results_sort_order, results_format, filter_status = settings.ignore_results_filter, settings.results_sort_order, settings.results_format, settings.filter_status
 autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
-preferred_autoplay, debrid_enabled = settings.preferred_autoplay, debrid.debrid_enabled
+auto_episode_group, preferred_autoplay, debrid_enabled = settings.auto_episode_group, settings.preferred_autoplay, debrid.debrid_enabled
 get_progress_status_movie, get_bookmarks_movie, erase_bookmark = watched_status.get_progress_status_movie, watched_status.get_bookmarks_movie, watched_status.erase_bookmark
 get_progress_status_episode, get_bookmarks_episode = watched_status.get_progress_status_episode, watched_status.get_bookmarks_episode
 internal_include_list = ['easynews', 'pm_cloud', 'rd_cloud', 'ad_cloud']
@@ -47,7 +48,8 @@ class Sources():
 		self.params = {}
 		self.prescrape_scrapers, self.prescrape_threads, self.prescrape_sources, self.uncached_results = [], [], [], []
 		self.threads, self.providers, self.sources, self.internal_scraper_names, self.remove_scrapers = [], [], [], [], ['external']
-		self.post_results_processed, self.clear_properties, self.filters_ignored, self.active_folders, self.resolve_dialog_made = False, True, False, False, False
+		self.rescrape_with_all, self.rescrape_with_episode_group = False, False
+		self.clear_properties, self.filters_ignored, self.active_folders, self.resolve_dialog_made, self.episode_group_used = True, False, False, False, False
 		self.sources_total = self.sources_4k = self.sources_1080p = self.sources_720p = self.sources_sd = 0
 		self.prescrape, self.disabled_ext_ignored, self.default_ext_only = 'true', 'false', 'false'
 		self.ext_name, self.ext_folder, self.provider_defaults, self.ext_sources = '', '', [], None
@@ -68,7 +70,7 @@ class Sources():
 			else: self.autoplay_nextep, self.autoscrape_nextep = False, True
 		else: self.autoplay_nextep, self.autoscrape_nextep = autoplay_next_episode(), autoscrape_next_episode()
 		self.autoscrape = self.autoscrape_nextep and self.background
-		self.auto_rescrape_with_all = auto_rescrape_with_all()
+		self.auto_rescrape_with_all, self.auto_episode_group = auto_rescrape_with_all(), auto_episode_group()
 		self.nextep_settings, self.disable_autoplay_next_episode = params_get('nextep_settings', {}), params_get('disable_autoplay_next_episode', 'false') == 'true'
 		self.ignore_scrape_filters = params_get('ignore_scrape_filters', 'false') == 'true'
 		self.disabled_ext_ignored = params_get('disabled_ext_ignored', self.disabled_ext_ignored) == 'true'
@@ -77,13 +79,14 @@ class Sources():
 		self.filter_size_method = int(get_setting('fenlight.results.filter_size_method', '0'))
 		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')		
 		self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
-		self.custom_season, self.custom_episode = params_get('custom_season', None), params_get('custom_episode', None)
+		self.episode_group_label = params_get('episode_group_label', '')
+		if self.media_type == 'episode':
+			self.season, self.episode = int(params_get('season')), int(params_get('episode'))
+			self.custom_season, self.custom_episode = params_get('custom_season', None), params_get('custom_episode', None)
+			self.check_episode_group()
+		else: self.season, self.episode, self.custom_season, self.custom_episode = '', '', '', ''
 		if 'autoplay' in self.params: self.autoplay = params_get('autoplay', 'false') == 'true'
 		else: self.autoplay = auto_play(self.media_type)
-		if 'season' in self.params: self.season = int(params_get('season'))
-		else: self.season = ''
-		if 'episode' in self.params: self.episode = int(params_get('episode'))
-		else: self.episode = ''
 		self.get_meta()
 		self.determine_scrapers_status()
 		self.sleep_time, self.provider_sort_ranks, self.scraper_settings = 100, provider_sort_ranks(), scraping_settings()
@@ -93,6 +96,17 @@ class Sources():
 		self.make_search_info()
 		if self.autoscrape: self.autoscrape_nextep_handler()
 		else: return self.get_sources()
+
+	def check_episode_group(self):
+		try:
+			if any([self.custom_season, self.custom_episode]) or 'skip_episode_group_check' in self.params: return
+			group_info = episode_groups_cache.get(self.tmdb_id)
+			if not group_info: return
+			group_details = metadata.group_episode_data(metadata.group_details(group_info['id']), None, self.season, self.episode)
+			if group_details:
+				self.custom_season, self.custom_episode, self.episode_group_used = group_details['season'], group_details['episode'], True
+				self.episode_group_label = '[B]CUSTOM GROUP: S%02dE%02d[/B]' % (self.custom_season, self.custom_episode)
+		except: self.custom_season, self.custom_episode = None, None
 
 	def determine_scrapers_status(self):
 		self.active_internal_scrapers = active_internal_scrapers()
@@ -360,7 +374,7 @@ class Sources():
 	def display_results(self, results):
 		window_format, window_number = results_format()
 		action, chosen_item = open_window(('windows.sources', 'SourcesResults'), 'sources_results.xml',
-				window_format=window_format, window_id=window_number, results=results, meta=self.meta,
+				window_format=window_format, window_id=window_number, results=results, meta=self.meta, episode_group_label=self.episode_group_label,
 				scraper_settings=self.scraper_settings, prescrape=self.prescrape, filters_ignored=self.filters_ignored, uncached_results=self.uncached_results)
 		if not action: self._kill_progress_dialog()
 		elif action == 'play': return self.play_file(results, chosen_item)
@@ -372,10 +386,34 @@ class Sources():
 		return [i[2] for i in scraper_list]
 
 	def _process_post_results(self):
-		if self.auto_rescrape_with_all in (1, 2) and self.active_external and not self.post_results_processed:
-			if self.auto_rescrape_with_all == 1 or confirm_dialog(heading=self.meta.get('rootname', ''), text='No results. Retry With All Scrapers?'):
-				self.threads, self.post_results_processed, self.disabled_ext_ignored, self.prescrape = [], True, True, False
+		if self.auto_rescrape_with_all in (1, 2) and self.active_external and not self.rescrape_with_all:
+			self.rescrape_with_all = True
+			if self.auto_rescrape_with_all == 1 or confirm_dialog(heading=self.meta.get('rootname', ''), text='No results.[CR]Retry With All Scrapers?'):
+				self.threads, self.disabled_ext_ignored, self.prescrape = [], True, False
 				return self.get_sources()
+		if self.media_type == 'episode' and self.auto_episode_group in (1, 2) and not self.rescrape_with_episode_group:
+			self.rescrape_with_episode_group = True
+			if self.auto_episode_group == 1 or confirm_dialog(heading=self.meta.get('rootname', ''), text='No results.[CR]Retry With Custom Episode Group if Possible?'):
+				if self.episode_group_used:
+					self.params.update({'custom_season': None, 'custom_episode': None, 'episode_group_label': '[B]CUSTOM GROUP: S%02dE%02d[/B]' % (self.season, self.episode),
+										'skip_episode_group_check': True})
+					self.threads, self.rescrape_with_all, self.disabled_ext_ignored, self.prescrape = [], True, True, False
+					return self.playback_prep()
+				if self.auto_episode_group == 2:
+					from indexers.dialogs import episode_groups_choice
+					try: group_id = episode_groups_choice({'meta': self.meta, 'poster': self.meta['poster']})
+					except: group_id = None
+				else:
+					try: group_id = metadata.episode_groups(self.tmdb_id)[0]['id']
+					except: group_id = None
+				if group_id:
+					try: group_details = metadata.group_episode_data(metadata.group_details(group_id), None, self.season, self.episode)
+					except: group_details = None
+					if group_details:
+						season, episode = group_details['season'], group_details['episode']
+						self.params.update({'custom_season': season, 'custom_episode': episode, 'episode_group_label': '[B]CUSTOM GROUP: S%02dE%02d[/B]' % (season, episode)})
+						self.threads, self.rescrape_with_episode_group, self.rescrape_with_all, self.disabled_ext_ignored, self.prescrape = [], True, True, True, False
+						return self.playback_prep()
 		if self.orig_results and not self.background:
 			if self.ignore_results_filter == 0: return self._no_results()
 			if self.ignore_results_filter == 1 or confirm_dialog(heading=self.meta.get('rootname', ''), text='No results. Access Filtered Results?'):
@@ -460,9 +498,9 @@ class Sources():
 	def get_meta(self):
 		if self.media_type == 'movie': self.meta = metadata.movie_meta('tmdb_id', self.tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
 		else:
-			self.meta = metadata.tvshow_meta('tmdb_id', self.tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
-			episodes_data = metadata.episodes_meta(self.season, self.meta)
 			try:
+				self.meta = metadata.tvshow_meta('tmdb_id', self.tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime())
+				episodes_data = metadata.episodes_meta(self.season, self.meta)
 				episode_data = [i for i in episodes_data if i['episode'] == self.episode][0]
 				ep_thumb = episode_data.get('thumb', None) or self.meta.get('fanart') or ''
 				episode_type = episode_data.get('episode_type', '')
@@ -473,11 +511,11 @@ class Sources():
 		self.meta.update({'media_type': self.media_type, 'background': self.background, 'custom_title': self.custom_title, 'custom_year': self.custom_year})
 
 	def make_search_info(self):
-		title, year, season, episode, ep_name = self.get_search_title(), self.get_search_year(), self.get_season(), self.get_episode(), self.get_ep_name()
+		title, year, ep_name = self.get_search_title(), self.get_search_year(), self.get_ep_name()
 		aliases = make_alias_dict(self.meta, title)
 		expiry_times = get_cache_expiry(self.media_type, self.meta, self.season)
 		self.search_info = {'media_type': self.media_type, 'title': title, 'year': year, 'tmdb_id': self.tmdb_id, 'imdb_id': self.meta.get('imdb_id'), 'aliases': aliases,
-							'season': season, 'episode': episode, 'tvdb_id': self.meta.get('tvdb_id'), 'ep_name': ep_name, 'expiry_times': expiry_times,
+							'season': self.get_season(), 'episode': self.get_episode(), 'tvdb_id': self.meta.get('tvdb_id'), 'ep_name': ep_name, 'expiry_times': expiry_times,
 							'total_seasons': self.meta.get('total_seasons', 1)}
 
 	def _get_module(self, module_type, function):

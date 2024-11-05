@@ -34,6 +34,7 @@ class SourcesResults(BaseDialog):
 		self.results = kwargs.get('results')
 		self.uncached_results = kwargs.get('uncached_results', [])
 		self.info_highlights_dict = kwargs.get('scraper_settings')
+		self.episode_group_label = kwargs.get('episode_group_label', '')
 		self.prescrape = kwargs.get('prescrape')
 		self.meta = kwargs.get('meta')
 		self.filters_ignored = kwargs.get('filters_ignored', False)
@@ -137,7 +138,8 @@ class SourcesResults(BaseDialog):
 					extraInfo = get('extraInfo', '')
 					extraInfo = extraInfo.rstrip('| ')
 					if pack: extraInfo = '[B]%s PACK[/B] | %s' % (get('package'), extraInfo)
-					elif not extraInfo: extraInfo = 'N/A'
+					if self.episode_group_label: extraInfo = '%s | %s' % (self.episode_group_label, extraInfo)
+					if not extraInfo: extraInfo = 'N/A'
 					if scrape_provider == 'external':
 						source_site = upper(get('provider'))
 						provider = upper(get('debrid', source_site).replace('.me', ''))

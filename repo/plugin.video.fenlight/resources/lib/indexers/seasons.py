@@ -61,7 +61,7 @@ def build_season_list(params):
 				if progress:
 					cm_append(('[B]Mark Unwatched %s[/B]' % watched_title, run_plugin % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_unwatched',
 														'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number})))
-					set_properties({'watchedepisodes': string(watched), 'unwatchedepisodes': string(unwatched)})
+				set_properties({'watchedepisodes': string(watched), 'unwatchedepisodes': string(unwatched)})
 				set_properties({'totalepisodes': string(aired_eps), 'watchedprogress': string(visible_progress),
 								'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params})
 				if is_external:

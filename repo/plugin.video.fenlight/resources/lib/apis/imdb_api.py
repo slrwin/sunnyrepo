@@ -8,7 +8,7 @@ from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
 from modules.kodi_utils import sleep
 from modules.utils import remove_accents, replace_html_codes
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
 base_url = 'https://www.imdb.com/%s'
@@ -182,83 +182,34 @@ def get_imdb(params):
 				imdb_list = re.search(r'href="/name/(.+?)"', result, re.DOTALL).group(1)
 			except: pass
 	elif action == 'imdb_parentsguide':
-		spoiler_results = None
-		spoiler_list, final_list = [], []
-		spoiler_append, final_list_append, imdb_append = spoiler_list.append, final_list.append, imdb_list.append
-		tester, count, result = '', 0, []
-		while count <= 2:
-			tester = requests.get(url, timeout=timeout, headers=headers)
-			if not 'opengraphprotocol' in tester:
-				result = tester
-				result = remove_accents(result.text)
-				result = result.replace('\n', ' ')
-				break
-			count += 1
-			sleep(100)
-		if not result:
-			logger('Parentsguide', 'All opengraphprotocol results')
-			return result, 0
-		try:
-			results = parseDOM(result, 'section', attrs={'id': r'advisory-(.+?)'})
-			spoiler_results = parseDOM(result, 'section', attrs={'id': 'advisory-spoilers'})[0]
-		except: pass
-		if spoiler_results:
-			results = [i for i in results if not i in spoiler_results]
-			spoiler_results = spoiler_results.split('<h4 class="ipl-list-title">')[1:]
-			for item in spoiler_results:
-				item_dict = {}
-				try:
-					title = replace_html_codes(re.search(r'(.+?)</h4>', item, re.DOTALL).group(1))
-					item_dict['title'] = title
-				except: continue
-				try:
-					listings = parseDOM(item, 'li', attrs={'class': 'ipl-zebra-list__item'})
-					item_dict['listings'] = []
-				except: continue
-				dict_listings_append = item_dict['listings'].append
-				for item in listings:
-					try:
-						listing = replace_html_codes(re.search(r'(.+?)     <div class="', item, re.DOTALL).group(1))
-						if not listing in item_dict['listings']: dict_listings_append(listing)
-					except: pass
-				if not item_dict in spoiler_list: spoiler_append(item_dict)
+		imdb_list = []
+		imdb_append = imdb_list.append
+		result = requests.get(url, timeout=timeout, headers=headers)
+		result = remove_accents(result.text)
+		result = result.replace('\n', ' ')
+		results = parseDOM(result, 'section', attrs={'class': 'ipc-page-section ipc-page-section--base'})
 		for item in results:
+			if 'contentRating' in item: continue
+			if 'Certifications' in item: continue
 			item_dict = {}
 			try:
-				title = replace_html_codes(parseDOM(item, 'h4', attrs={'class': 'ipl-list-title'})[0])
+				title_data = re.search(r'<span id="(.+?)">(.+?)</span>', item, re.DOTALL).group(0)
+				title = replace_html_codes(re.search(r'">(.+?)</span>', title_data, re.DOTALL).group(1))
 				item_dict['title'] = title
 			except: continue
 			try:
-				ranking = replace_html_codes(parseDOM(item, 'span', attrs={'class': 'ipl-status-pill ipl-status-pill--(.+?)'})[0])
+				ranking = replace_html_codes(re.search(r'<div class="ipc-signpost__text" role="presentation">(.+?)</div>', item, re.DOTALL).group(1))
 				item_dict['ranking'] = ranking
 			except: item_dict['ranking'] = 'none'
 			try:
-				listings = parseDOM(item, 'li', attrs={'class': 'ipl-zebra-list__item'})
-				item_dict['listings'] = []
-			except: pass
+				listings = re.findall(r'<div class="ipc-html-content-inner-div" role="presentation">(.+?)</div>', item)
+				listings = [replace_html_codes(i) for i in listings]
+			except: listings = []
 			if listings:
-				dict_listings_append = item_dict['listings'].append
-				for item in listings:
-					try:
-						listing = replace_html_codes(re.search(r'(.+?)     <div class="', item, re.DOTALL).group(1))
-						if not listing in item_dict['listings']: dict_listings_append(listing)
-					except: pass
+				item_dict['content'] = '\n\n'.join(['%02d. %s' % (count, i) for count, i in enumerate(listings, 1)])
 			elif item_dict['ranking'] == 'none': continue
-			if item_dict: final_list_append(item_dict)
-		if spoiler_list:
-			for imdb in imdb_list:
-				for spo in spoiler_list:
-					if spo['title'] == imdb['title']:
-						imdb['listings'].extend(spo['listings'])
-		for item in final_list:
-			new_dict = {}
-			listings = list(set(item['listings']))
-			item['listings'] = list(set(item['listings']))
-			new_dict['title'] = item['title']
-			new_dict['ranking'] = item['ranking']
-			new_dict['content'] = '\n\n'.join(['%02d. %s' % (count, i) for count, i in enumerate(listings, 1)])
-			new_dict['total_count'] = len(listings)
-			imdb_append(new_dict)
+			item_dict['total_count'] = len(listings)
+			if item_dict: imdb_append(item_dict)
 	return (imdb_list, next_page)
 
 def clear_imdb_cache(silent=False):

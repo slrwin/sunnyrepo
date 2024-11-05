@@ -23,7 +23,7 @@ string = str
 
 class MetaCache:
 	def get(self, media_type, id_type, media_id, current_time=None):
-		meta, custom_episodes = None, None
+		meta = None
 		try:
 			media_id = string(media_id)
 			if not current_time: current_time = get_timestamp()
@@ -34,13 +34,11 @@ class MetaCache:
 				if cache_data:
 					meta, expiry = eval(cache_data[0]), cache_data[1]
 					if expiry < current_time:
-						if media_type == 'tvshow': custom_episodes = meta.get('custom_episodes', None)
 						self.delete(media_type, id_type, media_id, meta=meta)
 						meta = None
 					else: self.set_memory_cache(media_type, id_type, meta, expiry, media_id)
 		except: pass
-		if media_type == 'movie': return meta
-		return meta, custom_episodes
+		return meta
 
 	def get_season(self, prop_string):
 		meta = None
@@ -94,24 +92,18 @@ class MetaCache:
 		except: return
 
 	def get_memory_cache(self, media_type, id_type, media_id, current_time):
-		result = None
 		try:
 			prop_string = media_prop % (media_type, id_type, media_id)
-			cachedata = get_property(prop_string)
-			if cachedata:
-				cachedata = eval(cachedata)
-				if cachedata[0] > current_time: result = cachedata[1]
-		except: pass
+			cachedata = eval(get_property(prop_string))
+			if cachedata[0] > current_time: result = cachedata[1]
+		except: result = None
 		return result
 
 	def get_memory_cache_season(self, prop_string, current_time):
-		result = None
 		try:
-			cachedata = get_property(season_prop % prop_string)
-			if cachedata:
-				cachedata = eval(cachedata)
-				if cachedata[0] > current_time: result = cachedata[1]
-		except: pass
+			cachedata = eval(get_property(season_prop % prop_string))
+			if cachedata[0] > current_time: result = cachedata[1]
+		except: result = None
 		return result
 
 	def set_memory_cache(self, media_type, id_type, meta, expires, media_id):

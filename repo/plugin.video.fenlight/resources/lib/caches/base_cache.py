@@ -22,12 +22,13 @@ metacache_db = translatePath(path_join(database_path_raw, 'metacache.db'))
 debridcache_db = translatePath(path_join(database_path_raw, 'debridcache.db'))
 external_db = translatePath(path_join(database_path_raw, 'external.db'))
 settings_db = translatePath(path_join(database_path_raw, 'settings.db'))
+episode_groups_db = translatePath(path_join(database_path_raw, 'episode_groups.db'))
 database_timeout = 20
 current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db',
-				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db')
+				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db', 'episode_groups.db')
 database_locations = {
 'navigator_db': navigator_db, 'watched_db': watched_db, 'favorites_db': favorites_db, 'settings_db': settings_db, 'trakt_db': trakt_db, 'maincache_db': maincache_db,
-'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db
+'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db, 'episode_groups_db': episode_groups_db
 		}
 integrity_check = {
 'settings_db': ('settings',),
@@ -40,7 +41,8 @@ integrity_check = {
 'lists_db': ('lists',),
 'discover_db': ('discover',),
 'debridcache_db': ('debrid_data',),
-'external_db': ('results_data',)
+'external_db': ('results_data',),
+'episode_groups_db': ('groups_data',)
 		}
 table_creators = {
 'navigator_db': (
@@ -78,7 +80,9 @@ last_played text, resume_id integer, title text, unique (db_type, media_id, seas
 'CREATE TABLE IF NOT EXISTS results_data (provider text not null, db_type text not null, tmdb_id text not null, title text, year integer, season text, episode text, results text, \
 expires integer, unique (provider, db_type, tmdb_id, title, year, season, episode))',),
 'discover_db': (
-'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',)
+'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',),
+'episode_groups_db': (
+'CREATE TABLE IF NOT EXISTS groups_data (tmdb_id text not null unique, data text)',)
 		}
 media_prop = 'fenlight.%s'
 BASE_GET = 'SELECT expires, data FROM %s WHERE id = ?'

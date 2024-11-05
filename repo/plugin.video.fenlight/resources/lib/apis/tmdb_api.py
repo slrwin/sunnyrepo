@@ -10,8 +10,8 @@ from modules.kodi_utils import make_session, tmdb_dict_removals, remove_keys, no
 
 EXPIRY_4_HOURS, EXPIRY_1_DAY, EXPIRY_1_WEEK = 4, 24, 168
 base_url = 'https://api.themoviedb.org/3'
-movies_append = 'external_ids,videos,credits,release_dates,alternative_titles,translations,images'
-tvshows_append = 'external_ids,videos,credits,content_ratings,alternative_titles,translations,images,episode_groups'
+movies_append = 'external_ids,videos,credits,release_dates,alternative_titles,translations,images,keywords'
+tvshows_append = 'external_ids,videos,credits,content_ratings,alternative_titles,translations,images,keywords'
 empty_setting_check = (None, 'empty_setting', '')
 session = make_session(base_url)
 timeout = 20.0
@@ -35,7 +35,7 @@ def tvshow_details(tmdb_id, api_key):
 def episode_groups_data(tmdb_id):
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
-	string = 'episode_groups_details_%s' % tmdb_id
+	string = 'episode_groups_data_%s' % tmdb_id
 	url = '%s/tv/%s/episode_groups?api_key=%s' % (base_url, tmdb_id, api_key)
 	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
@@ -509,7 +509,9 @@ def tmdb_anime_search(query, page_no):
 			data['results'] = [i[1] for i in anime_results]
 		return data
 	def _anime_checker(count, item):
-		if any([x['id'] == 210024 for x in tmdb_tv_keywords(item['id'])['results']]): anime_results_append((count, item))
+		try: keywords = tmdb_tv_keywords(item['id'])
+		except: return
+		if any([x['id'] == 210024 for x in keywords['results']]): anime_results_append((count, item))
 	api_key = tmdb_api_key()
 	if api_key in empty_setting_check: return no_api_key()
 	meta_filter = get_meta_filter()

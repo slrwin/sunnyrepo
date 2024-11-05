@@ -445,6 +445,23 @@
                         <property name="setting_description">Restore default Fen Light background</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=default_addon_fanart)</onclick>
                     </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(10)</visible>
+                        <property name="setting_label">Limit Concurrent Threads</property>
+                        <property name="setting_type">boolean</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.limit_concurrent_threads)]</property>
+                        <property name="setting_description">Enable this and Fen Light will limit the threads enacted simultaneously. Best to leave this disabled unless you are having issues with your device not supporting high numbers of concurrent threads in python</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=limit_concurrent_threads)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(10)</visible>
+                        <visible>String.IsEqual(Window(10000).Property(fenlight.limit_concurrent_threads),true)</visible>
+                        <property name="setting_label">    - Maximum Active Threads</property>
+                        <property name="setting_type">numeric</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.max_threads)]</property>
+                        <property name="setting_description">Choose the maximum active concurrent threads Fen Light will be limited to</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=max_threads)</onclick>
+                    </item>
             <!-- Manage Addon Updates -->
                     <item>
                         <visible>Container(2000).HasFocus(10)</visible>
@@ -1567,15 +1584,23 @@
                         <property name="setting_label">Retry With All Scrapers When No Results</property>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.auto_rescrape_with_all_name)]</property>
-                        <property name="setting_description">Choose the action performed when there are no results after an initial scrape for sources</property>
+                        <property name="setting_description">Choose whether to rescrape with all external scrapers when there are no results. Choices are Off, Auto or Prompt</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.auto_rescrape_with_all)</onclick>
+                    </item>
+                    <item>
+                        <visible>Container(2000).HasFocus(60)</visible>
+                        <property name="setting_label">Retry With Custom Episode Group When No Results</property>
+                        <property name="setting_type">action</property>
+                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.auto_episode_group_name)]</property>
+                        <property name="setting_description">Choose whether to rescrape with a custom episode grouping (if available) when there are no results. This setting only relates to episode scrapes. If a Custom Episode Group is already assigned to the TV Show, then the regular season/episode will be used. Choices are Off, Auto or Prompt</property>
+                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.auto_episode_group)</onclick>
                     </item>
                     <item>
                         <visible>Container(2000).HasFocus(60)</visible>
                         <property name="setting_label">Ignore All Filters When No Results</property>
                         <property name="setting_type">action</property>
                         <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.ignore_filter_name)]</property>
-                        <property name="setting_description">Choose the action performed when there are no results after an initial scrape for sources</property>
+                        <property name="setting_description">Choose whether to rescrape ignoring filters when there are no results. Choices are Off, Auto or Prompt</property>
                         <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=results.ignore_filter)</onclick>
                     </item>
             <!-- Sorting and Filtering -->

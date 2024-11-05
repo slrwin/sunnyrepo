@@ -3,6 +3,7 @@ import re
 import json
 from windows.base_window import open_window, create_window
 from caches.base_cache import refresh_cached_data
+from caches.episode_groups_cache import episode_groups_cache
 from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
 from modules.downloader import manager
 from modules import kodi_utils, settings, metadata
@@ -180,12 +181,30 @@ def episode_groups_choice(params):
 	meta = params.get('meta')
 	poster = params.get('poster') or empty_poster
 	groups = metadata.episode_groups(meta['tmdb_id'])
-	if not groups: return None
+	if not groups:
+		notification('No Episode Groups to choose from.')
+		return None
 	list_items = [{'line1': '%s | %s Order | %d Groups | %02d Episodes' % (item['name'], episode_group_types[item['type']], item['group_count'], item['episode_count']),
 					'line2': item['description'], 'icon': poster} for item in groups]
 	kwargs = {'items': json.dumps(list_items), 'heading': 'Episode Groups', 'enable_context_menu': 'true', 'enumerate': 'true', 'multi_line': 'true'}
 	choice = select_dialog([i['id'] for i in groups], **kwargs)
 	return choice
+
+def assign_episode_group_choice(params):
+	tmdb_id = params['meta']['tmdb_id']
+	current_group = episode_groups_cache.get(tmdb_id)
+	if current_group:
+		action = confirm_dialog(text='Set new Group or Clear Current Group?', ok_label='Set New', cancel_label='Clear', default_control=10)
+		if action == None: return
+		if not action:
+			episode_groups_cache.delete(tmdb_id)
+			return notification('Success', 2000)
+	choice = episode_groups_choice(params)
+	if choice == None: return
+	group_details = metadata.group_details(choice)
+	group_data = {'name': group_details['name'], 'id': group_details['id']}
+	episode_groups_cache.set(tmdb_id, group_data)
+	notification('Success', 2000)
 
 def playback_choice(params):
 	media_type, season, episode = params.get('media_type'), params.get('season', ''), params.get('episode', '')
@@ -203,7 +222,7 @@ def playback_choice(params):
 			{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'},
 			{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'},
 			{'line': 'Scrape With All Filters Ignored', 'function': 'scrape_with_filters_ignored'}]
-	if media_type == 'episode' and episode_id: items.append({'line': 'Scrape with Custom Episode Groups Value', 'function': 'scrape_with_episode_group'})
+	if media_type == 'episode': items.append({'line': 'Scrape with Custom Episode Groups Value', 'function': 'scrape_with_episode_group'})
 	if aliases: items.append({'line': 'Scrape with an Alias', 'function': 'scrape_with_aliases'})
 	items.append({'line': 'Scrape with Custom Values', 'function': 'scrape_with_custom_values'})
 	list_items = [{'line1': i['line'], 'icon': poster} for i in items]
@@ -241,9 +260,7 @@ def playback_choice(params):
 		set_property('fs_filterless_search', 'true')
 	elif choice == 'scrape_with_episode_group':
 		choice = episode_groups_choice({'meta': meta, 'poster': poster})
-		if choice == None:
-			notification('No Episode Groups to choose from. Try a different method.')
-			return playback_choice(params)
+		if choice == None: return playback_choice(params)
 		episode_details = metadata.group_episode_data(metadata.group_details(choice), episode_id, season, episode)
 		if not episode_details:
 			notification('No matching episode')
@@ -456,7 +473,9 @@ def clear_favorites_choice(params={}):
 def favorites_choice(params):
 	from caches.favorites_cache import favorites_cache
 	media_type, tmdb_id, title = params.get('media_type'), params.get('tmdb_id'), params.get('title')
-	if params.get('is_anime') in (True, 'True', 'true'): media_type = 'anime'
+	if media_type == 'tvshow':
+		if params.get('is_anime', None) in (True, 'True', 'true'): media_type = 'anime'
+		elif metadata.is_anime_check(tmdb_id): media_type = 'anime'
 	current_favorites = favorites_cache.get_favorites(media_type)
 	people_favorite = media_type == 'people'
 	current_favorite = any(i['tmdb_id'] == tmdb_id for i in current_favorites)
@@ -522,6 +541,8 @@ def options_menu_choice(params, meta=None):
 		if trakt_user_active(): listing_append(('Trakt Lists Manager', '', 'trakt_manager'))
 		listing_append(('Favorites Manager', '', 'favorites_choice'))
 	if menu_type == 'tvshow': listing_append(('Play Random', 'Based On %s' % rootname, 'random'))
+	if menu_type in ('tvshow', 'season'):
+		listing_append(('Assign an Episode Group to %s' % rootname, 'Currently %s' % episode_groups_cache.get(tmdb_id).get('name', 'None'), 'episode_group'))
 	if menu_type in ('movie', 'episode') or menu_type in single_ep_list:
 		base_str1, base_str2, on_str, off_str = '%s%s', 'Currently: [B]%s[/B]', 'On', 'Off'
 		if auto_play(content): autoplay_status, autoplay_toggle, quality_setting = on_str, 'false', 'autoplay_quality_%s' % content
@@ -539,6 +560,8 @@ def options_menu_choice(params, meta=None):
 				listing_append((base_str1 % ('Autoscrape Next Episode', ''), base_str2 % autoscrape_next_status, 'toggle_autoscrape_next'))
 		listing_append((base_str1 % ('Quality Limit', ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
 		listing_append((base_str1 % ('', 'Enable Scrapers'), base_str2 % current_scrapers_status, 'enable_scrapers'))
+		if menu_type == 'episode':
+			listing_append(('Assign an Episode Group to %s' % rootname, 'Currently %s' % episode_groups_cache.get(tmdb_id).get('name', 'None'), 'episode_group'))
 	if not from_extras:
 		if menu_type in ('movie', 'tvshow'):
 			listing_append(('Re-Cache %s Info' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
@@ -591,6 +614,8 @@ def options_menu_choice(params, meta=None):
 		set_quality_choice({'setting_id': 'autoplay_quality_%s' % content if autoplay_status == on_str else 'results_quality_%s' % content, 'icon': poster})
 	elif choice == 'enable_scrapers':
 		enable_scrapers_choice({'icon': poster})
+	elif choice == 'episode_group':
+		assign_episode_group_choice({'meta': meta, 'poster': poster})
 	options_menu_choice(params, meta=meta)
 
 def extras_menu_choice(params):

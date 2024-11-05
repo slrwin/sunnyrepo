@@ -348,8 +348,9 @@ class Extras(BaseDialog):
 		if not videos_id in self.enabled_lists: return
 		if not self.youtube_installed_check(): return
 		def _sort_trailers(trailers):
-			official_trailers = [i for i in trailers if i['type'] == 'Trailer' and i['name'].lower() == 'official trailer']
-			other_official_trailers = [i for i in trailers if i['type'] == 'Trailer' and 'official' in i['name'].lower() and not i in official_trailers]
+			youtube_trailers = [i for i in trailers if i['site'] == 'YouTube']
+			official_trailers = [i for i in youtube_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()]
+			other_official_trailers = [i for i in youtube_trailers if i['official'] and i['type'] == 'Trailer' and not i in official_trailers]
 			other_trailers = [i for i in trailers if i['type'] == 'Trailer' and not i in official_trailers  and not i in other_official_trailers]
 			teaser_trailers = [i for i in trailers if i['type'] == 'Teaser']
 			full_trailers = official_trailers + other_official_trailers + other_trailers + teaser_trailers
@@ -400,8 +401,8 @@ class Extras(BaseDialog):
 		if not networks_id in self.enabled_lists: return
 		try:
 			network = self.meta_get('studio')[0]
-			network_id = [i['id'] for i in tmdb_company_id(network)['results'] if i['name'] == network][0] \
-						if self.media_type == 'movie' else [item['id'] for item in networks if item['name'] == network][0]
+			network_list = tmdb_company_id(network)['results'] if self.media_type == 'movie' else networks
+			network_id = next(i['id'] for i in network_list if i['name'] == network)
 			function = tmdb_movies_companies if self.media_type == 'movie' else tmdb_tv_networks
 			data = self.remove_current_tmdb_mediaitem(function(network_id, 1)['results'])
 			item_list = list(self.make_tmdb_listitems(data))
