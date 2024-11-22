@@ -107,11 +107,16 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 		videos = data_get('videos', None)
 		if videos:
 			try:
-				all_trailers = [i for i in videos['results'] if i['site'] == 'YouTube']
-				trailer = next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
-				next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer'), None) or \
-				next((youtube_url % i['key'] for i in all_trailers if i['type'] == 'Trailer'), None) or ''
+				all_trailers = sorted([i for i in videos['results'] if i['site'] == 'YouTube'], key=lambda x: x['name'])
+				if all_trailers:
+					trailer = next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
+					next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer'), None) or \
+					next((youtube_url % i['key'] for i in all_trailers if i['type'] == 'Trailer'), None) or \
+					next((youtube_url % i['key'] for i in all_trailers if 'trailer' in i['name'].lower()), None) or \
+					next((youtube_url % i['key'] for i in all_trailers), None) or ''
+				else: trailler = ''
 			except: pass
+		keywords = data_get('keywords', None)
 		status, homepage = data_get('status', 'N/A'), data_get('homepage', 'N/A')
 		belongs_to_collection = data_get('belongs_to_collection')
 		if belongs_to_collection: ei_collection_name, ei_collection_id = belongs_to_collection['name'], belongs_to_collection['id']
@@ -125,7 +130,7 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 				'poster': poster, 'fanart': fanart, 'genre': genre, 'title': title, 'original_title': original_title, 'english_title': english_title, 'year': year, 'cast': cast,
 				'duration': duration, 'rootname': rootname, 'country': country, 'country_codes': country_codes, 'mpaa': mpaa,'writer': writer, 'all_trailers': all_trailers,
 				'director': director, 'alternative_titles': alternative_titles, 'plot': plot, 'studio': studio, 'extra_info': extra_info, 'mediatype': 'movie', 'tvdb_id': 'None',
-				'clearlogo': clearlogo, 'landscape': landscape, 'spoken_language': spoken_language}
+				'clearlogo': clearlogo, 'landscape': landscape, 'spoken_language': spoken_language, 'keywords': keywords}
 		metacache_set('movie', id_type, meta, movie_expiry(current_date, meta), current_time)
 	except: pass
 	return meta
@@ -225,10 +230,14 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 		videos = data_get('videos', None)
 		if videos:
 			try:
-				all_trailers = [i for i in videos['results'] if i['site'] == 'YouTube']
-				trailer = next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
-				next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer'), None) or \
-				next((youtube_url % i['key'] for i in all_trailers if i['type'] == 'Trailer'), None) or ''
+				all_trailers = sorted([i for i in videos['results'] if i['site'] == 'YouTube'], key=lambda x: x['name'])
+				if all_trailers:
+					trailer = next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
+					next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer'), None) or \
+					next((youtube_url % i['key'] for i in all_trailers if i['type'] == 'Trailer'), None) or \
+					next((youtube_url % i['key'] for i in all_trailers if 'trailer' in i['name'].lower()), None) or \
+					next((youtube_url % i['key'] for i in all_trailers), None) or ''
+				else: trailler = ''
 			except: pass
 		keywords = data_get('keywords', None)
 		status, _type, homepage = data_get('status', 'N/A'), data_get('type', 'N/A'), data_get('homepage', 'N/A')
@@ -374,7 +383,7 @@ def is_anime_check(tmdb_id):
 	genre = meta['genre']
 	if not genre or 'Animation' in genre:
 		try: keywords = meta.get('keywords', None) or tmdb_api.tmdb_tv_keywords(tmdb_id)['results']
-		except: False
+		except: return False
 		if not keywords: return False
 		return next((i for i in keywords if i['id'] == 210024), None) is not None
 	return False

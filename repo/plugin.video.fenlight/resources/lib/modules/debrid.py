@@ -34,40 +34,9 @@ def cached_check(hash_list, cached_hashes, debrid):
 	unchecked_list = [i for i in hash_list if not any([h for h in cached_hashes if h[0] == i and h[1] == debrid])]
 	return cached_list, unchecked_list
 
-def rd_fix_hash_add(unchecked_hashes):
-	import random, string
-	results, retries = [], 0
-	while retries < 3 and not results:
-		random_hash = ''.join(random.choices(string.ascii_lowercase + string.digits, k=40))
-		unchecked_hashes.append(random_hash)
-		results = RealDebridAPI().check_cache(unchecked_hashes)
-		unchecked_hashes.remove(random_hash)
-		retries += 1
-	return results
-
 def RD_check(hash_list, cached_hashes):
 	cached_hashes, unchecked_hashes = cached_check(hash_list, cached_hashes, 'rd')
-	if unchecked_hashes:
-		results = RealDebridAPI().check_cache(unchecked_hashes)
-		if not results: results = rd_fix_hash_add(unchecked_hashes)
-		if results:
-			cached_append = cached_hashes.append
-			process_list = []
-			process_append = process_list.append
-			try:
-				for h in unchecked_hashes:
-					cached = 'False'
-					try:
-						if h in results:
-							info = results[h]
-							if isinstance(info, dict) and len(info.get('rd')) > 0:
-								cached_append(h)
-								cached = 'True'
-					except: pass
-					process_append((h, cached))
-			except:
-				for i in unchecked_hashes: process_append((i, 'False'))
-			add_to_local_cache(process_list, 'rd')
+	if unchecked_hashes: add_to_local_cache([(i, 'False') for i in unchecked_hashes], 'rd')
 	return cached_hashes
 
 def PM_check(hash_list, cached_hashes):

@@ -9,7 +9,7 @@ from modules import kodi_utils
 
 close_all_dialog, external = kodi_utils.close_all_dialog, kodi_utils.external
 build_url, kodi_dialog, execute_builtin, select_dialog = kodi_utils.build_url, kodi_utils.kodi_dialog, kodi_utils.execute_builtin, kodi_utils.select_dialog
-notification, kodi_refresh, numeric_input = kodi_utils.notification, kodi_utils.kodi_refresh, kodi_utils.numeric_input
+notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
 clear_history_list = [('Clear Movie Search History', 'movie_queries'),
 					('Clear TV Show Search History', 'tvshow_queries'),
 					('Clear Anime Search History', 'anime_queries'),

@@ -43,7 +43,7 @@ class SyncSettings:
 		logger('Fen Light', 'SyncSettings Service Starting')
 		from caches.settings_cache import sync_settings
 		sync_settings()
-		logger('Fen Light', 'SyncSettings Service Starting')
+		logger('Fen Light', 'SyncSettings Service Finished')
 
 class CustomFonts:
 	def run(self):

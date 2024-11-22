@@ -141,8 +141,8 @@ class Navigator:
 
 	def trakt_recommendations(self):
 		self.category_name = 'Recommended'
-		self.add({'mode': 'build_movie_list', 'action': 'trakt_recommendations', 'new_page': 'movies', 'category_name': 'Recommended Movies'}, 'Movies', 'trakt')
-		self.add({'mode': 'build_tvshow_list', 'action': 'trakt_recommendations', 'new_page': 'shows', 'category_name': 'Recommended TV Shows'}, 'TV Shows', 'trakt')
+		self.add({'mode': 'build_movie_list', 'action': 'trakt_recommendations', 'category_name': 'Recommended Movies'}, 'Movies', 'trakt')
+		self.add({'mode': 'build_tvshow_list', 'action': 'trakt_recommendations', 'category_name': 'Recommended TV Shows'}, 'TV Shows', 'trakt')
 		self.end_directory()
 
 	def trakt_favorites(self):
@@ -179,7 +179,7 @@ class Navigator:
 		if get_setting('fenlight.external_scraper.module') not in ('empty_setting', ''):
 			self.add({'mode': 'open_external_scraper_settings', 'isFolder': 'false'}, 'External Scraper Settings', 'settings')
 		self.add({'mode': 'navigator.tips'}, 'Tips for Use', 'settings2')
-		if get_setting('fenlight.use_viewtypes', 'true') == 'true':
+		if get_setting('fenlight.use_viewtypes', 'true') == 'true' and not get_setting('fenlight.manual_viewtypes', 'false') == 'true':
 			self.add({'mode': 'navigator.set_view_modes'}, 'Set Views', 'settings2')
 		self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
 		self.add({'mode': 'build_next_episode_manager'}, 'TV Shows Progress Manager', 'settings2')
@@ -343,7 +343,7 @@ class Navigator:
 	def set_view(self):
 		set_setting(self.params['view_type'], str(current_window_object().getFocusId()))
 		notification('%s: %s' % (self.params['name'].upper(), get_infolabel('Container.Viewmode').upper()), time=500)
-	
+
 	def shortcut_folders(self):
 		folders = get_shortcut_folders()
 		if folders:

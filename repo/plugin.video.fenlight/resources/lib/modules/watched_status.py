@@ -171,13 +171,28 @@ def get_bookmarks_episode(media_id, season, watched_db=None):
 	if not watched_db: watched_db = get_database()
 	try:
 		info = watched_db.execute('SELECT resume_point, curr_time, resume_id, episode FROM progress WHERE db_type = ? AND media_id = ? AND season = ?',
-			('episode', str(media_id), season)).fetchall()
+			('episode', str(media_id), int(season))).fetchall()
 		info = dict([(i[3], {'resume_point': i[0], 'curr_time': i[1], 'resume_id': i[2]}) for i in info])
 	except: info = {}
 	return info
 
+def get_bookmarks_all_episode(media_id, total_seasons, watched_db=None):
+	if not watched_db: watched_db = get_database()
+	all_seasons_info = {}
+	for season in range(1, total_seasons + 1):
+		try:
+			season_info = get_bookmarks_episode(media_id, season, watched_db)
+			all_seasons_info[season] = season_info
+		except: pass
+	return all_seasons_info
+
 def get_progress_status_episode(progress_info, episode):
 	try: percent = str(round(float(progress_info[episode]['resume_point'])))
+	except: percent = None
+	return percent
+
+def get_progress_status_all_episode(progress_info, season, episode):
+	try: percent = str(round(float(progress_info[season][episode]['resume_point'])))
 	except: percent = None
 	return percent
 

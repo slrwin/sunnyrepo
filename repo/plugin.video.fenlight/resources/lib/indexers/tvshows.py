@@ -23,7 +23,7 @@ special = ('tmdb_tv_languages', 'tmdb_tv_networks', 'tmdb_tv_providers', 'tmdb_t
 'tmdb_anime_providers', 'tmdb_anime_search')
 personal = {'in_progress_tvshows': ('modules.watched_status', 'get_in_progress_tvshows'), 'favorites_tvshows': ('modules.favorites', 'get_favorites'),
 'favorites_anime_tvshows': ('modules.favorites', 'get_favorites'), 'watched_tvshows': ('modules.watched_status', 'get_watched_items')}
-trakt_main = ('trakt_tv_trending', 'trakt_tv_trending_recent', 'trakt_recommendations', 'trakt_tv_most_watched', 'trakt_tv_most_favorited',
+trakt_main = ('trakt_tv_trending', 'trakt_tv_trending_recent', 'trakt_tv_most_watched', 'trakt_tv_most_favorited',
 'trakt_anime_trending', 'trakt_anime_trending_recent', 'trakt_anime_most_watched', 'trakt_anime_most_favorited')
 trakt_special = ('trakt_tv_certifications', 'trakt_anime_certifications')
 trakt_personal = ('trakt_collection', 'trakt_watchlist', 'trakt_collection_lists', 'trakt_watchlist_lists', 'trakt_favorites')
@@ -97,6 +97,15 @@ class TVShows:
 				try:
 					if total_pages > page_no: self.new_page = {'new_page': string(page_no + 1), 'paginate_start': self.paginate_start}
 				except: pass
+			elif self.action == 'trakt_recommendations':
+				self.id_type = 'trakt_dict'
+				data = function('shows')
+				data, total_pages = self.paginate_list(data, page_no)
+				self.list = [i['ids'] for i in data]
+				if total_pages > 2: self.total_pages = total_pages
+				try:
+					if total_pages > page_no: self.new_page = {'new_page': string(page_no + 1), 'paginate_start': self.paginate_start}
+				except: pass
 			elif self.action == 'tmdb_tv_discover':
 				url = self.params_get('url')
 				data = function(url, page_no)
@@ -140,7 +149,7 @@ class TVShows:
 				playcount, total_watched, total_unwatched = get_watched_status_tvshow(self.watched_info.get(string(tmdb_id), None), total_aired_eps)
 				if total_watched: progress = get_progress_status_tvshow(total_watched, total_aired_eps)
 				else: progress = 0
-				visible_progress = 0 if progress == 100 else progress
+				visible_progress = '0' if progress == 100 else progress
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'is_external': self.is_external, 'is_anime': self.is_anime})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id, 'poster': poster,
 										'is_external': self.is_external, 'is_anime': self.is_anime})
@@ -173,7 +182,7 @@ class TVShows:
 				cm_append(('[B]Mark Unwatched %s[/B]' % self.watched_title, run_plugin % build_url({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_unwatched',
 																			'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id})))
 			set_properties({'watchedepisodes': string(total_watched), 'unwatchedepisodes': string(total_unwatched)})
-			set_properties({'watchedprogress': string(visible_progress), 'totalepisodes': string(total_aired_eps), 'totalseasons': string(total_seasons)})
+			set_properties({'watchedprogress': visible_progress, 'totalepisodes': string(total_aired_eps), 'totalseasons': string(total_seasons)})
 			if self.is_external:
 				cm_append(('[B]Refresh Widgets[/B]', run_plugin % build_url({'mode': 'refresh_widgets'})))
 				cm_append(('[B]Reload Widgets[/B]', run_plugin % build_url({'mode': 'kodi_refresh'})))

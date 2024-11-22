@@ -143,6 +143,9 @@ def lists_sort_order(setting):
 def show_specials():
 	return get_setting('fenlight.show_specials', 'false') == 'true'
 
+def single_ep_unwatched_episodes():
+	return get_setting('fenlight.single_ep_unwatched_episodes', 'false') == 'true'
+
 def single_ep_display_format(is_external):
 	if is_external: setting, default = 'fenlight.single_ep_display_widget', '1'
 	else: setting, default = 'fenlight.single_ep_display', ''
@@ -293,6 +296,9 @@ def media_open_action(media_type):
 def watched_indicators():
 	if not trakt_user_active(): return 0
 	return int(get_setting('fenlight.watched_indicators', '0'))
+
+def flatten_episodes():
+	return get_setting('fenlight.trakt.flatten_episodes', 'false') == 'true'
 
 def nextep_method():
 	return int(get_setting('fenlight.nextep.method', '0'))

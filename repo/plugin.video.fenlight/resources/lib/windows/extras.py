@@ -348,9 +348,8 @@ class Extras(BaseDialog):
 		if not videos_id in self.enabled_lists: return
 		if not self.youtube_installed_check(): return
 		def _sort_trailers(trailers):
-			youtube_trailers = [i for i in trailers if i['site'] == 'YouTube']
-			official_trailers = [i for i in youtube_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()]
-			other_official_trailers = [i for i in youtube_trailers if i['official'] and i['type'] == 'Trailer' and not i in official_trailers]
+			official_trailers = [i for i in trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()]
+			other_official_trailers = [i for i in trailers if i['official'] and i['type'] == 'Trailer' and not i in official_trailers]
 			other_trailers = [i for i in trailers if i['type'] == 'Trailer' and not i in official_trailers  and not i in other_official_trailers]
 			teaser_trailers = [i for i in trailers if i['type'] == 'Teaser']
 			full_trailers = official_trailers + other_official_trailers + other_trailers + teaser_trailers
@@ -585,7 +584,7 @@ class Extras(BaseDialog):
 		self.close()
 
 	def show_keywords(self):
-		keyword_id = keywords_choice({'media_type': self.media_type, 'tmdb_id': self.tmdb_id, 'poster': self.poster})
+		keyword_id = keywords_choice({'media_type': self.media_type, 'meta': self.meta})
 		if not keyword_id: return
 		self.close_all()
 		mode, action = ('build_movie_list', 'tmdb_movie_keyword_results') if self.media_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_keyword_results')

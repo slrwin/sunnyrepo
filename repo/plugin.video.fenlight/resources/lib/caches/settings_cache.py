@@ -254,14 +254,21 @@ default_settings = [
 {'setting_id': 'show_unaired_watchlist', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_viewtypes', 'setting_type': 'boolean', 'setting_default': 'true'},
-
-
+{'setting_id': 'manual_viewtypes', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'view.main', 'setting_type': 'string', 'setting_default': '55'},
+{'setting_id': 'view.movies', 'setting_type': 'string', 'setting_default': '500'},
+{'setting_id': 'view.tvshows', 'setting_type': 'string', 'setting_default': '500'},
+{'setting_id': 'view.seasons', 'setting_type': 'string', 'setting_default': '55'},
+{'setting_id': 'view.episodes', 'setting_type': 'string', 'setting_default': '55'},
+{'setting_id': 'view.episodes_single', 'setting_type': 'string', 'setting_default': '55'},
+{'setting_id': 'view.premium', 'setting_type': 'string', 'setting_default': '55'},
 #==================================================================================#
 #====================================SINGLE EPISODE LISTS====================================#
 #==================================================================================#
 #==================== General
 {'setting_id': 'single_ep_display', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
 {'setting_id': 'single_ep_display_widget', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'TITLE: SxE - EPISODE', '1': 'SxE - EPISODE', '2': 'EPISODE'}},
+{'setting_id': 'single_ep_unwatched_episodes', 'setting_type': 'boolean', 'setting_default': 'false'},
 #==================== Next Episodes
 {'setting_id': 'nextep.method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Last Aired', '1': 'Last Watched'}},
 {'setting_id': 'nextep.sort_type', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recently Watched', '1': 'Airdate', '2': 'Title'}},
@@ -273,6 +280,7 @@ default_settings = [
 {'setting_id': 'nextep.airing_today', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'nextep.include_unaired', 'setting_type': 'boolean', 'setting_default': 'false'},
 #======+============= Trakt Calendar
+{'setting_id': 'trakt.flatten_episodes', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'trakt.calendar_sort_order', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
 {'setting_id': 'trakt.calendar_previous_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
 {'setting_id': 'trakt.calendar_future_days', 'setting_type': 'action', 'setting_default': '7', 'min_value': '0', 'max_value': '14'},
@@ -458,12 +466,5 @@ default_settings = [
 {'setting_id': 'extras.movie.button14', 'setting_type': 'string', 'setting_default': 'show_extrainfo'},
 {'setting_id': 'extras.movie.button15', 'setting_type': 'string', 'setting_default': 'show_genres'},
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
-{'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
-{'setting_id': 'view.main', 'setting_type': 'string', 'setting_default': '55'},
-{'setting_id': 'view.movies', 'setting_type': 'string', 'setting_default': '500'},
-{'setting_id': 'view.tvshows', 'setting_type': 'string', 'setting_default': '500'},
-{'setting_id': 'view.seasons', 'setting_type': 'string', 'setting_default': '55'},
-{'setting_id': 'view.episodes', 'setting_type': 'string', 'setting_default': '55'},
-{'setting_id': 'view.episodes_single', 'setting_type': 'string', 'setting_default': '55'},
-{'setting_id': 'view.premium', 'setting_type': 'string', 'setting_default': '55'}
+{'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'}
 	]
