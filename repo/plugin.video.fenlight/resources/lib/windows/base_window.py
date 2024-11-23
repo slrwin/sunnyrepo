@@ -17,8 +17,8 @@ translate_path, get_infolabel, list_dirs, current_skin = kodi_utils.translate_pa
 get_system_setting, select_dialog, ok_dialog = kodi_utils.jsonrpc_get_system_setting, kodi_utils.select_dialog, kodi_utils.ok_dialog
 extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
 needed_font_values = ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60'))
-addon_skins_folder = 'special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/'
 current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
+addon_skins_folder = 'special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/'
 
 def open_window(import_info, skin_xml, **kwargs):
 	'''

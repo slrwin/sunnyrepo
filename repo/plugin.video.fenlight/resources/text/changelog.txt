@@ -1,5 +1,10 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
+[COLOR dodgerblue][B]Version 2.0.01[/B][/COLOR]
+- Fixed RD compatibility.
+- Removed update service.
+- Final release of this addon. So long all.
+
 [COLOR dodgerblue][B]Version 1.0.94[/B][/COLOR]
 NOTE: THERE ARE NO FIXES IN THIS RELEASE FOR REAL DEBRID INTEGRATION.
 - Added info for the unwatched count for single episode lists. This only shows for skins that support this.

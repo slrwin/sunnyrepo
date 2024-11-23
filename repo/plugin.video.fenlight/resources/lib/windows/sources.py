@@ -150,11 +150,12 @@ class SourcesResults(BaseDialog):
 							else: set_properties({'source_type': 'UNCACHED'})
 							set_properties({'highlight': 'FF7C7C7C'})
 						else:
+							cache_flag = 'UNCHECKED' if provider == 'REAL-DEBRID' else 'CACHED'
 							if highlight_type == 0: key = provider_lower
 							else: key = basic_quality
 							set_properties({'highlight': self.info_highlights_dict[key]})
-							if pack: set_properties({'source_type': 'CACHED [B]PACK[/B]'})
-							else: set_properties({'source_type': 'CACHED'})
+							if pack: set_properties({'source_type': '%s [B]PACK[/B]' % cache_flag})
+							else: set_properties({'source_type': '%s' % cache_flag})
 						set_properties({'provider': provider})
 					else:
 						source_site = upper(source)

@@ -35,9 +35,7 @@ def cached_check(hash_list, cached_hashes, debrid):
 	return cached_list, unchecked_list
 
 def RD_check(hash_list, cached_hashes):
-	cached_hashes, unchecked_hashes = cached_check(hash_list, cached_hashes, 'rd')
-	if unchecked_hashes: add_to_local_cache([(i, 'False') for i in unchecked_hashes], 'rd')
-	return cached_hashes
+	return hash_list
 
 def PM_check(hash_list, cached_hashes):
 	cached_hashes, unchecked_hashes = cached_check(hash_list, cached_hashes, 'pm')
