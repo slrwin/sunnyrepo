@@ -73,30 +73,6 @@ content_settings = '\
 \n                        <property name="setting_description">Choose the maximum active concurrent threads Fen Light will be limited to</property>\
 \n                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=max_threads)</onclick>\
 \n                    </item>\
-\n            <!-- Manage Addon Updates -->\
-\n                    <item>\
-\n                        <visible>Container(2000).HasFocus(10)</visible>\
-\n                        <property name="setting_label">Manage Addon Updates</property>\
-\n                        <property name="setting_type">separator</property>\
-\n                        <onclick>noop</onclick>\
-\n                    </item>\
-\n                    <item>\
-\n                        <visible>Container(2000).HasFocus(10)</visible>\
-\n                        <property name="setting_label">Update Action</property>\
-\n                        <property name="setting_type">action</property>\
-\n                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.update.action_name)]</property>\
-\n                        <property name="setting_description">Choose the manner in which Fen Light handles updates</property>\
-\n                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=update.action)</onclick>\
-\n                    </item>\
-\n                    <item>\
-\n                        <visible>Container(2000).HasFocus(10)</visible>\
-\n                        <visible>!String.IsEqual(Window(10000).Property(fenlight.update.action),3)</visible>\
-\n                        <property name="setting_label">    - Delay Before Running (secs)</property>\
-\n                        <property name="setting_type">numeric</property>\
-\n                        <property name="setting_value">$INFO[Window(10000).Property(fenlight.update.delay)]</property>\
-\n                        <property name="setting_description">Choose the delay time before Fen Light checks for updates after Kodi start</property>\
-\n                        <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=update.delay)</onclick>\
-\n                    </item>\
 \n            <!-- Watched Indicators -->\
 \n                    <item>\
 \n                        <visible>Container(2000).HasFocus(10)</visible>\

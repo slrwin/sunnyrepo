@@ -385,7 +385,9 @@ def is_anime_check(tmdb_id):
 		try: keywords = meta.get('keywords', None) or tmdb_api.tmdb_tv_keywords(tmdb_id)['results']
 		except: return False
 		if not keywords: return False
-		return next((i for i in keywords if i['id'] == 210024), None) is not None
+		try: is_anime = next((i for i in keywords['results'] if i['id'] == 210024), None) is not None
+		except: is_anime = False
+		return is_anime
 	return False
 
 def movie_meta_external_id(external_source, external_id, api_key):

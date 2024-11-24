@@ -166,7 +166,7 @@ def routing(sys):
 		if mode == 'alldebrid.revoke_authentication':
 			from apis.alldebrid_api import AllDebridAPI
 			return AllDebridAPI().revoke()
-		if mode == 'real_debrid.delete':
+		if mode == 'alldebrid.delete':
 			from indexers.alldebrid import ad_delete
 			return ad_delete(params.get('id'))
 	if '_cache' in mode:

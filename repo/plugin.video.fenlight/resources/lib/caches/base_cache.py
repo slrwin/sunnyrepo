@@ -254,15 +254,12 @@ class BaseCache(object):
 		result = None
 		try:
 			current_time = get_timestamp()
-			result = self.get_memory_cache(string, current_time)
-			if result is None:
-				dbcon = connect_database(self.dbfile)
-				cache_data = dbcon.execute(BASE_GET % self.table, (string,)).fetchone()
-				if cache_data:
-					if cache_data[0] > current_time:
-						result = eval(cache_data[1])
-						self.set_memory_cache(result, string, cache_data[0])
-					else: self.delete(string)
+			dbcon = connect_database(self.dbfile)
+			cache_data = dbcon.execute(BASE_GET % self.table, (string,)).fetchone()
+			if cache_data:
+				if cache_data[0] > current_time:
+					result = eval(cache_data[1])
+				else: self.delete(string)
 		except: pass
 		return result
 
@@ -271,25 +268,7 @@ class BaseCache(object):
 			dbcon = connect_database(self.dbfile)
 			expires = get_timestamp(expiration)
 			dbcon.execute(BASE_SET % self.table, (string, repr(data), int(expires)))
-			self.set_memory_cache(data, string, int(expires))
 		except: return None
-
-	def get_memory_cache(self, string, current_time):
-		result = None
-		try:
-			cachedata = get_property(media_prop % string)
-			if cachedata:
-				cachedata = eval(cachedata)
-				if cachedata[0] > current_time: result = cachedata[1]
-		except: pass
-		return result
-
-	def set_memory_cache(self, data, string, expires):
-		try:
-			cachedata = (expires, data)
-			cachedata_repr = repr(cachedata)
-			set_property(media_prop % string, cachedata_repr)
-		except: pass
 
 	def delete(self, string):
 		try:

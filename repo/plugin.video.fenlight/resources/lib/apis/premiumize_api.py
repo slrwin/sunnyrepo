@@ -295,14 +295,12 @@ class PremiumizeAPI:
 
 	def clear_cache(self, clear_hashes=True):
 		try:
-			from modules.kodi_utils import clear_property
 			from caches.debrid_cache import debrid_cache
 			from caches.base_cache import connect_database
 			dbcon = connect_database('maincache_db')
 			user_cloud_success = False
 			# USER CLOUD
 			try:
-				
 				try:
 					user_cloud_cache = dbcon.execute("""SELECT id FROM maincache WHERE id LIKE ?""", ('pm_user_cloud%',)).fetchall()
 					user_cloud_cache = [i[0] for i in user_cloud_cache]
@@ -311,13 +309,11 @@ class PremiumizeAPI:
 				if not user_cloud_success:
 					for i in user_cloud_cache:
 						dbcon.execute("""DELETE FROM maincache WHERE id=?""", (i,))
-						clear_property(str(i))
 					user_cloud_success = True
 			except: user_cloud_success = False
 			# DOWNLOAD LINKS
 			try:
 				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('pm_transfers_list',))
-				clear_property("fenlight.pm_transfers_list")
 				download_links_success = True
 			except: download_links_success = False
 			# HASH CACHED STATUS

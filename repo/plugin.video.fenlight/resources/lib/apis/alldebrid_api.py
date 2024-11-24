@@ -8,10 +8,10 @@ from caches.settings_cache import get_setting, set_setting
 from modules.utils import copy2clip
 from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
 from modules import kodi_utils
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 path_exists, get_icon = kodi_utils.path_exists, kodi_utils.get_icon
-show_busy_dialog, confirm_dialog, clear_property = kodi_utils.show_busy_dialog, kodi_utils.confirm_dialog, kodi_utils.clear_property
+show_busy_dialog, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.confirm_dialog
 sleep, ok_dialog = kodi_utils.sleep, kodi_utils.ok_dialog
 progress_dialog, notification, hide_busy_dialog, xbmc_monitor = kodi_utils.progress_dialog, kodi_utils.notification, kodi_utils.hide_busy_dialog, kodi_utils.xbmc_monitor
 base_url = 'https://api.alldebrid.com/v4/'
@@ -115,7 +115,7 @@ class AllDebridAPI:
 		url = 'magnet/delete'
 		url_append = '&id=%s' % transfer_id
 		result = self._get(url, url_append)
-		return result.get('success', False) == True
+		return result.get('message', '') == 'Magnet was successfully deleted'
 
 	def resolve_magnet(self, magnet_url, info_hash, store_to_cloud, title, season, episode):
 		try:
@@ -273,7 +273,6 @@ class AllDebridAPI:
 			# USER CLOUD
 			try:
 				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('ad_user_cloud',))
-				clear_property('ad_user_cloud')
 				user_cloud_success = True
 			except: user_cloud_success = False
 			# HASH CACHED STATUS
