@@ -10,10 +10,11 @@ from modules.kodi_utils import sleep
 from modules.utils import remove_accents, replace_html_codes
 # from modules.kodi_utils import logger
 
-headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Firefox/102.0'}
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edge/101.0.1210.53',
+			'Accept-Language':'en-us,en;q=0.5'}
 base_url = 'https://www.imdb.com/%s'
 more_like_this_url = 'title/%s'
-reviews_url = 'title/%s/reviews/_ajax?paginationKey=%s'
+reviews_url = 'title/%s/reviews/?sort=num_votes,desc'
 trivia_url = 'title/%s/trivia'
 blunders_url = 'title/%s/goofs'
 parentsguide_url = 'title/%s/parentalguide'
@@ -38,9 +39,9 @@ def imdb_people_id(actor_name):
 	return cache_object(get_imdb, string, params, False, 8736)[0]
 
 def imdb_reviews(imdb_id):
-	url = base_url % reviews_url % (imdb_id, '')
+	url = base_url % reviews_url % imdb_id
 	string = 'imdb_reviews_%s' % imdb_id
-	params = {'url': url, 'action': 'imdb_reviews', 'imdb_id': imdb_id}
+	params = {'url': url, 'action': 'imdb_reviews'}
 	return cache_object(get_imdb, string, params, False, 168)[0]
 
 def imdb_parentsguide(imdb_id):
@@ -121,50 +122,37 @@ def get_imdb(params):
 		imdb_list = list(_process())
 	elif action == 'imdb_reviews':
 		def _process():
-			for count, listing in enumerate(all_reviews, 1):
+			count = 1
+			for item in all_reviews:
 				try:
-					try: spoiler = listing['spoiler']
-					except: spoiler = False
-					try: listing = listing['content']
-					except: continue
 					try:
-						content = parseDOM(listing, 'div', attrs={'class': 'text show-more__control'})[0]
-						content = replace_html_codes(content)
+						content = re.findall(r'plaidHtml":"(.*)","__typename":"Markdown', item)[0]
+						try: content = content.encode('ascii').decode('unicode-escape')
+						except: pass
+						content = replace_html_codes(content.replace('</a>', '').replace('<p> ', '').replace('<br />', '').replace('  ', ''))
 					except: continue
-					try: title = parseDOM(listing, 'a', attrs={'class': 'title'})[0]
-					except: title = ''
-					try: date = parseDOM(listing, 'span', attrs={'class': 'review-date'})[0]
-					except: date = ''
+					try: spoiler = re.findall(r'"spoiler":(.*),"reportingLink', item)[0]
+					except: spoiler = 'false'
+					try: rating = re.findall(r'"authorRating":(.*),"submissionDate', item)[0]
+					except: rating = '-'
 					try:
-						rating = parseDOM(listing, 'span', attrs={'class': 'rating-other-user-rating'})
-						rating = parseDOM(rating, 'span')
-						rating = rating[0] + rating[1]
-					except: rating = ''
-					review = '[B]%02d. [I]%s - %s - %s[/I][/B][CR][CR]%s' % (count, rating, date, title, content)
-					if spoiler: review = '[B][COLOR red][%s][/COLOR][CR][/B]' % spoiler_str + review
+						title = re.findall(r'"summary":{"originalText":"(.*)","__typename":"ReviewSummary', item)[0]
+						title = replace_html_codes(title.replace('</a>', '').replace('<p> ', '').replace('<br />', '').replace('  ', ''))
+					except: title = '-----'
+					try: date = re.findall(r'"submissionDate":"(.*)","helpfulness', item)[0]
+					except: date = '-----'
+					try: review = '[B]%02d. [I]%s/10 - %s - %s[/I][/B][CR][CR]%s' % (count, rating, date, title, content)
+					except: continue
+					if spoiler == 'true': review = '[B][COLOR red][%s][/COLOR][CR][/B]' % spoiler_str + review
+					count += 1
 					yield review
 				except: pass
 		spoiler_str = 'CONTAINS SPOILERS'
-		imdb_id = params['imdb_id']
-		paginationKey = ''
-		non_spoiler_list = []
-		spoiler_list = []
-		count = 0
-		result = requests.get(url, timeout=timeout)
-		while count < 3:
-			if count > 0:
-				url = base_url % reviews_url % (imdb_id, paginationKey)
-				result = requests.get(url, timeout=timeout)
-			result = remove_accents(result.text)
-			result = result.replace('\n', ' ')
-			non_spoilers = parseDOM(result, 'div', attrs={'class': 'lister-item mode-detail imdb-user-review  collapsable'})
-			spoilers = parseDOM(result, 'div', attrs={'class': 'lister-item mode-detail imdb-user-review  with-spoiler'})
-			non_spoiler_list.extend([{'spoiler': False, 'content': i} for i in non_spoilers])
-			spoiler_list.extend([{'spoiler': True, 'content': i} for i in spoilers])
-			try: paginationKey = re.search(r'data-key="(.+?)"', result, re.DOTALL).group(1)
-			except: break
-			count += 1
-		all_reviews = non_spoiler_list + spoiler_list
+		result = requests.get(url, timeout=timeout, headers=headers)
+		result = remove_accents(result.text)
+		result = result.replace('\n', ' ')
+		body = re.findall(r'{"node":{"id":(.*)"__typename":"ReviewEdge"', result)[0]
+		all_reviews = body.split('"__typename":"ReviewEdge"}')
 		imdb_list = list(_process())
 	elif action == 'imdb_people_id':
 		try:
