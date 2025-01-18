@@ -1,4 +1,4 @@
-name: run GetAddons.py
+name: Update Addons
 
 on:
   workflow_dispatch
@@ -11,11 +11,11 @@ jobs:
     steps:
 
       - name: checkout repo content
-        uses: actions/checkout@3 # checkout the repository content to github runner
+        uses: actions/checkout@main # checkout the repository content to github runner
         with:
           submodules: recursive
           fetch-depth: 0 
-          token: ${{ secrets.PAT_TOKEN }}  
+          github_token: ${{ secrets.GITHUB_TOKEN }}  
 
       - name: setup python
         uses: actions/setup-python@main
