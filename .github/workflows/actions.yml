@@ -11,10 +11,9 @@ jobs:
     steps:
 
       - name: checkout repo content
-        uses: actions/checkout@main # checkout the repository content to github runner
+        uses: actions/checkout@4 # checkout the repository content to github runner
         with:
           submodules: true
-          fetch-depth: 0 
           token: ${{ secrets.GITHUB_TOKEN }}  
 
       - name: setup python
