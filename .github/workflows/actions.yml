@@ -13,9 +13,9 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@main # checkout the repository content to github runner
         with:
-          submodules: recursive
+          submodules: true
           fetch-depth: 0 
-          github_token: ${{ secrets.GITHUB_TOKEN }}  
+          token: ${{ secrets.GITHUB_TOKEN }}  
 
       - name: setup python
         uses: actions/setup-python@main
