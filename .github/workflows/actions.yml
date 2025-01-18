@@ -25,10 +25,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: execute getaddons script # run main.py
+     # - name: execute getaddons script # run main.py
         # env:
         #   SOME_SECRET: ${{ secrets.MY_SECRET }}
-        run: python GetAddons.py
+    #    run: python GetAddons.py
 
       - name: execute repo generator script # run main.py
         # env:
