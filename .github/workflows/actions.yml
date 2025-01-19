@@ -11,10 +11,15 @@ jobs:
     steps:
 
       - name: checkout repo content
-        uses: actions/checkout@4 # checkout the repository content to github runner
+        uses: actions/checkout@main # checkout the repository content to github runner
         with:
           submodules: true
-          token: ${{ secrets.GITHUB_TOKEN }}  
+          token: ${{ secrets.ACCESS_TOKEN }}  
+          persist-credentials: false
+
+      - name: Checkout submodules
+        run: |
+          git submodule update --init --recursive
 
       - name: setup python
         uses: actions/setup-python@main
