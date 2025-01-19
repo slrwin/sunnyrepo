@@ -75,7 +75,7 @@
         </assets>
         <news>INFO: For latest changes see Changelog within Tools of add-on.</news>
     </extension>
-</addon><addon id="repository.sunnyrepo" name="Sunny Repo" version="2.1.0" provider-name="slrwin">
+</addon><addon id="repository.sunnyrepo" name="Sunny Repo" version="2.2.0" provider-name="slrwin">
 	<extension point="xbmc.addon.repository" name="sunnyrepo">
 		<dir>
 			<info compressed="false">https://raw.githubusercontent.com/slrwin/sunnyrepo/master/repo/zips/addons.xml</info>
