@@ -13,15 +13,11 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@main # checkout the repository content to github runner
         with:
-          submodules: recursive
+          submodules: remote
           fetch-depth: 0 
           token: ${{ secrets.ACCESS_TOKEN }}  
           persist-credentials: false
-     
-      - name: update submodules
-        run: |
-          git submodule update --remote
-          
+         
 
       - name: setup python
         uses: actions/setup-python@main
