@@ -13,10 +13,11 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@main # checkout the repository content to github runner
         with:
-          submodules: remote
+          submodules: true
           fetch-depth: 0 
           token: ${{ secrets.ACCESS_TOKEN }}  
           persist-credentials: false
+          submodules-depth: 1 
          
 
       - name: setup python
