@@ -16,11 +16,14 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0 
           token: ${{ secrets.ACCESS_TOKEN }}  
-          persist-credentials: false
-          submodules-depth: 1 
+          #persist-credentials: false
+          #submodules-depth: 1 
 
       - name: Update Sub modules
-        run: git submodule update --remote
+        run: |
+          git submodule update --init --recursive
+          git submodule update --recursive --remote
+
          
 
       - name: setup python
