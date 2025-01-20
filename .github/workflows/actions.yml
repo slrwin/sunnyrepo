@@ -1,9 +1,9 @@
 name: Update Addons
 
 on:
-  workflow_dispatch
-   #schedule:
-    # - cron: '*/30 * * * *' #Every 30mins
+  #workflow_dispatch
+   schedule:
+     - cron: '*/30 * * * *' #Every 30mins
 
 jobs:
   build:
