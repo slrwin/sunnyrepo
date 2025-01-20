@@ -18,6 +18,9 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}  
           persist-credentials: false
           submodules-depth: 1 
+
+      - name: Update Sub modules
+        run: git submodule update --remote
          
 
       - name: setup python
