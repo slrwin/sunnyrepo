@@ -9,5 +9,5 @@
 	url = https://github.com/a4k-openproject/a4kSubtitles
 [submodule "repo/plugin.program.desiwizard"]
 	path = repo/plugin.program.desiwizard
-	url = https://github.com/slrwin/plugin.program.desiwizard
+	url = https://slrwin@github.com/slrwin/plugin.program.desiwizard
         branch = master
