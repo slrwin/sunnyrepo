@@ -4,8 +4,10 @@ on:
   push:
     branches: ["master"]
   #workflow_dispatch
-   #schedule:
-    # - cron: '*/30 * * * *' #Every 30mins
+  schedule:
+    - cron: '0 6 * * *'
+    - cron: '0 18 * * *'
+
 
 jobs:
   build:
