@@ -3,62 +3,47 @@ name: Update Addons
 on:
   push:
     branches: ["master"]
-  #workflow_dispatch
-  schedule:
-    - cron: '0 6 * * *'
-    - cron: '0 18 * * *'
-
+  schedule:
+    - cron: '0 6 * * *'   # Runs at 6:00 AM UTC
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
-      - name: checkout repo content
-        uses: actions/checkout@main # checkout the repository content to github runner
+      - name: Checkout repo content
+        uses: actions/checkout@v4
         with:
           submodules: 'recursive'
           fetch-depth: 0 
-          token: ${{ secrets.ACCESS_TOKEN }}  
-          #persist-credentials: false
-          #submodules-depth: 1 
+          token: ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Update Sub modules
+      - name: Update Submodules
         run: |
           git submodule update --init --recursive
           git submodule update --recursive --remote
 
-         
-
-      - name: setup python
-        uses: actions/setup-python@main
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # install the python version needed
-          
-      - name: install python packages
+          python-version: '3.11'
+
+      - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
-     # - name: execute getaddons script # run main.py
-        # env:
-        #   SOME_SECRET: ${{ secrets.MY_SECRET }}
-    #    run: python GetAddons.py
 
-      - name: execute repo generator script # run main.py
-        # env:
-        #   SOME_SECRET: ${{ secrets.MY_SECRET }}
+      - name: Execute repo generator script
         run: python _repo_generator.py
-          
-      - name: commit files
+
+      - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "updated repo" --allow-empty)
-          
-      - name: push changes
+          git diff-index --quiet HEAD || git commit -m "updated repo" --allow-empty
+
+      - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master 
+          branch: master
