@@ -45,3 +45,8 @@ if __name__ == "__main__":
 
     download_zip_files(url, download_folder, extract_folder)
     shutil.rmtree(download_folder)
+
+    download_zip_files("https://raw.githubusercontent.com/umbrellaplug/umbrellaplug.github.io/master/omega/zips/", download_folder, extract_folder)
+    shutil.rmtree(download_folder)
+
+    
