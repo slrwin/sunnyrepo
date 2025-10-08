@@ -32,6 +32,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: execute getaddons script # run main.py
+        run: python GetAddons.py
+     
       - name: Execute repo generator script
         run: python _repo_generator.py
 
