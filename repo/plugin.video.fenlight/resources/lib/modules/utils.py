@@ -2,47 +2,44 @@
 import re
 import sys
 import time
-import hashlib
 import random
 import _strptime
 import unicodedata
 from html import unescape
+from queue import SimpleQueue
 from threading import Thread, activeCount
-from zipfile import ZipFile
-from importlib import import_module, reload as rel_module
+from importlib import import_module
 from datetime import datetime, timedelta, date
 from modules.settings import max_threads
-from modules.kodi_utils import translate_path, sleep, show_busy_dialog, hide_busy_dialog, path_exists
+from modules.kodi_utils import sleep
 # from modules.kodi_utils import logger
 
-def change_image_resolution(image, replace_res):
-	return re.sub(r'(w185|w300|w342|w780|w1280|h632|original)', replace_res, image)
+class TaskPool:
+	def __init__(self):
+		self._queue = SimpleQueue()
 
-def append_module_to_syspath(location):
-	sys.path.append(translate_path(location))
+	def _thread_target(self, queue, target):
+		while not queue.empty():
+			try: target(*queue.get())
+			except: pass
 
-def manual_function_import(location, function_name):
-	return getattr(import_module(location), function_name)
+	def tasks(self, _target, _list, _max_size=60):
+		[self._queue.put(tag) for tag in _list]
+		threads = [Thread(target=self._thread_target, args=(self._queue, _target)) for i in range(_max_size)]
+		[i.start() for i in threads]
+		return threads
 
-def reload_module(location):
-	return rel_module(manual_module_import(location))
-
-def manual_module_import(location):
-	return import_module(location)
+	def tasks_enumerate(self, _target, _list, _max_size=60):
+		[self._queue.put((p, tag)) for p, tag in enumerate(_list, 1)]
+		threads = [Thread(target=self._thread_target, args=(self._queue, _target)) for i in range(_max_size)]
+		[i.start() for i in threads]
+		return threads
 
 def make_thread_list(_target, _list):
 	_max_threads = max_threads()
 	for item in _list:
 		while activeCount() > _max_threads: sleep(1)
 		threaded_object = Thread(target=_target, args=(item,))
-		threaded_object.start()
-		yield threaded_object
-
-def make_thread_list_multi_arg(_target, _list):
-	_max_threads = max_threads()
-	for item in _list:
-		while activeCount() > _max_threads: sleep(1)
-		threaded_object = Thread(target=_target, args=item)
 		threaded_object.start()
 		yield threaded_object
 
@@ -53,6 +50,23 @@ def make_thread_list_enumerate(_target, _list):
 		threaded_object = Thread(target=_target, args=(count, item))
 		threaded_object.start()
 		yield threaded_object
+
+def change_image_resolution(image, replace_res):
+	return re.sub(r'(w185|w300|w342|w780|w1280|h632|original)', replace_res, image)
+
+def append_module_to_syspath(location):
+	from modules.kodi_utils import translate_path
+	sys.path.append(translate_path(location))
+
+def manual_function_import(location, function_name):
+	return getattr(import_module(location), function_name)
+
+def reload_module(location):
+	from importlib import reload as rel_module
+	return rel_module(manual_module_import(location))
+
+def manual_module_import(location):
+	return import_module(location)
 
 def chunks(item_list, limit):
 	"""
@@ -171,7 +185,8 @@ def byteify(data, ignore_dicts=False):
 		if isinstance(data, unicode): return data.encode('utf-8')
 		if isinstance(data, list): return [byteify(item, ignore_dicts=True) for item in data]
 		if isinstance(data, dict) and not ignore_dicts:
-			return dict([(byteify(key, ignore_dicts=True), byteify(value, ignore_dicts=True)) for key, value in data.iteritems()])
+			iter_data = data.iteritems()
+			return dict([(byteify(key, ignore_dicts=True), byteify(value, ignore_dicts=True)) for key, value in iter_data])
 	except: pass
 	return data
 
@@ -217,7 +232,16 @@ def replace_html_codes(txt):
 	txt = txt.replace("[/spoiler]", "")
 	return txt
 
+def gen_md5(value):
+	import hashlib
+	try:
+		md5_hash = hashlib.md5()
+		md5_hash.update(str(value).encode('utf-8'))
+		return md5_hash.hexdigest()
+	except: return None
+
 def gen_file_hash(file):
+	import hashlib
 	try:
 		md5_hash = hashlib.md5()
 		with open(file, 'rb') as afile:
@@ -242,7 +266,8 @@ def released_key(item):
 	if 'first_aired' in item: return item['first_aired'] or '2050-01-01'
 	return '2050-01-01'
 
-def title_key(title):
+def title_key(title, ignore_articles):
+	if not ignore_articles: return title
 	try:
 		if title is None: title = ''
 		articles = ['the', 'a', 'an']
@@ -252,16 +277,19 @@ def title_key(title):
 		return title[offset:]
 	except: return title
 
-def sort_for_article(_list, _key):
-	_list.sort(key=lambda k: re.sub(r'(^the |^a |^an )', '', k[_key].lower()))
+def sort_for_article(_list, _key, ignore_articles):
+	try:
+		if not ignore_articles: _list.sort(key=lambda k: k.get(_key))
+		else: _list.sort(key=lambda k: re.sub(r'(^the |^a |^an )', '', k.get(_key).lower()))
+	except: pass
 	return _list
 	
-def sort_list(sort_key, sort_direction, list_data):
+def sort_list(sort_key, sort_direction, list_data, ignore_articles):
 	try:
 		reverse = sort_direction != 'asc'
 		if sort_key == 'rank': return sorted(list_data, key=lambda x: x['rank'], reverse=reverse)
 		if sort_key == 'added': return sorted(list_data, key=lambda x: x['listed_at'], reverse=reverse)
-		if sort_key == 'title': return sorted(list_data, key=lambda x: title_key(x[x['type']].get('title')), reverse=reverse)
+		if sort_key == 'title': return sorted(list_data, key=lambda x: title_key(x[x['type']].get('title'), ignore_articles), reverse=reverse)
 		if sort_key == 'released': return sorted(list_data, key=lambda x: released_key(x[x['type']]), reverse=reverse)
 		if sort_key == 'runtime': return sorted(list_data, key=lambda x: x[x['type']].get('runtime', 0), reverse=reverse)
 		if sort_key == 'popularity': return sorted(list_data, key=lambda x: x[x['type']].get('votes', 0), reverse=reverse)
@@ -281,6 +309,8 @@ def paginate_list(item_list, page, limit=20, paginate_start=0):
 	return result
 
 def unzip(zip_location, destination_location, destination_check, show_busy=True):
+	from zipfile import ZipFile
+	from modules.kodi_utils import show_busy_dialog, hide_busy_dialog, path_exists
 	if show_busy: show_busy_dialog()
 	try:
 		zipfile = ZipFile(zip_location)
@@ -290,6 +320,31 @@ def unzip(zip_location, destination_location, destination_check, show_busy=True)
 	except: status = False
 	if show_busy: hide_busy_dialog()
 	return status
+
+def make_qrcode(url):
+	if url == None: return
+	import segno
+	from os import path
+	from modules.kodi_utils import addon_profile
+	try:
+		art_path = path.join(addon_profile(), 'qr.png')
+		qrcode = segno.make(url, micro=False)
+		qrcode.save(art_path, scale=20)
+	except: return
+	return art_path
+
+def make_tinyurl(url):
+	import requests
+	short_url = ''
+	try:
+		tiny_url = 'http://tinyurl.com/api-create.php'
+		response = requests.get(tiny_url, params={'url': url})
+		status = response.status_code
+		if status == 200:
+			short_url = response.text
+		else: pass
+	except: pass
+	return short_url
 
 def copy2clip(txt):
 	if sys.platform == "win32":
@@ -310,3 +365,78 @@ def copy2clip(txt):
 			p = Popen(['xsel', '-pi'], stdin=PIPE)
 			p.communicate(input=txt)
 		except: return
+
+def image_from_db(image_url, delete=True):
+	import os
+	import sqlite3 as database
+	from modules.kodi_utils import translate_path
+	try:
+		thumbs_folder = translate_path('special://thumbnails')
+		dbfile = translate_path(os.path.join('special://database', 'Textures13.db'))
+		if os.path.exists(dbfile):
+			dbcon = database.connect(dbfile, isolation_level=None)
+			dbcur = dbcon.cursor()
+			dbcur.execute('''PRAGMA synchronous = OFF''')
+			dbcur.execute('''PRAGMA journal_mode = OFF''')
+		else: return notification('Failed')
+		try: image_id, image_location = dbcur.execute("SELECT id, cachedurl FROM texture WHERE url = ?", (image_url,)).fetchone()
+		except: return True
+		path = os.path.join(thumbs_folder, image_location)
+		if not delete: return path
+		os.remove(path)
+		dbcur.execute("DELETE FROM texture WHERE id=?", (image_id,))
+		dbcur.execute("DELETE FROM sizes WHERE idtexture = ?", (image_id,))
+		dbcur.execute("VACUUM")
+		dbcon.commit()
+		return True
+	except: return False
+
+def make_image(list_type, image_type, list_name, images, current_image):
+	import os
+	import shutil
+	import urllib.request
+	from PIL import Image
+	from modules.kodi_utils import translate_path, addon_profile, make_directory, notification
+	def _process(count, item):
+		saved_path = translate_path(os.path.join(worker_image_folder, '%s_%02d.jpg' % (list_name, count + 1)))
+		urllib.request.urlretrieve(item, saved_path)
+		bg = Image.open(saved_path)
+		bg.thumbnail(size_dimensions)
+		new_img.paste(bg, placements[count])
+	saved_final_image = None
+	md5_image_name = gen_md5(list_name)
+	try:
+		profile_path = addon_profile()
+		worker_image_folder = os.path.join(profile_path, 'images', '%s_worker' % list_type)
+		final_image_folder = os.path.join(profile_path, 'images', '%s_%s' % (list_type, image_type))
+		saved_final_image = os.path.join(final_image_folder, '%s_%s.jpg' % (md5_image_name, get_current_timestamp()))
+		for location in (worker_image_folder, final_image_folder): make_directory(location)
+		if image_type == 'poster': new_dimensions, size_dimensions, placements = (1000, 1500), (500, 750), ((0, 0), (500, 0), (0, 750), (500, 750))
+		else: new_dimensions, size_dimensions, placements = (1280, 720), (640, 360), ((0, 0), (640, 0), (0, 360), (640, 360))
+		new_img = Image.new('RGB', new_dimensions)
+		threads = list(make_thread_list_enumerate(_process, images))
+		[i.join() for i in threads]
+		new_img.save(saved_final_image)
+		try: shutil.rmtree(worker_image_folder)
+		except: pass
+		if current_image: os.remove(current_image)
+	except: notification('Error Creating Image')
+	return saved_final_image
+
+def download_image(list_type, image_type, list_name, url, current_image):
+	import os
+	import shutil
+	import urllib.request
+	from modules.kodi_utils import addon_profile, make_directory, notification
+	saved_final_image = None
+	md5_image_name = gen_md5(list_name)
+	try:
+		profile_path = addon_profile()
+		final_image_folder = os.path.join(profile_path, 'images', '%s_%s' % (list_type, image_type))
+		saved_final_image = os.path.join(final_image_folder, '%s_%s.jpg' % (md5_image_name, get_current_timestamp()))
+		make_directory(final_image_folder)
+		urllib.request.urlretrieve(url, saved_final_image)
+		if current_image: os.remove(current_image)
+	except: notification('Error Creating Image')
+	return saved_final_image
+	

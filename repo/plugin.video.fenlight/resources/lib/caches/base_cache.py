@@ -1,50 +1,12 @@
 # -*- coding: utf-8 -*-
 import time
+from os import path
 import sqlite3 as database
 from modules import kodi_utils
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
-kodi_refresh, sleep, path_join, translatePath, addon_profile = kodi_utils.kodi_refresh, kodi_utils.sleep, kodi_utils.path_join, kodi_utils.translatePath, kodi_utils.addon_profile
-delete_file, get_property, set_property, clear_property = kodi_utils.delete_file, kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
-notification, confirm_dialog, ok_dialog, open_file, show_text = kodi_utils.notification, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.open_file, kodi_utils.show_text
-path_exists, list_dirs, progress_dialog, make_directory = kodi_utils.path_exists, kodi_utils.list_dirs, kodi_utils.progress_dialog, kodi_utils.make_directory
-userdata_path = addon_profile()
-databases_path = path_join(userdata_path, 'databases/')
-database_path_raw = path_join(userdata_path, 'databases')
-navigator_db = translatePath(path_join(database_path_raw, 'navigator.db'))
-watched_db = translatePath(path_join(database_path_raw, 'watched.db'))
-favorites_db = translatePath(path_join(database_path_raw, 'favourites.db'))
-trakt_db = translatePath(path_join(database_path_raw, 'traktcache.db'))
-maincache_db = translatePath(path_join(database_path_raw, 'maincache.db'))
-lists_db = translatePath(path_join(database_path_raw, 'lists.db'))
-discover_db = translatePath(path_join(database_path_raw, 'discover.db'))
-metacache_db = translatePath(path_join(database_path_raw, 'metacache.db'))
-debridcache_db = translatePath(path_join(database_path_raw, 'debridcache.db'))
-external_db = translatePath(path_join(database_path_raw, 'external.db'))
-settings_db = translatePath(path_join(database_path_raw, 'settings.db'))
-episode_groups_db = translatePath(path_join(database_path_raw, 'episode_groups.db'))
-database_timeout = 20
-current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db',
-				'discover.db', 'metacache.db', 'debridcache.db', 'external.db', 'settings.db', 'episode_groups.db')
-database_locations = {
-'navigator_db': navigator_db, 'watched_db': watched_db, 'favorites_db': favorites_db, 'settings_db': settings_db, 'trakt_db': trakt_db, 'maincache_db': maincache_db,
-'metacache_db': metacache_db, 'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db, 'external_db': external_db, 'episode_groups_db': episode_groups_db
-		}
-integrity_check = {
-'settings_db': ('settings',),
-'navigator_db': ('navigator',),
-'watched_db': ('watched_status', 'progress'),
-'favorites_db': ('favourites',),
-'trakt_db': ('trakt_data', 'watched_status', 'progress'),
-'maincache_db': ('maincache',),
-'metacache_db': ('metadata', 'season_metadata', 'function_cache'),
-'lists_db': ('lists',),
-'discover_db': ('discover',),
-'debridcache_db': ('debrid_data',),
-'external_db': ('results_data',),
-'episode_groups_db': ('groups_data',)
-		}
-table_creators = {
+def table_creators():
+	return {
 'navigator_db': (
 'CREATE TABLE IF NOT EXISTS navigator (list_name text, list_type text, list_contents text, unique (list_name, list_type))',),
 'watched_db': (
@@ -82,26 +44,41 @@ expires integer, unique (provider, db_type, tmdb_id, title, year, season, episod
 'discover_db': (
 'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',),
 'episode_groups_db': (
-'CREATE TABLE IF NOT EXISTS groups_data (tmdb_id text not null unique, data text)',)
+'CREATE TABLE IF NOT EXISTS groups_data (tmdb_id text not null unique, data text)',),
+'personal_lists_db': (
+'CREATE TABLE IF NOT EXISTS personal_lists \
+(name text, contents text, total integer, created text, sort_order integer, description text, seen text, poster text, fanart text, author text, updated text, unique (name, author))',),
+'tmdb_lists_db': (
+'CREATE TABLE IF NOT EXISTS tmdb_lists (id text unique, data text, expires integer)',),
+'random_widgets_db': (
+'CREATE TABLE IF NOT EXISTS random_widgets (id text unique, data text, expires integer)',)
 		}
-media_prop = 'fenlight.%s'
-BASE_GET = 'SELECT expires, data FROM %s WHERE id = ?'
-BASE_SET = 'INSERT OR REPLACE INTO %s(id, data, expires) VALUES (?, ?, ?)'
-BASE_DELETE = 'DELETE FROM %s WHERE id = ?'
+
+def locations():
+	return {
+'navigator_db': 'navigator.db', 'watched_db': 'watched.db', 'favorites_db': 'favourites.db', 'settings_db': 'settings.db', 'trakt_db': 'traktcache.db',
+'maincache_db': 'maincache.db', 'metacache_db': 'metacache.db', 'debridcache_db': 'debridcache.db', 'lists_db': 'lists.db', 'tmdb_lists_db': 'tmdb_lists.db',
+'discover_db': 'discover.db', 'external_db': 'external.db', 'episode_groups_db': 'episode_groups.db', 'personal_lists_db': 'personal_lists.db',
+'random_widgets_db': 'random_widgets.db'
+			}
+
+def database_locations(database_name):
+	return kodi_utils.translate_path(path.join(path.join(kodi_utils.addon_profile(), 'databases'), locations()[database_name]))
 
 def make_database(database_name):
-	dbcon = database.connect(database_locations[database_name])
-	for command in table_creators[database_name]: dbcon.execute(command)
+	dbcon = database.connect(database_locations(database_name))
+	all_commands = table_creators()[database_name]
+	for command in all_commands: dbcon.execute(command)
 	dbcon.close()
 
 def make_databases():
-	if not path_exists(databases_path): make_directory(databases_path)
-	for database_name, database_location in database_locations.items():
-		dbcon = database.connect(database_location)
-		for command in table_creators[database_name]: dbcon.execute(command)
+	databases_path = path.join(kodi_utils.addon_profile(), 'databases/')
+	if not kodi_utils.path_exists(databases_path): kodi_utils.make_directory(databases_path)
+	all_locations = locations()
+	for database_name in all_locations: make_database(database_name)
 
 def connect_database(database_name):
-	dbcon = database.connect(database_locations[database_name], timeout=database_timeout, isolation_level=None, check_same_thread=False)
+	dbcon = database.connect(database_locations(database_name), timeout=20, isolation_level=None, check_same_thread=False)
 	dbcon.execute('PRAGMA synchronous = OFF')
 	dbcon.execute('PRAGMA journal_mode = OFF')
 	return dbcon
@@ -111,36 +88,57 @@ def get_timestamp(offset=0):
 	return int(time.time()) + (offset*3600)
 
 def remove_old_databases():
+	databases_path = path.join(kodi_utils.addon_profile(), 'databases/')
+	current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'traktcache.db', 'maincache.db', 'lists.db', 'tmdb_lists.db', 'discover.db', 'metacache.db', 'debridcache.db',
+	'external.db', 'settings.db', 'episode_groups.db', 'personal_lists_db', 'episode_groups_db', 'personal_lists_db', 'random_widgets_db')
 	try:
-		files = list_dirs(databases_path)[1]
+		files = kodi_utils.list_dirs(databases_path)[1]
 		for item in files:
 			if not item in current_dbs:
-				try: delete_file(databases_path + item)
+				try: kodi_utils.delete_file(databases_path + item)
 				except: pass
 	except: pass
 
 def check_databases_integrity():
+	integrity_check = {
+	'settings_db': ('settings',),
+	'navigator_db': ('navigator',),
+	'watched_db': ('watched_status', 'progress'),
+	'favorites_db': ('favourites',),
+	'trakt_db': ('trakt_data', 'watched_status', 'progress'),
+	'maincache_db': ('maincache',),
+	'metacache_db': ('metadata', 'season_metadata', 'function_cache'),
+	'lists_db': ('lists',),
+	'tmdb_lists_db': ('tmdb_lists',),
+	'discover_db': ('discover',),
+	'debridcache_db': ('debrid_data',),
+	'external_db': ('results_data',),
+	'episode_groups_db': ('groups_data',),
+	'personal_lists_db': ('personal_lists',),
+	'random_widgets_db': ('random_widgets',)
+			}
 	def _process(database_name, tables):
-		database_location = database_locations[database_name]
+		database_location = database_locations(database_name)
 		try:
 			dbcon = database.connect(database_location)
 			for db_table in tables: dbcon.execute(command_base % db_table)
 		except:
 			database_errors.append(database_name)
-			if path_exists(database_location):
+			if kodi_utils.path_exists(database_location):
 				try: dbcon.close()
 				except: pass
-				delete_file(database_location)
+				kodi_utils.delete_file(database_location)
 	command_base = 'SELECT * FROM %s LIMIT 1'
 	database_errors = []
-	for database_name, tables in integrity_check.items(): _process(database_name, tables)
+	integ_check = integrity_check.items()
+	for database_name, tables in integ_check: _process(database_name, tables)
 	make_databases()
-	if database_errors: ok_dialog(text='[B]Following Databases Rebuilt:[/B][CR][CR]%s' % ', '.join(database_errors))
-	else: notification('No Corrupt or Missing Databases', time=3000)
+	if database_errors: kodi_utils.ok_dialog(text='[B]Following Databases Rebuilt:[/B][CR][CR]%s' % ', '.join(database_errors))
+	else: kodi_utils.notification('No Corrupt or Missing Databases', time=3000)
 
 def get_size(file):
-		with open_file(file) as f: s = f.size()
-		return s
+	with kodi_utils.open_file(file) as f: s = f.size()
+	return s
 
 def clean_databases():
 	from caches.external_cache import external_cache
@@ -148,8 +146,10 @@ def clean_databases():
 	from caches.lists_cache import lists_cache
 	from caches.meta_cache import meta_cache
 	from caches.debrid_cache import debrid_cache
-	clean_cache_list = (('EXTERNAL CACHE', external_cache, external_db), ('MAIN CACHE', main_cache, maincache_db), ('LISTS CACHE', lists_cache, lists_db),
-						('META CACHE', meta_cache, metacache_db), ('DEBRID CACHE', debrid_cache, debridcache_db))
+	clean_cache_list = (('EXTERNAL CACHE', external_cache, database_locations('external_db')),
+						('MAIN CACHE', main_cache, database_locations('maincache_db')), ('LISTS CACHE', lists_cache, database_locations('lists_db')),
+						('TMDB LISTS CACHE', lists_cache, database_locations('tmdb_lists_db')), ('META CACHE', meta_cache, database_locations('metacache_db')),
+						('DEBRID CACHE', debrid_cache, database_locations('debridcache_db')), ('RANDOM WIDGETS CACHE', debrid_cache, database_locations('random_widgets_db')))
 	results = []
 	append = results.append
 	for item in clean_cache_list:
@@ -163,10 +163,10 @@ def clean_databases():
 		saved_bytes = start_bytes - end_bytes
 		append('[B]%s: [COLOR green]SUCCESS[/COLOR][/B][CR]    [B]Saved Size: %sMB[/B][CR]    Start Size/End Size: %sMB/%sMB' \
 		% (name, round(float(saved_bytes)/1024/1024, 2), round(float(start_bytes)/1024/1024, 2), round(float(end_bytes)/1024/1024, 2)))
-	return show_text('Cache Clean Results', text='[CR]----------------------------------[CR]'.join(results), font_size='large')
+	return kodi_utils.show_text('Cache Clean Results', text='[CR]----------------------------------[CR]'.join(results), font_size='large')
 
 def clear_cache(cache_type, silent=False):
-	def _confirm(): return silent or confirm_dialog()
+	def _confirm(): return silent or kodi_utils.confirm_dialog()
 	success = True
 	if cache_type == 'meta':
 		from caches.meta_cache import delete_meta_cache
@@ -193,28 +193,28 @@ def clear_cache(cache_type, silent=False):
 		success = clear_imdb_cache()
 	elif cache_type == 'pm_cloud':
 		if not _confirm(): return
-		from apis.premiumize_api import PremiumizeAPI
-		success = PremiumizeAPI().clear_cache()
+		from apis.premiumize_api import Premiumize
+		success = Premiumize.clear_cache()
 	elif cache_type == 'rd_cloud':
 		if not _confirm(): return
-		from apis.real_debrid_api import RealDebridAPI
-		success = RealDebridAPI().clear_cache()
+		from apis.real_debrid_api import RealDebrid
+		success = RealDebrid.clear_cache()
 	elif cache_type == 'ad_cloud':
 		if not _confirm(): return
-		from apis.alldebrid_api import AllDebridAPI
-		success = AllDebridAPI().clear_cache()
+		from apis.alldebrid_api import AllDebrid
+		success = AllDebrid.clear_cache()
 	elif cache_type == 'oc_cloud':
 		if not _confirm(): return
-		from apis.offcloud_api import OffcloudAPI
-		success = OffcloudAPI().clear_cache()
+		from apis.offcloud_api import Offcloud
+		success = Offcloud.clear_cache()
 	elif cache_type == 'ed_cloud':
 		if not _confirm(): return
-		from apis.easydebrid_api import EasyDebridAPI
-		success = EasyDebridAPI().clear_cache()
+		from apis.easydebrid_api import EasyDebrid
+		success = EasyDebrid.clear_cache()
 	elif cache_type == 'tb_cloud':
 		if not _confirm(): return
-		from apis.torbox_api import TorBoxAPI
-		success = TorBoxAPI().clear_cache()
+		from apis.torbox_api import TorBox
+		success = TorBox.clear_cache()
 	elif cache_type == 'folders':
 		if not _confirm(): return
 		from caches.main_cache import main_cache
@@ -223,40 +223,98 @@ def clear_cache(cache_type, silent=False):
 		if not _confirm(): return
 		from caches.lists_cache import lists_cache
 		success = lists_cache.delete_all_lists()
+	elif cache_type == 'tmdb_list':
+		if not _confirm(): return
+		from caches.tmdb_lists import tmdb_lists_cache
+		success = tmdb_lists_cache.clear_all()
 	else:# main
 		if not _confirm(): return
 		from caches.main_cache import main_cache
 		success = main_cache.delete_all()
-	if not silent and success: notification('Success')
+	if not silent and success: kodi_utils.notification('Success')
 	return success
 
 def clear_all_cache():
-	if not confirm_dialog(): return
-	progressDialog = progress_dialog()
+	if not kodi_utils.confirm_dialog(): return
+	progressDialog = kodi_utils.progress_dialog()
 	line = 'Clearing....[CR]%s'
 	caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
-			('trakt', 'Trakt Cache'), ('imdb', 'IMDb Cache'), ('list', 'List Data Cache', ), ('main', 'Main Cache', ),
-			('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'),
+			('trakt', 'Trakt Cache'), ('imdb', 'IMDb Cache'), ('list', 'List Data Cache'), ('tmdb_list', 'TMDb Personal List Cache'),
+			('main', 'Main Cache'), ('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'),
 			('oc_cloud', 'OffCloud Cloud'), ('ed_cloud', 'Easy Debrid Cloud'), ('tb_cloud', 'TorBox Cloud'))
 	for count, cache_type in enumerate(caches, 1):
 		try:
 			progressDialog.update(line % (cache_type[1]), int(float(count) / float(len(caches)) * 100))
 			clear_cache(cache_type[0], silent=True)
-			sleep(1000)
+			kodi_utils.sleep(1000)
 		except: pass
 	progressDialog.close()
-	sleep(100)
-	ok_dialog(text='Success')
+	kodi_utils.sleep(100)
+	kodi_utils.ok_dialog(text='Success')
 
 def refresh_cached_data(meta):
 	from caches.meta_cache import meta_cache
 	media_type, tmdb_id, imdb_id = meta['mediatype'], meta['tmdb_id'], meta['imdb_id']
 	try: meta_cache.delete(media_type, 'tmdb_id', tmdb_id, meta)
-	except: return notification('Error')
+	except: return kodi_utils.notification('Error')
 	from apis.imdb_api import refresh_imdb_meta_data
 	refresh_imdb_meta_data(imdb_id)
-	notification('Success')
-	kodi_refresh()
+	kodi_utils.notification('Success')
+	kodi_utils.kodi_refresh()
+
+def columns_in_table(database, table, check_existence=''):
+	dbcon = connect_database(database)
+	all_columns = [i[1] for i in dbcon.execute('PRAGMA table_info(%s);' % table).fetchall()]
+	if check_existence: return check_existence in all_columns
+	return all_columns
+
+def insert_new_column_in_table(database, table, new_column, new_column_properties):
+	try:
+		dbcon = connect_database(database)
+		dbcon.execute('ALTER TABLE %s ADD COLUMN %s %s;' % (table, new_column, new_column_properties))
+		return True
+	except: return False
+
+def check_and_insert_new_columns(database, table, new_column, new_column_properties):
+	#Check for existence of any column in databases and insert if not present
+	try:
+		in_table = columns_in_table(database, table, new_column)
+		if not in_table:
+			success = insert_new_column_in_table(database, table, new_column, new_column_properties)
+			if not success: kodi_utils.notification('Error with [B]%s[/B] Database. Missing Column [B]%s[/B]' % (database.upper(), new_column.upper()))
+	except: kodi_utils.notification('Error Checking Database Table/s: %s' % database)
+
+def change_column_schema():
+	# dbcon = connect_database('personal_lists_db')
+	dbcon = database.connect(database_locations('personal_lists_db'))
+	dbcur = dbcon.cursor()
+	logger('change_column_schema', dbcon)
+	# try:
+	dbcur.execute('PRAGMA foreign_keys = OFF;')
+	dbcur.execute('BEGIN TRANSACTION;')
+
+	# Example: Changing 'age' column from INTEGER to TEXT
+	dbcur.execute('CREATE TABLE personal_lists_new \
+		(name text, contents text, total integer, created text, sort_order integer, description text, seen text, poster text, \
+		fanart text, author text, updated text, unique (name, author))',)
+	dbcur.execute('INSERT INTO personal_lists_new \
+		(name, contents, total, created, sort_order, description, seen, poster, fanart, author, updated) \
+		SELECT name, contents, total, created, sort_order, description, seen, poster, fanart, author, updated FROM personal_lists;')
+	# dbcur.execute('DROP TABLE personal_lists_new;')
+	# dbcur.execute('ALTER TABLE personal_lists_new RENAME TO personal_lists;')
+
+	dbcon.commit()
+	# print("Column schema modified successfully.")
+	dbcur.execute('PRAGMA foreign_keys = ON;')
+	dbcon.close()
+
+	# except database.Error as e:
+	#     conn.rollback()
+	#     print(f"Error modifying column schema: {e}")
+
+	# finally:
+	#     cursor.execute("PRAGMA foreign_keys = ON;")
+	#     conn.close()
 
 class BaseCache(object):
 	def __init__(self, dbfile, table):
@@ -268,7 +326,7 @@ class BaseCache(object):
 		try:
 			current_time = get_timestamp()
 			dbcon = connect_database(self.dbfile)
-			cache_data = dbcon.execute(BASE_GET % self.table, (string,)).fetchone()
+			cache_data = dbcon.execute('SELECT expires, data FROM %s WHERE id = ?' % self.table, (string,)).fetchone()
 			if cache_data:
 				if cache_data[0] > current_time:
 					result = eval(cache_data[1])
@@ -280,18 +338,20 @@ class BaseCache(object):
 		try:
 			dbcon = connect_database(self.dbfile)
 			expires = get_timestamp(expiration)
-			dbcon.execute(BASE_SET % self.table, (string, repr(data), int(expires)))
+			dbcon.execute('INSERT OR REPLACE INTO %s(id, data, expires) VALUES (?, ?, ?)' % self.table, (string, repr(data), int(expires)))
 		except: return None
 
 	def delete(self, string):
 		try:
 			dbcon = connect_database(self.dbfile)
-			dbcon.execute(BASE_DELETE % self.table, (string,))
-			self.delete_memory_cache(string)
+			dbcon.execute('DELETE FROM %s WHERE id = ?' % self.table, (string,))
 		except: pass
 
-	def delete_memory_cache(self, string):
-		clear_property(media_prop % string)
+	def delete_like(self, string):
+		try:
+			dbcon = connect_database(self.dbfile)
+			dbcon.execute('DELETE FROM %s WHERE id LIKE ?' % self.table, (string,))
+		except: pass
 
 	def manual_connect(self, dbfile):
 		return connect_database(dbfile)

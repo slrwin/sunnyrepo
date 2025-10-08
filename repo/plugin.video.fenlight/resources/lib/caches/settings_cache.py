@@ -4,44 +4,32 @@ from modules import kodi_utils
 from caches.base_cache import connect_database
 # logger = kodi_utils.logger
 
-numeric_input = kodi_utils.numeric_input
-kodi_dialog, ok_dialog, select_dialog, confirm_dialog = kodi_utils.kodi_dialog, kodi_utils.ok_dialog, kodi_utils.select_dialog, kodi_utils.confirm_dialog
-default_addon_fanart, get_property, set_property, notification = kodi_utils.addon_fanart(), kodi_utils.get_property, kodi_utils.set_property, kodi_utils.notification
-tmdb_default_api, trakt_default_id, trakt_default_secret = kodi_utils.tmdb_default_api, kodi_utils.trakt_default_id, kodi_utils.trakt_default_secret
-boolean_dict = {'true': 'false', 'false': 'true'}
-
-BASE_GET = 'SELECT setting_value from settings WHERE setting_id = ?'
-GET_MANY = 'SELECT setting_id, setting_value FROM settings WHERE setting_id in (%s)'
-GET_ALL = 'SELECT setting_id, setting_value FROM settings'
-BASE_SET = 'INSERT OR REPLACE INTO settings VALUES (?, ?, ?, ?)'
-BASE_DELETE = 'DELETE FROM settings WHERE setting_id = ?'
-CLEAR_SETTINGS = 'DELETE FROM settings'
-
 class SettingsCache:
 	def get(self, setting_id):
 		try:
 			dbcon = connect_database('settings_db')
 			setting_id = setting_id.replace('fenlight.', '')
-			setting_value = dbcon.execute(BASE_GET, (setting_id,)).fetchone()[0]
+			setting_value = dbcon.execute('SELECT setting_value from settings WHERE setting_id = ?', (setting_id,)).fetchone()[0]
 			self.set_memory_cache(setting_id, setting_value)
 		except: setting_value = None
 		return setting_value
 
 	def remove_setting(self, setting_id):
 		dbcon = connect_database('settings_db')
-		dbcon.execute(BASE_DELETE, (setting_id,))
+		dbcon.execute('DELETE FROM settings WHERE setting_id = ?', (setting_id,))
 
 	def get_many(self, settings_list):
 		try:
 			dbcon = connect_database('settings_db')
-			results = dict(dbcon.execute(GET_MANY % (', '.join('?' for _ in settings_list)), settings_list).fetchall())
+			results = dict(dbcon.execute('SELECT setting_id, setting_value FROM settings WHERE setting_id in (%s)' \
+										% (', '.join('?' for _ in settings_list)), settings_list).fetchall())
 			return results
 		except: results = {}
 		return results
 
 	def get_all(self):
 		dbcon = connect_database('settings_db')
-		try: all_settings = dict(dbcon.execute(GET_ALL).fetchall())
+		try: all_settings = dict(dbcon.execute('SELECT setting_id, setting_value FROM settings').fetchall())
 		except: all_settings = {}
 		return all_settings
 
@@ -50,27 +38,28 @@ class SettingsCache:
 		setting_info = default_setting_values(setting_id)
 		setting_type, setting_default = setting_info['setting_type'], setting_info['setting_default']
 		if setting_value is None: setting_value = setting_default
-		dbcon.execute(BASE_SET, (setting_id, setting_type, setting_default, setting_value))
+		dbcon.execute('INSERT OR REPLACE INTO settings VALUES (?, ?, ?, ?)', (setting_id, setting_type, setting_default, setting_value))
 		self.set_memory_cache(setting_id, setting_value)
 		if setting_type == 'action' and 'settings_options' in setting_info:
 			name_setting_id = '%s_name' % setting_id
 			name_setting_value = setting_info['settings_options'][setting_value]
-			dbcon.execute(BASE_SET, (name_setting_id, 'name', '', name_setting_value))
+			dbcon.execute('INSERT OR REPLACE INTO settings VALUES (?, ?, ?, ?)', (name_setting_id, 'name', '', name_setting_value))
 			self.set_memory_cache(name_setting_id, name_setting_value)
 
 	def set_many(self, settings_list):
 		dbcon = connect_database('settings_db')
-		dbcon.executemany(BASE_SET, settings_list)
+		dbcon.executemany('INSERT OR REPLACE INTO settings VALUES (?, ?, ?, ?)', settings_list)
 		for item in settings_list: self.set_memory_cache(item[0], item[3] or item[2])
 
 	def set_memory_cache(self, setting_id, setting_value):
-		set_property('fenlight.%s' % setting_id, setting_value)
+		kodi_utils.set_property('fenlight.%s' % setting_id, setting_value)
 
 	def delete_memory_cache(self, setting_id):
 		clear_property('fenlight.%s' % setting_id)
 
 	def setting_info(self, setting_id):
-		return [i for i in default_settings if i['setting_id'] == setting_id][0]
+		d_settings = default_settings()
+		return [i for i in d_settings if i['setting_id'] == setting_id][0]
 
 	def clean_database(self):
 		try:
@@ -85,7 +74,7 @@ def set_setting(setting_id, value):
 	settings_cache.set(setting_id, value)
 
 def get_setting(setting_id, fallback=''):
-	return get_property(setting_id) or settings_cache.get(setting_id) or fallback
+	return kodi_utils.get_property(setting_id) or settings_cache.get(setting_id) or fallback
 
 def get_many(settings_list):
 	return settings_cache.get_many(settings_list)
@@ -95,17 +84,20 @@ def sync_settings(params={}):
 	insert_list = []
 	insert_list_append = insert_list.append
 	currentsettings = settings_cache.get_all()
-	defaultsettings_ids = [i['setting_id'] for i in default_settings]
-	defaultsettings_names = [i['setting_id'] for i in default_settings if 'settings_options' in i]
+	d_settings = default_settings()
+	defaultsettings_ids = [i['setting_id'] for i in d_settings]
+	defaultsettings_names = [i['setting_id'] for i in d_settings if 'settings_options' in i]
 	defaultsettings_ids.extend(['%s_name' % i for i in defaultsettings_names])
 	try:
-		obsoletesettings_ids = [k for k, v in currentsettings.items() if not k in defaultsettings_ids]
+		c_settings = currentsettings.items()
+		obsoletesettings_ids = [k for k, v in c_settings if not k in defaultsettings_ids]
 		if obsoletesettings_ids:
 			for item in obsoletesettings_ids: settings_cache.remove_setting(item)
 	except: pass
 	if currentsettings:
-		for k, v  in currentsettings.items(): settings_cache.set_memory_cache(k, v)
-	for item in default_settings:
+		c_settings = currentsettings.items()
+		for k, v  in c_settings: settings_cache.set_memory_cache(k, v)
+	for item in d_settings:
 		setting_id = item['setting_id']
 		if setting_id in currentsettings: continue
 		setting_type = item['setting_type']
@@ -116,25 +108,27 @@ def sync_settings(params={}):
 		insert_list_append((setting_id, setting_type, setting_default, setting_default))
 	if insert_list: settings_cache.set_many(insert_list)
 	settings_cache.clean_database()
-	if not silent: notification('Settings Cache Remade')
+	if not silent: kodi_utils.notification('Settings Cache Remade')
 
 def set_default(setting_ids):
 	if not isinstance(setting_ids, list): setting_ids = [setting_ids]
-	if not confirm_dialog(text='Are You Sure?', ok_label='Yes', cancel_label='No', default_control=11): return
+	if not kodi_utils.confirm_dialog(text='Are You Sure?', ok_label='Yes', cancel_label='No', default_control=11): return
 	for setting_id in setting_ids:
 		try: set_setting(setting_id, default_setting_values(setting_id)['setting_default'])
 		except: pass
 
 def set_boolean(params):
+	boolean_dict = {'true': 'false', 'false': 'true'}
 	setting = params['setting_id']
 	set_setting(setting, boolean_dict[get_setting('fenlight.%s' % setting)])
 
 def set_string(params):
 	current_value = get_setting('fenlight.%s' % params['setting_id'])
 	current_value = current_value.replace('empty_setting', '')
-	new_value = kodi_dialog().input('', defaultt=current_value)
-	if not new_value and not confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_string(params)
-	set_setting(params['setting_id'], new_value)
+	new_value = kodi_utils.kodi_dialog().input('', defaultt=current_value)
+	if not new_value and not kodi_utils.confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11):
+		return set_string(params)
+	set_setting(params['setting_id'], new_value or 'empty_setting')
 
 def set_numeric(params):
 	setting_id = params['setting_id']
@@ -146,26 +140,27 @@ def set_numeric(params):
 		multiplier_values = [('Positive(+)', 1), ('Negative(-)', -1)]
 		list_items = [{'line1': item[0]} for item in multiplier_values]
 		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Will this be a positive or negative number?'}
-		multiplier = select_dialog(multiplier_values, **kwargs)
+		multiplier = kodi_utils.select_dialog(multiplier_values, **kwargs)
 	else: multiplier = None
-	new_value = kodi_dialog().input('Range [B]%s - %s[/B].' % (min_value, max_value), type=numeric_input)
+	new_value = kodi_utils.kodi_dialog().input('Range [B]%s - %s[/B].' % (min_value, max_value), type=1)
 	if not new_value: return
 	if multiplier: new_value = str(int(float(new_value) * multiplier[1]))
 	if int(new_value) < min_value or int(new_value) > max_value:
-		ok_dialog(text='Please Choose Between the Range [B]%s - %s[/B].' % (min_value, max_value))
+		kodi_utils.ok_dialog(text='Please Choose Between the Range [B]%s - %s[/B].' % (min_value, max_value))
 		return set_numeric(params)
 	set_setting(setting_id, new_value)
 
 def set_path(params):
 	setting_id = params['setting_id']
 	browse_mode = int(default_setting_values(setting_id)['browse_mode'])
-	new_value = kodi_dialog().browse(browse_mode, '', '', defaultt=get_setting('fenlight.%s' % setting_id))
+	new_value = kodi_utils.kodi_dialog().browse(browse_mode, '', '', defaultt=get_setting('fenlight.%s' % setting_id))
 	set_setting(setting_id, new_value)
 
 def set_from_list(params):
 	setting_id = params['setting_id']
-	settings_list = [(v, k) for k, v in default_setting_values(setting_id)['settings_options'].items()]
-	new_value = select_dialog(settings_list, **{'items': json.dumps([{'line1': item[0]} for item in settings_list]), 'narrow_window': 'true'})
+	settings_options = default_setting_values(setting_id)['settings_options'].items()
+	settings_list = [(v, k) for k, v in settings_options]
+	new_value = kodi_utils.select_dialog(settings_list, **{'items': json.dumps([{'line1': item[0]} for item in settings_list]), 'narrow_window': 'true'})
 	if not new_value: return
 	setting_value = new_value[1]
 	set_setting(setting_id, setting_value)
@@ -174,40 +169,44 @@ def set_source_folder_path(params):
 	setting_id = params['setting_id']
 	current_setting = get_setting('fenlight.%s' % setting_id)
 	if current_setting not in (None, 'None', ''):
-		if confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_setting(setting_id, 'None')
+		if kodi_utils.confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11):
+			return set_setting(setting_id, 'None')
 	return set_path(params)
 
 def restore_setting_default(params):
 	silent = params.get('silent', 'false') == 'true'
-	if not silent and not confirm_dialog(): return
+	if not silent and not kodi_utils.confirm_dialog(): return
 	try:
 		setting_id = params['setting_id']
 		setting_default = default_setting_values(setting_id)['setting_default']
 		set_setting(setting_id, setting_default)
 	except:
-		if not silent: ok_dialog(text='Error restoring default setting')
+		if not silent: kodi_utils.ok_dialog(text='Error restoring default setting')
 
 def default_setting_values(setting_id):
-	return next((i for i in default_settings if i['setting_id'] == setting_id), None)
+	d_settings = default_settings()
+	return next((i for i in d_settings if i['setting_id'] == setting_id), None)
 
-default_settings = [
+def default_settings():
+	return [
 #===============================================================================#
 #====================================GENERAL====================================#
 #===============================================================================#
 #==================== General
 {'setting_id': 'auto_start_fenlight', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
+{'setting_id': 'addon_icon_choice', 'setting_type': 'string', 'setting_default': 'resources/media/addon_icons/fenlight_icon_01.png'},
+{'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': kodi_utils.addon_fanart(), 'browse_mode': '2'},
 {'setting_id': 'limit_concurrent_threads', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'max_threads', 'setting_type': 'action', 'setting_default': '60', 'min_value': '10', 'max_value': '250'},
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
 {'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},
-{'setting_id': 'update.username', 'setting_type': 'string', 'setting_default': 'Tikipeter'},
-{'setting_id': 'update.location', 'setting_type': 'string', 'setting_default': 'tikipeter.github.io'},
+{'setting_id': 'update.username', 'setting_type': 'string', 'setting_default': 'FenlightAnonyMouse'},
+{'setting_id': 'update.location', 'setting_type': 'string', 'setting_default': 'FenlightAnonyMouse.github.io'},
 #==================== Watched Indicators
 {'setting_id': 'watched_indicators', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Fen Light', '1': 'Trakt'}},
 #======+============= Trakt Cache
-{'setting_id': 'trakt.sync_interval', 'setting_type': 'action', 'setting_default': '30', 'min_value': '5', 'max_value': '600'},
+{'setting_id': 'trakt.sync_interval', 'setting_type': 'action', 'setting_default': '60', 'min_value': '5', 'max_value': '600'},
 {'setting_id': 'trakt.refresh_widgets', 'setting_type': 'boolean', 'setting_default': 'true'},
 #==================== UTC Time Offset
 {'setting_id': 'datetime.offset', 'setting_type': 'action', 'setting_default': '0', 'min_value': '-15', 'max_value': '15'},
@@ -232,20 +231,33 @@ default_settings = [
 #==================================================================================#
 #====================================CONTENT====================================#
 #==================================================================================#
-#==================== Sorting - Personal Lists
+#==================== Contents Sort Order For Watched Progress
 {'setting_id': 'sort.progress', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Recently Watched'}},
 {'setting_id': 'sort.watched', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Recently Watched'}},
+#==================== Contents Sort Order For Trakt Lists
 {'setting_id': 'sort.collection', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Date Added', '2': 'Release Date'}},
 {'setting_id': 'sort.watchlist', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Date Added', '2': 'Release Date'}},
+#==================== Personal Lists
+{'setting_id': 'personal_list.sort_unseen_to_top', 'setting_type': 'boolean', 'setting_default': 'true'},
+{'setting_id': 'personal_list.highlight_unseen', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'personal_list.unseen_highlight', 'setting_type': 'string', 'setting_default': 'FF4DDBFF'},
+{'setting_id': 'personal_list.show_author', 'setting_type': 'boolean', 'setting_default': 'true'},
 #==================== Widgets
 {'setting_id': 'widget_refresh_timer', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'widget_refresh_notification', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'widget_hide_watched', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'widget_hide_next_page', 'setting_type': 'boolean', 'setting_default': 'false'},
+#==================== RPDb Ratings Posters
+{'setting_id': 'rpdb_enabled', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Movies', '2': 'TV Shows', '3': 'Both'}},
+#==================== Context Menu
+{'setting_id': 'context_menu.order', 'setting_type': 'string',
+'setting_default': 'extras,options,playback_options,browse_set_season,recommended,more_like_this,in_trakt_list,trakt_manager,personal_manager,tmdb_manager,' \
+'favorites_manager,mark_watched,exit,refresh,reload'},
 #==================== General
 {'setting_id': 'paginate.lists', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Within Addon Only', '2': 'Widgets Only', '3': 'Both'}},
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
+{'setting_id': 'ignore_articles', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'recommend_service', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recommended (TMDb)', '1': 'More Like This (IMDb)'}},
 {'setting_id': 'recommend_seed', 'setting_type': 'action', 'setting_default': '5', 'settings_options': {'1': 'Last Watched Only', '2': 'Last 2 Watched',
 '3': 'Last 3 Watched', '4': 'Last 4 Watched', '5': 'Last 5 Watched'}},
@@ -253,6 +265,7 @@ default_settings = [
 {'setting_id': 'tv_progress_location', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Watched', '1': 'In Progress', '2': 'Both'}},
 {'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_all_episodes', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'If Only One Season', '2': 'Always'}},
+{'setting_id': 'avoid_episode_spoilers', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'show_unaired_watchlist', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_viewtypes', 'setting_type': 'boolean', 'setting_default': 'true'},
@@ -264,6 +277,8 @@ default_settings = [
 {'setting_id': 'view.episodes', 'setting_type': 'string', 'setting_default': '55'},
 {'setting_id': 'view.episodes_single', 'setting_type': 'string', 'setting_default': '55'},
 {'setting_id': 'view.premium', 'setting_type': 'string', 'setting_default': '55'},
+
+
 #==================================================================================#
 #====================================SINGLE EPISODE LISTS====================================#
 #==================================================================================#
@@ -291,17 +306,24 @@ default_settings = [
 #=====================================================================================#
 #====================================ACCOUNTS====================================#
 #=====================================================================================#
-#==================== Trakt
-{'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': trakt_default_id},
-{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': trakt_default_secret},
-#==================== TMDb
-{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': tmdb_default_api},
-#==================== OMDb
-{'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== External
 {'setting_id': 'provider.external', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'external_scraper.name', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'external.cache_check', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'external.check_year', 'setting_type': 'boolean', 'setting_default': 'false'},
+#==================== Trakt
+{'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'},
+{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1'},
+#==================== TMDb API
+{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': 'b370b60447737762ca38457bd77579b3'},
+#==================== TMDb Lists
+{'setting_id': 'tmdb.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'tmdb.account_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+#==================== OMDb
+{'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+#==================== RPDb
+{'setting_id': 'rpdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== Real Debrid
 {'setting_id': 'rd.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'rd.enabled', 'setting_type': 'boolean', 'setting_default': 'false'},
@@ -310,6 +332,7 @@ default_settings = [
 {'setting_id': 'provider.rd_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'rd_cloud.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'check.rd_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.rd_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_rdcloud_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'rd.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
 #==================== Premiumize
@@ -320,6 +343,7 @@ default_settings = [
 {'setting_id': 'provider.pm_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'pm_cloud.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'check.pm_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.pm_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_pmcloud_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'pm.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
 #==================== All Debrid
@@ -330,6 +354,7 @@ default_settings = [
 {'setting_id': 'provider.ad_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'ad_cloud.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'check.ad_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.ad_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_adcloud_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'ad.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
 #==================== Off Cloud
@@ -339,6 +364,7 @@ default_settings = [
 {'setting_id': 'provider.oc_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'oc_cloud.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'check.oc_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.oc_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_occloud_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'oc.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
 #==================== Easy Debrid
@@ -352,6 +378,7 @@ default_settings = [
 {'setting_id': 'provider.tb_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'tb_cloud.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'check.tb_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.tb_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_tbcloud_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'tb.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
 #==================== Easynews
@@ -362,13 +389,16 @@ default_settings = [
 {'setting_id': 'easynews.filter_lang', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'easynews.lang_filters', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'check.easynews', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.easynews', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'en.priority', 'setting_type': 'action', 'setting_default': '7', 'min_value': '1', 'max_value': '10'},
 #=========+========== Folders
 {'setting_id': 'provider.folders', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'folders.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'check.folders', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'autoplay.folders', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_folders_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'results.folders_ignore_filters', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'folders.priority', 'setting_type': 'action', 'setting_default': '6', 'min_value': '1', 'max_value': '10'},
 
 
 #===============================================================================#
@@ -378,12 +408,13 @@ default_settings = [
 {'setting_id': 'results.timeout', 'setting_type': 'action', 'setting_default': '20', 'min_value': '1'},
 {'setting_id': 'results.list_format', 'setting_type': 'string', 'setting_default': 'List'},
 #==================== General
+{'setting_id': 'results.auto_rescrape_cache_ignored', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
+{'setting_id': 'results.auto_rescrape_imdb_year', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
 {'setting_id': 'results.auto_rescrape_with_all', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
 {'setting_id': 'results.auto_episode_group', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
 {'setting_id': 'results.ignore_filter', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
 #==================== Sorting and Filtering
 {'setting_id': 'results.sort_order_display', 'setting_type': 'string', 'setting_default': 'Quality, Size, Provider'},
-{'setting_id': 'results.size_sort_direction', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
 {'setting_id': 'results.filter_size_method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Use Line Speed', '2': 'Use Size'}},
 {'setting_id': 'results.line_speed', 'setting_type': 'action', 'setting_default': '25', 'min_value': '1'},
 {'setting_id': 'results.movie_size_max', 'setting_type': 'action', 'setting_default': '10000', 'min_value': '1'},
@@ -391,6 +422,10 @@ default_settings = [
 {'setting_id': 'results.movie_size_min', 'setting_type': 'action', 'setting_default': '0', 'min_value': '0'},
 {'setting_id': 'results.episode_size_min', 'setting_type': 'action', 'setting_default': '0', 'min_value': '0'},
 {'setting_id': 'results.size_unknown', 'setting_type': 'boolean', 'setting_default': 'true'},
+{'setting_id': 'results.size_sort_weighted', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'results.size_sort_direction', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Descending', '1': 'Ascending'}},
+{'setting_id': 'results.limit_number_quality', 'setting_type': 'string', 'setting_default': '0'},
+{'setting_id': 'results.limit_number_total', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'results.include.unknown.size', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'filter.include_prerelease', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Include', '1': 'Exclude'}},
 {'setting_id': 'filter.hevc', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Include', '1': 'Exclude'}},
@@ -401,7 +436,8 @@ default_settings = [
 {'setting_id': 'filter.dv', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Include', '1': 'Exclude'}},
 {'setting_id': 'filter.av1', 'setting_type': 'action', 'setting_default': '0', 'settings_options':{'0': 'Include', '1': 'Exclude'}},
 {'setting_id': 'filter.enhanced_upscaled', 'setting_type': 'action', 'setting_default': '0', 'settings_options':{'0': 'Include', '1': 'Exclude'}},
-{'setting_id': 'preferred_autoplay', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'filter.sort_to_top', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Source Select', '2': 'Autoplay', '3': 'Both'}},
+{'setting_id': 'filter.preferred_filters', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'filter_audio', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== Results Color Highlights
 {'setting_id': 'highlight.type', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Provider', '1': 'Quality', '2': 'Single Color'}},
@@ -429,13 +465,16 @@ default_settings = [
 {'setting_id': 'results_quality_movie', 'setting_type': 'string', 'setting_default': 'SD, 720p, 1080p, 4K'},
 {'setting_id': 'autoplay_quality_movie', 'setting_type': 'string', 'setting_default': 'SD, 720p, 1080p, 4K'},
 {'setting_id': 'auto_resume_movie', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'Always', '2': 'Autoplay Only'}},
+{'setting_id': 'stinger_alert.show', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'stinger_alert.window_percentage', 'setting_type': 'action', 'setting_default': '90', 'min_value': '1', 'max_value': '99'},
+{'setting_id': 'stinger_alert.use_chapters', 'setting_type': 'boolean', 'setting_default': 'true'},
 #==================== Playback Episodes
 {'setting_id': 'auto_play_episode', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results_quality_episode', 'setting_type': 'string', 'setting_default': 'SD, 720p, 1080p, 4K'},
 {'setting_id': 'autoplay_quality_episode', 'setting_type': 'string', 'setting_default': 'SD, 720p, 1080p, 4K'},
 {'setting_id': 'autoplay_next_episode', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'autoplay_default_action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Play', '1': 'Cancel', '2': 'Pause & Wait'}},
 {'setting_id': 'autoplay_alert_method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Window', '1': 'Notification'}},
+{'setting_id': 'autoplay_default_action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Play', '1': 'Cancel', '2': 'Pause & Wait'}},
 {'setting_id': 'autoplay_next_window_percentage', 'setting_type': 'action', 'setting_default': '95', 'min_value': '75', 'max_value': '99'},
 {'setting_id': 'autoplay_use_chapters', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'autoscrape_next_episode', 'setting_type': 'boolean', 'setting_default': 'false'},
@@ -444,6 +483,8 @@ default_settings = [
 {'setting_id': 'auto_resume_episode', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'Always', '2': 'Autoplay Only'}},
 #==================== Playback Utilities
 {'setting_id': 'playback.limit_resolve', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'easynews.playback_method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Retry', '2': 'No Seek', '3': 'Both'}},
+{'setting_id': 'easynews.playback_method_limited', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'playback.volumecheck_enabled', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'playback.volumecheck_percent', 'setting_type': 'action', 'setting_default': '50', 'min_value': '1', 'max_value': '100'},
 
@@ -451,13 +492,21 @@ default_settings = [
 #=========================================================================================#
 #======================================HIDDEN=============================================#
 #=========================================================================================#
+{'setting_id': 'reuse_language_invoker', 'setting_type': 'string', 'setting_default': 'true'},
+{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'fenlightam_icon_01'},
 {'setting_id': 'widget_refresh_timer_name', 'setting_type': 'string', 'setting_default': 'Off'},
 {'setting_id': 'mpaa_region_display_name', 'setting_type': 'string', 'setting_default': 'United States'},
+{'setting_id': 'results.limit_number_quality_name', 'setting_type': 'string', 'setting_default': 'Off'},
+{'setting_id': 'results.limit_number_total_name', 'setting_type': 'string', 'setting_default': 'Off'},
 {'setting_id': 'external_scraper.module', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'trakt.next_daily_clear', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.expires', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.refresh', 'setting_type': 'string', 'setting_default': '0'},
 {'setting_id': 'trakt.token', 'setting_type': 'string', 'setting_default': '0'},
+{'setting_id': 'tmdblist.list_sort', 'setting_type': 'string', 'setting_default': '0'},
+{'setting_id': 'tmdblist.list_sort_name', 'setting_type': 'string', 'setting_default': 'Title'},
+{'setting_id': 'personal_list.list_sort', 'setting_type': 'string', 'setting_default': '0'},
+{'setting_id': 'personal_list.list_sort_name', 'setting_type': 'string', 'setting_default': 'Title'},
 {'setting_id': 'rd.client_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'rd.refresh', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'rd.secret', 'setting_type': 'string', 'setting_default': 'empty_setting'},
@@ -493,5 +542,7 @@ default_settings = [
 {'setting_id': 'extras.movie.button14', 'setting_type': 'string', 'setting_default': 'show_extrainfo'},
 {'setting_id': 'extras.movie.button15', 'setting_type': 'string', 'setting_default': 'show_genres'},
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
-{'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'}
+{'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
+{'setting_id': 'updatechecks.personal_lists_01', 'setting_type': 'string', 'setting_default': 'false'},
+{'setting_id': 'updatechecks.personal_lists_02', 'setting_type': 'string', 'setting_default': 'false'}
 	]

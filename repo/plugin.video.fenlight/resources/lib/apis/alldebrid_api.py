@@ -5,44 +5,42 @@ import requests
 from threading import Thread
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
-from modules.utils import copy2clip
-from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
-from modules import kodi_utils
-# logger = kodi_utils.logger
-
-path_exists, get_icon = kodi_utils.path_exists, kodi_utils.get_icon
-show_busy_dialog, confirm_dialog = kodi_utils.show_busy_dialog, kodi_utils.confirm_dialog
-sleep, ok_dialog = kodi_utils.sleep, kodi_utils.ok_dialog
-progress_dialog, notification, hide_busy_dialog, xbmc_monitor = kodi_utils.progress_dialog, kodi_utils.notification, kodi_utils.hide_busy_dialog, kodi_utils.xbmc_monitor
-base_url = 'https://api.alldebrid.com/v4/'
-user_agent = 'Fen Light for Kodi'
-timeout = 20.0
-icon = get_icon('alldebrid')
+from modules.utils import copy2clip, make_qrcode, make_tinyurl
+from modules.source_utils import supported_video_extensions, seas_ep_filter, extras
+from modules.kodi_utils import progress_dialog, notification, hide_busy_dialog, show_busy_dialog, confirm_dialog, sleep, ok_dialog, progress_dialog, \
+								notification, hide_busy_dialog
+# from modules.kodi_utils import logger
 
 class AllDebridAPI:
 	def __init__(self):
 		self.token = get_setting('fenlight.ad.token', 'empty_setting')
 		self.break_auth_loop = False
+		self.base_url = 'https://api.alldebrid.com/v4/'
+		self.user_agent = 'Fen Light for Kodi'
 
 	def auth(self):
 		self.token = ''
-		url = base_url + 'pin/get?agent=%s' % user_agent
-		response = requests.get(url, timeout=timeout).json()
+		url = self.base_url + 'pin/get?agent=%s' % self.user_agent
+		response = requests.get(url, timeout=20).json()
 		response = response['data']
 		expires_in = int(response['expires_in'])
 		poll_url = response['check_url']
 		user_code = response['pin']
-		try: copy2clip(user_code)
-		except: pass
+		auth_url = 'https://alldebrid.com/pin?pin=%s' % user_code
+		qr_code = make_qrcode(auth_url) or ''
+		short_url = make_tinyurl(auth_url)
+		copy2clip(auth_url)
+		if short_url: p_dialog_insert = 'OR visit this URL: [B]%s[/B][CR]OR Enter this Code: [B]%s[/B]' % (short_url, user_code)
+		else: p_dialog_insert = 'OR Enter this Code: [B]%s[/B]' % user_code
 		sleep_interval = 5
-		content = 'Authorize Debrid Services[CR]Navigate to: [B]%s[/B][CR]Enter the following code: [B]%s[/B]' % (response.get('base_url'), user_code)
-		progressDialog = progress_dialog('All Debrid Authorize', get_icon('ad_qrcode'))
+		content = 'Please Scan the QR Code%s[CR]' % p_dialog_insert
+		progressDialog = progress_dialog('All Debrid Authorize', qr_code)
 		progressDialog.update(content, 0)
 		start, time_passed = time.time(), 0
 		sleep(2000)
 		while not progressDialog.iscanceled() and time_passed < expires_in and not self.token:
 			sleep(1000 * sleep_interval)
-			response = requests.get(poll_url, timeout=timeout).json()
+			response = requests.get(poll_url, timeout=20).json()
 			response = response['data']
 			activated = response['activated']
 			if not activated:
@@ -137,15 +135,16 @@ class AllDebridAPI:
 			if not transfer_finished:
 				self.delete_transfer(transfer_id)
 				return None
-			valid_results = [i for i in transfer_info['links'] if any(i.get('filename').lower().endswith(x) for x in extensions) and not i.get('link', '') == '']
+			links = transfer_info['links']
+			valid_results = [i for i in links if any(i.get('filename').lower().endswith(x) for x in extensions) and not i.get('link', '') == '']
 			if valid_results:
 				if season:
 					correct_files = [i for i in valid_results if seas_ep_filter(season, episode, i['filename'])]
 					if correct_files:
-						extras = [i for i in EXTRAS if not i == title.lower()]
+						_extras = [i for i in extras() if not i == title.lower()]
 						episode_title = re.sub(r'[^A-Za-z0-9-]+', '.', title.replace('\'', '').replace('&', 'and').replace('%', '.percent')).lower()
 						try: media_id = [i['link'] for i in correct_files if not any(x in re.sub(episode_title, '', seas_ep_filter(season, episode, i['filename'], split=True)) \
-											for x in extras)][0]
+											for x in _extras)][0]
 						except: media_id = None
 				else: media_id = max(valid_results, key=lambda x: x.get('size')).get('link', None)
 			if not store_to_cloud: Thread(target=self.delete_transfer, args=(transfer_id,)).start()
@@ -180,7 +179,8 @@ class AllDebridAPI:
 				return None
 			end_results = []
 			append = end_results.append
-			for item in transfer_info.get('links'):
+			links = transfer_info.get('links')
+			for item in links:
 				if any(item.get('filename').lower().endswith(x) for x in extensions) and not item.get('link', '') == '':
 					append({'link': item['link'], 'filename': item['filename'], 'size': item['size']})
 			self.delete_transfer(transfer_id)
@@ -195,8 +195,8 @@ class AllDebridAPI:
 		result = None
 		try:
 			if self.token in ('empty_setting', ''): return None
-			url = base_url + url + '?agent=%s&apikey=%s' % (user_agent, self.token) + url_append
-			result = requests.get(url, timeout=timeout).json()
+			url = self.base_url + url + '?agent=%s&apikey=%s' % (self.user_agent, self.token) + url_append
+			result = requests.get(url, timeout=20).json()
 			if result.get('status') == 'success' and 'data' in result: result = result['data']
 		except: pass
 		return result
@@ -205,8 +205,8 @@ class AllDebridAPI:
 		result = None
 		try:
 			if self.token in ('empty_setting', ''): return None
-			url = base_url + url + '?agent=%s&apikey=%s' % (user_agent, self.token)
-			result = requests.post(url, data=data, timeout=timeout).json()
+			url = self.base_url + url + '?agent=%s&apikey=%s' % (self.user_agent, self.token)
+			result = requests.post(url, data=data, timeout=20).json()
 			if result.get('status') == 'success' and 'data' in result: result = result['data']
 		except: pass
 		return result
@@ -231,3 +231,6 @@ class AllDebridAPI:
 		except: return False
 		if False in (user_cloud_success, hash_cache_status_success): return False
 		return True
+
+
+AllDebrid = AllDebridAPI()

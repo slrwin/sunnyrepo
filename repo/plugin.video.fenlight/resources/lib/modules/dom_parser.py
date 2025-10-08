@@ -2,9 +2,6 @@
 import re
 from collections import namedtuple
 
-DomMatch = namedtuple('DOMMatch', ['attrs', 'content'])
-re_type = type(re.compile(''))
-
 def parseDOM(html, name='', attrs=None, ret=False):
 	results = []
 	try:
@@ -41,6 +38,7 @@ def __get_dom_content(html, name, match):
 	return result
 
 def __get_dom_elements(item, name, attrs):
+	re_type = type(re.compile(''))
 	this_list = []
 	try:
 		if not attrs:
@@ -89,6 +87,7 @@ def __get_attribs(element):
 	return attribs
 
 def parse_dom(html, name='', attrs=None, req=False, exclude_comments=False):
+	DomMatch = namedtuple('DOMMatch', ['attrs', 'content'])
 	all_results = []
 	try:
 		if attrs is None: attrs = {}

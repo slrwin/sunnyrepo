@@ -2,12 +2,6 @@
 from caches.base_cache import BaseCache, get_timestamp
 # from modules.kodi_utils import logger
 
-GET_ALL = 'SELECT id FROM maincache'
-DELETE_ALL = 'DELETE FROM maincache'
-LIKE_SELECT = 'SELECT id from maincache where id LIKE %s'
-LIKE_DELETE = 'DELETE FROM maincache WHERE id LIKE %s'
-CLEAN = 'DELETE from maincache WHERE CAST(expires AS INT) <= ?'
-
 class MainCache(BaseCache):
 	def __init__(self):
 		BaseCache.__init__(self, 'maincache_db', 'maincache')
@@ -15,27 +9,23 @@ class MainCache(BaseCache):
 	def delete_all(self):
 		try:
 			dbcon = self.manual_connect('maincache_db')
-			for i in dbcon.execute(GET_ALL): self.delete_memory_cache(str(i[0]))
-			dbcon.execute(DELETE_ALL)
+			dbcon.execute('DELETE FROM maincache')
 			dbcon.execute('VACUUM')
 			return True
 		except: return False
 
 	def delete_all_folderscrapers(self):
 		dbcon = self.manual_connect('maincache_db')
-		remove_list = [str(i[0]) for i in dbcon.execute(LIKE_SELECT % "'FOLDERSCRAPER_%'").fetchall()]
-		if not remove_list: return True
 		try:
-			dbcon.execute(LIKE_DELETE % "'FOLDERSCRAPER_%'")
+			dbcon.execute('DELETE FROM maincache WHERE id LIKE %s' % "'FOLDERSCRAPER_%'")
 			dbcon.execute('VACUUM')
-			for item in remove_list: self.delete_memory_cache(str(item))
 			return True
 		except: return False
 
 	def clean_database(self):
 		try:
 			dbcon = self.manual_connect('maincache_db')
-			dbcon.execute(CLEAN, (get_timestamp(),))
+			dbcon.execute('DELETE from maincache WHERE CAST(expires AS INT) <= ?', (get_timestamp(),))
 			dbcon.execute('VACUUM')
 			return True
 		except: return False

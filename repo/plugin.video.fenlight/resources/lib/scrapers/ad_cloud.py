@@ -6,38 +6,35 @@ from modules.utils import clean_file_name, normalize
 from modules.settings import enabled_debrids_check, filter_by_name
 # from modules.kodi_utils import logger
 
-internal_results, check_title, clean_title, get_aliases_titles = source_utils.internal_results, source_utils.check_title, source_utils.clean_title, source_utils.get_aliases_titles
-get_file_info, release_info_format, seas_ep_filter = source_utils.get_file_info, source_utils.release_info_format, source_utils.seas_ep_filter
-AllDebrid = AllDebridAPI()
-extensions = source_utils.supported_video_extensions()
-
 class source:
 	def __init__(self):
 		self.scrape_provider = 'ad_cloud'
 		self.sources = []
+		self.AllDebrid = AllDebridAPI()
+		self.extensions = source_utils.supported_video_extensions()
 
 	def results(self, info):
 		try:
-			if not enabled_debrids_check('ad'): return internal_results(self.scrape_provider, self.sources)
+			if not enabled_debrids_check('ad'): return source_utils.internal_results(self.scrape_provider, self.sources)
 			self.folder_results, self.scrape_results = [], []
 			filter_title = filter_by_name(self.scrape_provider)
 			self.media_type, title = info.get('media_type'), info.get('title')
 			self.year, self.season, self.episode = int(info.get('year')), info.get('season'), info.get('episode')
 			self.tmdb_id = info.get('tmdb_id')
-			self.folder_query = clean_title(normalize(title))
+			self.folder_query = source_utils.clean_title(normalize(title))
 			self._scrape_cloud()
-			if not self.scrape_results: return internal_results(self.scrape_provider, self.sources)
-			self.aliases = get_aliases_titles(info.get('aliases', []))
+			if not self.scrape_results: return source_utils.internal_results(self.scrape_provider, self.sources)
+			self.aliases = source_utils.get_aliases_titles(info.get('aliases', []))
 			def _process():
 				for item in self.scrape_results:
 					try:
 						file_name = normalize(item['filename'])
-						if filter_title and not check_title(title, file_name, self.aliases, self.year, self.season, self.episode): continue
+						if filter_title and not source_utils.check_title(title, file_name, self.aliases, self.year, self.season, self.episode): continue
 						display_name = clean_file_name(file_name).replace('html', ' ').replace('+', ' ').replace('-', ' ')
 						file_dl, size = item['link'], round(float(int(item['size']))/1073741824, 2)
-						video_quality, details = get_file_info(name_info=release_info_format(file_name))
+						video_quality, details = source_utils.get_file_info(name_info=source_utils.release_info_format(file_name))
 						source_item = {'name': file_name, 'display_name': display_name, 'quality': video_quality, 'size': size, 'size_label': '%.2f GB' % size,
-									'extraInfo': details, 'url_dl': file_dl, 'id': file_dl, 'downloads': False, 'direct': True, 'source': self.scrape_provider,
+									'extraInfo': details, 'url_dl': file_dl, 'id': file_dl, 'downloads': False, 'direct': True, 'source': self.scrape_provider, 'debrid': self.scrape_provider,
 									'scrape_provider': self.scrape_provider}
 						yield source_item
 					except: pass
@@ -45,13 +42,13 @@ class source:
 		except Exception as e:
 			from modules.kodi_utils import logger
 			logger('alldebrid scraper Exception', str(e))
-		internal_results(self.scrape_provider, self.sources)
+		source_utils.internal_results(self.scrape_provider, self.sources)
 		return self.sources
 
 	def _scrape_cloud(self):
 		try:
 			try:
-				my_cloud_files = AllDebrid.user_cloud()['magnets']
+				my_cloud_files = self.AllDebrid.user_cloud()['magnets']
 				my_cloud_files = [i for i in my_cloud_files if i['statusCode'] == 4]
 			except: return self.sources
 			threads = []
@@ -60,7 +57,7 @@ class source:
 			year_query_list = self._year_query_list()
 			for item in my_cloud_files:
 				normalized = normalize(item['filename'])
-				folder_name = clean_title(normalized)
+				folder_name = source_utils.clean_title(normalized)
 				if not folder_name: results_append(item)
 				elif not self.folder_query in folder_name: continue
 				else:
@@ -76,10 +73,10 @@ class source:
 		try:
 			links = folder_info['links']
 			append = self.scrape_results.append
-			links = [i for i in links if i['filename'].lower().endswith(tuple(extensions))]
+			links = [i for i in links if i['filename'].lower().endswith(tuple(self.extensions))]
 			for item in links:
 				normalized = normalize(item['filename'])
-				if self.media_type == 'episode' and not seas_ep_filter(self.season, self.episode, normalized): continue
+				if self.media_type == 'episode' and not source_utils.seas_ep_filter(self.season, self.episode, normalized): continue
 				append(item)
 		except: return
 

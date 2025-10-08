@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from windows.base_window import BaseDialog, json, select_dialog, confirm_dialog, ok_dialog
+import json
+from windows.base_window import BaseDialog
+from modules.kodi_utils import select_dialog, confirm_dialog, ok_dialog
 # from modules.kodi_utils import logger
-
-status_property_string = 'download_status.%s'
 
 class DownloadsManager(BaseDialog):
 	def __init__(self, *args, **kwargs):
@@ -61,7 +61,7 @@ class DownloadsManager(BaseDialog):
 		except: pass
 
 	def get_status(self, item_id):
-		return self.get_home_property(status_property_string % item_id)
+		return self.get_home_property('download_status.%s' % item_id)
 
 	def set_status(self, list_item):
 		choices = []
@@ -78,7 +78,7 @@ class DownloadsManager(BaseDialog):
 		if status_choice == None: return
 		if status_choice == 'filename': return ok_dialog(text=list_item.getProperty('name'))
 		if status_choice == 'cancelled' and not confirm_dialog(): return
-		return self.set_home_property(status_property_string % item_id, status_choice)
+		return self.set_home_property('download_status.%s' % item_id, status_choice)
 
 	def monitor(self):
 		while not self.closed:

@@ -6,10 +6,7 @@ from modules.utils import get_datetime, get_current_timestamp
 from modules.kodi_utils import make_session
 # from modules.kodi_utils import logger
 
-url = 'http://www.omdbapi.com/?apikey=%s&i=%s&tomatoes=True&r=xml'
-timeout = 20.0
 session = make_session('http://www.omdbapi.com/')
-metascore_icon, imdb_icon, tmdb_icon = 'metacritic.png', 'imdb.png', 'tmdb.png'
 
 class OMDbAPI:
 	def fetch_info(self, meta, api_key):
@@ -32,11 +29,11 @@ class OMDbAPI:
 		if tomatousermeter_rating: tomatousermeter_icon = 'popcorn.png' if int(tomatousermeter_rating) > 59 else 'popcorn_spilt.png'
 		else: tomatousermeter_icon = 'popcorn_spilt.png'		
 		data = {
-				'metascore': {'rating': '%s%%' %  metascore_rating, 'icon': metascore_icon},
+				'metascore': {'rating': '%s%%' %  metascore_rating, 'icon': 'metacritic.png'},
 				'tomatometer': {'rating': '%s%%' % tomatometer_rating, 'icon': tomatometer_icon},
 				'tomatousermeter': {'rating': '%s%%' % tomatousermeter_rating, 'icon': tomatousermeter_icon},
-				'imdb': {'rating': imdb_rating, 'icon': imdb_icon},
-				'tmdb': {'rating': '', 'icon': tmdb_icon},
+				'imdb': {'rating': imdb_rating, 'icon': 'imdb.png'},
+				'tmdb': {'rating': '', 'icon': 'tmdb.png'},
 				}
 		media_type = meta.get('mediatype')
 		expiry_function = movie_expiry if media_type == 'movie' else tvshow_expiry
@@ -46,7 +43,7 @@ class OMDbAPI:
 
 	def get_result(self, imdb_id):
 		try:
-			result = session.get(url % (self.api_key, imdb_id), timeout=timeout).text
+			result = session.get('http://www.omdbapi.com/?apikey=%s&i=%s&tomatoes=True&r=xml' % (self.api_key, imdb_id), timeout=20).text
 			response_test = dict(mdParse(result).getElementsByTagName('root')[0].attributes.items())
 			if not response_test.get('response', 'False') == 'True': return None
 			return dict(mdParse(result).getElementsByTagName('movie')[0].attributes.items())

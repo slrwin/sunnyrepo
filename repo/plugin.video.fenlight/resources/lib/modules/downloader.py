@@ -6,28 +6,12 @@ import json
 from threading import Thread
 from urllib.request import Request, urlopen
 from urllib.parse import parse_qsl, urlparse, unquote
-from caches.settings_cache import get_setting
 from modules import kodi_utils
 from modules.sources import Sources
 from modules.settings import download_directory
 from modules.source_utils import clean_title
 from modules.utils import clean_file_name, safe_string, remove_accents, normalize
 # logger = kodi_utils.logger
-
-video_extensions, image_extensions, get_icon, kodi_dialog = kodi_utils.video_extensions, kodi_utils.image_extensions, kodi_utils.get_icon, kodi_utils.kodi_dialog
-add_items, set_sort_method, set_content, end_directory = kodi_utils.add_items, kodi_utils.set_sort_method, kodi_utils.set_content, kodi_utils.end_directory
-show_busy_dialog, hide_busy_dialog, make_directory, open_file = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.make_directory, kodi_utils.open_file
-notification = kodi_utils.notification
-confirm_dialog, ok_dialog, build_url, get_visibility = kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.build_url, kodi_utils.get_visibility
-sleep, set_category, poster_empty, select_dialog = kodi_utils.sleep, kodi_utils.set_category, kodi_utils.empty_poster, kodi_utils.select_dialog
-get_property, set_property, clear_property = kodi_utils.get_property, kodi_utils.set_property, kodi_utils.clear_property
-set_view_mode, make_listitem, list_dirs = kodi_utils.set_view_mode, kodi_utils.make_listitem, kodi_utils.list_dirs
-fanart = kodi_utils.get_addon_fanart()
-sources = Sources()
-ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-icons = {'Real-Debrid': 'realdebrid', 'Premiumize.me': 'premiumize', 'AllDebrid': 'alldebrid', 'Offcloud': 'offcloud', 'EasyDebrid': 'easydebrid', 'Torbox': 'torbox'}
-levels =['../../../..', '../../..', '../..', '..']
-status_property_string = 'fenlight.download_status.%s'
 
 def runner(params):
 	action = params.get('action')
@@ -41,18 +25,19 @@ def runner(params):
 		from modules.source_utils import find_season_in_release_title
 		provider = params['provider']
 		try:
-			debrid_files, debrid_function = sources.debridPacks(provider, params['name'], params['magnet_url'], params['info_hash'], download=True)
+			debrid_files, debrid_function = Sources().debridPacks(provider, params['name'], params['magnet_url'], params['info_hash'], download=True)
 			pack_choices = [dict(params, **{'pack_files':item}) for item in debrid_files]
-			icon = icons[provider]
-		except: return notification('No URL found for Download. Pick another Source.')
-		default_icon = get_icon(icon)
+			icon = {'Real-Debrid': 'realdebrid', 'Premiumize.me': 'premiumize', 'AllDebrid': 'alldebrid', 'Offcloud': 'offcloud',
+					'EasyDebrid': 'easydebrid', 'Torbox': 'torbox'}[provider]
+		except: return kodi_utils.notification('No URL found for Download. Pick another Source.')
+		default_icon = kodi_utils.get_icon(icon)
 		chosen_list = select_pack_item(pack_choices, default_icon)
 		if not chosen_list: return
 		show_package = json.loads(params['source']).get('package') == 'show'
 		meta  = json.loads(chosen_list[0].get('meta'))
-		image = meta.get('poster') or poster_empty
+		image = meta.get('poster') or kodi_utils.get_icon('box_office')
 		default_name = '%s (%s)' % (clean_file_name(get_title(meta)), get_year(meta))
-		default_foldername = kodi_dialog().input('Title', defaultt=default_name)
+		default_foldername = kodi_utils.kodi_dialog().input('Title', defaultt=default_name)
 		multi_downloads = []
 		multi_downloads_append = multi_downloads.append
 		for item in chosen_list:
@@ -67,25 +52,25 @@ def runner(params):
 	else: Downloader(params).run()
 
 def download_threads_manager(multi_downloads, image):
-	notification('Multi File Pack Download Started...', 3500, image)
+	kodi_utils.notification('Multi File Pack Download Started...', 3500, image)
 	started_downloads = []
 	started_downloads_append = started_downloads.append
 	for item in multi_downloads:
 		while len([x for x in multi_downloads if x[0].is_alive()]) >= 2:
-			sleep(2000)
+			kodi_utils.sleep(2000)
 			continue
 		item[0].start()
 		started_downloads_append(item)
 		remaining_downloads = [x[1] for x in multi_downloads if not x in started_downloads]
-		set_property('fenlight.active_queued_downloads', json.dumps(remaining_downloads))
-	clear_property('fenlight.active_queued_downloads')
+		kodi_utils.set_property('fenlight.active_queued_downloads', json.dumps(remaining_downloads))
+	kodi_utils.clear_property('fenlight.active_queued_downloads')
 
 def select_pack_item(pack_choices, icon):
 	list_items = [{'line1': '%.2f GB | %s' % (float(item['pack_files']['size'])/1073741824, clean_file_name(item['pack_files']['filename']).upper()), 'icon': icon} \
 				for item in pack_choices]
 	heading = 'Choose Files to Download - %s' % clean_file_name(json.loads(pack_choices[0].get('source')).get('name'))
 	kwargs = {'items': json.dumps(list_items), 'heading': heading, 'enumerate': 'true', 'multi_choice': 'true'}
-	return select_dialog(pack_choices, **kwargs)
+	return kodi_utils.select_dialog(pack_choices, **kwargs)
 
 def get_title(meta):
 	title = meta.get('custom_title', None) or meta.get('english_title') or meta.get('title')	
@@ -105,7 +90,7 @@ class Downloader:
 
 	def run(self):
 		self.download_prep()
-		if not self.action == 'meta.pack': show_busy_dialog()
+		if not self.action == 'meta.pack': kodi_utils.show_busy_dialog()
 		self.get_url_and_headers()
 		if self.url in (None, 'None', ''): return self.return_notification(_notification='No URL found for Download. Pick another Source')
 		self.get_filename()
@@ -126,7 +111,7 @@ class Downloader:
 			self.title = clean_file_name(get_title(self.meta))
 			self.year = get_year(self.meta)
 			self.season = get_season(self.meta)
-			self.image = self.meta_get('poster') or poster_empty
+			self.image = self.meta_get('poster') or kodi_utils.get_icon('box_office')
 			self.name = self.params_get('name')
 		else:
 			self.meta, self.name, self.year, self.season = None, None, None, None
@@ -144,31 +129,31 @@ class Downloader:
 		self.start_download()
 
 	def get_active_downloads(self):
-		return json.loads(get_property('fenlight.active_downloads') or '[]')
+		return json.loads(kodi_utils.get_property('fenlight.active_downloads') or '[]')
 
 	def add_active_download(self):
 		if self.action == 'image': return
 		active_downloads = self.get_active_downloads()
 		active_downloads.append(self.final_name)
-		set_property('fenlight.active_downloads', json.dumps(active_downloads))
+		kodi_utils.set_property('fenlight.active_downloads', json.dumps(active_downloads))
 
 	def remove_active_download(self):
 		if self.action == 'image': return
 		active_downloads = self.get_active_downloads()
 		try: active_downloads.remove(self.final_name)
 		except: pass
-		if active_downloads: set_property('fenlight.active_downloads', json.dumps(active_downloads))
+		if active_downloads: kodi_utils.set_property('fenlight.active_downloads', json.dumps(active_downloads))
 		else: self.clear_active_downloads()
 
 	def clear_active_downloads(self):
-		clear_property('fenlight.active_downloads')
+		kodi_utils.clear_property('fenlight.active_downloads')
 
 	def set_percent_property(self, percent):
-		set_property('fenlight.%s' % self.final_name, str(percent))
+		kodi_utils.set_property('fenlight.%s' % self.final_name, str(percent))
 
 	def check_status(self):
-		status = get_property(status_property_string % self.final_name)
-		if status in ('unpaused', 'cancelled'): clear_property(status_property_string % self.final_name)
+		status = kodi_utils.get_property('fenlight.download_status.%s' % self.final_name)
+		if status in ('unpaused', 'cancelled'): kodi_utils.clear_property('fenlight.download_status.%s' % self.final_name)
 		return status
 
 	def get_url_and_headers(self):
@@ -178,7 +163,7 @@ class Downloader:
 				try:
 					source = json.loads(self.source)
 					if source.get('scrape_provider', '') == 'easynews': source['url_dl'] = source['down_url']
-					url = sources.resolve_sources(source, meta=self.meta)
+					url = Sources().resolve_sources(source, meta=self.meta)
 					if 'torbox' in url:
 						from apis.torbox_api import TorBoxAPI
 						url = TorBoxAPI().add_headers_to_url(url)
@@ -231,8 +216,8 @@ class Downloader:
 	def get_download_folder(self):
 		self.down_folder = download_directory(self.media_type)
 		if self.media_type == 'thumb_url': self.down_folder = os.path.join(self.down_folder, '.thumbs')
-		for level in levels:
-			try: make_directory(os.path.abspath(os.path.join(self.down_folder, level)))
+		for level in ['../../../..', '../../..', '../..', '..']:
+			try: kodi_utils.make_directory(os.path.abspath(os.path.join(self.down_folder, level)))
 			except: pass
 
 	def get_destination_folder(self):
@@ -240,16 +225,16 @@ class Downloader:
 			self.final_destination = self.down_folder
 		elif self.action in ('meta.single', 'meta.pack'):
 			default_name = '%s (%s)' % (self.title, self.year)
-			if self.action == 'meta.single': folder_rootname = kodi_dialog().input('Title', defaultt=default_name)
+			if self.action == 'meta.single': folder_rootname = kodi_utils.kodi_dialog().input('Title', defaultt=default_name)
 			else: folder_rootname = self.params_get('default_foldername', default_name)
 			if not folder_rootname: return False
 			if self.media_type == 'episode':
 				inter = os.path.join(self.down_folder, folder_rootname)
-				make_directory(inter)
+				kodi_utils.make_directory(inter)
 				self.final_destination = os.path.join(inter, 'Season %02d' %  int(self.season))
 			else: self.final_destination = os.path.join(self.down_folder, folder_rootname)
 		else: self.final_destination = self.down_folder
-		make_directory(self.final_destination)
+		kodi_utils.make_directory(self.final_destination)
 		return True
 
 	def get_filename(self):
@@ -274,10 +259,10 @@ class Downloader:
 			ext = 'zip'
 		elif self.action == 'image':
 			ext = os.path.splitext(urlparse(self.url).path)[1][1:]
-			if not ext in image_extensions: ext = 'jpg'
+			if not ext in kodi_utils.image_extensions(): ext = 'jpg'
 		else:
 			ext = os.path.splitext(urlparse(self.url).path)[1][1:]
-			if not ext in video_extensions: ext = 'mp4'
+			if not ext in kodi_utils.video_extensions(): ext = 'mp4'
 		ext = '.%s' % ext
 		self.extension = ext
 
@@ -292,13 +277,13 @@ class Downloader:
 		self.size = 1024 * 1024
 		self.mb = self.content / (1024 * 1024)
 		if self.content < self.size: self.size = self.content
-		hide_busy_dialog()
+		kodi_utils.hide_busy_dialog()
 		return True
 
 	def start_download(self):
 		monitor_progress = self.action != 'image'
 		total, errors, count, resume, sleep_time  = 0, 0, 0, 0, 0
-		f = open_file(self.final_destination, 'w')
+		f = kodi_utils.open_file(self.final_destination, 'w')
 		chunk  = None
 		chunks = []
 		while True:
@@ -310,7 +295,7 @@ class Downloader:
 				if status == 'paused':
 					while status == 'paused':
 						status = self.check_status()
-						sleep(1000)
+						kodi_utils.sleep(1000)
 				if status == 'cancelled': return self.finish_download(status)
 				if percent % 5 == 0: self.set_percent_property(percent)
 			chunk = None
@@ -352,7 +337,7 @@ class Downloader:
 			if error:
 				errors += 1
 				count  += 1
-				sleep(sleep_time*1000)
+				kodi_utils.sleep(sleep_time*1000)
 			if (self.resumable and errors > 0) or errors >= 10:
 				if (not self.resumable and resume >= 50) or resume >= 500:
 					return self.finish_download('failed')
@@ -370,25 +355,26 @@ class Downloader:
 				size = int(size)
 				headers['Range'] = 'bytes=%d-' % size
 			req = Request(self.url, headers=headers)
-			resp = urlopen(req, context=ctx, timeout=30)
+			resp = urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_SSLv23), timeout=30)
 			return resp
 		except: return None
 
 	def finish_download(self, status):
 		if self.action == 'image':
-			if self.media_type == 'image_url': return notification(status.upper(), 2500, self.final_destination)
+			if self.media_type == 'image_url': return kodi_utils.notification(status.upper(), 2500, self.final_destination)
 			else: return
-		if not get_visibility('Window.IsActive(fullscreenvideo)'):
-			notification('[B]%s[/B] %s' % (status.upper(), self.final_name.replace('.', ' ').replace('_', ' ')), 2500, self.image)
+		if not kodi_utils.get_visibility('Window.IsActive(fullscreenvideo)'):
+			kodi_utils.notification('[B]%s[/B] %s' % (status.upper(), self.final_name.replace('.', ' ').replace('_', ' ')), 2500, self.image)
 		self.remove_active_download()
 
 	def confirm_download(self):
-		return True if self.action in ('image', 'meta.pack') else confirm_dialog(heading=self.final_name, text='Complete file is [B]%dMB[/B][CR]Continue with download?' % self.mb)
+		return True if self.action in ('image', 'meta.pack') \
+		else kodi_utils.confirm_dialog(heading=self.final_name, text='Complete file is [B]%dMB[/B][CR]Continue with download?' % self.mb)
 
 	def return_notification(self, _notification=None, _ok_dialog=None):
-		hide_busy_dialog()
-		if _notification: notification(_notification, 2500)
-		elif _ok_dialog: ok_dialog(text=_ok_dialog)
+		kodi_utils.hide_busy_dialog()
+		if _notification: kodi_utils.notification(_notification, 2500)
+		elif _ok_dialog: kodi_utils.ok_dialog(text=_ok_dialog)
 		else: return
 
 def viewer(params):
@@ -397,24 +383,25 @@ def viewer(params):
 			try:
 				path = info[0]
 				url = os.path.join(folder_path, path)
-				listitem = make_listitem()
+				listitem = kodi_utils.make_listitem()
 				listitem.setLabel(clean_file_name(normalize(path)))
 				listitem.setArt({'fanart': fanart})
-				info_tag = listitem.getVideoInfoTag()
+				info_tag = listitem.getVideoInfoTag(True)
 				info_tag.setPlot(' ')
 				yield (url, listitem, info[1])
 			except: pass
 	handle = int(sys.argv[1])
+	fanart = kodi_utils.get_addon_fanart()
 	folder_path = download_directory(params['folder_type'])
-	dirs, files = list_dirs(folder_path)
+	dirs, files = kodi_utils.list_dirs(folder_path)
 	results = [(i, True) for i in dirs] + [(i, False) for i in files]
 	item_list = list(_process())
-	add_items(handle, item_list)
-	set_sort_method(handle, 'files')
-	set_content(handle, '')
-	set_category(handle, params.get('name'))
-	end_directory(handle)
-	set_view_mode('view.main', '')
+	kodi_utils.add_items(handle, item_list)
+	kodi_utils.set_sort_method(handle, 'files')
+	kodi_utils.set_content(handle, '')
+	kodi_utils.set_category(handle, params.get('name'))
+	kodi_utils.end_directory(handle)
+	kodi_utils.set_view_mode('view.main', '')
 
 def manager(foo=None):
 	from windows.base_window import open_window

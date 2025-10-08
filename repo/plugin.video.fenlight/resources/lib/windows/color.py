@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from windows.base_window import BaseDialog, ok_dialog
+from windows.base_window import BaseDialog
 from modules.meta_lists import color_palette
-from modules.kodi_utils import kodi_dialog
+from modules.kodi_utils import kodi_dialog, ok_dialog
 # from modules.kodi_utils import logger
 
 class SelectColor(BaseDialog):
@@ -43,7 +43,8 @@ class SelectColor(BaseDialog):
 
 	def make_menu(self):
 		def builder():
-			for count, item in enumerate(color_palette):
+			c_palette = color_palette()
+			for count, item in enumerate(c_palette):
 				try:
 					listitem = self.make_listitem()
 					listitem.setProperty('highlight', item)

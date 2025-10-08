@@ -1,113 +1,76 @@
 # -*- coding: utf-8 -*-
 
-years_movies = [
-{'name': '2030', 'id': 2030}, {'name': '2029', 'id': 2029}, {'name': '2028', 'id': 2028}, {'name': '2027', 'id': 2027}, {'name': '2026', 'id': 2026}, {'name': '2025', 'id': 2025},
-{'name': '2024', 'id': 2024}, {'name': '2023', 'id': 2023}, {'name': '2022', 'id': 2022}, {'name': '2021', 'id': 2021}, {'name': '2020', 'id': 2020}, {'name': '2019', 'id': 2019},
-{'name': '2018', 'id': 2018}, {'name': '2017', 'id': 2017}, {'name': '2016', 'id': 2016}, {'name': '2015', 'id': 2015}, {'name': '2014', 'id': 2014}, {'name': '2013', 'id': 2013},
-{'name': '2012', 'id': 2012}, {'name': '2011', 'id': 2011}, {'name': '2010', 'id': 2010}, {'name': '2009', 'id': 2009}, {'name': '2008', 'id': 2008}, {'name': '2007', 'id': 2007},
-{'name': '2006', 'id': 2006}, {'name': '2005', 'id': 2005}, {'name': '2004', 'id': 2004}, {'name': '2003', 'id': 2003}, {'name': '2002', 'id': 2002}, {'name': '2001', 'id': 2001},
-{'name': '2000', 'id': 2000}, {'name': '1999', 'id': 1999}, {'name': '1998', 'id': 1998}, {'name': '1997', 'id': 1997}, {'name': '1996', 'id': 1996}, {'name': '1995', 'id': 1995},
-{'name': '1994', 'id': 1994}, {'name': '1993', 'id': 1993}, {'name': '1992', 'id': 1992}, {'name': '1991', 'id': 1991}, {'name': '1990', 'id': 1990}, {'name': '1989', 'id': 1989},
-{'name': '1988', 'id': 1988}, {'name': '1987', 'id': 1987}, {'name': '1986', 'id': 1986}, {'name': '1985', 'id': 1985}, {'name': '1984', 'id': 1984}, {'name': '1983', 'id': 1983},
-{'name': '1982', 'id': 1982}, {'name': '1981', 'id': 1981}, {'name': '1980', 'id': 1980}, {'name': '1979', 'id': 1979}, {'name': '1978', 'id': 1978}, {'name': '1977', 'id': 1977},
-{'name': '1976', 'id': 1976}, {'name': '1975', 'id': 1975}, {'name': '1974', 'id': 1974}, {'name': '1973', 'id': 1973}, {'name': '1972', 'id': 1972}, {'name': '1971', 'id': 1971},
-{'name': '1970', 'id': 1970}, {'name': '1969', 'id': 1969}, {'name': '1968', 'id': 1968}, {'name': '1967', 'id': 1967}, {'name': '1966', 'id': 1966}, {'name': '1965', 'id': 1965},
-{'name': '1964', 'id': 1964}, {'name': '1963', 'id': 1963}, {'name': '1962', 'id': 1962}, {'name': '1961', 'id': 1961}, {'name': '1960', 'id': 1960}, {'name': '1959', 'id': 1959},
-{'name': '1958', 'id': 1958}, {'name': '1957', 'id': 1957}, {'name': '1956', 'id': 1956}, {'name': '1955', 'id': 1955}, {'name': '1954', 'id': 1954}, {'name': '1953', 'id': 1953},
-{'name': '1952', 'id': 1952}, {'name': '1951', 'id': 1951}, {'name': '1950', 'id': 1950}, {'name': '1949', 'id': 1949}, {'name': '1948', 'id': 1948}, {'name': '1947', 'id': 1947},
-{'name': '1946', 'id': 1946}, {'name': '1945', 'id': 1945}, {'name': '1944', 'id': 1944}, {'name': '1943', 'id': 1943}, {'name': '1942', 'id': 1942}, {'name': '1941', 'id': 1941},
-{'name': '1940', 'id': 1940}, {'name': '1939', 'id': 1939}, {'name': '1938', 'id': 1938}, {'name': '1937', 'id': 1937}, {'name': '1936', 'id': 1936}, {'name': '1935', 'id': 1935},
-{'name': '1934', 'id': 1934}, {'name': '1933', 'id': 1933}, {'name': '1932', 'id': 1932}, {'name': '1931', 'id': 1931}, {'name': '1930', 'id': 1930}, {'name': '1929', 'id': 1929},
-{'name': '1928', 'id': 1928}, {'name': '1927', 'id': 1927}, {'name': '1926', 'id': 1926}, {'name': '1925', 'id': 1925}, {'name': '1924', 'id': 1924}, {'name': '1923', 'id': 1923},
-{'name': '1922', 'id': 1922}, {'name': '1921', 'id': 1921}, {'name': '1920', 'id': 1920}, {'name': '1919', 'id': 1919}, {'name': '1918', 'id': 1918}, {'name': '1917', 'id': 1917},
-{'name': '1916', 'id': 1916}, {'name': '1915', 'id': 1915}, {'name': '1914', 'id': 1914}, {'name': '1913', 'id': 1913}, {'name': '1912', 'id': 1912}, {'name': '1911', 'id': 1911},
-{'name': '1910', 'id': 1910}, {'name': '1909', 'id': 1909}, {'name': '1908', 'id': 1908}, {'name': '1907', 'id': 1907}, {'name': '1906', 'id': 1906}, {'name': '1905', 'id': 1905},
-{'name': '1904', 'id': 1904}, {'name': '1903', 'id': 1903}, {'name': '1902', 'id': 1902}, {'name': '1901', 'id': 1901}, {'name': '1900', 'id': 1900}
-	]
+def get_years(start_year):
+	from datetime import datetime
+	current_year = datetime.now().year
+	return [{'name': str(year), 'id': year} for year in range(current_year, start_year - 1, -1)]
+	
+	return years
 
-years_tvshows = [
-{'name': '2030', 'id': 2030}, {'name': '2029', 'id': 2029}, {'name': '2028', 'id': 2028}, {'name': '2027', 'id': 2027}, {'name': '2026', 'id': 2026}, {'name': '2025', 'id': 2025},
-{'name': '2024', 'id': 2024}, {'name': '2023', 'id': 2023}, {'name': '2022', 'id': 2022}, {'name': '2021', 'id': 2021}, {'name': '2020', 'id': 2020}, {'name': '2019', 'id': 2019},
-{'name': '2018', 'id': 2018}, {'name': '2017', 'id': 2017}, {'name': '2016', 'id': 2016}, {'name': '2015', 'id': 2015}, {'name': '2014', 'id': 2014}, {'name': '2013', 'id': 2013},
-{'name': '2012', 'id': 2012}, {'name': '2011', 'id': 2011}, {'name': '2010', 'id': 2010}, {'name': '2009', 'id': 2009}, {'name': '2008', 'id': 2008}, {'name': '2007', 'id': 2007},
-{'name': '2006', 'id': 2006}, {'name': '2005', 'id': 2005}, {'name': '2004', 'id': 2004}, {'name': '2003', 'id': 2003}, {'name': '2002', 'id': 2002}, {'name': '2001', 'id': 2001},
-{'name': '2000', 'id': 2000}, {'name': '1999', 'id': 1999}, {'name': '1998', 'id': 1998}, {'name': '1997', 'id': 1997}, {'name': '1996', 'id': 1996}, {'name': '1995', 'id': 1995},
-{'name': '1994', 'id': 1994}, {'name': '1993', 'id': 1993}, {'name': '1992', 'id': 1992}, {'name': '1991', 'id': 1991}, {'name': '1990', 'id': 1990}, {'name': '1989', 'id': 1989},
-{'name': '1988', 'id': 1988}, {'name': '1987', 'id': 1987}, {'name': '1986', 'id': 1986}, {'name': '1985', 'id': 1985}, {'name': '1984', 'id': 1984}, {'name': '1983', 'id': 1983},
-{'name': '1982', 'id': 1982}, {'name': '1981', 'id': 1981}, {'name': '1980', 'id': 1980}, {'name': '1979', 'id': 1979}, {'name': '1978', 'id': 1978}, {'name': '1977', 'id': 1977},
-{'name': '1976', 'id': 1976}, {'name': '1975', 'id': 1975}, {'name': '1974', 'id': 1974}, {'name': '1973', 'id': 1973}, {'name': '1972', 'id': 1972}, {'name': '1971', 'id': 1971},
-{'name': '1970', 'id': 1970}, {'name': '1969', 'id': 1969}, {'name': '1968', 'id': 1968}, {'name': '1967', 'id': 1967}, {'name': '1966', 'id': 1966}, {'name': '1965', 'id': 1965},
-{'name': '1964', 'id': 1964}, {'name': '1963', 'id': 1963}, {'name': '1962', 'id': 1962}, {'name': '1961', 'id': 1961}, {'name': '1960', 'id': 1960}, {'name': '1959', 'id': 1959},
-{'name': '1958', 'id': 1958}, {'name': '1957', 'id': 1957}, {'name': '1956', 'id': 1956}, {'name': '1955', 'id': 1955}, {'name': '1954', 'id': 1954}, {'name': '1953', 'id': 1953},
-{'name': '1952', 'id': 1952}, {'name': '1951', 'id': 1951}, {'name': '1950', 'id': 1950}, {'name': '1949', 'id': 1949}, {'name': '1948', 'id': 1948}, {'name': '1947', 'id': 1947},
-{'name': '1946', 'id': 1946}, {'name': '1945', 'id': 1945}, {'name': '1944', 'id': 1944}
-	]
+def get_decades(start_decade):
+	from datetime import datetime
+	current_year = datetime.now().year
+	current_decade = (current_year // 10) * 10
+	return [{'name': '%ss' % decade, 'id': decade} for decade in range(current_decade, start_decade - 1, -10)]
 
-years_anime = [
-{'name': '2030', 'id': 2030}, {'name': '2029', 'id': 2029}, {'name': '2028', 'id': 2028}, {'name': '2027', 'id': 2027}, {'name': '2026', 'id': 2026}, {'name': '2025', 'id': 2025},
-{'name': '2024', 'id': 2024}, {'name': '2023', 'id': 2023}, {'name': '2022', 'id': 2022}, {'name': '2021', 'id': 2021}, {'name': '2020', 'id': 2020}, {'name': '2019', 'id': 2019},
-{'name': '2018', 'id': 2018}, {'name': '2017', 'id': 2017}, {'name': '2016', 'id': 2016}, {'name': '2015', 'id': 2015}, {'name': '2014', 'id': 2014}, {'name': '2013', 'id': 2013},
-{'name': '2012', 'id': 2012}, {'name': '2011', 'id': 2011}, {'name': '2010', 'id': 2010}, {'name': '2009', 'id': 2009}, {'name': '2008', 'id': 2008}, {'name': '2007', 'id': 2007},
-{'name': '2006', 'id': 2006}, {'name': '2005', 'id': 2005}, {'name': '2004', 'id': 2004}, {'name': '2003', 'id': 2003}, {'name': '2002', 'id': 2002}, {'name': '2001', 'id': 2001},
-{'name': '2000', 'id': 2000}, {'name': '1999', 'id': 1999}, {'name': '1998', 'id': 1998}, {'name': '1997', 'id': 1997}, {'name': '1996', 'id': 1996}, {'name': '1995', 'id': 1995},
-{'name': '1994', 'id': 1994}, {'name': '1993', 'id': 1993}, {'name': '1992', 'id': 1992}, {'name': '1991', 'id': 1991}, {'name': '1990', 'id': 1990}, {'name': '1989', 'id': 1989},
-{'name': '1988', 'id': 1988}, {'name': '1987', 'id': 1987}, {'name': '1986', 'id': 1986}, {'name': '1985', 'id': 1985}, {'name': '1984', 'id': 1984}, {'name': '1983', 'id': 1983},
-{'name': '1982', 'id': 1982}, {'name': '1981', 'id': 1981}, {'name': '1980', 'id': 1980}, {'name': '1979', 'id': 1979}, {'name': '1978', 'id': 1978}, {'name': '1977', 'id': 1977},
-{'name': '1976', 'id': 1976}, {'name': '1975', 'id': 1975}, {'name': '1974', 'id': 1974}, {'name': '1973', 'id': 1973}, {'name': '1972', 'id': 1972}, {'name': '1971', 'id': 1971},
-{'name': '1970', 'id': 1970}, {'name': '1969', 'id': 1969}, {'name': '1968', 'id': 1968}, {'name': '1967', 'id': 1967}, {'name': '1966', 'id': 1966}, {'name': '1965', 'id': 1965},
-{'name': '1964', 'id': 1964}, {'name': '1963', 'id': 1963}, {'name': '1962', 'id': 1962}, {'name': '1961', 'id': 1961}
-	]
+def years_movies():
+	return get_years(1900)
 
-decades_movies = [
-{'name': '2030s', 'id': 2030}, {'name': '2020s', 'id': 2020}, {'name': '2010s', 'id': 2010}, {'name': '2000s', 'id': 2000}, {'name': '1990s', 'id': 1990},
-{'name': '1980s', 'id': 1980}, {'name': '1970s', 'id': 1970}, {'name': '1960s', 'id': 1960}, {'name': '1950s', 'id': 1950}, {'name': '1940s', 'id': 1940},
-{'name': '1930s', 'id': 1930}, {'name': '1920s', 'id': 1920}, {'name': '1910s', 'id': 1910}, {'name': '1900s', 'id': 1900}
-	]
+def years_tvshows():
+	return get_years(1944)
 
-decades_tvshows = [
-{'name': '2030s', 'id': 2030}, {'name': '2020s', 'id': 2020}, {'name': '2010s', 'id': 2010}, {'name': '2000s', 'id': 2000}, {'name': '1990s', 'id': 1990},
-{'name': '1980s', 'id': 1980}, {'name': '1970s', 'id': 1970}, {'name': '1960s', 'id': 1960}, {'name': '1950s', 'id': 1950}, {'name': '1940s', 'id': 1940}
-	]
+def years_anime():
+	return get_years(1961)
 
-decades_anime = [
-{'name': '2030s', 'id': 2030}, {'name': '2020s', 'id': 2020}, {'name': '2010s', 'id': 2010}, {'name': '2000s', 'id': 2000}, {'name': '1990s', 'id': 1990},
-{'name': '1980s', 'id': 1980}, {'name': '1970s', 'id': 1970}, {'name': '1960s', 'id': 1960}
-	]
+def decades_movies():
+	return get_decades(1900)
 
-oscar_winners = (
-{'results': [{'id': 872585}, {'id': 545611}, {'id': 776503}, {'id': 581734}, {'id': 496243}, {'id': 490132}, {'id': 399055}, {'id': 376867}, {'id': 314365},
-{'id': 194662}, {'id': 76203}, {'id': 68734}, {'id': 74643}, {'id': 45269}, {'id': 12162}, {'id': 12405}, {'id': 6977}, {'id': 1422}, {'id': 1640}, {'id': 70}],
+def decades_tvshows():
+	return get_decades(1940)
+
+def decades_anime():
+	return get_decades(1960)
+
+def oscar_winners():
+	return (
+{'results': [{'id': 1064213}, {'id': 872585}, {'id': 545611}, {'id': 776503}, {'id': 581734}, {'id': 496243}, {'id': 490132}, {'id': 399055}, {'id': 376867}, {'id': 314365},
+{'id': 194662}, {'id': 76203}, {'id': 68734}, {'id': 74643}, {'id': 45269}, {'id': 12162}, {'id': 12405}, {'id': 6977}, {'id': 1422}, {'id': 1640}],
 'total_pages': 5, 'page': 1},
-{'results': [{'id': 122}, {'id': 1574}, {'id': 453}, {'id': 98}, {'id': 14}, {'id': 1934}, {'id': 597}, {'id': 409}, {'id': 197}, {'id': 13}, {'id': 424}, {'id': 33},
-{'id': 274}, {'id': 581}, {'id': 403}, {'id': 380}, {'id': 746}, {'id': 792}, {'id': 606}, {'id': 279}], 'total_pages': 5, 'page': 2},
-{'results': [{'id': 11050}, {'id': 783}, {'id': 9443}, {'id': 16619}, {'id': 12102}, {'id': 11778}, {'id': 703}, {'id': 1366}, {'id': 510}, {'id': 240}, {'id': 9277},
-{'id': 238}, {'id': 1051}, {'id': 11202}, {'id': 3116}, {'id': 17917}, {'id': 10633}, {'id': 874}, {'id': 15121}, {'id': 11113}], 'total_pages': 5, 'page': 3},
-{'results': [{'id': 5769}, {'id': 947}, {'id': 1725}, {'id': 284}, {'id': 665}, {'id': 17281}, {'id': 826}, {'id': 2897}, {'id': 15919}, {'id': 654}, {'id': 11426},
-{'id': 27191}, {'id': 2769}, {'id': 705}, {'id': 25430}, {'id': 23383}, {'id': 33667}, {'id': 887}, {'id': 28580}, {'id': 17661}], 'total_pages': 5, 'page': 4},
-{'results': [{'id': 27367}, {'id': 289}, {'id': 43266}, {'id': 223}, {'id': 770}, {'id': 34106}, {'id': 43278}, {'id': 43277}, {'id': 12311}, {'id': 3078}, {'id': 56164},
+{'results': [{'id': 70}, {'id': 122}, {'id': 1574}, {'id': 453}, {'id': 98}, {'id': 14}, {'id': 1934}, {'id': 597}, {'id': 409}, {'id': 197}, {'id': 13}, {'id': 424}, {'id': 33},
+{'id': 274}, {'id': 581}, {'id': 403}, {'id': 380}, {'id': 746}, {'id': 792}, {'id': 606}], 'total_pages': 5, 'page': 2},
+{'results': [{'id': 279}, {'id': 11050}, {'id': 783}, {'id': 9443}, {'id': 16619}, {'id': 12102}, {'id': 11778}, {'id': 703}, {'id': 1366}, {'id': 510}, {'id': 240}, {'id': 9277},
+{'id': 238}, {'id': 1051}, {'id': 11202}, {'id': 3116}, {'id': 17917}, {'id': 10633}, {'id': 874}, {'id': 15121}], 'total_pages': 5, 'page': 3},
+{'results': [{'id': 11113}, {'id': 5769}, {'id': 947}, {'id': 1725}, {'id': 284}, {'id': 665}, {'id': 17281}, {'id': 826}, {'id': 2897}, {'id': 15919}, {'id': 654}, {'id': 11426},
+{'id': 27191}, {'id': 2769}, {'id': 705}, {'id': 25430}, {'id': 23383}, {'id': 33667}, {'id': 887}, {'id': 28580}], 'total_pages': 5, 'page': 4},
+{'results': [{'id': 17661}, {'id': 27367}, {'id': 289}, {'id': 43266}, {'id': 223}, {'id': 770}, {'id': 34106}, {'id': 43278}, {'id': 43277}, {'id': 12311}, {'id': 3078}, {'id': 56164},
 {'id': 33680}, {'id': 42861}, {'id': 143}, {'id': 65203}, {'id': 28966}, {'id': 631}], 'total_pages': 5, 'page': 5}
 	)
 
-movie_certifications = [
+def movie_certifications():
+	return [
 {'name': 'G', 'id': 'G'}, {'name': 'PG', 'id': 'PG'}, {'name': 'PG-13', 'id': 'PG-13'},
 {'name': 'R', 'id': 'R'}, {'name': 'NC-17', 'id': 'NC-17'}, {'name': 'NR', 'id': 'NR'}
 	]
 
-tvshow_certifications = [
+def tvshow_certifications():
+	return [
 {'name': 'TV-Y', 'id': 'tv-y'}, {'name': 'TV-Y7', 'id': 'tv-y7'}, {'name': 'TV-G', 'id': 'tv-g'},
 {'name': 'TV-PG', 'id': 'tv-pg'}, {'name': 'TV-14', 'id': 'tv-14'}, {'name': 'TV-MA', 'id': 'tv-ma'}
 	]
 
-languages = [
+def languages():
+	return [
 {'name': 'Arabic', 'id': 'ar'}, {'name': 'Bosnian', 'id': 'bs'}, {'name': 'Bulgarian', 'id': 'bg'}, {'name': 'Chinese', 'id': 'zh'}, {'name': 'Croatian', 'id': 'hr'},
 {'name': 'Dutch', 'id': 'nl'}, {'name': 'English', 'id': 'en'}, {'name': 'Finnish', 'id': 'fi'}, {'name': 'French', 'id': 'fr'}, {'name': 'German', 'id': 'de'},
 {'name': 'Greek', 'id': 'el'}, {'name': 'Hebrew', 'id': 'he'}, {'name': 'Hindi', 'id': 'hi'}, {'name': 'Hungarian', 'id': 'hu'}, {'name': 'Icelandic', 'id': 'is'},
 {'name': 'Italian', 'id': 'it'}, {'name': 'Japanese', 'id': 'ja'}, {'name': 'Korean', 'id': 'ko'}, {'name': 'Macedonian', 'id': 'mk'}, {'name': 'Norwegian', 'id': 'no'},
 {'name': 'Persian', 'id': 'fa'}, {'name': 'Polish', 'id': 'pl'}, {'name': 'Portuguese', 'id': 'pt'}, {'name': 'Punjabi', 'id': 'pa'}, {'name': 'Romanian', 'id': 'ro'},
 {'name': 'Russian', 'id': 'ru'}, {'name': 'Serbian', 'id': 'sr'}, {'name': 'Slovenian', 'id': 'sl'}, {'name': 'Spanish', 'id': 'es'}, {'name': 'Swedish', 'id': 'sv'},
-{'name': 'Turkish', 'id': 'tr'}, {'name': 'Ukrainian', 'id': 'uk'}]
+{'name': 'Turkish', 'id': 'tr'}, {'name': 'Ukrainian', 'id': 'uk'}, {'name': 'Vietnamese', 'id': 'vi'}
+	]
 
-language_choices =  {
+def language_choices():
+	return {
 'None': 'None',              'Afrikaans': 'afr',            'Albanian': 'alb',             'Arabic': 'ara',
 'Armenian': 'arm',           'Basque': 'baq',               'Bengali': 'ben',              'Bosnian': 'bos',
 'Breton': 'bre',             'Bulgarian': 'bul',            'Burmese': 'bur',              'Catalan': 'cat',
@@ -128,7 +91,8 @@ language_choices =  {
 'Vietnamese': 'vie'
 	}
 
-regions = [
+def regions():
+	return [
 {'id': 'AF', 'name': 'Afghanistan'},        {'id': 'AL', 'name': 'Albania'},          {'id': 'DZ', 'name': 'Algeria'},
 {'id': 'AQ', 'name': 'Antarctica'},         {'id': 'AR', 'name': 'Argentina'},        {'id': 'AM', 'name': 'Armenia'},
 {'id': 'AU', 'name': 'Australia'},          {'id': 'AT', 'name': 'Austria'},          {'id': 'BD', 'name': 'Bangladesh'},
@@ -155,7 +119,8 @@ regions = [
 {'id': 'YE', 'name': 'Yemen'},              {'id': 'ZW', 'name': 'Zimbabwe'}
 	]
 
-movie_genres = [
+def movie_genres():
+	return [
 {'name': 'Action', 'id': '28', 'icon': 'genre_action'}, {'name': 'Adventure', 'id': '12', 'icon': 'genre_adventure'}, {'name': 'Animation', 'id': '16', 'icon': 'genre_animation'},
 {'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'}, {'name': 'Documentary', 'id': '99', 'icon': 'genre_documentary'},
 {'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Fantasy', 'id': '14', 'icon': 'genre_fantasy'},
@@ -165,7 +130,8 @@ movie_genres = [
 {'name': 'War', 'id': '10752', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
-tvshow_genres = [
+def tvshow_genres():
+	return [
 {'name': 'Action & Adventure', 'id': '10759', 'icon': 'genre_action'}, {'name': 'Animation', 'id': '16', 'icon': 'genre_animation'},
 {'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'}, {'name': 'Documentary', 'id': '99', 'icon': 'genre_documentary'},
 {'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Kids', 'id': '10762', 'icon': 'genre_kids'},
@@ -174,55 +140,59 @@ tvshow_genres = [
 {'name': 'War & Politics', 'id': '10768', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
-anime_genres = [
+def anime_genres():
+	return [
 {'name': 'Action & Adventure', 'id': '10759', 'icon': 'genre_action'}, {'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'},
 {'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Kids', 'id': '10762', 'icon': 'genre_kids'},
 {'name': 'Mystery', 'id': '9648', 'icon': 'genre_mystery'}, {'name': 'Sci-Fi & Fantasy', 'id': '10765', 'icon': 'genre_scifi'},
 {'name': 'War & Politics', 'id': '10768', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
-networks = [
-{'id': 54, 'name': 'Disney Channel', 'icon': 'network_disney'},                                  {'id': 44, 'name': 'Disney XD', 'icon': 'network_disneyxd'},
-{'id': 2, 'name': 'ABC', 'icon': 'network_abc'},                                                 {'id': 493, 'name': 'BBC America', 'icon': 'network_bbcamerica'},
-{'id': 6, 'name': 'NBC', 'icon': 'network_nbc'},                                                 {'id': 13, 'name': 'Nickelodeon', 'icon': 'network_nickelodeon'},
-{'id': 14, 'name': 'PBS', 'icon': 'network_pbs'},                                                {'id': 16, 'name': 'CBS', 'icon': 'network_cbs'},
-{'id': 19, 'name': 'FOX', 'icon': 'network_fox'},                                                {'id': 21, 'name': 'The WB', 'icon': 'network_thewb'},
-{'id': 24, 'name': 'BET', 'icon': 'network_bet'},                                                {'id': 30, 'name': 'USA Network', 'icon': 'network_usanetwork'},
-{'id': 23, 'name': 'CBC', 'icon': 'network_cbc'},                                                {'id': 88, 'name': 'FX', 'icon': 'network_fx'},
-{'id': 33, 'name': 'MTV', 'icon': 'network_mtv'},                                                {'id': 34, 'name': 'Lifetime', 'icon': 'network_lifetime'},
-{'id': 35, 'name': 'Nick Junior', 'icon': 'network_nickjr'},                                     {'id': 41, 'name': 'TNT', 'icon': 'network_tnt'},
-{'id': 43, 'name': 'National Geographic', 'icon': 'network_natgeo'},                             {'id': 47, 'name': 'Comedy Central', 'icon': 'network_comedycentral'},
-{'id': 49, 'name': 'HBO', 'icon': 'network_hbo'},                                                {'id': 55, 'name': 'Spike', 'icon': 'network_spike'},
-{'id': 67, 'name': 'Showtime', 'icon': 'network_showtime'},                                      {'id': 56, 'name': 'Cartoon Network', 'icon': 'network_cartoonnetwork'},
-{'id': 65, 'name': 'History Channel', 'icon': 'network_history'},                                {'id': 84, 'name': 'TLC', 'icon': 'network_tlc'},
-{'id': 68, 'name': 'TBS', 'icon': 'network_tbs'},                                                {'id': 71, 'name': 'The CW', 'icon': 'network_thecw'},
-{'id': 74, 'name': 'Bravo', 'icon': 'network_bravo'},                                            {'id': 76, 'name': 'E!', 'icon': 'network_e'},
-{'id': 77, 'name': 'Syfy', 'icon': 'network_syfy'},                                              {'id': 80, 'name': 'Adult Swim', 'icon': 'network_adultswim'},
-{'id': 91, 'name': 'Animal Planet', 'icon': 'network_animalplanet'},                             {'id': 110, 'name': 'CTV', 'icon': 'network_ctv'},
-{'id': 129, 'name': 'A&E', 'icon': 'network_ane'},                                               {'id': 158, 'name': 'VH1', 'icon': 'network_vh1'},
-{'id': 174, 'name': 'AMC', 'icon': 'network_amc'},                                               {'id': 928, 'name': 'Crackle', 'icon': 'network_crackle'},
-{'id': 202, 'name': 'WGN America', 'icon': 'network_wgnamerica'},                                {'id': 209, 'name': 'Travel Channel', 'icon': 'network_travel'},
-{'id': 213, 'name': 'Netflix', 'icon': 'network_netflix'},                                       {'id': 251, 'name': 'Audience', 'icon': 'network_audience'},
-{'id': 270, 'name': 'SundanceTV', 'icon': 'network_sundancetv'},                                 {'id': 318, 'name': 'Starz', 'icon': 'network_starz'},
-{'id': 359, 'name': 'Cinemax', 'icon': 'network_cinemax'},                                       {'id': 364, 'name': 'truTV', 'icon': 'network_trutv'},
-{'id': 384, 'name': 'Hallmark Channel', 'icon': 'network_hallmark'},                             {'id': 397, 'name': 'TV Land', 'icon': 'network_tvland'},
-{'id': 1024, 'name': 'Amazon', 'icon': 'network_amazon'},                                        {'id': 1267, 'name': 'Freeform', 'icon': 'network_freeform'},
-{'id': 4, 'name': 'BBC 1', 'icon': 'network_bbc1'},                                              {'id': 332, 'name': 'BBC 2', 'icon': 'network_bbc2'},
-{'id': 3, 'name': 'BBC 3', 'icon': 'network_bbc3'},                                              {'id': 100, 'name': 'BBC 4', 'icon': 'network_bbc4'},
-{'id': 214, 'name': 'Sky 1', 'icon': 'network_sky1'},                                            {'id': 9, 'name': 'ITV', 'icon': 'network_itv'},
-{'id': 26, 'name': 'Channel 4', 'icon': 'network_channel4'},                                     {'id': 99, 'name': 'Channel 5', 'icon': 'network_channel5'},
-{'id': 136, 'name': 'E4', 'icon': 'network_e4'},                                                 {'id': 210, 'name': 'HGTV', 'icon': 'network_hgtv'},
-{'id': 453, 'name': 'Hulu', 'icon': 'network_hulu'},                                             {'id': 1436, 'name': 'YouTube Red', 'icon': 'network_youtubered'},
-{'id': 64, 'name': 'Discovery Channel', 'icon': 'network_discovery'},                            {'id': 2739, 'name': 'Disney+', 'icon': 'network_disneyplus'},
-{'id': 2552, 'name': 'Apple TV +', 'icon': 'network_appletvplus'},                               {'id': 2697, 'name': 'Acorn TV', 'icon': 'network_acorntv'},
-{'id': 1709, 'name': 'CBS All Access', 'icon': 'network_cbsallaccess'},                          {'id': 3186, 'name': 'HBO Max', 'icon': 'network_hbomax'},
-{'id': 2243, 'name': 'DC Universe', 'icon': 'network_dcuniverse'},                               {'id': 2076, 'name': 'Paramount Network', 'icon': 'network_paramount'},
-{'id': 4330, 'name': 'Paramount+', 'icon': 'network_paramountplus'},                             {'id': 3353, 'name': 'Peacock', 'icon': 'network_peacock'},
-{'id': 4353, 'name': 'Discovery+', 'icon': 'network_discoveryplus'},                             {'id': 132, 'name': 'Oxygen', 'icon': 'network_oxygen'},
-{'id': 244, 'name': 'Discovery ID', 'icon': 'network_discoveryid'}
-	]
+def networks():
+	return [
+{'id': 129, 'name': 'A&E', 'icon': 'https://i.imgur.com/xLDfHjH.png'},                            {'id': 2, 'name': 'ABC', 'icon': 'https://i.imgur.com/qePLxos.png'},
+{'id': 174, 'name': 'AMC', 'icon': 'https://i.imgur.com/ndorJxi.png'},                            {'id': 2697, 'name': 'Acorn TV', 'icon': 'https://i.imgur.com/fSWB5gB.png'},
+{'id': 80, 'name': 'Adult Swim', 'icon': 'https://i.imgur.com/jCqbRcS.png'},                      {'id': 1024, 'name': 'Amazon', 'icon': 'https://i.imgur.com/ru9DDlL.png'},
+{'id': 91, 'name': 'Animal Planet', 'icon': 'https://i.imgur.com/olKc4RP.png'},                   {'id': 2552, 'name': 'Apple TV +', 'icon': 'https://i.imgur.com/fAQMVNp.png'},
+{'id': 251, 'name': 'Audience', 'icon': 'https://i.imgur.com/5Q3mo5A.png'},                       {'id': 4, 'name': 'BBC 1', 'icon': 'https://i.imgur.com/u8x26te.png'},
+{'id': 332, 'name': 'BBC 2', 'icon': 'https://i.imgur.com/SKeGH1a.png'},                          {'id': 3, 'name': 'BBC 3', 'icon': 'https://i.imgur.com/SDLeLcn.png'},
+{'id': 100, 'name': 'BBC 4', 'icon': 'https://i.imgur.com/PNDalgw.png'},                          {'id': 493, 'name': 'BBC America', 'icon': 'https://i.imgur.com/TUHDjfl.png'},
+{'id': 24, 'name': 'BET', 'icon': 'https://i.imgur.com/ZpGJ5UQ.png'},                             {'id': 74, 'name': 'Bravo', 'icon': 'https://i.imgur.com/TmEO3Tn.png'},
+{'id': 23, 'name': 'CBC', 'icon': 'https://i.imgur.com/unQ7WCZ.png'},                             {'id': 16, 'name': 'CBS', 'icon': 'https://i.imgur.com/8OT8igR.png'},
+{'id': 1709, 'name': 'CBS All Access', 'icon': 'https://i.imgur.com/ZvaWMuU.png'},                {'id': 110, 'name': 'CTV', 'icon': 'https://i.imgur.com/qUlyVHz.png'},
+{'id': 56, 'name': 'Cartoon Network', 'icon': 'https://i.imgur.com/zmOLbbI.png'},                 {'id': 26, 'name': 'Channel 4', 'icon': 'https://i.imgur.com/6ZA9UHR.png'},
+{'id': 99, 'name': 'Channel 5', 'icon': 'https://i.imgur.com/5ubnvOh.png'},                       {'id': 359, 'name': 'Cinemax', 'icon': 'https://i.imgur.com/zWypFNI.png'},
+{'id': 47, 'name': 'Comedy Central', 'icon': 'https://i.imgur.com/ko6XN77.png'},                  {'id': 928, 'name': 'Crackle', 'icon': 'https://i.imgur.com/53kqZSY.png'},
+{'id': 2243, 'name': 'DC Universe', 'icon': 'https://i.imgur.com/bhWIubn.png'},                   {'id': 64, 'name': 'Discovery Channel', 'icon': 'https://i.imgur.com/8UrXnAB.png'},
+{'id': 244, 'name': 'Discovery ID', 'icon': 'https://i.imgur.com/07w7BER.png'},                   {'id': 4353, 'name': 'Discovery+', 'icon': 'https://i.imgur.com/ukz1nOG.png'},
+{'id': 54, 'name': 'Disney Channel', 'icon': 'https://i.imgur.com/ZCgEkp6.png'},                  {'id': 44, 'name': 'Disney XD', 'icon': 'https://i.imgur.com/PAJJoqQ.png'},
+{'id': 2739, 'name': 'Disney+', 'icon': 'https://i.imgur.com/DVrPgbM.png'},                       {'id': 76, 'name': 'E!', 'icon': 'https://i.imgur.com/3Delf9f.png'},
+{'id': 136, 'name': 'E4', 'icon': 'https://i.imgur.com/frpunK8.png'},                             {'id': 19, 'name': 'FOX', 'icon': 'https://i.imgur.com/6vc0Iov.png'},
+{'id': 88, 'name': 'FX', 'icon': 'https://i.imgur.com/aQc1AIZ.png'},                              {'id': 1267, 'name': 'Freeform', 'icon': 'https://i.imgur.com/f9AqoHE.png'},
+{'id': 49, 'name': 'HBO', 'icon': 'https://i.imgur.com/Hyu8ZGq.png'},                             {'id': 3186, 'name': 'HBO Max', 'icon': 'https://i.imgur.com/mmRMG75.png'},
+{'id': 210, 'name': 'HGTV', 'icon': 'https://i.imgur.com/INnmgLT.png'},                           {'id': 384, 'name': 'Hallmark Channel', 'icon': 'https://i.imgur.com/zXS64I8.png'},
+{'id': 65, 'name': 'History Channel', 'icon': 'https://i.imgur.com/LEMgy6n.png'},                 {'id': 453, 'name': 'Hulu', 'icon': 'https://i.imgur.com/uSD2Cdw.png'},
+{'id': 9, 'name': 'ITV', 'icon': 'https://i.imgur.com/5Hxp5eA.png'},                              {'id': 34, 'name': 'Lifetime', 'icon': 'https://i.imgur.com/tvYbhen.png'},
+{'id': 33, 'name': 'MTV', 'icon': 'https://i.imgur.com/QM6DpNW.png'},                             {'id': 6, 'name': 'NBC', 'icon': 'https://i.imgur.com/yPRirQZ.png'},
+{'id': 43, 'name': 'National Geographic', 'icon': 'https://i.imgur.com/XCGNKVQ.png'},             {'id': 213, 'name': 'Netflix', 'icon': 'https://i.imgur.com/jI5c3bw.png'},
+{'id': 35, 'name': 'Nick Junior', 'icon': 'https://i.imgur.com/leuCWYt.png'},                     {'id': 13, 'name': 'Nickelodeon', 'icon': 'https://i.imgur.com/OUVoqYc.png'},
+{'id': 132, 'name': 'Oxygen', 'icon': 'https://i.imgur.com/uFCQvbR.png'},                         {'id': 14, 'name': 'PBS', 'icon': 'https://i.imgur.com/r9qeDJY.png'},
+{'id': 2076, 'name': 'Paramount Network', 'icon': 'https://i.imgur.com/ez3U6NV.png'},             {'id': 4330, 'name': 'Paramount+', 'icon': 'https://i.imgur.com/dmUjWmU.png'},
+{'id': 3353, 'name': 'Peacock', 'icon': 'https://i.imgur.com/1JXFkSM.png'},                       {'id': 67, 'name': 'Showtime', 'icon': 'https://i.imgur.com/SawAYkO.png'},
+{'id': 214, 'name': 'Sky 1', 'icon': 'https://i.imgur.com/xbgzhPU.png'},                          {'id': 55, 'name': 'Spike', 'icon': 'https://i.imgur.com/BhXYytR.png'},
+{'id': 318, 'name': 'Starz', 'icon': 'https://i.imgur.com/Z0ep2Ru.png'},                          {'id': 270, 'name': 'SundanceTV', 'icon': 'https://i.imgur.com/qldG5p2.png'},
+{'id': 77, 'name': 'Syfy', 'icon': 'https://i.imgur.com/9yCq37i.png'},                            {'id': 68, 'name': 'TBS', 'icon': 'https://i.imgur.com/RVCtt4Z.png'},
+{'id': 84, 'name': 'TLC', 'icon': 'https://i.imgur.com/c24MxaB.png'},                             {'id': 41, 'name': 'TNT', 'icon': 'https://i.imgur.com/WnzpAGj.png'},
+{'id': 397, 'name': 'TV Land', 'icon': 'https://i.imgur.com/1nIeDA5.png'},                        {'id': 71, 'name': 'The CW', 'icon': 'https://i.imgur.com/Q8tooeM.png'},
+{'id': 21, 'name': 'The WB', 'icon': 'https://i.imgur.com/rzfVME6.png'},                          {'id': 209, 'name': 'Travel Channel', 'icon': 'https://i.imgur.com/mWXv7SF.png'},
+{'id': 30, 'name': 'USA Network', 'icon': 'https://i.imgur.com/Doccw9E.png'},                     {'id': 158, 'name': 'VH1', 'icon': 'https://i.imgur.com/IUtHYzA.png'},
+{'id': 202, 'name': 'WGN America', 'icon': 'https://i.imgur.com/TL6MzgO.png'},                    {'id': 1436, 'name': 'YouTube Red', 'icon': 'https://i.imgur.com/ZfewP1Y.png'},
+{'id': 364, 'name': 'truTV', 'icon': 'https://i.imgur.com/HnB3zfc.png'}
+]
 
-watch_providers_movies = [
+
+def watch_providers_movies():
+	return [
 {'name': 'Netflix', 'id': 8, 'icon': 't2yyOv40HZeVlLjYsCsPHnWLk4W.jpg'},                     {'name': 'Amazon Prime Video', 'id': 9, 'icon': 'emthp39XA2YScoYL1p0sdbAH2WA.jpg'},
 {'name': 'Disney Plus', 'id': 337, 'icon': '7rwgEs15tFwyR9NPQ5vpzxTj19Q.jpg'},               {'name': 'Google Play Movies', 'id': 3, 'icon': 'tbEdFQDwx5LEVr8WpSeXQSIirVq.jpg'},
 {'name': 'Sun Nxt', 'id': 309, 'icon': 'uW4dPCcbXaaFTyfL5HwhuDt5akK.jpg'},                   {'name': 'Apple TV', 'id': 2, 'icon': 'peURlLlr8jggOwK53fJ5wdQl05y.jpg'},
@@ -304,7 +274,8 @@ watch_providers_movies = [
 {'name': 'Viaplay', 'id': 76, 'icon': 'cvl65OJnz14LUlC3yGK1KHj8UYs.jpg'},                    {'name': 'Popflick', 'id': 1832, 'icon': 'wbKHI2d5417yAAY7QestC3qnXyo.jpg'}
 	]
 
-watch_providers_tvshows = [
+def watch_providers_tvshows():
+	return [
 {'name': 'Netflix', 'id': 8, 'icon': 't2yyOv40HZeVlLjYsCsPHnWLk4W.jpg'},                        {'name': 'Amazon Prime Video', 'id': 9, 'icon': 'emthp39XA2YScoYL1p0sdbAH2WA.jpg'},
 {'name': 'Disney +', 'id': 337, 'icon': '7rwgEs15tFwyR9NPQ5vpzxTj19Q.jpg'},                     {'name': 'Apple TV', 'id': 2, 'icon': 'peURlLlr8jggOwK53fJ5wdQl05y.jpg'},
 {'name': 'Google Play Movies', 'id': 3, 'icon': 'tbEdFQDwx5LEVr8WpSeXQSIirVq.jpg'},             {'name': 'Hulu', 'id': 15, 'icon': 'zxrVdFjIjLqkfnwyghnfywTn3Lh.jpg'},
@@ -406,7 +377,8 @@ watch_providers_tvshows = [
 {'name': 'Hallmark Movies & Mysteries', 'id': 1966, 'icon': '80iXgRgamAX3JOMVg1EDHMX9s1f.jpg'}, {'name': 'Outside Watch', 'id': 1976, 'icon': '7N6w9Hz541qNhlHEHjHgEGCjKDh.jpg'},
 {'name': 'Citytv', 'id': 1985, 'icon': 'piaX7JA1HEJ3qA4CKQ5LZyxxshm.jpg'}]
 
-movie_sorts = [
+def movie_sorts():
+	return [
 {'name': 'Popularity (asc)', 'id': '&sort_by=popularity.asc'}, {'name': 'Popularity (desc)', 'id': '&sort_by=popularity.desc'},
 {'name': 'Release Date (asc)', 'id': '&sort_by=primary_release_date.asc'}, {'name': 'Release Date (desc)', 'id': '&sort_by=primary_release_date.desc'},
 {'name': 'Total Revenue (asc)', 'id': '&sort_by=revenue.asc'}, {'name': 'Total Revenue (desc)', 'id': '&sort_by=revenue.desc'},
@@ -415,14 +387,16 @@ movie_sorts = [
 {'name': 'Random', 'id': '[random]'}
 		]
 
-tvshow_sorts = [
+def tvshow_sorts():
+	return [
 {'name': 'Popularity (asc)', 'id': '&sort_by=popularity.asc'}, {'name': 'Popularity (desc)', 'id': '&sort_by=popularity.desc'},
 {'name': 'First Aired (asc)', 'id': '&sort_by=first_air_date.asc'}, {'name': 'First Aired (desc)', 'id': '&sort_by=first_air_date.desc'},
 {'name': 'Rating (asc)', 'id': '&sort_by=vote_average.asc'}, {'name': 'Rating (desc)', 'id': '&sort_by=vote_average.desc'},
 {'name': 'Random', 'id': '[random]'}
 		]
 
-discover_items = {
+def discover_items():
+	return {
 'with_year_start': {'label': 'Year Start', 'key': 'with_year_start', 'display_key': 'with_year_start_display', 'action': 'years',
 'url_insert_movie': '&primary_release_date.gte=%s-01-01', 'url_insert_tvshow': '&first_air_date.gte=%s-01-01', 'name_value': ' | %s onwards', 'icon': 'calender'},
 'with_year_end': {'label': 'Year End', 'key': 'with_year_end', 'display_key': 'with_year_end_display', 'action': 'years',
@@ -438,7 +412,9 @@ discover_items = {
 'with_certification': {'label': 'Certification', 'key': 'with_certification', 'display_key': 'with_certification_display', 'action': 'certifications',
 'url_insert': '&certification_country=US&certification=%s', 'name_value': ' | %s', 'limited': 'movie', 'icon': 'certifications'},
 'with_certification_and_lower': {'label': 'Certification (& lower)', 'key': 'with_certification_and_lower', 'display_key': 'with_certification_and_lower_display',
-'action': 'certification_and_lowers', 'url_insert': '&certification_country=US&certification.lte=%s', 'name_value': ' | %s', 'limited': 'movie', 'icon': 'certifications'},		
+'action': 'certification_and_lowers', 'url_insert': '&certification_country=US&certification.lte=%s', 'name_value': ' | %s', 'limited': 'movie', 'icon': 'certifications'},
+'with_language': {'label': 'Language', 'key': 'with_language', 'display_key': 'with_language_display', 'action': 'languages',
+'url_insert': '&with_original_language=%s', 'name_value': ' | %s', 'icon': 'languages'},	
 'with_keywords': {'label': 'With Keywords', 'key': 'with_keywords', 'display_key': 'with_keywords_display', 'action': 'keywords',
 'url_insert': '&with_keywords=%s', 'name_value': ' | Keywords: %s', 'icon': 'genre_fantasy'},
 'with_rating': {'label': 'Minimum Rating', 'key': 'with_rating', 'display_key': 'with_rating_display', 'action': 'ratings',
@@ -452,10 +428,11 @@ discover_items = {
 'with_released': {'label': 'Released Only', 'key': 'with_released', 'display_key': 'with_released_display', 'action': 'released',
 'url_insert_movie': '&primary_release_date.lte=%s', 'url_insert_tvshow': '&include_null_first_air_dates=false&first_air_date.lte=%s', 'name_value': ' | Released Only', 'icon': 'dvd'},
 'with_adult': {'label': 'Include Adult', 'key': 'with_adult', 'display_key': 'with_adult_display', 'action': 'adult',
-'url_insert': '&include_adult=%s', 'name_value': ' | Include Adult', 'limited': 'movie', 'icon': 'genre_romance'}
+'url_insert': '&include_adult=%s', 'name_value': ' | Include Adult', 'limited': 'movie', 'icon': 'genre_romance'},
 		}
 
-color_palette = [
+def color_palette():
+	return [
 'FFFFFFE3', 'FFFFFAE6', 'FFFEF5E6', 'FFFEF0E5', 'FFFEEBE5', 'FFFFEFEF', 'FFFFE6EA', 'FFFFE6F1', 'FFFEE6F4', 'FFFFE6FB', 'FFFEE6FE', 'FFFAE6FF', 'FFF4E6FF', 'FFF0E6FF', 'FFEAE7FC',
 'FFE6E7FC', 'FFE6EBFF', 'FFE7F0FF', 'FFE7F5FF', 'FFE7FAFF', 'FFE6FFFF', 'FFE6FFFB', 'FFE7FEF4', 'FFE7FFF1', 'FFE6FFEA', 'FFE7FFE7', 'FFEBFFF3', 'FFF1FFE6', 'FFF5FFE6', 'FFFBFFE6',
 'FFFFFFFF', 'FFFFFFCB', 'FFFEFACA', 'FFFFEACB', 'FFFFE0CC', 'FFFED6CC', 'FFFFCACD', 'FFFFCCD5', 'FFFFCDE0', 'FFFFCCEB', 'FFFFCBF5', 'FFFECCFD', 'FFF6CBFF', 'FFECCCFE', 'FFE0CCFF',
@@ -493,3 +470,14 @@ color_palette = [
 'FF0E004B', 'FF01004C', 'FF000E4B', 'FF001F4D', 'FF012E4D', 'FF003D4C', 'FF004C4C', 'FF004D3D', 'FF004C2E', 'FF004C1E', 'FF004C0E', 'FF004C01', 'FF0F4C00', 'FF204C01', 'FF2D4C00',
 'FF3E4C01', 'FF000000'
 	]
+
+def list_display_choices(list_type):
+	return {
+'tmdb': {'choices': [('Title', '0'), ('Date Created (asc)', '1'), ('Date Created (desc)', '2'), ('Recently Updated (asc)', '3'), ('Recently Updated (desc)', '4'),
+('Item Count (asc)', '5'), ('Item Count (desc)', '6'), ('Average Rating (asc)', '7'), ('Average Rating (desc)', '8'), ('Total Runtime (asc)', '9'),
+('Total Runtime (desc)', '10'), ('Total Revenue (asc)', '11'), ('Total Revenue (desc)', '12')],
+'setting': 'tmdblist'},
+'personal': {'choices': [('Title', '0'), ('Author', '1'), ('Date Created (asc)', '2'), ('Date Created (desc)', '3'),
+('Recently Updated (asc)', '4'), ('Recently Updated (desc)', '5'), ('Item Count (asc)', '6'), ('Item Count (desc)', '7')],
+'setting': 'personal_list'}
+}[list_type]

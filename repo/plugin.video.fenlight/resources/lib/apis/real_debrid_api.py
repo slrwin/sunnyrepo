@@ -1,29 +1,21 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 import time
 import requests
 from threading import Thread
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
-from modules.utils import copy2clip
-from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
-from modules import kodi_utils
-# logger = kodi_utils.logger
-
-sleep, confirm_dialog, ok_dialog, xbmc_monitor = kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.xbmc_monitor
-progress_dialog, get_icon, notification = kodi_utils.progress_dialog, kodi_utils.get_icon, kodi_utils.notification
-base_url = 'https://api.real-debrid.com/rest/1.0/'
-auth_url = 'https://api.real-debrid.com/oauth/v2/'
-device_url = 'device/code?%s'
-credentials_url = 'device/credentials?%s'
-icon = get_icon('realdebrid')
-timeout = 20.0
+from modules.utils import copy2clip, make_tinyurl, make_qrcode
+from modules.source_utils import supported_video_extensions, seas_ep_filter, extras
+from modules.kodi_utils import sleep, ok_dialog, progress_dialog, notification
+# from modules.kodi_utils import logger
 
 class RealDebridAPI:
 	def __init__(self):
 		self.client_ID = get_setting('fenlight.rd.client_id', 'empty_setting')
 		if self.client_ID in ('empty_setting', ''): self.client_ID = 'X245A4XAIBGVM'
+		self.base_url = 'https://api.real-debrid.com/rest/1.0/'
+		self.auth_url = 'https://api.real-debrid.com/oauth/v2/'
 		self.token = get_setting('fenlight.rd.token', 'empty_setting')
 		self.secret = get_setting('fenlight.rd.secret', 'empty_setting')
 		self.refresh = get_setting('fenlight.rd.refresh', 'empty_setting')
@@ -34,22 +26,26 @@ class RealDebridAPI:
 	def auth(self):
 		self.secret = ''
 		self.client_ID = 'X245A4XAIBGVM'
-		url = auth_url + device_url % 'client_id=%s&new_credentials=yes' % self.client_ID
-		response = requests.get(url, timeout=timeout).json()
+		url = self.auth_url + 'device/code?%s' % 'client_id=%s&new_credentials=yes' % self.client_ID
+		response = requests.get(url, timeout=20).json()
 		user_code = response['user_code']
-		try: copy2clip(user_code)
-		except: pass
-		content = 'Authorize Debrid Services[CR]Navigate to: [B]https://real-debrid.com/device[/B][CR]Enter the following code: [B]%s[/B]' % user_code
-		progressDialog = progress_dialog('Real Debrid Authorize', get_icon('rd_qrcode'))
+		auth_url = response['direct_verification_url']
+		qr_code = make_qrcode(auth_url) or ''
+		short_url = make_tinyurl(auth_url)
+		copy2clip(auth_url)
+		if short_url: p_dialog_insert = 'OR visit this URL: [B]%s[/B][CR]OR Enter this Code: [B]%s[/B]' % (short_url, user_code)
+		else: p_dialog_insert = 'OR Enter this Code: [B]%s[/B]' % user_code
+		content = 'Please Scan the QR Code%s[CR]' % p_dialog_insert
+		progressDialog = progress_dialog('Real Debrid Authorize', qr_code)
 		progressDialog.update(content, 0)
 		expires_in = int(response['expires_in'])
 		sleep_interval = int(response['interval'])
 		device_code = response['device_code']
-		poll_url = auth_url + credentials_url % 'client_id=%s&code=%s' % (self.client_ID, device_code)
+		poll_url = self.auth_url + 'device/credentials?%s' % 'client_id=%s&code=%s' % (self.client_ID, device_code)
 		start, time_passed = time.time(), 0
 		while not progressDialog.iscanceled() and time_passed < expires_in and not self.secret:
 			sleep(1000 * sleep_interval)
-			try: response = requests.get(poll_url, timeout=timeout).json()
+			try: response = requests.get(poll_url, timeout=20).json()
 			except: continue
 			if 'error' in response:
 				time_passed = time.time() - start
@@ -69,8 +65,8 @@ class RealDebridAPI:
 		except: pass
 		if self.secret:
 			data = {'client_id': self.client_ID, 'client_secret': self.secret, 'code': device_code, 'grant_type': 'http://oauth.net/grant_type/device/1.0'}
-			url = '%stoken' % auth_url
-			response = requests.post(url, data=data, timeout=timeout).json()
+			url = '%stoken' % self.auth_url
+			response = requests.post(url, data=data, timeout=20).json()
 			self.token = response['access_token']
 			self.refresh = response['refresh_token']
 			username = self.account_info()['username']
@@ -82,7 +78,7 @@ class RealDebridAPI:
 
 	def refresh_token(self):
 		try:
-			url = auth_url + 'token'
+			url = self.auth_url + 'token'
 			data = {'client_id': self.client_ID, 'client_secret': self.secret, 'code': self.refresh, 'grant_type': 'http://oauth.net/grant_type/device/1.0'}
 			response = requests.post(url, data=data).json()
 			self.token = response['access_token']
@@ -164,19 +160,17 @@ class RealDebridAPI:
 	def add_magnet(self, magnet):
 		post_data = {'magnet': magnet}
 		url = 'torrents/addMagnet'
-		return self._post(url, post_data)
+		result = self._post(url, post_data)
+		return result
 
 	def create_transfer(self, magnet_url):
-		from modules.source_utils import supported_video_extensions
 		try:
 			extensions = supported_video_extensions()
 			torrent = self.add_magnet(magnet_url)
 			torrent_id = torrent['id']
 			info = self.torrent_info(torrent_id)
 			files = info['files']
-			torrent_keys = [str(item['id']) for item in files if item['path'].lower().endswith(tuple(extensions))]
-			torrent_keys = ','.join(torrent_keys)
-			self.add_torrent_select(torrent_id, torrent_keys)
+			self.add_torrent_select(torrent_id, 'all')
 			return 'success'
 		except:
 			self.delete_torrent(torrent_id)
@@ -191,18 +185,18 @@ class RealDebridAPI:
 	def delete_torrent(self, folder_id):
 		if self.token in ('empty_setting', ''): return None
 		url = 'torrents/delete/%s&auth_token=%s' % (folder_id, self.token)
-		response = requests.delete(base_url + url, timeout=timeout)
+		response = requests.delete(self.base_url + url, timeout=20)
 		return response
 
 	def delete_download(self, download_id):
 		if self.token in ('empty_setting', ''): return None
 		url = 'downloads/delete/%s&auth_token=%s' % (download_id, self.token)
-		response = requests.delete(base_url + url, timeout=timeout)
+		response = requests.delete(self.base_url + url, timeout=20)
 		return response
 
 	def resolve_magnet(self, magnet_url, info_hash, store_to_cloud, title, season, episode):
 		compare_title = re.sub(r'[^A-Za-z0-9]+', '.', title.replace('\'', '').replace('&', 'and').replace('%', '.percent')).lower()
-		elapsed_time, transfer_finished = 0, False
+		attempts, transfer_finished = 0, False
 		extensions = supported_video_extensions()
 		torrent_id = None
 		try:
@@ -215,16 +209,17 @@ class RealDebridAPI:
 				self.delete_torrent(torrent_id)
 				return None
 			sleep(200)
-			while elapsed_time <= 4 and not transfer_finished:
+			while attempts < 3 and not transfer_finished:
 				active_count = self.torrents_activeCount()
 				active_list = active_count['list']
-				elapsed_time += 1
-				if info_hash in active_list: sleep(1000)
+				attempts += 1
+				if info_hash in active_list: sleep(500)
 				else: transfer_finished = True
 			if not transfer_finished:
 				self.delete_torrent(torrent_id)
 				return None
-			selected_files = [(idx, i) for idx, i in enumerate([i for i in torrent_info['files'] if i['selected'] == 1 and i['path'].lower().endswith(tuple(extensions))])]
+			files = [i for i in torrent_info['files'] if i['selected'] == 1 and i['path'].lower().endswith(tuple(extensions))]
+			selected_files = [(idx, i) for idx, i in enumerate(files)]
 			selected_files = sorted(selected_files, key=lambda x: x[1]['bytes'], reverse=True)
 			match = False
 			if season:
@@ -238,7 +233,8 @@ class RealDebridAPI:
 					for i in correct_files:
 						compare_link = seas_ep_filter(season, episode, i['path'], split=True)
 						compare_link = re.sub(compare_title, '', compare_link)
-						if any(x in compare_link for x in EXTRAS): continue
+						extras_filter = extras()
+						if any(x in compare_link for x in extras_filter): continue
 						else: match = True; break
 				if match: index = [i[0] for i in selected_files if i[1]['path'] == correct_files[0]['path']][0]
 			else:
@@ -246,7 +242,8 @@ class RealDebridAPI:
 				for value in selected_files:
 					filename = re.sub(r'[^A-Za-z0-9-]+', '.', value[1]['path'].rsplit('/', 1)[1].replace('\'', '').replace('&', 'and').replace('%', '.percent')).lower()
 					filename_info = filename.replace(compare_title, '')
-					if any(x in filename_info for x in EXTRAS): continue
+					extras_filter = extras()
+					if any(x in filename_info for x in extras_filter): continue
 					match, index = True, value[0]; break
 			if match:
 				rd_link = torrent_info['links'][index]
@@ -281,7 +278,8 @@ class RealDebridAPI:
 			if not transfer_finished:
 				self.delete_torrent(torrent_id)
 				return None
-			list_file_items = [dict(i, **{'link': torrent_info['links'][idx]}) for idx, i in enumerate([i for i in torrent_info['files'] if i['selected'] == 1])]
+			files = [i for i in torrent_info['files'] if i['selected'] == 1]
+			list_file_items = [dict(i, **{'link': torrent_info['links'][idx]}) for idx, i in enumerate(files)]
 			list_file_items = [{'link': i['link'], 'filename': i['path'].replace('/', ''), 'size': i['bytes']} for i in list_file_items]
 			self.delete_torrent(torrent_id)
 			return list_file_items
@@ -290,10 +288,12 @@ class RealDebridAPI:
 			return None
 
 	def video_only(self, storage_variant, extensions):
-		return False if len([i for i in storage_variant.values() if not i['filename'].lower().endswith(tuple(extensions))]) > 0 else True
+		values = storage_variant.values()
+		return False if len([i for i in values if not i['filename'].lower().endswith(tuple(extensions))]) > 0 else True
 
 	def name_check(self, storage_variant, season, episode, seas_ep_filter):
-		return len([i for i in storage_variant.values() if seas_ep_filter(season, episode, i['filename'])]) > 0
+		values = storage_variant.values()
+		return len([i for i in values if seas_ep_filter(season, episode, i['filename'])]) > 0
 
 	def sort_cache_list(self, unsorted_list):
 		sorted_list = sorted(unsorted_list, key=lambda x: x[1], reverse=True)
@@ -306,11 +306,11 @@ class RealDebridAPI:
 
 	def _get(self, url):
 		original_url = url
-		url = base_url + url
+		url = self.base_url + url
 		if self.token in ('empty_setting', ''): return None
 		if '?' not in url: url += '?auth_token=%s' % self.token
 		else: url += '&auth_token=%s' % self.token
-		response = requests.get(url, timeout=timeout)
+		response = requests.get(url, timeout=20)
 		if any(value in response.text for value in ('bad_token', 'Bad Request')):
 			if self.refresh_token(): response = self._get(original_url)
 			else: return None
@@ -319,11 +319,11 @@ class RealDebridAPI:
 
 	def _post(self, url, post_data):
 		original_url = url
-		url = base_url + url
+		url = self.base_url + url
 		if self.token in ('empty_setting', ''): return None
 		if '?' not in url: url += '?auth_token=%s' % self.token
 		else: url += '&auth_token=%s' % self.token
-		response = requests.post(url, data=post_data, timeout=timeout)
+		response = requests.post(url, data=post_data, timeout=20)
 		if any(value in response.text for value in ('bad_token', 'Bad Request')):
 			if self.refresh_token(): response = self._post(original_url, post_data)
 			else: return None
@@ -339,7 +339,8 @@ class RealDebridAPI:
 			# USER CLOUD
 			try:
 				try:
-					user_cloud_info_caches = [eval(i[0])['id'] for i in dbcon.execute("""SELECT data FROM maincache WHERE id LIKE ?""", ('rd_user_cloud_info_%',)).fetchall()]
+					cache = dbcon.execute("""SELECT data FROM maincache WHERE id LIKE ?""", ('rd_user_cloud_info_%',)).fetchall()
+					user_cloud_info_caches = [eval(i[0])['id'] for i in cache]
 				except:
 					user_cloud_success = True
 				if not user_cloud_success:
@@ -363,4 +364,6 @@ class RealDebridAPI:
 		except: return False
 		if False in (user_cloud_success, download_links_success, hash_cache_status_success): return False
 		return True
+
+RealDebrid = RealDebridAPI()
 

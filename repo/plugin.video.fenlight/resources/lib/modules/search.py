@@ -4,21 +4,8 @@ from urllib.parse import unquote
 from caches.main_cache import main_cache
 from indexers.people import person_search
 from indexers.easynews import search_easynews_image
-from modules import kodi_utils
+from modules.kodi_utils import close_all_dialog, external, build_url, kodi_dialog, execute_builtin, select_dialog, notification, kodi_refresh
 # logger = kodi_utils.logger
-
-close_all_dialog, external = kodi_utils.close_all_dialog, kodi_utils.external
-build_url, kodi_dialog, execute_builtin, select_dialog = kodi_utils.build_url, kodi_utils.kodi_dialog, kodi_utils.execute_builtin, kodi_utils.select_dialog
-notification, kodi_refresh = kodi_utils.notification, kodi_utils.kodi_refresh
-clear_history_list = [('Clear Movie Search History', 'movie_queries'),
-					('Clear TV Show Search History', 'tvshow_queries'),
-					('Clear Anime Search History', 'anime_queries'),
-					('Clear People Search History', 'people_queries'),
-					('Clear Keywords Movie Search History', 'keyword_tmdb_movie_queries'),
-					('Clear Keywords TV Show Search History', 'keyword_tmdb_tvshow_queries'),
-					('Clear Easynews Search History', 'easynews_video_queries'),
-					('Clear Easynews Search History', 'easynews_image_queries'),
-					('Clear Trakt List Search History', 'trakt_list_queries')]
 
 def get_key_id(params):
 	close_all_dialog()
@@ -31,8 +18,9 @@ def get_key_id(params):
 	string = None
 	if search_type == 'media_title':
 		if media_type == 'movie': url_params, string = {'mode': 'build_movie_list', 'action': 'tmdb_movies_search'}, 'movie_queries'
-		elif media_type == 'tv_show': url_params, string = {'mode': 'build_tvshow_list', 'action': 'tmdb_tv_search'}, 'tvshow_queries'
-		else: url_params, string = {'mode': 'build_tvshow_list', 'action': 'tmdb_anime_search'}, 'anime_queries'
+		# elif media_type == 'anime': url_params, string = {'mode': 'build_tvshow_list', 'action': 'tmdb_tv_search', 'is_anime_list': 'true'}, 'anime_queries'
+		elif media_type == 'anime': url_params, string = {'mode': 'build_tvshow_list', 'action': 'trakt_anime_search', 'is_anime_list': 'true'}, 'anime_queries'
+		else: url_params, string = {'mode': 'build_tvshow_list', 'action': 'trakt_tv_search'}, 'tvshow_queries'
 	elif search_type == 'people': string = 'people_queries'
 	elif search_type == 'tmdb_keyword':
 		url_params, string = {'mode': 'navigator.keyword_results', 'media_type': media_type}, 'keyword_tmdb_%s_queries' % media_type
@@ -70,6 +58,15 @@ def remove_from_search(params):
 	except: return
 
 def clear_search():
+	clear_history_list = [('Clear Movie Search History', 'movie_queries'),
+	('Clear TV Show Search History', 'tvshow_queries'),
+	('Clear Anime Search History', 'anime_queries'),
+	('Clear People Search History', 'people_queries'),
+	('Clear Keywords Movie Search History', 'keyword_tmdb_movie_queries'),
+	('Clear Keywords TV Show Search History', 'keyword_tmdb_tvshow_queries'),
+	('Clear Easynews Search History', 'easynews_video_queries'),
+	('Clear Easynews Search History', 'easynews_image_queries'),
+	('Clear Trakt List Search History', 'trakt_list_queries')]
 	try:
 		list_items = [{'line1': item[0]} for item in clear_history_list]
 		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}

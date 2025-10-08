@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import xbmcgui
 import re
 import json
 from threading import Thread
@@ -6,19 +7,7 @@ from xml.dom.minidom import parse as mdParse
 from modules import kodi_utils
 from caches.settings_cache import get_setting, set_setting, restore_setting_default
 from modules.utils import manual_function_import
-
-window_xml_dialog, logger, xbmc_player, notification = kodi_utils.window_xml_dialog, kodi_utils.logger, kodi_utils.xbmc_player, kodi_utils.notification
-make_listitem, sleep, open_file, path_exists, confirm_dialog = kodi_utils.make_listitem, kodi_utils.sleep, kodi_utils.open_file, kodi_utils.path_exists, kodi_utils.confirm_dialog
-addon_installed, addon_path, delete_folder = kodi_utils.addon_installed, kodi_utils.addon_path, kodi_utils.delete_folder
-clear_property, run_plugin, get_visibility = kodi_utils.clear_property, kodi_utils.run_plugin, kodi_utils.get_visibility
-show_busy_dialog, hide_busy_dialog, addon_enabled, getSkinDir = kodi_utils.show_busy_dialog, kodi_utils.hide_busy_dialog, kodi_utils.addon_enabled, kodi_utils.getSkinDir
-build_url, execute_builtin, set_property, get_property = kodi_utils.build_url, kodi_utils.execute_builtin, kodi_utils.set_property, kodi_utils.get_property
-translate_path, get_infolabel, list_dirs, current_skin = kodi_utils.translate_path, kodi_utils.get_infolabel, kodi_utils.list_dirs, kodi_utils.current_skin
-get_system_setting, select_dialog, ok_dialog = kodi_utils.jsonrpc_get_system_setting, kodi_utils.select_dialog, kodi_utils.ok_dialog
-extras_keys, folder_options = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol'), ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
-needed_font_values = ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60'))
-current_skin_prop, current_font_prop = 'fenlight.current_skin', 'fenlight.current_font'
-addon_skins_folder = 'special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/'
+# logger = kodi_utils.logger
 
 def open_window(import_info, skin_xml, **kwargs):
 	'''
@@ -30,7 +19,7 @@ def open_window(import_info, skin_xml, **kwargs):
 		del xml_window
 		return choice
 	except Exception as e:
-		logger('error in open_window', str(e))
+		kodi_utils.logger('error in open_window', str(e))
 
 def create_window(import_info, skin_xml, **kwargs):
 	'''
@@ -38,27 +27,27 @@ def create_window(import_info, skin_xml, **kwargs):
 	'''
 	try:
 		function = manual_function_import(*import_info)
-		args = (skin_xml, addon_path())
+		args = (skin_xml, kodi_utils.addon_path())
 		xml_window = function(*args, **kwargs)
 		return xml_window
 	except Exception as e:
-		logger('error in create_window', str(e))
-		return notification('Error')
+		kodi_utils.logger('error in create_window', str(e))
+		return kodi_utils.notification('Error')
 
 def window_manager(obj):
 	def close():
 		obj.close()
-		clear_property('fenlight.window_loaded')
-		clear_property('fenlight.window_stack')
+		kodi_utils.clear_property('fenlight.window_loaded')
+		kodi_utils.clear_property('fenlight.window_stack')
 
 	def monitor():
 		timer = 0
-		while not get_property('fenlight.window_loaded') == 'true' and timer <= 5:
-			sleep(50)
+		while not kodi_utils.get_property('fenlight.window_loaded') == 'true' and timer <= 5:
+			kodi_utils.sleep(50)
 			timer += 0.05
-		hide_busy_dialog()
+		kodi_utils.hide_busy_dialog()
 		obj.close()
-		clear_property('fenlight.window_loaded')
+		kodi_utils.clear_property('fenlight.window_loaded')
 
 	def runner(params):
 		try:
@@ -73,21 +62,21 @@ def window_manager(obj):
 		except: close()
 
 	def get_stack():
-		try: window_stack = json.loads(get_property('fenlight.window_stack'))
+		try: window_stack = json.loads(kodi_utils.get_property('fenlight.window_stack'))
 		except: window_stack = []
 		return window_stack
 
 	def add_to_stack(params):
 		window_stack.append(params)
-		set_property('fenlight.window_stack', json.dumps(window_stack))
+		kodi_utils.set_property('fenlight.window_stack', json.dumps(window_stack))
 
 	def remove_from_stack():
 		previous_params = window_stack.pop()
-		set_property('fenlight.window_stack', json.dumps(window_stack))
+		kodi_utils.set_property('fenlight.window_stack', json.dumps(window_stack))
 		return previous_params
-	show_busy_dialog()
+	kodi_utils.show_busy_dialog()
 	try:
-		clear_property('fenlight.window_loaded')
+		kodi_utils.clear_property('fenlight.window_loaded')
 		current_params = obj.current_params
 		new_params = obj.new_params
 		window_stack = get_stack()
@@ -102,17 +91,17 @@ def window_manager(obj):
 				runner(previous_params)
 		else: close()
 	except: close()
-	hide_busy_dialog()
+	kodi_utils.hide_busy_dialog()
 
 def window_player(obj):
 	def monitor():
 		timer = 0
-		while not get_property('fenlight.window_loaded') == 'true' and timer <= 5:
-			sleep(50)
+		while not kodi_utils.get_property('fenlight.window_loaded') == 'true' and timer <= 5:
+			kodi_utils.sleep(50)
 			timer += 0.05
-		hide_busy_dialog()
+		kodi_utils.hide_busy_dialog()
 		obj.close()
-		clear_property('fenlight.window_loaded')
+		kodi_utils.clear_property('fenlight.window_loaded')
 
 	def runner(params):
 		try:
@@ -127,27 +116,27 @@ def window_player(obj):
 	try:
 		window_player_url = obj.window_player_url
 		if 'plugin.video.youtube' in window_player_url:
-			if not addon_installed('plugin.video.youtube') or not addon_enabled('plugin.video.youtube'): return
-		clear_property('fenlight.window_loaded')
+			if not kodi_utils.addon_installed('plugin.video.youtube') or not kodi_utils.addon_enabled('plugin.video.youtube'): return
+		kodi_utils.clear_property('fenlight.window_loaded')
 		current_params = obj.current_params
-		player = xbmc_player()
+		player = kodi_utils.kodi_player()
 		player.play(window_player_url)
-		sleep(2000)
-		while not player.isPlayingVideo(): sleep(100)
+		kodi_utils.sleep(2000)
+		while not player.isPlayingVideo(): kodi_utils.sleep(100)
 		obj.close()
-		while player.isPlayingVideo(): sleep(100)
-		show_busy_dialog()
-		sleep(1000)
+		while player.isPlayingVideo(): kodi_utils.sleep(100)
+		kodi_utils.show_busy_dialog()
+		kodi_utils.sleep(1000)
 		Thread(target=monitor).start()
 		runner(current_params)
 	except: obj.close()
-	hide_busy_dialog()
+	kodi_utils.hide_busy_dialog()
 
-class BaseDialog(window_xml_dialog):
+class BaseDialog(xbmcgui.WindowXMLDialog):
 	def __init__(self, *args):
-		window_xml_dialog.__init__(self, args)
+		xbmcgui.WindowXMLDialog.__init__(self, args)
 		self.args = args
-		self.player = xbmc_player()
+		self.player = kodi_utils.kodi_player()
 		self.left_action = 1
 		self.right_action = 2
 		self.up_action = 3
@@ -158,7 +147,7 @@ class BaseDialog(window_xml_dialog):
 		self.context_actions = (101, 108, 117)
 
 	def current_skin(self):
-		return current_skin()
+		return kodi_utils.current_skin()
 
 	def get_setting(self, setting_id, setting_default=''):
 		return get_setting(setting_id, setting_default)
@@ -170,13 +159,13 @@ class BaseDialog(window_xml_dialog):
 		restore_setting_default(params)
 
 	def make_listitem(self):
-		return make_listitem()
+		return kodi_utils.make_listitem()
 
 	def build_url(self, params):
-		return build_url(params)
+		return kodi_utils.build_url(params)
 
 	def execute_code(self, command, block=False):
-		return execute_builtin(command, block)
+		return kodi_utils.execute_builtin(command, block)
 	
 	def get_position(self, window_id):
 		return self.get_control(window_id).getSelectedPosition()
@@ -214,34 +203,34 @@ class BaseDialog(window_xml_dialog):
 		return cm_item
 
 	def get_infolabel(self, label):
-		return get_infolabel(label)
+		return kodi_utils.get_infolabel(label)
 
 	def get_visibility(self, command):
-		return get_visibility(command)
+		return kodi_utils.get_visibility(command)
 	
 	def open_window(self, import_info, skin_xml, **kwargs):
 		return open_window(import_info, skin_xml, **kwargs)
 
 	def run_addon(self, command, block=False):
-		run_plugin(command, block)
+		kodi_utils.run_plugin(command, block)
 
 	def sleep(self, time):
-		sleep(time)
+		kodi_utils.sleep(time)
 
 	def path_exists(self, path):
-		return path_exists(path)
+		return kodi_utils.path_exists(path)
 
 	def translate_path(self, path):
-		return translate_path(path)
+		return kodi_utils.translate_path(path)
 
 	def set_home_property(self, prop, value):
-		set_property('fenlight.%s' % prop, value)
+		kodi_utils.set_property('fenlight.%s' % prop, value)
 
 	def get_home_property(self, prop):
-		return get_property('fenlight.%s' % prop)
+		return kodi_utils.get_property('fenlight.%s' % prop)
 
 	def clear_home_property(self, prop):
-		return clear_property('fenlight.%s' % prop)
+		return kodi_utils.clear_property('fenlight.%s' % prop)
 
 	def get_attribute(self, obj, attribute):
 		return getattr(obj, attribute)
@@ -254,39 +243,46 @@ class BaseDialog(window_xml_dialog):
 		except: pass
 
 	def notification(self, text, duration=3000):
-		return notification(text, duration)
+		return kodi_utils.notification(text, duration)
 
 	def addon_installed(self, addon_id):
-		return addon_installed(addon_id)
+		return kodi_utils.addon_installed(addon_id)
 
 	def addon_enabled(self, addon_id):
-		return addon_enabled(addon_id)
+		return kodi_utils.addon_enabled(addon_id)
 
 class FontUtils:
 	def execute_custom_fonts(self):
+		change = self.skin_change_check()
 		if not self.skin_change_check(): return
 		replacement_values, skin_font_xml = [], ''
 		replacement_values_append = replacement_values.append
 		skin_folder = self.get_skin_folder()
-		if skin_folder: skin_font_xml = translate_path('special://skin/%s/Font.xml' % skin_folder)
+		if skin_folder: skin_font_xml = kodi_utils.translate_path('special://skin/%s/Font.xml' % skin_folder)
 		if skin_font_xml: self.skin_font_info = self.get_font_info(skin_font_xml) or self.default_font_info()
 		else: self.skin_font_info = self.default_font_info()
-		for item in needed_font_values: replacement_values_append(self.match_font(*item))
-		for item in list_dirs(translate_path(addon_skins_folder))[1]: self.replace_font(item, replacement_values)
-		set_property(current_skin_prop, self.current_skin)
-		set_property(current_font_prop, self.current_font)
+		for item in ((21, False, 'font10'), (26, False, 'font12'), (30, False, 'font13'), (33, False, 'font14'), (38, False, 'font16'), (60, True, 'font60')):
+			replacement_values_append(self.match_font(*item))
+		skin_files = kodi_utils.list_dirs(kodi_utils.translate_path('special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/'))[1]
+		for item in skin_files:
+			self.replace_font(item, replacement_values)
+		kodi_utils.set_property('fenlight.current_skin', self.current_skin)
+		kodi_utils.set_property('fenlight.current_font', self.current_font)
 
 	def get_skin_folder(self):
+		folder_options = ('xml', '1080', '720', '1080p', '720p', '1080i', '720i', '16x9')
 		skin_folder = None
 		try:
-			skin_folder = mdParse(translate_path('special://skin/addon.xml')).getElementsByTagName('extension')[0].getElementsByTagName('res')[0].getAttribute('folder')
-			if not skin_folder: skin_folder = [i for i in list_dirs(translate_path('special://skin'))[0] if i in folder_options][0]
+			skin_folder = mdParse(kodi_utils.translate_path('special://skin/addon.xml')).getElementsByTagName('extension')[0].getElementsByTagName('res')[0].getAttribute('folder')
+			if not skin_folder:
+				s_folder = kodi_utils.list_dirs(kodi_utils.translate_path('special://skin'))[0]
+				skin_folder = [i for i in s_folder if i in folder_options][0]
 		except: pass
 		return skin_folder
 
 	def skin_change_check(self):
-		self.current_skin, self.current_font = current_skin(), get_system_setting('lookandfeel.font', 'Default')
-		if self.current_skin != get_property(current_skin_prop) or self.current_font != get_property(current_font_prop): return True
+		self.current_skin, self.current_font = kodi_utils.current_skin(), kodi_utils.jsonrpc_get_system_setting('lookandfeel.font', 'Default')
+		if self.current_skin != kodi_utils.get_property('fenlight.current_skin') or self.current_font != kodi_utils.get_property('fenlight.current_font'): return True
 		return False
 
 	def match_font(self, size, bold, fallback):
@@ -302,6 +298,7 @@ class FontUtils:
 		return (font_tag, [i['name'] for i in fonts if i['size'] == min([i['size'] for i in fonts], key=lambda k: abs(k-size))][0])
 
 	def get_font_info(self, skin_font_xml):
+		extras_keys = ('upper', 'uppercase', 'italic', 'capitalize', 'black', 'mono', 'symbol')
 		results = []
 		if not skin_font_xml: return results
 		results_append = results.append
@@ -309,7 +306,8 @@ class FontUtils:
 			all_fonts = mdParse(skin_font_xml).getElementsByTagName('fontset')
 			try: fontset = [i for i in all_fonts if i.getAttribute('id').lower() == self.current_font.lower()][0]
 			except: fontset = all_fonts[0]
-			for item in fontset.getElementsByTagName('font'):
+			font_element = fontset.getElementsByTagName('font')
+			for item in font_element:
 				try: name = item.getElementsByTagName('name')[0].firstChild.data
 				except: continue
 				try: size = int(item.getElementsByTagName('size')[0].firstChild.data)
@@ -325,12 +323,12 @@ class FontUtils:
 		return results
 
 	def replace_font(self, window, replacement_values):
-		file = translate_path(addon_skins_folder + window)
-		with open_file(file) as f: content = f.read()
+		file = kodi_utils.translate_path('special://home/addons/plugin.video.fenlight/resources/skins/Default/1080i/' + window)
+		with kodi_utils.open_file(file) as f: content = f.read()
 		for item in replacement_values:
 			try: content = re.sub(r'<font>(.*?)</font> <\!-- %s -->' % item[0], '<font>%s</font> <!-- %s -->' % (item[1], item[0]), content)
 			except: pass
-		with open_file(file, 'w') as f: f.write(content)
+		with kodi_utils.open_file(file, 'w') as f: f.write(content)
 
 	def default_font_info(self):
 		return [{'name': 'font10', 'size': 21, 'bold': False, 'extra_styles': False},

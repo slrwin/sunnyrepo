@@ -1,114 +1,99 @@
-import requests
+# -*- coding: utf-8 -*-
 from threading import Thread
 from urllib.parse import urlencode
 from caches.settings_cache import get_setting, set_setting
 from caches.main_cache import cache_object
-from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
+from modules.source_utils import supported_video_extensions, seas_ep_filter, extras
 from modules.kodi_utils import make_session, kodi_dialog, ok_dialog, notification, confirm_dialog
 # from modules.kodi_utils import logger
 
-base_url = 'https://api.torbox.app/v1/api/'
-stats = 'user/me'
-download = 'torrents/requestdl'
-remove = 'torrents/controltorrent'
-history = 'torrents/mylist'
-explore = 'torrents/mylist?id=%s'
-cache = 'torrents/checkcached'
-cloud = 'torrents/createtorrent'
-download_usenet = 'usenet/requestdl'
-remove_usenet = 'usenet/controlusenetdownload'
-history_usenet = 'usenet/mylist'
-explore_usenet = 'usenet/mylist?id=%s'
-user_agent = 'Mozilla/5.0'
-timeout = 20.0
-session = make_session(base_url)
+session = make_session('https://api.torbox.app/v1/api/')
 
 class TorBoxAPI:
-
 	def __init__(self):
 		self.token = get_setting('fenlight.tb.token')
 
 	def _get(self, url, data={}):
 		if self.token in ('empty_setting', ''): return None
 		headers = {'Authorization': 'Bearer %s' % self.token}
-		url = base_url + url
-		response = session.get(url, params=data, headers=headers, timeout=timeout)
+		url = 'https://api.torbox.app/v1/api/' + url
+		response = session.get(url, params=data, headers=headers, timeout=20)
 		return response.json()
 
 	def _post(self, url, params=None, json=None, data=None):
 		if self.token in ('empty_setting', '') and not 'token' in url: return None
 		headers = {'Authorization': 'Bearer %s' % self.token}
-		url = base_url + url
-		response = session.post(url, params=params, json=json, data=data, headers=headers, timeout=timeout)
+		url = 'https://api.torbox.app/v1/api/' + url
+		response = session.post(url, params=params, json=json, data=data, headers=headers, timeout=20)
 		return response.json()
 
 	def add_headers_to_url(self, url):
-		return url + '|' + urlencode({'User-Agent': user_agent})
+		return url + '|' + urlencode({'User-Agent': 'Mozilla/5.0'})
 
 	def account_info(self):
-		return self._get(stats)
+		return self._get('user/me')
 
 	def user_cloud(self):
 		string = 'tb_user_cloud'
-		url = history
+		url = 'torrents/mylist'
 		return cache_object(self._get, string, url, False, 0.03)
 
 	def user_cloud_usenet(self):
 		string = 'tb_user_cloud_usenet'
-		url = history_usenet
+		url = 'usenet/mylist'
 		return cache_object(self._get, string, url, False, 0.03)
 
 	def user_cloud_info(self, request_id=''):
 		string = 'tb_user_cloud_%s' % request_id
-		url = explore % request_id
+		url = 'torrents/mylist?id=%s' % request_id
 		return cache_object(self._get, string, url, False, 0.03)
 
 	def user_cloud_info_usenet(self, request_id=''):
 		string = 'tb_user_cloud_usenet_%s' % request_id
-		url = explore_usenet % request_id
+		url = 'usenet/mylist?id=%s' % request_id
 		return cache_object(self._get, string, url, False, 0.03)
 
 	def user_cloud_clear(self):
 		if not confirm_dialog(): return
 		data = {'all': True, 'operation': 'delete'}
-		self._post(remove, json=data)
-		self._post(remove_usenet, json=data)
+		self._post('torrents/controltorrent', json=data)
+		self._post('usenet/controlusenetdownload', json=data)
 		self.clear_cache()
 
 	def torrent_info(self, request_id=''):
-		url = explore % request_id
+		url = 'torrents/mylist?id=%s' % request_id
 		return self._get(url)
 
 	def delete_torrent(self, request_id=''):
 		data = {'torrent_id': request_id, 'operation': 'delete'}
-		return self._post(remove, json=data)
+		return self._post('torrents/controltorrent', json=data)
 
 	def delete_usenet(self, request_id=''):
 		data = {'usenet_id': request_id, 'operation': 'delete'}
-		return self._post(remove_usenet, json=data)
+		return self._post('usenet/controlusenetdownload', json=data)
 
 	def unrestrict_link(self, file_id):
 		torrent_id, file_id = file_id.split(',')
 		data = {'token': self.token, 'torrent_id': torrent_id, 'file_id': file_id}
-		try: return self._get(download, data=data)['data']
+		try: return self._get('torrents/requestdl', data=data)['data']
 		except: return None
 
 	def unrestrict_usenet(self, file_id):
 		usenet_id, file_id = file_id.split(',')
 		params = {'token': self.token, 'usenet_id': usenet_id, 'file_id': file_id, 'user_ip': True}
-		try: return self._get(download_usenet, params=params)['data']
+		try: return self._get('usenet/requestdl', params=params)['data']
 		except: return None
 
 	def add_magnet(self, magnet):
 		data = {'magnet': magnet, 'seed': 3, 'allow_zip': False}
-		return self._post(cloud, data=data)
+		return self._post('torrents/createtorrent', data=data)
 
 	def check_cache_single(self, _hash):
-		return self._get(cache, data={'hash': _hash, 'format': 'list'})
+		return self._get('torrents/checkcached', data={'hash': _hash, 'format': 'list'})
 
 	def check_cache(self, hashlist):
 		data = {'hashes': hashlist}
-		return self._post(cache, params={'format': 'list'}, json=data)
+		return self._post('torrents/checkcached', params={'format': 'list'}, json=data)
 
 	def create_transfer(self, magnet_url):
 		result = self.add_magnet(magnet_url)
@@ -119,13 +104,15 @@ class TorBoxAPI:
 		try:
 			file_url, match, torrent_id = None, False, None
 			extensions = supported_video_extensions()
-			extras_filtering_list = tuple(i for i in EXTRAS if not i in title.lower())
+			extras_filter = extras()
+			extras_filtering_list = tuple(i for i in extras_filter if not i in title.lower())
 			torrent = self.add_magnet(magnet_url)
 			if not torrent['success']: return None
 			torrent_id = torrent['data']['torrent_id']
 			torrent_files = self.torrent_info(torrent_id)
+			files = torrent_files['data']['files']
 			selected_files = [{'url': '%d,%d' % (torrent_id, item['id']), 'filename': item['short_name'], 'size': item['size']} \
-							for item in torrent_files['data']['files'] if item['short_name'].lower().endswith(tuple(extensions))]
+							for item in files if item['short_name'].lower().endswith(tuple(extensions))]
 			if not selected_files: return None
 			if season:
 				selected_files = [i for i in selected_files if seas_ep_filter(season, episode, i['filename'])]
@@ -151,8 +138,9 @@ class TorBoxAPI:
 			if not torrent['success']: return None
 			torrent_id = torrent['data']['torrent_id']
 			torrent_files = self.torrent_info(torrent_id)
+			files = torrent_files['data']['files']
 			torrent_files = [{'link': '%d,%d' % (torrent_id, item['id']), 'filename': item['short_name'], 'size': item['size']} \
-							for item in torrent_files['data']['files'] if item['short_name'].lower().endswith(tuple(extensions))]
+							for item in files if item['short_name'].lower().endswith(tuple(extensions))]
 			Thread(target=self.delete_torrent, args=(torrent_id,)).start()
 			return torrent_files or None
 		except Exception:
@@ -204,4 +192,6 @@ class TorBoxAPI:
 		except: return False
 		if False in (user_cloud_success, hash_cache_status_success): return False
 		return True
+
+TorBox = TorBoxAPI()
 

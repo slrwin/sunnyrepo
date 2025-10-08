@@ -33,7 +33,7 @@
                 <align>right</align>
                 <aligny>top</aligny>
                 <aspectratio aligny="top">keep</aspectratio>
-                <texture colordiffuse="FFCCCCCC">fenlight_common/fenlight.png</texture>
+                <texture colordiffuse="FFCCCCCC">$INFO[Window(10000).Property(fenlight.addon_icon_mini)]</texture>
             </control>
             <control type="group">
                 <left>5</left>
@@ -68,7 +68,7 @@
                 <control type="textbox" id="2001">
                     <top>100</top>
                     <left>20</left>
-                    <width>600</width>
+                    <width>580</width>
                     <height>250</height>
                     <font>font13</font> <!-- FENLIGHT_30 -->
                     <align>center</align>

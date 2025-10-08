@@ -2,10 +2,6 @@
 from caches.base_cache import BaseCache, get_timestamp
 # from modules.kodi_utils import logger
 
-GET_ALL = 'SELECT id FROM lists'
-DELETE_ALL = 'DELETE FROM lists'
-CLEAN = 'DELETE from lists WHERE CAST(expires AS INT) <= ?'
-
 class ListsCache(BaseCache):
 	def __init__(self):
 		BaseCache.__init__(self, 'lists_db', 'lists')
@@ -13,8 +9,7 @@ class ListsCache(BaseCache):
 	def delete_all_lists(self):
 		try:
 			dbcon = self.manual_connect('lists_db')
-			for i in dbcon.execute(GET_ALL): self.delete_memory_cache(str(i[0]))
-			dbcon.execute(DELETE_ALL)
+			dbcon.execute('DELETE FROM lists')
 			dbcon.execute('VACUUM')
 			return True
 		except: return False
@@ -22,7 +17,7 @@ class ListsCache(BaseCache):
 	def clean_database(self):
 		try:
 			dbcon = self.manual_connect('lists_db')
-			dbcon.execute(CLEAN, (get_timestamp(),))
+			dbcon.execute('DELETE from lists WHERE CAST(expires AS INT) <= ?', (get_timestamp(),))
 			dbcon.execute('VACUUM')
 			return True
 		except: return False
