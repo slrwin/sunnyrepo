@@ -39,7 +39,7 @@ def download_zip_files(url, download_folder, extract_folder):
             download_and_extract_zip(absolute_url, download_folder, extract_folder)
 
 if __name__ == "__main__":
-    url = "https://tikipeter.github.io/packages/"  # Replace with the actual URL
+    url = "https://fenlightanonymouse.github.io/packages/"  # Replace with the actual URL
     download_folder = "zips"
     extract_folder = "repo"
 
