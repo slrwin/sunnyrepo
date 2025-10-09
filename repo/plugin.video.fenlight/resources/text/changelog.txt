@@ -1,6 +1,13 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.42/43[/B][/COLOR]
+- Fixed art from TMDb.
+- Added "Auto Enable Subtitles" to Settings->Playback-?Playback Utilities. If subtitles are included in the file, Fen Light will enable them.
+- Quick fix for search.
+- Other changes/fixes.
+
+
 [COLOR dodgerblue][B]Version 2.1.41[/B][/COLOR]
 - Added "Anime" as a Search menu. Only anime results will appear. Similarly, the regular "TV Show" search menu will now exclude anime results.
 - Added "Anime" as a Favorites menu. Only anime results will appear. Similarly, the regular "TV Show" favorites menu will now exclude anime results.

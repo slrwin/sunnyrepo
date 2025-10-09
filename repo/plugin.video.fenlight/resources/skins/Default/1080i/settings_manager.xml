@@ -2825,6 +2825,14 @@
                           <property name="setting_description">Choose the maximum allowed volume level</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=playback.volumecheck_percent)</onclick>
                       </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(70)</visible>
+                          <property name="setting_label">Auto Enable Subtitles</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.playback.auto_enable_subs)]</property>
+                          <property name="setting_description">Enable this and Fen Light will automatically enable subtitles when available</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=playback.auto_enable_subs)</onclick>
+                      </item>
                 </content>
             </control>
             <control type="group">

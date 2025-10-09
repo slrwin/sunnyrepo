@@ -43,14 +43,18 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 		images = data_get('images', {})
 		if images:
 			try:
+				clearlogo = next((tmdb_image_url % ('original', i['file_path']) for i in images['logos']), '')
+				if not clearlogo.endswith('png'): clearlogo = clearlogo.replace(clearlogo.split('.')[-1], 'png')
+			except: clearlogo = ''
+			try:
 				logo_path = images.get('logos')[0].get('file_path')
 				if logo_path.endswith('png'): clearlogo = tmdb_image_url % ('original', logo_path)
 				else: clearlogo = tmdb_image_url % ('original', logo_path.replace(logo_path.split('.')[-1], 'png'))
 			except: clearlogo = ''
-			try:
-				landscape_path = images.get('backdrops')[0].get('file_path')
-				landscape = tmdb_image_url % ('w1280', landscape_path)
+			try: landscape = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] == 'en'), '')
 			except: landscape = ''
+			if not poster: poster = next((tmdb_image_url % ('w780', i['file_path']) for i in images['posters'] if i['iso_639_1'] == 'en'), '')
+			if not fanart: fanart = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] == 'xx'), '')
 		else: clearlogo, landscape = '', ''
 		title, original_title = data_get('title'), data_get('original_title')
 		try:
@@ -173,14 +177,18 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 		images = data_get('images', {})
 		if images:
 			try:
+				clearlogo = next((tmdb_image_url % ('original', i['file_path']) for i in images['logos']), '')
+				if not clearlogo.endswith('png'): clearlogo = clearlogo.replace(clearlogo.split('.')[-1], 'png')
+			except: clearlogo = ''
+			try:
 				logo_path = images.get('logos')[0].get('file_path')
 				if logo_path.endswith('png'): clearlogo = tmdb_image_url % ('original', logo_path)
 				else: clearlogo = tmdb_image_url % ('original', logo_path.replace(logo_path.split('.')[-1], 'png'))
 			except: clearlogo = ''
-			try:
-				landscape_path = images.get('backdrops')[0].get('file_path')
-				landscape = tmdb_image_url % ('w1280', landscape_path)
+			try: landscape = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] == 'en'), '')
 			except: landscape = ''
+			if not poster: poster = next((tmdb_image_url % ('w780', i['file_path']) for i in images['posters'] if i['iso_639_1'] == 'en'), '')
+			if not fanart: fanart = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] == 'xx'), '')
 		else: clearlogo, landscape = '', ''
 		title, original_title = data_get('name'), data_get('original_name')
 		try:

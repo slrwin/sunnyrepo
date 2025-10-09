@@ -19,14 +19,14 @@ def no_api_key():
 def movie_details(tmdb_id, api_key):
 	try:
 		url = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=en&append_to_response=external_ids,videos,credits,release_dates,alternative_titles,translations,' \
-		'images,keywords&include_image_language=en' % (tmdb_id, api_key)
+		'images,keywords&include_image_language=en,null' % (tmdb_id, api_key)
 		return get_tmdb(url).json()
 	except: return None
 
 def tvshow_details(tmdb_id, api_key):
 	try:
 		url = 'https://api.themoviedb.org/3/tv/%s?api_key=%s&language=en&append_to_response=external_ids,videos,credits,content_ratings,alternative_titles,translations,' \
-		'images,keywords&include_image_language=en' % (tmdb_id, api_key)
+		'images,keywords&include_image_language=en,null' % (tmdb_id, api_key)
 		return get_tmdb(url).json()
 	except: return None
 

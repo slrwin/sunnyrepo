@@ -98,6 +98,9 @@ def preferred_filters():
 def include_prerelease_results():
 	return int(get_setting('fenlight.filter.include_prerelease', '0')) == 0
 
+def auto_enable_subs():
+	return get_setting('fenlight.playback.auto_enable_subs', 'false') == 'true'
+
 def stingers_show():
 	return get_setting('fenlight.stinger_alert.show', 'false') == 'true'
 

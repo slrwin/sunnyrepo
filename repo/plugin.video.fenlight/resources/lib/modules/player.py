@@ -76,6 +76,7 @@ class FenLightPlayer(xbmc.Player):
 				total_check_time += 0.10
 			ku.hide_busy_dialog()
 			ku.sleep(1000)
+			if st.auto_enable_subs(): self.showSubtitles(True)
 			while self.isPlayingVideo():
 				try:
 					if not ensure_dialog_dead:
