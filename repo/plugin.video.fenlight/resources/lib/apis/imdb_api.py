@@ -60,7 +60,7 @@ def imdb_year_check(imdb_id):
 	return cache_object(get_imdb, string, params, False, 720)[0]
 
 def get_imdb(params):
-	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edge/101.0.1210.53',
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
 				'Accept-Language':'en-us,en;q=0.5'}
 	imdb_list = []
 	action = params.get('action')
