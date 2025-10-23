@@ -54,7 +54,7 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 			try: landscape = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] == 'en'), '')
 			except: landscape = ''
 			if not poster: poster = next((tmdb_image_url % ('w780', i['file_path']) for i in images['posters'] if i['iso_639_1'] == 'en'), '')
-			if not fanart: fanart = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] == 'xx'), '')
+			if not fanart: fanart = next((tmdb_image_url % ('w1280', i['file_path']) for i in images['backdrops'] if i['iso_639_1'] in (None, 'xx')), '')
 		else: clearlogo, landscape = '', ''
 		title, original_title = data_get('title'), data_get('original_title')
 		try:

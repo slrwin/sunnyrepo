@@ -125,7 +125,7 @@ class Images():
 		results = tmdb_media_images(self.params['media_type'], self.params['tmdb_id'])
 		try:
 			posters, clearlogos = [i for i in results['posters']], [dict(i, **{'file_path': '%s.png' % i['file_path'].split('.')[0]}) for i in results['logos']]
-			fanarts, landscapes = [i for i in results['backdrops'] if i['iso_639_1'] == 'xx'], [i for i in results['backdrops'] if i['iso_639_1'] == 'en']
+			fanarts, landscapes = [i for i in results['backdrops'] if i['iso_639_1'] in (None, 'xx')], [i for i in results['backdrops'] if i['iso_639_1'] == 'en']
 			for item in ((posters, '%s _Poster_%03d'), (fanarts, '%s _Fanart_%03d'), (landscapes, '%s _Landscape_%03d'), (clearlogos, '%s _Clearlogo_%03d')):
 				if item[0]: all_images.extend([(self.tmdb_image_base % ('original', i['file_path']), item[1] % (rootname, count), self.tmdb_image_base % ('w300', i['file_path'])) \
 												for count, i in enumerate(item[0], 1)])

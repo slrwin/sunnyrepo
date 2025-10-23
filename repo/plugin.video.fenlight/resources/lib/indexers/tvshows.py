@@ -39,7 +39,10 @@ class TVShows:
 
 	def is_anime(self):
 		if 'is_anime_list' in self.params: self.is_anime_list = self.params['is_anime_list'] == 'true'
-		elif self.action in self.personal or self.action == 'tmdb_tv_search': self.is_anime_list = False
+		elif self.action in self.personal:
+			if settings.include_anime_tvshow(): self.is_anime_list = None
+			else: self.is_anime_list = False
+		elif self.action == 'tmdb_tv_search': self.is_anime_list = None
 		else: self.is_anime_list = None
 
 	def fetch_list(self):

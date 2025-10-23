@@ -296,6 +296,7 @@ def build_single_episode(list_type, params={}):
 	poster_empty, fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
 	handle, is_external = int(sys.argv[1]), kodi_utils.external()
 	is_anime_list = 'is_anime_list' in params
+	if not is_anime_list and settings.include_anime_tvshow(): is_anime_list = None
 	item_list, airing_today, unwatched, return_results = [], [], [], False
 	resinsert = ''
 	item_list_append = item_list.append

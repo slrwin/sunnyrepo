@@ -461,7 +461,6 @@ def playback_choice(params):
 	if debrid_for_ext_cache_check():
 		items.append({'line': 'Rescrape with External Cache Check [B]%s[/B]' % check_cache_status, 'function': 'rescrape_external_cache_check'})
 	items.extend([{'line': 'Clear Debrid Cache & Show Results', 'function': 'clear_debrid_cache_and_show'},
-				{'line': 'Scrape with DEFAULT External Scrapers', 'function': 'scrape_with_default'},
 				{'line': 'Scrape with ALL External Scrapers', 'function': 'scrape_with_disabled'},
 				{'line': 'Scrape With All Filters Ignored', 'function': 'scrape_with_filters_ignored'}])
 	if media_type == 'episode': items.append({'line': 'Scrape with Custom Episode Groups Value', 'function': 'scrape_with_episode_group'})
@@ -498,11 +497,6 @@ def playback_choice(params):
 		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'autoplay': 'false', 'prescrape': 'false'}
 		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'],
 							'season': season, 'episode': episode, 'autoplay': 'false', 'prescrape': 'false'}
-	elif choice == 'scrape_with_default':
-		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'],
-												'default_ext_only': 'true', 'prescrape': 'false', 'autoplay': 'false'}
-		else: play_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season,
-							'episode': episode, 'default_ext_only': 'true', 'prescrape': 'false', 'autoplay': 'false'}
 	elif choice == 'scrape_with_disabled':
 		if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'],
 												'disabled_ext_ignored': 'true', 'prescrape': 'false', 'autoplay': 'false'}
@@ -563,11 +557,8 @@ def playback_choice(params):
 				if settings.autoplay_next_episode(): _process_params('', 'true', 'disable_autoplay_next_episode')
 		all_choice = kodi_utils.confirm_dialog(heading=meta.get('rootname', ''), text='Scrape with ALL External Scrapers?', ok_label='Yes', cancel_label='No')
 		if all_choice == None: return kodi_utils.notification('Cancelled', 2500)
-		if not all_choice:
-			default_choice = kodi_utils.confirm_dialog(heading=meta.get('rootname', ''), text='Scrape with DEFAULT External Scrapers?', ok_label='Yes', cancel_label='No')
-			if default_choice == None: return kodi_utils.notification('Cancelled', 2500)
-			if default_choice: _process_params('', 'true', 'default_ext_only')
-		else:  _process_params('', 'true', 'disabled_ext_ignored')
+		if all_choice:
+			process_params('', 'true', 'disabled_ext_ignored')
 		disable_filters_choice = kodi_utils.confirm_dialog(heading=meta.get('rootname', ''), text='Disable All Filters for Search?', ok_label='Yes', cancel_label='No')
 		if disable_filters_choice == None: return kodi_utils.notification('Cancelled', 2500)
 		if disable_filters_choice:

@@ -963,6 +963,14 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>
+                          <property name="setting_label">Include Anime in TV Show Watched Progress</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.include_anime_tvshow)]</property>
+                          <property name="setting_description">Enable this and Fen Light will include Anime content in your Watched, Progress, Progress Episodes and Next Episodes menus in the main TV Show menu</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=include_anime_tvshow)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
                           <property name="setting_label">Include Unaired Media in Trakt Watchlists</property>
                           <property name="setting_type">boolean</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.show_unaired_watchlist)]</property>
@@ -1235,6 +1243,7 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.provider.external),true)</visible>
                           <visible>!String.IsEqual(Window(10000).Property(fenlight.rd.token),empty_setting)|!String.IsEqual(Window(10000).Property(fenlight.ad.token),empty_setting)</visible>
                           <visible>String.IsEqual(Window(10000).Property(fenlight.rd.enabled),true)|String.IsEqual(Window(10000).Property(fenlight.ad.enabled),true)</visible>
                           <property name="setting_label">Check for cached status of Results (RD &amp; AD)</property>
@@ -1242,6 +1251,15 @@
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.external.cache_check)]</property>
                           <property name="setting_description">Enable this and Fen Light will get the cached status for Real Debrid and All Debrid results. This will lead to less results overall, but the results displayed SHOULD be cached on their servers. There will also be results filtered out that are cached. Use this knowing that you will get less results</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=external.cache_check)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.provider.external),true)</visible>
+                          <property name="setting_label">Filter External Scrapers</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.external.filter_sources)]</property>
+                          <property name="setting_description">Enable this and Fen Light will filter the external scrapers based on their priority determined by the scraper pack used</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=external.filter_sources)</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>

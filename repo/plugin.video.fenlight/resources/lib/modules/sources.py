@@ -20,7 +20,7 @@ class Sources():
 		self.rescrape_cache_ignored, self.original_year_ignored, self.rescrape_with_all, self.rescrape_with_episode_group = False, False, False, False
 		self.clear_properties, self.filters_ignored, self.active_folders, self.resolve_dialog_made, self.episode_group_used = True, False, False, False, False
 		self.sources_total = self.sources_4k = self.sources_1080p = self.sources_720p = self.sources_sd = 0
-		self.prescrape, self.disabled_ext_ignored, self.default_ext_only = 'true', 'false', 'false'
+		self.prescrape, self.disabled_ext_ignored = 'true', 'false'
 		self.ext_name, self.ext_folder = '', ''
 		self.progress_dialog, self.progress_thread = None, None
 		self.playing_filename = ''
@@ -56,7 +56,6 @@ class Sources():
 		self.ignore_scrape_filters = params_get('ignore_scrape_filters', 'false') == 'true'
 		self.nextep_settings, self.disable_autoplay_next_episode = params_get('nextep_settings', {}), params_get('disable_autoplay_next_episode', 'false') == 'true'
 		self.disabled_ext_ignored = params_get('disabled_ext_ignored', self.disabled_ext_ignored) == 'true'
-		self.default_ext_only = params_get('default_ext_only', self.default_ext_only) == 'true'
 		self.folders_ignore_filters = get_setting('fenlight.results.folders_ignore_filters', 'false') == 'true'
 		self.filter_size_method = int(get_setting('fenlight.results.filter_size_method', '0'))
 		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')		
@@ -94,7 +93,7 @@ class Sources():
 
 	def determine_scrapers_status(self):
 		self.active_internal_scrapers = settings.active_internal_scrapers()
-		if not 'external' in self.active_internal_scrapers and (self.disabled_ext_ignored or self.default_ext_only): self.active_internal_scrapers.append('external')
+		if not 'external' in self.active_internal_scrapers and self.disabled_ext_ignored: self.active_internal_scrapers.append('external')
 		self.active_external = 'external' in self.active_internal_scrapers
 		if self.active_external:
 			self.debrid_enabled = debrid.debrid_enabled()
@@ -291,7 +290,7 @@ class Sources():
 	def activate_external_providers(self):
 		self.external_providers = self.external_sources()
 		if not self.external_providers: self.disable_external('No External Providers Enabled')
-	
+
 	def disable_external(self, line1=''):
 		if line1: kodi_utils.notification(line1, 2000)
 		try: self.active_internal_scrapers.remove('external')
@@ -307,8 +306,14 @@ class Sources():
 
 	def external_sources(self):
 		append_module_to_syspath('special://home/addons/%s/lib' % self.ext_folder)
-		try: sourceDict = manual_function_import(self.ext_name, 'sources')(specified_folders=['torrents'], ret_all=self.disabled_ext_ignored)
+		try: sourceDict = self.filter_external_sources(manual_function_import(self.ext_name, 'sources')(specified_folders=['torrents'], ret_all=self.disabled_ext_ignored))
 		except: sourceDict = []
+		return sourceDict
+
+	def filter_external_sources(self, sourceDict):
+		if settings.external_filter_sources() and any([self.disabled_ext_ignored, len(sourceDict) <= 5]): return sourceDict
+		sourceDict.sort(key=lambda k: k[1].priority)
+		sourceDict = sourceDict[:5]
 		return sourceDict
 
 	def folder_sources(self):

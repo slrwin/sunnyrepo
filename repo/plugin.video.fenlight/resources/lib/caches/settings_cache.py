@@ -266,6 +266,7 @@ def default_settings():
 {'setting_id': 'show_specials', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_all_episodes', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Never', '1': 'If Only One Season', '2': 'Always'}},
 {'setting_id': 'avoid_episode_spoilers', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'include_anime_tvshow', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'show_unaired_watchlist', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'meta_filter', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'use_viewtypes', 'setting_type': 'boolean', 'setting_default': 'true'},
@@ -310,7 +311,7 @@ def default_settings():
 {'setting_id': 'provider.external', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'external_scraper.name', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'external.cache_check', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'external.check_year', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'external.filter_sources', 'setting_type': 'boolean', 'setting_default': 'true'},
 #==================== Trakt
 {'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'},
