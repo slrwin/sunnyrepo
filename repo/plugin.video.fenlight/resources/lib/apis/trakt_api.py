@@ -433,7 +433,7 @@ def hide_unhide_progress_items(params):
 
 def trakt_search_lists(search_title, page_no):
 	def _process(dummy_arg):
-		return call_trakt('search', params={'type': 'list', 'fields': 'name,description', 'query': search_title, 'limit': 50}, page_no=page_no)
+		return call_trakt('search', params={'type': 'list', 'fields': 'name,description', 'query': search_title, 'limit': 50}, with_auth=False, pagination=True, page_no=page_no)
 	string = 'trakt_search_lists_%s_%s' % (search_title, page_no)
 	return cache_object(_process, string, 'dummy_arg', False, 4)
 
