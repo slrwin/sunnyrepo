@@ -163,7 +163,7 @@ def routing(sys):
 			ad_cloud(_get('id', None))
 		elif mode == 'alldebrid.browse_ad_cloud':
 			from indexers.alldebrid import browse_ad_cloud
-			browse_ad_cloud(_get('folder'))
+			browse_ad_cloud(_get('id'))
 		elif mode == 'alldebrid.resolve_ad':
 			from indexers.alldebrid import resolve_ad
 			resolve_ad(params)

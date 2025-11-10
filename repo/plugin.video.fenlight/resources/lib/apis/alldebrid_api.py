@@ -104,11 +104,14 @@ class AllDebridAPI:
 		else: return result.get('id', '')
 
 	def list_transfer(self, transfer_id):
+		def _process(dummy):
+			result = self._get(url, url_append)
+			return result['magnets']
 		url = 'magnet/status'
 		url_append = '&id=%s' % transfer_id
-		result = self._get(url, url_append)
+		string = 'ad_list_transfer_%s' % transfer_id
+		return cache_object(_process, string, 'dummy', False)
 		result = result['magnets']
-		return result
 
 	def delete_transfer(self, transfer_id):
 		url = 'magnet/delete'
@@ -132,7 +135,7 @@ class AllDebridAPI:
 			correct_files = []
 			transfer_id, ready = self.create_transfer(magnet_url)
 			if not ready: return None
-			links = self.correct_files_list(self.list_transfer(transfer_id).get('files', []))
+			links = self.browse_folder(transfer_id)
 			valid_results = [i for i in links if any(i.get('n').lower().endswith(x) for x in extensions) and not i.get('l', '') == '']
 			if valid_results:
 				if season:
@@ -162,7 +165,7 @@ class AllDebridAPI:
 			extensions = supported_video_extensions()
 			transfer_id, ready = self.create_transfer(magnet_url)
 			if not ready: return None
-			links = self.correct_files_list(self.list_transfer(transfer_id).get('files', []))
+			links = self.browse_folder(transfer_id)
 			end_results = [{'link': i['l'], 'filename': i['n'], 'size': i['s']} for i in links
 							if any(i.get('n').lower().endswith(x) for x in extensions) and not i.get('l', '') == '']
 			self.delete_transfer(transfer_id)
@@ -172,6 +175,11 @@ class AllDebridAPI:
 				if transfer_id: self.delete_transfer(transfer_id)
 			except: pass
 			return None
+
+	def browse_folder(self, folder_id):
+		try: links = self.correct_files_list(self.list_transfer(folder_id).get('files', []))
+		except: links = []
+		return links
 
 	def _get(self, url, url_append=''):
 		result = None

@@ -1,6 +1,10 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.48[/B][/COLOR]
+- Fix All Debrid again. Properly.
+
+
 [COLOR dodgerblue][B]Version 2.1.47[/B][/COLOR]
 - Fixed All Debrid resolving, matching new API output.
 - Other changes/fixes.

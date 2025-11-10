@@ -70,6 +70,7 @@ def get_trakt_lists(params):
 				cm = []
 				cm_append = cm.append
 				list_name, user, slug, item_count = item['name'], item['user']['ids']['slug'], item['ids']['slug'], item['item_count']
+				if user in (None, 'None'): continue
 				custom_poster = get_custom_image(list_name, list_type, user, 'poster', all_posters)
 				if custom_poster: poster = custom_poster
 				else: poster = trakt_icon
