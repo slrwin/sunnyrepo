@@ -8,7 +8,7 @@ from caches.main_cache import cache_object
 from caches.settings_cache import get_setting
 from modules.dom_parser import parseDOM
 from modules.utils import chunks, remove_accents
-from modules.kodi_utils import make_session, clear_property
+from modules.kodi_utils import make_session
 # from modules.kodi_utils import logger
 
 session = make_session()
@@ -99,7 +99,7 @@ class EasyNewsAPI:
 					logger('easynews API Exception', str(e))
 		down_url = files.get('downURL')
 		download_url = 'https://%s:%s@members.easynews.com/dl' % (quote(self.username), quote(self.password))
-		dl_farm, dl_port = self.get_farm_and_port(files)
+		dl_farm, dl_port = files.get('dlFarm'), files.get('dlPort')
 		total_results, total_pages = files.get('results'), files.get('numPages')
 		files = files.get('data', [])
 		results = list(chunks(list(list(_process())), 50))
@@ -137,14 +137,10 @@ class EasyNewsAPI:
 					logger('easynews API Exception', str(e))
 		down_url = files.get('downURL')
 		streaming_url = 'https://%s:%s@members.easynews.com/dl' % (quote(self.username), quote(self.password))
-		dl_farm, dl_port = self.get_farm_and_port(files)
+		dl_farm, dl_port = files.get('dlFarm'), files.get('dlPort')
 		files = files.get('data', [])
 		results = list(_process())
 		return results
-
-	def get_farm_and_port(self, files):
-		dl_farm, dl_port = files.get('dlFarm'), files.get('dlPort')
-		return dl_farm, dl_port
 
 	def _translate_search(self, search_type='VIDEO'):
 		video_extensions = 'm4v, 3g2, 3gp, nsv, tp, ts, ty, pls, rm, rmvb, mpd, ifo, mov, qt, divx, xvid, bivx, vob, nrg, img, iso, udf, pva, wmv, asf, asx, ogm, m2v, avi, bin, dat,' \
@@ -165,9 +161,7 @@ class EasyNewsAPI:
 		return self.base_process(results)
 
 	def _get(self, url, params={}):
-		headers = {'Authorization': self.auth,
-					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edge/101.0.1210.53',
-					'Accept-Language':'en-us,en;q=0.5'}
+		headers = {'Authorization': self.auth}
 		try: response = session.get(url, params=params, headers=headers, timeout=20).text
 		except: return None
 		try: return json.loads(response)
@@ -185,23 +179,13 @@ EasyNews = EasyNewsAPI()
 
 def clear_media_results_database():
 	dbcon = connect_database('maincache_db')
-	en_results = dbcon.execute("SELECT id FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'").fetchall()
-	easynews_results = [str(i[0]) for i in en_results]
-	if easynews_results:
-		try:
-			dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'")
-			for i in easynews_results: clear_property(i)
-			process_result = True
-		except: process_result = False
-	else: process_result = True
-	en_results = dbcon.execute("SELECT id FROM maincache WHERE id LIKE 'EASYNEWS_IMAGE_SEARCH_%'").fetchall()
-	easynews_image_results = [str(i[0]) for i in en_results]
-	if easynews_image_results:
-		try:
-			dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_IMAGE_SEARCH_%'")
-			for i in easynews_image_results: clear_property(i)
-			process_image_result = True
-		except: process_image_result = False
-	else: process_image_result = True
+	try:
+		dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_SEARCH_%'")
+		process_result = True
+	except: process_result = False
+	try:
+		dbcon.execute("DELETE FROM maincache WHERE id LIKE 'EASYNEWS_IMAGE_SEARCH_%'")
+		process_image_result = True
+	except: process_image_result = False
 	return (process_result, process_image_result) == (True, True)
 

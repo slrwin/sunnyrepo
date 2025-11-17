@@ -8,7 +8,7 @@ class NavigatorCache:
 	{'name': 'Movies', 'mode': 'navigator.main', 'action': 'MovieList', 'iconImage': 'movies'},
 	{'name': 'TV Shows', 'mode': 'navigator.main', 'action': 'TVShowList', 'iconImage': 'tv'},
 	{'name': 'Anime', 'mode': 'navigator.main', 'action': 'AnimeList', 'iconImage': 'anime'},
-	{'name': 'People', 'mode': 'navigator.people', 'iconImage': 'genre_family'},
+	{'name': 'People', 'mode': 'navigator.people', 'iconImage': 'empty_person'},
 	{'name': 'Search', 'mode': 'navigator.search', 'iconImage': 'search'},
 	{'name': 'Discover', 'mode': 'navigator.discover', 'iconImage': 'discover'},
 	{'name': 'Random Lists', 'mode': 'navigator.random_lists', 'iconImage': 'random'},

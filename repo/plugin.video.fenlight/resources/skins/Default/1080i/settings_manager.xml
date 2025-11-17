@@ -850,10 +850,10 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>
-                          <property name="setting_label">Context Menu Order</property>
+                          <property name="setting_label">Context Menu Options</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">...</property>
-                          <property name="setting_description">Choose the order in which Context Menu items appear for Fen Light media items</property>
+                          <property name="setting_description">Choose the order and availability for Context Menu items for Fen Light media items</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=context_menu_order_choice)</onclick>
                       </item>
                       <item>

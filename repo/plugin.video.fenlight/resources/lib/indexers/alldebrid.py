@@ -78,7 +78,7 @@ def resolve_ad(params):
 	FenLightPlayer().run(resolved_link, 'video')
 
 def ad_delete(file_id):
-	if not kodi_utils.show_text(): return
+	if not kodi_utils.confirm_dialog(): return
 	result = AllDebrid.delete_transfer(file_id)
 	if not result: return kodi_utils.notification('Error')
 	AllDebrid.clear_cache()

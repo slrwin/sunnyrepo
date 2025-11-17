@@ -102,7 +102,7 @@ class Navigator:
 		self.add({'mode': 'build_movie_list', 'action': 'favorites_movies', 'name': 'Movies'}, 'Movies', 'movies')
 		self.add({'mode': 'build_tvshow_list', 'action': 'favorites_tvshows', 'name': 'TV Shows'}, 'TV Shows', 'tv'),
 		self.add({'mode': 'build_tvshow_list', 'action': 'favorites_anime', 'is_anime_list': 'true', 'name': 'Anime'}, 'Anime', 'anime'),
-		self.add({'mode': 'favorite_people', 'isFolder': 'false', 'name': 'People'}, 'People', 'genre_family')
+		self.add({'mode': 'favorite_people', 'isFolder': 'false', 'name': 'People'}, 'People', 'empty_person')
 		self.end_directory()
 
 	def my_content(self):
@@ -323,12 +323,11 @@ class Navigator:
 		from modules.meta_lists import networks as function
 		mode, action = 'build_tvshow_list', 'tmdb_tv_networks'
 		for i in sorted(function(), key=lambda k: k['name']):
-			self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'], original_image=True)
+			self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'networks')
 		self.end_directory()
 
 	def providers(self):
 		menu_type = self.params_get('menu_type')
-		image_insert = 'https://image.tmdb.org/t/p/original/%s'
 		if menu_type == 'movie':
 			from modules.meta_lists import watch_providers_movies as function
 			mode, action = 'build_movie_list', 'tmdb_movies_providers'
@@ -337,7 +336,7 @@ class Navigator:
 			mode = 'build_tvshow_list'
 			if menu_type == 'tvshow': action = 'tmdb_tv_providers'
 			else: action = 'tmdb_anime_providers'
-		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], image_insert % i['icon'], original_image=True)
+		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'providers')
 		self.end_directory()
 
 	def genres(self):
@@ -353,7 +352,7 @@ class Navigator:
 			else:
 				from modules.meta_lists import anime_genres as function
 				action = 'tmdb_anime_genres'
-		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'])
+		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'genres')#, i['icon'])
 		self.end_directory()
 
 	def search_history(self):

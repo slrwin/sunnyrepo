@@ -202,28 +202,21 @@ def get_imdb(params):
 	return (imdb_list, next_page)
 
 def clear_imdb_cache(silent=False):
-	from modules.kodi_utils import clear_property
 	try:
 		dbcon = connect_database('maincache_db')
 		results = dbcon.execute("SELECT id FROM maincache WHERE id LIKE ?", ('imdb_%',)).fetchall()
-		imdb_results = [str(i[0]) for i in results]
-		if not imdb_results: return True
 		dbcon.execute("DELETE FROM maincache WHERE id LIKE ?", ('imdb_%',))
-		for i in imdb_results: clear_property(i)
 		return True
 	except: return False
 
 def refresh_imdb_meta_data(imdb_id):
-	from modules.kodi_utils import clear_property
 	try:
 		imdb_results = []
 		insert1, insert2 = '%%_%s' % imdb_id, '%%_%s_%%' % imdb_id
 		dbcon = connect_database('maincache_db')
 		for item in (insert1, insert2):
 			results = dbcon.execute("SELECT id FROM maincache WHERE id LIKE ?", (item,)).fetchall()
-			imdb_results += [str(i[0]) for i in results]
-		if not imdb_results: return True
 		dbcon.execute("DELETE FROM maincache WHERE id LIKE ?", (insert1,))
 		dbcon.execute("DELETE FROM maincache WHERE id LIKE ?", (insert2,))
-		for i in imdb_results: clear_property(i)
-	except: pass
+		return True
+	except: return False

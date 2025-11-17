@@ -144,7 +144,7 @@ class People(BaseDialog):
 			self.person_thumb = 'https://image.tmdb.org/t/p/%s%s' % ('w185', image_path)
 			self.person_image = 'https://image.tmdb.org/t/p/%s%s' % ('h632', image_path)
 		else:
-			self.person_thumb = self.person_image = get_icon('genre_family')
+			self.person_thumb = self.person_image = get_icon('empty_person')
 		try: self.person_gender = {0: '', 1: 'Female', 2: 'Male', 3: ''}[person_info.get('gender')]
 		except: self.person_gender = ''
 		self.person_place_of_birth = person_info.get('place_of_birth', '') or ''

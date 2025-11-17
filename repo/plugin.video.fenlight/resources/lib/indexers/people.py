@@ -43,7 +43,7 @@ def person_direct_search(key_id):
 			info_tag = listitem.getVideoInfoTag(True)
 			info_tag.setPlot(known_for)
 			yield (url, listitem, False)
-	icon, fanart = get_icon('genre_family'), get_addon_fanart()
+	icon, fanart = get_icon('empty_person'), get_addon_fanart()
 	try:
 		key_id = unquote(key_id)
 		data = tmdb_people_info(key_id)['results']

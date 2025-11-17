@@ -210,6 +210,7 @@ class AllDebridAPI:
 			# USER CLOUD
 			try:
 				dbcon.execute("""DELETE FROM maincache WHERE id=?""", ('ad_user_cloud',))
+				dbcon.execute("DELETE FROM maincache WHERE id LIKE 'ad_list_transfer_%'")
 				user_cloud_success = True
 			except: user_cloud_success = False
 			# HASH CACHED STATUS

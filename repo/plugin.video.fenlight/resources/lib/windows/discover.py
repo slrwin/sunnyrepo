@@ -83,7 +83,7 @@ class Discover(BaseDialog):
 		genres = meta_lists.movie_genres() if self.media_type == 'movie' else meta_lists.tvshow_genres()
 		if self.chosen_item['key'] == 'with_genres' and self.without_genres_display: genres = [i for i in genres if not i['name'] in self.without_genres_display.split(', ')]
 		elif self.with_genres_display: genres = [i for i in genres if not i['name'] in self.with_genres_display.split(', ')]
-		choice = self.multiselect_dialog(self.chosen_item['label'], [{'name': i['name'], 'icon': get_icon(i['icon'])} for i in genres], genres)
+		choice = self.multiselect_dialog(self.chosen_item['label'], [{'name': i['name'], 'icon': get_icon('genres')} for i in genres], genres)
 		if choice != None: self.set_key_values(self.chosen_item['url_insert'] % ','.join([i['id'] for i in choice]), ', '.join([i['name'] for i in choice]))
 
 	def keywords(self):
@@ -153,7 +153,7 @@ class Discover(BaseDialog):
 				known_for_list = [i.get('title') for i in item['known_for'] if i.get('title', 'NA') != 'NA']
 				known_for = ', '.join(known_for_list) if known_for_list else ''
 				if item.get('profile_path'): icon = 'https://image.tmdb.org/t/p/h632/%s' % item['profile_path']
-				else: icon = get_icon('genre_family')
+				else: icon = get_icon('empty_person')
 				append({'line1': name, 'line2': known_for, 'icon': icon, 'name': name, 'id': item['id']})
 			kwargs = {'items': json.dumps(actor_list), 'heading': self.chosen_item['label'], 'enumerate': 'false', 'multi_line': 'true'}
 			choice = select_dialog(actor_list, **kwargs)
