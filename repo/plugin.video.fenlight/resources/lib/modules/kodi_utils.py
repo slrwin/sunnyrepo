@@ -137,6 +137,10 @@ def set_view_mode(view_type, content='files', is_external=None):
 		execute_builtin('Container.SetViewMode(%s)' % view_id)
 	except: return
 
+def random_integer(start=1, end=1000000):
+	from random import randint
+	return randint(start, end)
+
 def remove_keys(dict_item, dict_removals):
 	for k in dict_removals: dict_item.pop(k, None)
 	return dict_item

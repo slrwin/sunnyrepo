@@ -41,6 +41,8 @@ class Sources():
 		kodi_utils.hide_busy_dialog()
 		if params: self.params = params
 		params_get = self.params.get
+		playback_integer = int(params_get('playback_integer', '0'))
+		if not playback_integer or playback_integer != settings.playback_integer(): return kodi_utils.notification('WARNING: External Playback Detected!')
 		self.play_type, self.background, self.prescrape = params_get('play_type', ''), params_get('background', 'false') == 'true', params_get('prescrape', self.prescrape) == 'true'
 		self.random, self.random_continual = params_get('random', 'false') == 'true', params_get('random_continual', 'false') == 'true'
 		if 'external_cache_check' in self.params: self.external_cache_check = params_get('external_cache_check') == 'true'

@@ -24,7 +24,8 @@ class SetAddonConstants:
 					('fenlight.addon_icon', kodi_utils.translate_path(kodi_utils.addon_info('icon'))),
 					('fenlight.addon_icon_mini', os.path.join(kodi_utils.addon_info('path'), 'resources', 'media', 'addon_icons', 'minis',
 													os.path.basename(kodi_utils.translate_path(kodi_utils.addon_info('icon'))))),
-					('fenlight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart')))]
+					('fenlight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart'))),
+					('fenlight.playback_integer', str(kodi_utils.random_integer()))]
 		for item in addon_items: kodi_utils.set_property(*item)
 		return kodi_utils.logger('Fen Light', 'SetAddonConstants Service Finished')
 

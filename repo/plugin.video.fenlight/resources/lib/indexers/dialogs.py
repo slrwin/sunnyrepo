@@ -566,6 +566,7 @@ def playback_choice(params):
 			kodi_utils.set_property('fs_filterless_search', 'true')
 	else: episodes_data = metadata.episodes_meta(orig_season, meta)
 	from modules.sources import Sources
+	play_params['playback_integer'] = settings.playback_integer()
 	Sources().playback_prep(play_params)
 
 def set_quality_choice(params):

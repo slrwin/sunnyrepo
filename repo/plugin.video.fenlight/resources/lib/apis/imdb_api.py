@@ -24,7 +24,7 @@ def imdb_people_id(actor_name):
 	return cache_object(get_imdb, string, params, False, 8736)[0]
 
 def imdb_reviews(imdb_id):
-	url = 'https://www.imdb.com/title/%s/reviews/?sort=num_votes,desc' % imdb_id
+	url = 'https://www.imdb.com/title/%s/reviews/?sort=featured,desc' % imdb_id
 	string = 'imdb_reviews_%s' % imdb_id
 	params = {'url': url, 'action': 'imdb_reviews'}
 	return cache_object(get_imdb, string, params, False, 168)[0]

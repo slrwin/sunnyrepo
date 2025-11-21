@@ -4,7 +4,7 @@ import json
 import random
 from datetime import date
 from modules.sources import Sources
-from modules.settings import date_offset, watched_indicators, ignore_articles
+from modules.settings import date_offset, watched_indicators, ignore_articles, playback_integer
 from modules.metadata import episodes_meta, all_episodes_meta
 from modules.watched_status import get_next_episodes, get_hidden_progress_items, watched_info_episode, get_next
 from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
@@ -78,7 +78,7 @@ class EpisodeTools:
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_name, 'ep_thumb': ep_thumb,
 							'episode': episode, 'premiered': premiered, 'plot': plot})
 			url_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'tvshowtitle': self.meta_get('rootname'),
-						'season': season, 'episode': episode, 'autoplay': 'true'}
+						'season': season, 'episode': episode, 'playback_integer': playback_integer(), 'autoplay': 'true'}
 			if continual: url_params['random_continual'] = 'true'
 			else: url_params['random'] = 'true'
 			if not first_run:

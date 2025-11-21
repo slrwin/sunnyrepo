@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from caches.settings_cache import get_setting, set_setting, default_setting_values
 from modules.kodi_utils import translate_path, get_property
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 def tmdb_api_key():
 	return get_setting('fenlight.tmdb_api', '')
@@ -38,6 +38,9 @@ def enabled_debrids_check(debrid_service):
 def authorized_debrid_check(debrid_service):
 	if get_setting('fenlight.%s.token' % debrid_service) in (None, '', 'empty_setting'): return False
 	return True
+
+def playback_integer():
+	return int(get_property('fenlight.playback_integer'))
 
 def playback_settings():
 	return (int(get_setting('fenlight.playback.watched_percent', '90')), int(get_setting('fenlight.playback.resume_percent', '5')))

@@ -73,13 +73,12 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 			kodi_utils.sleep(1000 * headers['Retry-After'])
 			response = send_query()
 	response.encoding = 'utf-8'
-	try: result = response.json()
-	except: return None
+	result = response.json() if 'json' in response.headers.get('Content-Type', '') else response.text
 	headers = response.headers
-	if method == 'sort_by_headers' and 'X-Sort-By' in headers and 'X-Sort-How' in headers:
-		try: result = sort_list(headers['X-Sort-By'], headers['X-Sort-How'], result, settings.ignore_articles())
+	if method == 'sort_by_headers':
+		try: result = sort_list(headers.get('X-Sort-By', 'title'), headers.get('X-Sort-How', 'asc'), result, settings.ignore_articles())
 		except: pass
-	if pagination: return (result, headers['X-Pagination-Page-Count'])
+	if pagination: return (result, headers.get('X-Pagination-Page-Count'), page_no)
 	else: return result
 
 def trakt_get_device_code():
