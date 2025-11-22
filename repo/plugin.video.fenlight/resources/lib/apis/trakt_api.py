@@ -78,7 +78,7 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 	if method == 'sort_by_headers':
 		try: result = sort_list(headers.get('X-Sort-By', 'title'), headers.get('X-Sort-How', 'asc'), result, settings.ignore_articles())
 		except: pass
-	if pagination: return (result, headers.get('X-Pagination-Page-Count'), page_no)
+	if pagination: return (result, headers.get('X-Pagination-Page-Count', page_no))
 	else: return result
 
 def trakt_get_device_code():

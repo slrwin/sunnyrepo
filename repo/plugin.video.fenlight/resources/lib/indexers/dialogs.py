@@ -557,8 +557,7 @@ def playback_choice(params):
 				if settings.autoplay_next_episode(): _process_params('', 'true', 'disable_autoplay_next_episode')
 		all_choice = kodi_utils.confirm_dialog(heading=meta.get('rootname', ''), text='Scrape with ALL External Scrapers?', ok_label='Yes', cancel_label='No')
 		if all_choice == None: return kodi_utils.notification('Cancelled', 2500)
-		if all_choice:
-			process_params('', 'true', 'disabled_ext_ignored')
+		if all_choice: _process_params('', 'true', 'disabled_ext_ignored')
 		disable_filters_choice = kodi_utils.confirm_dialog(heading=meta.get('rootname', ''), text='Disable All Filters for Search?', ok_label='Yes', cancel_label='No')
 		if disable_filters_choice == None: return kodi_utils.notification('Cancelled', 2500)
 		if disable_filters_choice:

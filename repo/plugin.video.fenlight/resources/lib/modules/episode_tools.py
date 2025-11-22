@@ -38,7 +38,7 @@ class EpisodeTools:
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_data['title'], 'ep_thumb': ep_data.get('thumb', None),
 							'episode': episode, 'premiered': airdate, 'plot': ep_data['plot']})
 			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season,
-						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type}
+						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type, 'playback_integer': playback_integer()}
 			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
 			if custom_title: url_params['custom_title'] = custom_title
 			if 'custom_year' in self.meta: url_params['custom_year'] = self.meta_get('custom_year')
@@ -77,7 +77,7 @@ class EpisodeTools:
 			except: premiered = chosen_episode['premiered']
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_name, 'ep_thumb': ep_thumb,
 							'episode': episode, 'premiered': premiered, 'plot': plot})
-			url_params = {'mode': 'playback.media', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'tvshowtitle': self.meta_get('rootname'),
+			url_params = {'media_type': 'episode', 'tmdb_id': tmdb_id, 'tvshowtitle': self.meta_get('rootname'),
 						'season': season, 'episode': episode, 'playback_integer': playback_integer(), 'autoplay': 'true'}
 			if continual: url_params['random_continual'] = 'true'
 			else: url_params['random'] = 'true'
