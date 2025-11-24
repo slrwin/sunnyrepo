@@ -31,7 +31,6 @@ class Movies:
 		self.rpdb_api_key = settings.rpdb_api_key('movie')
 		self.mpaa_region = settings.mpaa_region()
 		self.append = self.items.append
-		self.playback_integer = settings.playback_integer()
 		self.movieset_list_active = False
 
 	def fetch_list(self):
@@ -144,7 +143,7 @@ class Movies:
 			else: unaired = False
 			progress = watched_status.get_progress_status_movie(self.bookmarks, str_tmdb_id)
 			playcount = watched_status.get_watched_status_movie(self.watched_info, str_tmdb_id)
-			play_params = self.build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'playback_integer': self.playback_integer})
+			play_params = self.build_url({'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = self.build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			options_params = self.build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
 			playback_options_params = self.build_url({'mode': 'playback_choice', 'media_type': 'movie', 'meta': tmdb_id})

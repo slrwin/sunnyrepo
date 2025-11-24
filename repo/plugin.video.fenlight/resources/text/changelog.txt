@@ -1,7 +1,11 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
-[COLOR dodgerblue][B]Version 2.1.52[/B][/COLOR]
+[COLOR dodgerblue][B]Version 2.1.57[/B][/COLOR]
+- Revised implementation of external player detection. Thanks TP.
+
+
+[COLOR dodgerblue][B]Version 2.1.52/53/54/55/56[/B][/COLOR]
 - Fixed Trakt lists.
 - Added detection for external playback.
 - Other changes/fixes.

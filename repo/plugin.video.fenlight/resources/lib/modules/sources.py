@@ -37,12 +37,16 @@ class Sources():
 		'ed_browse': ('apis.easydebrid_api', 'EasyDebridAPI'), 'TorBox': ('apis.torbox_api', 'TorBoxAPI'), 'tb_cloud': ('apis.torbox_api', 'TorBoxAPI'),
 		'tb_browse': ('apis.torbox_api', 'TorBoxAPI')}
 
+	def check_item_integrity(self):
+		if int(self.params.get('playback_integer', '0')) == settings.playback_integer(): return True
+		if 'fenlight' in kodi_utils.get_infolabel('ListItem.FileNameAndPath'): return True
+		return False
+
 	def playback_prep(self, params=None):
 		kodi_utils.hide_busy_dialog()
 		if params: self.params = params
 		params_get = self.params.get
-		playback_integer = int(params_get('playback_integer', '0'))
-		if not playback_integer or playback_integer != settings.playback_integer(): return kodi_utils.notification('WARNING: External Playback Detected!')
+		if not self.check_item_integrity(): return kodi_utils.ok_dialog(text='External player not supported.[CR]Play media through FenLightAM only. ')
 		self.play_type, self.background, self.prescrape = params_get('play_type', ''), params_get('background', 'false') == 'true', params_get('prescrape', self.prescrape) == 'true'
 		self.random, self.random_continual = params_get('random', 'false') == 'true', params_get('random_continual', 'false') == 'true'
 		if 'external_cache_check' in self.params: self.external_cache_check = params_get('external_cache_check') == 'true'
