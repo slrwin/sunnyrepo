@@ -39,9 +39,6 @@ def authorized_debrid_check(debrid_service):
 	if get_setting('fenlight.%s.token' % debrid_service) in (None, '', 'empty_setting'): return False
 	return True
 
-def playback_integer():
-	return int(get_property('fenlight.playback_integer'))
-
 def playback_settings():
 	return (int(get_setting('fenlight.playback.watched_percent', '90')), int(get_setting('fenlight.playback.resume_percent', '5')))
 

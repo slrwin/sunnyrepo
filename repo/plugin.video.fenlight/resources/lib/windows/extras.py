@@ -524,7 +524,7 @@ class Extras(BaseDialog):
 		self.close()
 
 	def movies_play(self):
-		url_params = {'media_type': 'movie', 'tmdb_id': self.tmdb_id, 'playback_integer': settings.playback_integer()}
+		url_params = {'media_type': 'movie', 'tmdb_id': self.tmdb_id}
 		Sources().playback_prep(url_params)
 
 	def show_plot(self):
@@ -566,8 +566,7 @@ class Extras(BaseDialog):
 
 	def play_nextep(self):
 		if self.nextep_season == None: return kodi_utils.ok_dialog(text='No Episodes Available')
-		url_params = {'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season,
-					'episode': self.nextep_episode, 'playback_integer': settings.playback_integer(), 'autoplay': 'true'}
+		url_params = {'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season, 'episode': self.nextep_episode, 'autoplay': 'true'}
 		Sources().playback_prep(url_params)
 
 	def play_random_episode(self):
