@@ -2,7 +2,7 @@
 import json
 import time
 import requests
-from urllib.parse import unquote
+from urllib.parse import unquote, quote_plus
 from caches import trakt_cache
 from caches.settings_cache import get_setting, set_setting
 from caches.main_cache import cache_object
@@ -41,16 +41,16 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 		try:
 			if method:
 				if method == 'post':
-					resp = requests.post(API_ENDPOINT % path, headers=headers, timeout=20)
+					resp = requests.post(API_ENDPOINT % path, headers=headers, timeout=10)
 				elif method == 'delete':
-					resp = requests.delete(API_ENDPOINT % path, headers=headers, timeout=20)
+					resp = requests.delete(API_ENDPOINT % path, headers=headers, timeout=10)
 				elif method == 'sort_by_headers':
-					resp = requests.get(API_ENDPOINT % path, params=params, headers=headers, timeout=20)
+					resp = requests.get(API_ENDPOINT % path, params=params, headers=headers, timeout=10)
 			elif data is not None:
 				assert not params
-				resp = requests.post(API_ENDPOINT % path, json=data, headers=headers, timeout=20)
-			elif is_delete: resp = requests.delete(API_ENDPOINT % path, headers=headers, timeout=20)
-			else: resp = requests.get(API_ENDPOINT % path, params=params, headers=headers, timeout=20)
+				resp = requests.post(API_ENDPOINT % path, json=data, headers=headers, timeout=10)
+			elif is_delete: resp = requests.delete(API_ENDPOINT % path, headers=headers, timeout=10)
+			else: resp = requests.get(API_ENDPOINT % path, params=params, headers=headers, timeout=10)
 			resp.raise_for_status()
 		except Exception as e: kodi_utils.logger('Trakt Error', str(e))
 		return resp
@@ -218,14 +218,16 @@ def trakt_recommendations(media_type):
 
 def trakt_tv_trending(page_no):
 	string = 'trakt_tv_trending_%s' % page_no
-	params = {'path': 'shows/trending/%s', 'params': {'genres': '-anime', 'limit': 20}, 'page_no': page_no}
+	# params = {'path': 'shows/trending/%s', 'params': {'genres': '-anime', 'limit': 20}, 'page_no': page_no}
+	params = {'path': 'shows/trending/%s', 'params': {'limit': 20}, 'page_no': page_no}
 	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_trending_recent(page_no):
 	current_year = get_datetime().year
 	years = '%s-%s' % (str(current_year-1), str(current_year))
 	string = 'trakt_tv_trending_recent_%s' % page_no
-	params = {'path': 'shows/trending/%s', 'params': {'genres': '-anime', 'years': years, 'limit': 20}, 'page_no': page_no}
+	# params = {'path': 'shows/trending/%s', 'params': {'genres': '-anime', 'years': years, 'limit': 20}, 'page_no': page_no}
+	params = {'path': 'shows/trending/%s', 'params': {'years': years, 'limit': 20}, 'page_no': page_no}
 	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_most_watched(page_no):

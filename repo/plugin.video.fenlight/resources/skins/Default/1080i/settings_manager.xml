@@ -2725,7 +2725,7 @@
                           <property name="setting_label">Autoplay Next Episode</property>
                           <property name="setting_type">boolean</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoplay_next_episode)]</property>
-                          <property name="setting_description">Enable this and Fen Light will automatically search for sources for the next episode of a TV Show towards the end of the episode currently being watched</property>
+                          <property name="setting_description">Enable this and Fen Light will automatically play the next episode of a TV Show at the end of the episode currently being watched</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoplay_next_episode)</onclick>
                       </item>
                       <item>
