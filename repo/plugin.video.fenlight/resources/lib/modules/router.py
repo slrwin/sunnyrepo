@@ -161,6 +161,12 @@ def routing(sys):
 		if mode == 'alldebrid.ad_cloud':
 			from indexers.alldebrid import ad_cloud
 			ad_cloud(_get('id', None))
+		elif mode == 'alldebrid.ad_downloads':
+			from indexers.alldebrid import ad_downloads
+			ad_downloads()
+		elif mode == 'alldebrid.ad_saved_links':
+			from indexers.alldebrid import ad_saved_links
+			ad_saved_links()
 		elif mode == 'alldebrid.browse_ad_cloud':
 			from indexers.alldebrid import browse_ad_cloud
 			browse_ad_cloud(_get('id'))

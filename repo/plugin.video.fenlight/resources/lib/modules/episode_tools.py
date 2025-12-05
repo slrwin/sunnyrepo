@@ -20,7 +20,6 @@ class EpisodeTools:
 	def next_episode_info(self):
 		try:
 			play_type = self.nextep_settings['play_type']
-			current_date = get_datetime()
 			season_data = self.meta_get('season_data')
 			current_season, current_episode = int(self.meta_get('season')), int(self.meta_get('episode'))
 			season, episode = get_next(current_season, current_episode, watched_info_episode(self.meta_get('tmdb_id')), season_data, 0)
@@ -28,15 +27,14 @@ class EpisodeTools:
 			if not ep_data: return 'no_next_episode'
 			ep_data = next((i for i in ep_data if i['episode'] == episode), None)
 			if not ep_data: return 'no_next_episode'
-			airdate = ep_data['premiered']
-			d = airdate.split('-')
-			episode_date = date(int(d[0]), int(d[1]), int(d[2]))
-			if current_date < episode_date: return 'no_next_episode'
+			adjust_hours, current_date = date_offset(), get_datetime()
+			episode_date, premiered = adjust_premiered_date(ep_data['premiered'], adjust_hours)
+			if not episode_date or current_date < episode_date: return 'no_next_episode'
 			custom_title = self.meta_get('custom_title', None)
 			title = custom_title or self.meta_get('title')
 			display_name = '%s - %dx%.2d' % (title, int(season), int(episode))
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_data['title'], 'ep_thumb': ep_data.get('thumb', None),
-							'episode': episode, 'premiered': airdate, 'plot': ep_data['plot']})
+							'episode': episode, 'premiered': premiered, 'plot': ep_data['plot']})
 			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season,
 						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type}
 			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
