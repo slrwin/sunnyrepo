@@ -4,7 +4,7 @@ import json
 import random
 from datetime import date
 from modules.sources import Sources
-from modules.settings import date_offset, watched_indicators, ignore_articles
+from modules.settings import date_offset, watched_indicators, ignore_articles, playback_key
 from modules.metadata import episodes_meta, all_episodes_meta
 from modules.watched_status import get_next_episodes, get_hidden_progress_items, watched_info_episode, get_next
 from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
@@ -41,7 +41,7 @@ class EpisodeTools:
 			if custom_title: url_params['custom_title'] = custom_title
 			if 'custom_year' in self.meta: url_params['custom_year'] = self.meta_get('custom_year')
 		except: url_params = 'error'
-		return url_params
+		return self.add_playback_key(url_params)
 
 	def get_random_episode(self, continual=False, first_run=True):
 		try:
@@ -82,7 +82,7 @@ class EpisodeTools:
 				url_params['background'] = 'true'
 				url_params['play_type'] = 'random_continual'
 		except: url_params = 'error'
-		return url_params
+		return self.add_playback_key(url_params)
 
 	def play_random(self):
 		url_params = self.get_random_episode()
@@ -99,6 +99,10 @@ class EpisodeTools:
 		if url_params == 'error': return kodi_utils.notification('Next Episode Error', 3000)
 		elif url_params == 'no_next_episode': return
 		return Sources().playback_prep(url_params)
+
+	def add_playback_key(self, url_params):
+		url_params[playback_key()] = 'true'
+		return url_params
 
 def build_next_episode_manager():
 	def _process(item):

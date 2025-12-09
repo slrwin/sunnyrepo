@@ -64,10 +64,11 @@ def context_menu_default_choice(params):
 	return kodi_utils.ok_dialog(text='Context Menu set to Default.')
 
 def context_menu_order_choice(params):
-	options = {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Playback Options', 'browse_set_season': 'Browse Movie Set/TV Season',
-	'recommended': 'Browse Recommended', 'more_like_this': 'Browse More Like This', 'in_trakt_list': 'In Trakt Lists', 'trakt_manager':'Trakt Lists Manager',
-	'personal_manager': 'Personal Lists Manager', 'tmdb_manager': 'TMDb Lists Manager', 'favorites_manager': 'Favorites Manager',
-	'mark_watched': 'Mark Watched/Unwatched', 'exit': 'Exit List', 'refresh': 'Refresh Widgets', 'reload': 'Reload Widgets'}
+	options = {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Playback Options', 'browse_movie_set': 'Browse Movie Set', 'browse_seasons': 'Browse TV Seasons',
+	'browse_episodes': 'Browse Season Episodes', 'recommended': 'Browse Recommended', 'more_like_this': 'Browse More Like This', 'in_trakt_list': 'In Trakt Lists',
+	'trakt_manager':'Trakt Lists Manager', 'personal_manager': 'Personal Lists Manager', 'tmdb_manager': 'TMDb Lists Manager', 'favorites_manager': 'Favorites Manager',
+	'mark_watched': 'Mark Watched/Unwatched', 'unmark_previous_episode': 'Unmark Previous Watched Episode', 'exit': 'Exit List', 'refresh': 'Refresh Widgets',
+	'reload': 'Reload Widgets'}
 	default_control = params.get('default_control') or 11
 	current_settings = settings.cm_sort_order()
 	current_settings = sorted(current_settings, key=current_settings.get)
@@ -565,6 +566,7 @@ def playback_choice(params):
 			kodi_utils.set_property('fs_filterless_search', 'true')
 	else: episodes_data = metadata.episodes_meta(orig_season, meta)
 	from modules.sources import Sources
+	play_params[settings.playback_key()] = 'true'
 	Sources().playback_prep(play_params)
 
 def set_quality_choice(params):

@@ -251,8 +251,8 @@ def default_settings():
 {'setting_id': 'rpdb_enabled', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Movies', '2': 'TV Shows', '3': 'Both'}},
 #==================== Context Menu
 {'setting_id': 'context_menu.order', 'setting_type': 'string',
-'setting_default': 'extras,options,playback_options,browse_set_season,recommended,more_like_this,in_trakt_list,trakt_manager,personal_manager,tmdb_manager,' \
-'favorites_manager,mark_watched,exit,refresh,reload'},
+'setting_default': 'extras,options,playback_options,browse_movie_set,browse_seasons,browse_episodes,recommended,more_like_this,in_trakt_list,' \
+'trakt_manager,personal_manager,tmdb_manager,favorites_manager,mark_watched,unmark_previous_episode,exit,refresh,reload'},
 #==================== General
 {'setting_id': 'paginate.lists', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Within Addon Only', '2': 'Widgets Only', '3': 'Both'}},
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
@@ -548,5 +548,6 @@ def default_settings():
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
 {'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
 {'setting_id': 'updatechecks.personal_lists_01', 'setting_type': 'string', 'setting_default': 'false'},
-{'setting_id': 'updatechecks.personal_lists_02', 'setting_type': 'string', 'setting_default': 'false'}
+{'setting_id': 'updatechecks.personal_lists_02', 'setting_type': 'string', 'setting_default': 'false'},
+{'setting_id': 'updatechecks.context_menu_update_01', 'setting_type': 'string', 'setting_default': 'false'}
 	]

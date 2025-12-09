@@ -4,6 +4,7 @@ import requests
 import shutil
 from os import path
 from caches.settings_cache import get_setting, set_setting
+from indexers.random_lists import refresh_widgets
 from modules.utils import string_alphanum_to_num, unzip
 from modules import kodi_utils 
 logger = kodi_utils.logger
@@ -109,3 +110,4 @@ def update_addon(new_version, action, show_after_action=True):
 	kodi_utils.update_local_addons()
 	kodi_utils.disable_enable_addon()
 	kodi_utils.update_kodi_addons_db()
+	refresh_widgets()

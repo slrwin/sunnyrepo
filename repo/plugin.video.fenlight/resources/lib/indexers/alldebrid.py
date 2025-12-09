@@ -97,7 +97,7 @@ def ad_saved_links():
 			except: pass
 	try:
 		saved_links = AllDebrid.user_links()
-		saved_links = user_links.get('links', []) or []
+		saved_links = saved_links.get('links', []) or []
 	except: saved_links = []
 	icon, fanart = kodi_utils.get_icon('alldebrid'), kodi_utils.get_addon_fanart()
 	handle = int(sys.argv[1])

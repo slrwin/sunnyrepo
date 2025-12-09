@@ -370,6 +370,17 @@ def mark_episode(params):
 	update_hidden_progress(tmdb_id)
 	refresh_container(refresh)
 
+def unmark_previous_episode(params):
+	try:
+		season, episode = int(params.get('season')), int(params.get('episode'))
+		if episode == 1:
+			season = params['season'] = season - 1
+			meta = metadata.tvshow_meta('tmdb_id', params.get('tmdb_id'), settings.tmdb_api_key(), settings.mpaa_region(), get_datetime())
+			params['episode'] = episode = next((i for i in meta['season_data'] if i['season_number'] == season))['episode_count']
+		else: episode = params['episode'] = episode - 1
+		return mark_episode(params)
+	except: notification('Error')
+
 def watched_status_mark(watched_indicators, media_type='', media_id='', action='', season='', episode='', title=''):
 	try:
 		last_played = get_last_played_value(watched_indicators)
