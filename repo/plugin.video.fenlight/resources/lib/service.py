@@ -54,9 +54,10 @@ class OnUpdateChanges:
 		except: pass
 		return kodi_utils.logger('Fen Light', 'OnUpdateChanges Service Finished')
 
-	def context_menu_update_01(self):
+	def context_menu_update_03(self):
 		from caches.settings_cache import default_setting_values
 		set_setting('context_menu.order', default_setting_values('context_menu.order')['setting_default'])
+		set_setting('extras.enabled', default_setting_values('extras.enabled')['setting_default'])
 
 class CustomFonts:
 	def run(self):

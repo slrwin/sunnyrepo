@@ -282,7 +282,7 @@ def mark_movie(params):
 	tmdb_id, title = params.get('tmdb_id'), params.get('title')
 	watched_indicators = settings.watched_indicators()
 	if watched_indicators == 1:
-		if from_playback == 'true' and trakt_official_status(media_type) == False: sleep(1000)
+		if from_playback and trakt_official_status(media_type) == False: sleep(1000)
 		elif not trakt_watched_status_mark(action, 'movies', tmdb_id): return notification('Error')
 		clear_trakt_collection_watchlist_data('watchlist', media_type)
 	watched_status_mark(watched_indicators, media_type, tmdb_id, action, title=title)
@@ -363,7 +363,7 @@ def mark_episode(params):
 	except: tvdb_id = 0
 	watched_indicators = settings.watched_indicators()
 	if watched_indicators == 1:
-		if from_playback == 'true' and trakt_official_status(media_type) == False: sleep(1000)
+		if from_playback and trakt_official_status(media_type) == False: sleep(1000)
 		elif not trakt_watched_status_mark(action, media_type, tmdb_id, tvdb_id, season, episode): return notification('Error')
 		clear_trakt_collection_watchlist_data('watchlist', 'tvshow')
 	watched_status_mark(watched_indicators, media_type, tmdb_id, action, season, episode, title)

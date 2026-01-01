@@ -60,8 +60,17 @@ def download_directory(media_type):
 								None: 'fenlight.premium_download_directory', 'None': False}
 	return translate_path(get_setting(download_directories_dict[media_type]))
 
+def ai_model_order():
+	return get_setting('fenlight.ai_model.order', 'gemini-2.5-flash-lite,llama-3.3-70b-versatile,gemma-3-27b-it,llama-3.1-8b-instant').split(',')
+
+def ai_model_limit():
+	return max(1, int(get_setting('fenlight.ai_model.limit', '10')))
+
 def show_unaired_watchlist():
 	return get_setting('fenlight.show_unaired_watchlist', 'true') == 'true'
+
+def lists_cache_duraton():
+	return int(get_setting('fenlight.lists_cache_duraton', '48'))
 
 def auto_start_fenlight():
 	return get_setting('fenlight.auto_start_fenlight', 'false') == 'true'
