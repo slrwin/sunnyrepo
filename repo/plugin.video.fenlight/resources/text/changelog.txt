@@ -1,6 +1,10 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.63[/B][/COLOR]
+- Quick fix for Discover.
+
+
 [COLOR dodgerblue][B]Version 2.1.62[/B][/COLOR]
 - Added Google AI and Groq AI to Meta Accounts settings. Use your API keys here, and you can currently use this AI for Similar titles recommended by the AI. Found in context menu for Movies and TV Shows, and also in the Extras window. Access settings for the similars in Features->AI Generated Similar Titles.
 [COLOR darkgoldenrod]Big thanks to user hcgiub001 for all the help and code examples, and Tikipeter for the re-write and implementation.[/COLOR]

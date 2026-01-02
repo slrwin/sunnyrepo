@@ -160,11 +160,10 @@ def tmdb_media_videos(media_type, tmdb_id):
 def tmdb_movies_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
-	expiration = min(lists_cache_duraton(), 24)
 	if '[current_date]' in query: query = query.replace('[current_date]', get_current_date())
 	if '[random]' in query: query = query.replace('[random]', '')
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return lists_cache_object(get_tmdb, string, url, json=True, expiraton=expiration)
+	return lists_cache_object(get_tmdb, string, url, json=True, expiration=min(lists_cache_duraton(), 24))
 
 def tmdb_movies_popular(page_no):
 	api_key = tmdb_api_key()

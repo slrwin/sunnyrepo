@@ -45,7 +45,7 @@ def ai_similar(media_info, dummy=None):
 	limit = ai_model_limit()
 	media_type = "Movie" if media_type == 'movie' else "Show"
 	string = 'ai_similar_%s_%s_%s' % (media_type, tmdb_id, limit)
-	return lists_cache_object(_fetch_similar, string, 'foo', expiration=24)
+	return lists_cache_object(_fetch_similar, string, 'foo', expiration=168)
 
 def tmdb_simplified(title, media_type):
 	function = tmdb_movies_search if media_type == 'Movie' else tmdb_tv_search
@@ -72,7 +72,7 @@ def pick_best_tmdb_match(results, title, year):
 			if title == compare_title and year is not None and abs(year - compare_year) == 1: return item
 	return results[0]
 
-def get_currently_active_models():
+def get_currently_active_model():
 	model_id = None
 	try:
 		current_time = get_timestamp()
@@ -92,7 +92,7 @@ def set_currently_active_models(model_id, timeout):
 	except: return False
 
 def ai_similar_call(media_type, tmdb_id, meta, limit, timeout=30):
-	model_id = get_currently_active_models()
+	model_id = get_currently_active_model()
 	if not model_id: return {}
 	try: model_info = next(i.model_info(model_id, media_type, meta, limit) for i in [google_api, groq_api] if i.model_present(model_id))
 	except: return {}	
@@ -100,9 +100,10 @@ def ai_similar_call(media_type, tmdb_id, meta, limit, timeout=30):
 	status_code = response.status_code
 	headers = response.headers
 	if status_code != 200:
-		from modules.kodi_utils import notification
-		notification('Disabling %s' % model_id)
-		if set_currently_active_models(model_id, 24 if status_code == 429 else 2): return ai_similar_call(media_type, tmdb_id, meta, limit, timeout)
+		if set_currently_active_models(model_id, 24 if status_code == 429 else 2):
+			from modules.kodi_utils import notification
+			notification('Disabling %s' % model_id)
+			return ai_similar_call(media_type, tmdb_id, meta, limit, timeout)
 		return {}
 	data = response.json()
 	result = model_info['similar']['parse'](data)

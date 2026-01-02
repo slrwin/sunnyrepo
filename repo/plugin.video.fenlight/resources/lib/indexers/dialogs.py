@@ -58,18 +58,16 @@ def addon_icon_choice(params):
 	kodi_utils.disable_enable_addon()
 
 def context_menu_order_choice(params):
-	options = {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Playback Options', 'browse_movie_set': 'Browse Movie Set', 'browse_seasons': 'Browse TV Seasons',
-	'browse_episodes': 'Browse Season Episodes', 'recommended': 'Browse Recommended', 'more_like_this': 'Browse More Like This', 'similar': 'Browse Similar',
-	'in_trakt_list': 'In Trakt Lists', 'trakt_manager':'Trakt Lists Manager', 'personal_manager': 'Personal Lists Manager', 'tmdb_manager': 'TMDb Lists Manager',
-	'favorites_manager': 'Favorites Manager', 'mark_watched': 'Mark Watched/Unwatched', 'unmark_previous_episode': 'Unmark Previous Watched Episode',
-	'exit': 'Exit List', 'refresh': 'Refresh Widgets', 'reload': 'Reload Widgets'}
+	options = kodi_utils.context_menu_items()
 	default_control = params.get('default_control') or 11
 	current_settings = settings.cm_sort_order()
 	current_settings = sorted(current_settings, key=current_settings.get)
 	default_settings = default_setting_values('context_menu.order')['setting_default'].split(',')
 	removed_settings = [i for i in default_settings if not i in current_settings]
-	if removed_settings:
-		start_choices = [{'name': 'RE-ADD a removed item', 'action': 'readd'}, {'name': 'EDIT current items', 'action': 'edit'}, {'name': 'RESTORE to default', 'action': 'restore'}]
+	not_default = default_settings != current_settings
+	if not_default:
+		start_choices = [{'name': 'EDIT current items', 'action': 'edit'}, {'name': 'RESTORE to default', 'action': 'restore'}]
+		if removed_settings: start_choices.insert(0, {'name': 'RE-ADD a removed item', 'action': 'readd'})
 		list_items = [{'line1': i['name']} for i in start_choices]
 		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Context Menu Editor Action...'}
 		start_choice = kodi_utils.select_dialog(start_choices, **kwargs)
