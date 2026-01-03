@@ -1,6 +1,10 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.64[/B][/COLOR]
+- Added block for unsupported external players.
+
+
 [COLOR dodgerblue][B]Version 2.1.63[/B][/COLOR]
 - Quick fix for Discover.
 
