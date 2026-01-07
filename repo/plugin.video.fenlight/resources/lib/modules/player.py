@@ -261,3 +261,12 @@ class FenLightPlayer(xbmc.Player):
 		self.clear_playback_properties()
 		ku.notification('Playback Failed', 3500)
 		return False
+
+def player_check(mode, params):
+	if mode == 'playback.%s' % st.playback_key():
+		from modules.sources import Sources
+		Sources().playback_prep(params)
+	elif mode == 'playback.video':
+		from modules.player import FenLightPlayer
+		FenLightPlayer().run(params.get('url', None), params.get('obj', None))
+	else: ku.ok_dialog('External Playback Detected', 'Playback through external addons is not supported.[CR]')

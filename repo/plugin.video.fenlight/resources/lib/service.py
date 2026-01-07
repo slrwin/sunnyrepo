@@ -25,8 +25,7 @@ class SetAddonConstants:
 						('fenlight.addon_icon', kodi_utils.translate_path(kodi_utils.addon_info('icon'))),
 						('fenlight.addon_icon_mini', os.path.join(kodi_utils.addon_info('path'), 'resources', 'media', 'addon_icons', 'minis',
 						os.path.basename(kodi_utils.translate_path(kodi_utils.addon_info('icon'))))),
-						('fenlight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart'))),
-						('fenlight.playback_key', str(random.randint(1000, 10000)))]
+						('fenlight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart')))]
 		for item in addon_items: kodi_utils.set_property(*item)
 		return kodi_utils.logger('Fen Light', 'SetAddonConstants Service Finished')
 
@@ -209,6 +208,27 @@ class AddonXMLCheck:
 		kodi_utils.update_local_addons()
 		kodi_utils.disable_enable_addon()
 
+class PlaybackKeymaker:
+	def run(self):
+		kodi_utils.logger('Fen Light', 'PlaybackKeymaker Service Starting')
+		from caches.main_cache import cache_object
+		monitor = kodi_utils.kodi_monitor()
+		wait_for_abort = monitor.waitForAbort
+		while not monitor.abortRequested():
+			kodi_utils.set_property('fenlight.playback_key', cache_object(self.make_key, 'playback_key', ('foo',), False, 1))
+			wait_for_abort(1800)
+		try: del monitor
+		except: pass
+		return kodi_utils.logger('Fen Light', 'PlaybackKeymaker Service Finished')
+
+	def make_key(self, dummy_arg):
+		import random
+		new_key = str(random.randint(1000, 10000))
+		kodi_utils.set_property('fenlight.playback_key', new_key)
+		kodi_utils.logger('Fen Light', 'PlaybackKeymaker Service - New Key Made: %s' % new_key)
+		kodi_utils.kodi_refresh()
+		return new_key
+
 
 class FenLightMonitor(Monitor):
 	def __init__ (self):
@@ -218,6 +238,7 @@ class FenLightMonitor(Monitor):
 	def startServices(self):
 		SetAddonConstants().run()
 		DatabaseMaintenance().run()
+		Thread(target=PlaybackKeymaker().run).start()
 		SyncSettings().run()
 		OnUpdateChanges().run()
 		AddonXMLCheck().run()

@@ -28,12 +28,8 @@ def routing(sys):
 		from indexers import easynews
 		exec('easynews.%s(params)' % mode.split('.')[1])
 	elif 'playback.' in mode:
-		if mode == 'playback.meta':
-			from modules.sources import Sources
-			Sources().playback_prep(params)
-		elif mode == 'playback.video':
-			from modules.player import FenLightPlayer
-			FenLightPlayer().run(_get('url', None), _get('obj', None))
+		from modules.player import player_check
+		player_check(mode, params)
 	elif 'choice' in mode:
 		from indexers import dialogs
 		exec('dialogs.%s(params)' % mode)

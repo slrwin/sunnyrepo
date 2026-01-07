@@ -10,7 +10,7 @@ from modules import meta_lists
 from modules.settings import paginate, page_limit
 from modules import kodi_utils
 from modules.utils import manual_function_import, make_thread_list
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 def refresh_widgets():
 	RandomWidgets().delete_like('random_list.%')
@@ -203,10 +203,10 @@ class RandomLists():
 			if list_type == 'my_lists': self.random_results = [i for i in trakt_get_lists(list_type) if i['item_count']]
 			else: self.random_results = [i['list'] for i in trakt_get_lists(list_type) if i['list']['item_count']]
 			random_list = random.choice(self.random_results)
-			user, slug = random_list['user']['ids']['slug'], random_list['ids']['slug']
+			user, slug, list_id = random_list['user']['username'], random_list['user']['ids']['slug'], random_list['ids']['trakt']
 			list_name = random_list['name']
 			with_auth = list_type == 'my_lists'
-			result = get_trakt_list_contents(list_type, user, slug, with_auth)
+			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id)
 			random.shuffle(result)
 			if paginate(self.is_external): data = random.sample(result, min(len(result), page_limit(self.is_external)))
 			else: data = random.sample(result, len(result))
@@ -277,9 +277,9 @@ class RandomLists():
 		list_type_name = 'Trakt My Lists' if list_type == 'my_lists' else 'Trakt Liked Lists' if list_type == 'liked_lists' else 'Trakt User Lists'
 		random_list, cache_to_memory = get_persistent_content(self.database, '%s_%s' % (list_type, list_name), self.is_external)
 		if not random_list:
-			user, slug = self.params_get('user'), self.params_get('slug')
+			user, slug, list_id = self.params_get('user'), self.params_get('slug'), self.params_get('list_id')
 			with_auth = list_type == 'my_lists'
-			result = get_trakt_list_contents(list_type, user, slug, with_auth)
+			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id)
 			random.shuffle(result)
 			if paginate(self.is_external): result = random.sample(result, min(len(result), page_limit(self.is_external)))
 			result = [dict(i, **{'order': c}) for c, i in enumerate(result)]

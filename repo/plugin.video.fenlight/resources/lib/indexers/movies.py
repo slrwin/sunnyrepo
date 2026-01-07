@@ -25,7 +25,7 @@ class Movies:
 			self.widget_hide_next_page = settings.widget_hide_next_page()
 			self.widget_hide_watched = self.action not in ('watched_movies', 'recent_watched_movies') and settings.widget_hide_watched()
 		else: self.widget_hide_next_page, self.widget_hide_watched = False, False
-		self.playback_key = settings.playback_key()
+		self.play_mode = 'playback.%s' % settings.playback_key()
 		self.custom_order = self.params_get('custom_order', 'false') == 'true'
 		self.paginate_start = int(self.params_get('paginate_start', '0'))
 		self.tmdb_api_key = settings.tmdb_api_key()
@@ -144,7 +144,7 @@ class Movies:
 			else: unaired = False
 			progress = watched_status.get_progress_status_movie(self.bookmarks, str_tmdb_id)
 			playcount = watched_status.get_watched_status_movie(self.watched_info, str_tmdb_id)
-			play_params = self.build_url({'mode': 'playback.meta', 'media_type': 'movie', 'tmdb_id': tmdb_id, self.playback_key: 'true'})
+			play_params = self.build_url({'mode': self.play_mode, 'media_type': 'movie', 'tmdb_id': tmdb_id})
 			extras_params = self.build_url({'mode': 'extras_menu_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'is_external': self.is_external})
 			options_params = self.build_url({'mode': 'options_menu_choice', 'content': 'movie', 'tmdb_id': tmdb_id, 'poster': poster, 'is_external': self.is_external})
 			playback_options_params = self.build_url({'mode': 'playback_choice', 'media_type': 'movie', 'meta': tmdb_id})

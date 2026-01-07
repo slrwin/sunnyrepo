@@ -461,7 +461,7 @@ def trakt_lists_with_media(media_type, imdb_id):
 	params = {'path': '%s/%s/lists/personal', 'path_insert': (media_type, imdb_id), 'params': {'limit': 100}, 'pagination': False}
 	return cache_object(_process, string, 'foo', False, 168)
 
-def get_trakt_list_contents(list_type, user, slug, with_auth):
+def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None):
 	def _process(params):
 		results = []
 		results_append = results.append
@@ -480,9 +480,13 @@ def get_trakt_list_contents(list_type, user, slug, with_auth):
 				results_append(data)
 			except: pass
 		return results
-	string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
-	if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full'}, 'method': 'sort_by_headers'}
-	else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'with_auth': with_auth, 'method': 'sort_by_headers'}
+	if list_id is not None:
+		string = 'trakt_list_contents_%s_%s' % (list_type, list_id)
+		params = {'path': 'lists/%s/items', 'path_insert': list_id, 'params': {'extended':'full'}, 'method': 'sort_by_headers'}
+	else:
+		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
+		if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full'}, 'method': 'sort_by_headers'}
+		else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'with_auth': with_auth, 'method': 'sort_by_headers'}
 	return trakt_cache.cache_trakt_object(_process, string, params)
 
 def trakt_get_lists(list_type, page_no='1'):
@@ -546,11 +550,11 @@ def delete_trakt_list(params):
 	kodi_utils.kodi_refresh()
 
 def trakt_like_a_list(params):
-	user = params['user']
-	list_slug = params['list_slug']
+	user, list_slug, list_id = params.get('user'), params.get('list_slug'), params.get('list_id')
 	refresh = params.get('refresh', 'true') == 'true'
 	try:
-		call_trakt('/users/%s/lists/%s/like' % (user, list_slug), method='post')
+		if list_id is not None: call_trakt('/lists/%s/like' % list_id, method='post')
+		else: call_trakt('/users/%s/lists/%s/like' % (user, list_slug), method='post')
 		kodi_utils.notification('Success - Trakt List Liked', 3000)
 		trakt_sync_activities()
 		if refresh: kodi_utils.kodi_refresh()
@@ -559,12 +563,12 @@ def trakt_like_a_list(params):
 		kodi_utils.notification('Error', 3000)
 		return False
 
-def trakt_unlike_a_list(params):
-	user = params['user']
-	list_slug = params['list_slug']
+def trakt_like_a_list(params):
+	user, list_slug, list_id = params.get('user'), params.get('list_slug'), params.get('list_id')
 	refresh = params.get('refresh', 'true') == 'true'
 	try:
-		call_trakt('/users/%s/lists/%s/like' % (user, list_slug), method='delete')
+		if list_id is not None: call_trakt('/lists/%s/like' % list_id, method='delete')
+		else: call_trakt('/users/%s/lists/%s/like' % (user, list_slug), method='delete')
 		kodi_utils.notification('Success - Trakt List Unliked', 3000)
 		trakt_sync_activities()
 		if refresh: kodi_utils.kodi_refresh()

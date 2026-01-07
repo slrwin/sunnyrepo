@@ -40,8 +40,7 @@ def build_episode_list(params):
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'meta': tmdb_id, 'season': season,
 												'episode': episode, 'episode_id': episode_id})
-				url_params = build_url({'mode': 'playback.meta', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
-										'episode_id': episode_id, playback_key: 'true'})
+				play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'episode_id': episode_id})
 				cm_append(['extras', ('[B]Extras[/B]', 'RunPlugin(%s)' % extras_params)])
 				cm_append(['options', ('[B]Options[/B]', 'RunPlugin(%s)' % options_params)])
 				cm_append(['playback_options', ('[B]Playback Options[/B]', 'RunPlugin(%s)' % playback_options_params)])
@@ -87,7 +86,7 @@ def build_episode_list(params):
 					'fenlight.options_params': options_params,
 					'fenlight.playback_options_params': playback_options_params
 					})
-				yield (url_params, listitem, False)
+				yield (play_params, listitem, False)
 			except: pass
 	kodi_actor, make_listitem, build_url = kodi_utils.kodi_actor(), kodi_utils.make_listitem, kodi_utils.build_url
 	poster_empty, fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
@@ -99,7 +98,7 @@ def build_episode_list(params):
 	cm_sort_order = settings.cm_sort_order()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
-	playback_key = settings.playback_key()
+	play_mode = 'playback.%s' % settings.playback_key()
 	watched_title = 'Trakt' if watched_indicators == 1 else 'FENLAM'
 	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), settings.tmdb_api_key(), settings.mpaa_region(), current_date)
 	meta_get = meta.get
@@ -231,12 +230,11 @@ def build_single_episode(list_type, params={}):
 				else: display_premiered = 'UNKNOWN'
 				display = '[%s] %s%s%s' % (display_premiered, title_str, seas_ep, ep_name)
 			else: display = '%s%s%s' % (title_str, seas_ep, ep_name)
+			play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'episode_id': episode_id})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 			playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'meta': tmdb_id, 'season': season,
 											'episode': episode, 'episode_id': episode_id})
-			url_params = build_url({'mode': 'playback.meta', 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
-									'episode_id': episode_id, playback_key: 'true'})
 			cm_append(['extras', ('[B]Extras[/B]', 'RunPlugin(%s)' % extras_params)])
 			cm_append(['options', ('[B]Options[/B]', 'RunPlugin(%s)' % options_params)])
 			cm_append(['playback_options', ('[B]Playback Options[/B]', 'RunPlugin(%s)' % \
@@ -293,7 +291,7 @@ def build_single_episode(list_type, params={}):
 				'fenlight.options_params': options_params,
 				'fenlight.playback_options_params': playback_options_params
 				})
-			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
+			item_list_append({'list_items': (play_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
 							'unaired': unaired, 'last_played': ep_data_get('last_played', resinsert), 'sort_order': _position, 'unwatched': ep_data_get('unwatched')})
 		except: pass
 	kodi_actor, make_listitem, build_url = kodi_utils.kodi_actor(), kodi_utils.make_listitem, kodi_utils.build_url
@@ -314,7 +312,7 @@ def build_single_episode(list_type, params={}):
 	cm_sort_order, ignore_articles = settings.cm_sort_order(), settings.ignore_articles()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
-	playback_key = settings.playback_key()
+	play_mode = 'playback.%s' % settings.playback_key()
 	watched_db = ws.get_database(watched_indicators)
 	watched_title = 'Trakt' if watched_indicators == 1 else 'FENLAM'
 	if list_type == 'episode.next':
