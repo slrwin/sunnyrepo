@@ -101,7 +101,8 @@ class EpisodeTools:
 		return Sources().playback_prep(url_params)
 
 	def add_playback_key(self, url_params):
-		url_params[playback_key()] = 'true'
+		_key = playback_key()
+		url_params[_key] = _key
 		return url_params
 
 def build_next_episode_manager():

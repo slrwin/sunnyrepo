@@ -479,8 +479,9 @@ def playback_choice(params):
 	from modules.debrid import debrid_for_ext_cache_check
 	from modules.source_utils import get_aliases_titles, make_alias_dict
 	from modules import metadata
-	media_type, season, episode = params.get('media_type'), params.get('season', ''), params.get('episode', '')
-	episode_id, play_mode = params.get('episode_id', None), 'playback.%s' % settings.playback_key()
+	media_type, season, episode, episode_id = params.get('media_type'), params.get('season', ''), params.get('episode', ''), params.get('episode_id', None)
+	playback_key = settings.playback_key()
+	play_mode = 'playback.%s' % playback_key
 	meta = params.get('meta')
 	try: meta = json.loads(meta)
 	except: pass
@@ -598,8 +599,8 @@ def playback_choice(params):
 			_process_params('', 'true', 'ignore_scrape_filters')
 			kodi_utils.set_property('fs_filterless_search', 'true')
 	else: episodes_data = metadata.episodes_meta(orig_season, meta)
+	play_params[playback_key] = playback_key
 	from modules.sources import Sources
-	play_params[settings.playback_key()] = 'true'
 	Sources().playback_prep(play_params)
 
 def set_quality_choice(params):

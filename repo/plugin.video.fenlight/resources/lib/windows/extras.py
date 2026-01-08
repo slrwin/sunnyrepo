@@ -551,7 +551,7 @@ class Extras(BaseDialog):
 		self.close()
 
 	def movies_play(self):
-		Sources().playback_prep({'media_type': 'movie', 'tmdb_id': self.tmdb_id})
+		Sources().playback_prep({'media_type': 'movie', 'tmdb_id': self.tmdb_id, self.playback_key: self.playback_key})
 
 	def show_plot(self):
 		return self.show_text_media(text=self.plot)
@@ -592,7 +592,8 @@ class Extras(BaseDialog):
 
 	def play_nextep(self):
 		if self.nextep_season == None: return kodi_utils.ok_dialog(text='No Episodes Available')
-		Sources().playback_prep({'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season, 'episode': self.nextep_episode, 'autoplay': 'true'})
+		Sources().playback_prep({'media_type': 'episode', 'tmdb_id': self.tmdb_id, 'season': self.nextep_season, 'episode': self.nextep_episode,
+								'autoplay': 'true', self.playback_key: self.playback_key})
 
 	def play_random_episode(self):
 		self.close_all()
@@ -692,6 +693,7 @@ class Extras(BaseDialog):
 		self.item_action_dict, self.button_action_dict = {}, {}
 		self.selected = None
 		self.current_date = get_datetime()
+		self.playback_key = settings.playback_key()
 		self.current_params, self.new_params = {}, {}
 		self.extra_info = self.meta_get('extra_info')
 		self.extra_info_get = self.extra_info.get

@@ -7,7 +7,7 @@ from caches.lists_cache import lists_cache, lists_cache_object
 from modules.metadata import movie_meta, tvshow_meta
 from modules.utils import TaskPool, normalize, get_datetime, get_current_timestamp
 from modules.settings import ai_model_order, ai_model_limit, max_threads, tmdb_api_key, mpaa_region
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 # GOOGLE_MODELS = ('gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemma-3-27b-it', 'gemma-3-12b-it', 'gemma-3-1b-it', 'gemma-3-4b-it', 'gemini-3-flash-preview')
 # GROQ_MODELS = ('llama-3.1-8b-instant', 'llama-3.3-70b-versatile', 'openai/gpt-oss-120b')
@@ -95,9 +95,10 @@ def ai_similar_call(media_type, tmdb_id, meta, limit, timeout=30):
 	model_id = get_currently_active_model()
 	if not model_id: return {}
 	try: model_info = next(i.model_info(model_id, media_type, meta, limit) for i in [google_api, groq_api] if i.model_present(model_id))
-	except: return {}	
+	except: return {}
 	response = requests.post(model_info['similar']['url'], headers=model_info['similar']['headers'], json=model_info['similar']['payload'], timeout=timeout)
 	status_code = response.status_code
+	logger('ai_similar_call: %s' % model_id, status_code)
 	headers = response.headers
 	if status_code != 200:
 		if set_currently_active_models(model_id, 24 if status_code == 429 else 2):

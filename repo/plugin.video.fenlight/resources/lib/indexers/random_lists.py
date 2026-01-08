@@ -51,7 +51,6 @@ class RandomLists():
 		self.database = RandomWidgets()
 		self.handle = int(sys.argv[1])
 		self.params = params
-		self.make_next_page_category_name()
 		self.params_get = self.params.get
 		self.mode = self.params_get('mode').replace('random.', '')
 		self.action = self.params_get('action')
@@ -65,13 +64,6 @@ class RandomLists():
 		self.category_name, self.list_items, self.random_results = '', [], []
 		if self.action and 'anime' in self.action: self.max_range, self.sample_size = 4, 3
 		else: self.max_range, self.sample_size = 10, 3
-
-	def make_next_page_category_name(self):
-		self.next_params = {k: v for k, v in self.params.items() if k not in ('random',)}
-		name_keys = ('mode', 'action', 'name', 'category_name')
-		for key, value in self.next_params.items():
-			if key in name_keys:
-				self.next_params[key] = value.replace('random.', '').replace('random_', '').replace('Random ', '')
 
 	def run_random(self):
 		if self.action in self.movie_main: return self.random_main()
@@ -101,7 +93,7 @@ class RandomLists():
 		self.params['list'] = [i['id'] for i in random_list]
 		self.list_items = self.function(self.params).worker()
 		self.category_name = self.params_get('category_name', None) or self.base_list_name or ''
-		self.make_directory(self.next_params)
+		self.make_directory()
 
 	def random_trakt_main(self):
 		random_list, cache_to_memory = get_persistent_content(self.database, self.action, self.is_external)
@@ -118,7 +110,7 @@ class RandomLists():
 		self.params['id_type'] = 'trakt_dict'
 		self.list_items = self.function(self.params).worker()
 		self.category_name = self.params_get('category_name', None) or self.base_list_name or ''
-		self.make_directory(self.next_params)
+		self.make_directory()
 
 	def random_special_main(self):
 		random_list, cache_to_memory = get_persistent_content(self.database, self.action, self.is_external)
@@ -139,9 +131,7 @@ class RandomLists():
 		else: self.params['list'] = [i['id'] for i in result]
 		self.list_items = self.function(self.params).worker()
 		self.category_name = list_name
-		self.next_params['name'] = self.category_name
-		self.next_params['key_id'] = info['id']
-		self.make_directory(self.next_params)
+		self.make_directory()
 
 	def random_trakt_collection_watchlist(self):
 		from apis.trakt_api import trakt_collection_lists, trakt_watchlist_lists
@@ -156,7 +146,7 @@ class RandomLists():
 		self.params['id_type'] = 'trakt_dict'
 		self.list_items = self.function(self.params).worker()
 		self.category_name = self.base_list_name or ''
-		self.make_directory(self.next_params)
+		self.make_directory()
 
 	def random_because_you_watched(self):
 		from apis.tmdb_api import tmdb_movies_recommendations, tmdb_tv_recommendations
@@ -244,8 +234,7 @@ class RandomLists():
 			content_type, self.list_items = build_personal_list(url_params)
 		self.category_name = list_name or ''
 		self.view_mode, self.content_type = 'view.%s' % content_type, content_type
-		self.next_params['name'] = self.category_name
-		self.make_directory(self.next_params)
+		self.make_directory()
 
 	def random_tmdb_lists(self):
 		from indexers.tmdb_lists import get_tmdb_list, build_tmdb_list, get_all_tmdb_lists
@@ -353,9 +342,9 @@ class RandomLists():
 
 	def make_directory(self, next_page_params={}):
 		kodi_utils.add_items(self.handle, self.list_items)
-		# if next_page_params:
-		# 	kodi_utils.add_dir(self.handle, next_page_params, 'Browse Into %s >>' \
-		# 			% (next_page_params.get('category_name', None) or next_page_params.get('name', None) or self.content_type), 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
+		if next_page_params:
+			kodi_utils.add_dir(self.handle, next_page_params, 'Browse Into %s >>' \
+					% (next_page_params.get('category_name', None) or next_page_params.get('name', None) or self.content_type), 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
 		kodi_utils.set_content(self.handle, self.content_type)
 		kodi_utils.set_category(self.handle, self.category_name)
 		kodi_utils.end_directory(self.handle, cacheToDisc=False if self.is_external else True)

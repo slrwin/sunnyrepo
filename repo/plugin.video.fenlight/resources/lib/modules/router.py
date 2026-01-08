@@ -28,7 +28,7 @@ def routing(sys):
 		from indexers import easynews
 		exec('easynews.%s(params)' % mode.split('.')[1])
 	elif 'playback.' in mode:
-		from modules.player import player_check
+		from modules.kodi_utils import player_check
 		player_check(mode, params)
 	elif 'choice' in mode:
 		from indexers import dialogs

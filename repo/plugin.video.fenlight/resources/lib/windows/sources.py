@@ -3,8 +3,9 @@ import json
 from windows.base_window import BaseDialog
 from caches.settings_cache import set_setting
 from modules.debrid import debrid_for_ext_cache_check
+from modules.utils import TaskPool
 from modules.source_utils import source_filters
-from modules.settings import provider_sort_ranks, avoid_episode_spoilers
+from modules.settings import provider_sort_ranks, avoid_episode_spoilers, max_threads
 from modules.kodi_utils import get_icon, kodi_dialog, hide_busy_dialog, addon_fanart, select_dialog, ok_dialog, notification
 # from modules.kodi_utils import logger
 
@@ -135,54 +136,62 @@ class SourcesResults(BaseDialog):
 		self.set_properties()
 
 	def make_items(self, filtered_list=None):
-		def builder(results):
-			for count, item in enumerate(results, 1):
-				try:
-					get = item.get
-					listitem = self.make_listitem()
-					set_properties = listitem.setProperties
-					scrape_provider, source, quality, name = get('scrape_provider'), get('source'), get('quality', 'SD'), get('display_name')
-					basic_quality, quality_icon = self.get_quality_and_path(quality.lower())
-					pack = get('package', 'false') in ('true', 'show', 'season')
-					extraInfo = get('extraInfo', '')
-					extraInfo = extraInfo.rstrip('| ')
-					if pack: extraInfo = '[B]%s PACK[/B] | %s' % (get('package'), extraInfo)
-					if self.episode_group_label: extraInfo = '%s | %s' % (self.episode_group_label, extraInfo)
-					if not extraInfo: extraInfo = 'N/A'
-					if scrape_provider == 'external':
-						source_site = get('provider').upper()
-						provider = get('debrid', source_site).replace('.me', '').upper()
-						provider_lower = provider.lower()
-						provider_icon = self.get_provider_and_path(provider_lower)[1]
-						if 'Uncached' in item['cache_provider']:
-							if 'seeders' in item: set_properties({'source_type': 'UNCACHED (%d SEEDERS)' % get('seeders', 0)})
-							else: set_properties({'source_type': 'UNCACHED'})
-							set_properties({'highlight': 'FF7C7C7C'})
-						else:
-							if provider in ('REAL-DEBRID', 'ALLDEBRID'):
-								if self.external_cache_check: cache_flag = '[B]CACHED[/B]'
-								else: cache_flag = 'UNCHECKED'
-							else: cache_flag = '[B]CACHED[/B]'
-							if highlight_type == 0: key = provider_lower
-							else: key = basic_quality
-							set_properties({'highlight': self.info_highlights_dict[key]})
-							if pack: set_properties({'source_type': '%s [B]PACK[/B]' % cache_flag})
-							else: set_properties({'source_type': '%s' % cache_flag})
-						set_properties({'provider': provider})
+		def builder(count, item):
+			try:
+				get = item.get
+				listitem = self.make_listitem()
+				set_properties = listitem.setProperties
+				scrape_provider, source, quality, name = get('scrape_provider'), get('source'), get('quality', 'SD'), get('display_name')
+				basic_quality, quality_icon = self.get_quality_and_path(quality.lower())
+				pack = get('package', 'false') in ('true', 'show', 'season')
+				extraInfo = get('extraInfo', '')
+				extraInfo = extraInfo.rstrip('| ')
+				if pack: extraInfo = '[B]%s PACK[/B] | %s' % (get('package'), extraInfo)
+				if self.episode_group_label: extraInfo = '%s | %s' % (self.episode_group_label, extraInfo)
+				if not extraInfo: extraInfo = 'N/A'
+				if scrape_provider == 'external':
+					source_site = get('provider').upper()
+					provider = get('debrid', source_site).replace('.me', '').upper()
+					provider_lower = provider.lower()
+					provider_icon = self.get_provider_and_path(provider_lower)[1]
+					if 'Uncached' in item['cache_provider']:
+						if 'seeders' in item: set_properties({'source_type': 'UNCACHED (%d SEEDERS)' % get('seeders', 0)})
+						else: set_properties({'source_type': 'UNCACHED'})
+						set_properties({'highlight': 'FF7C7C7C'})
 					else:
-						source_site = source.upper()
-						provider, provider_icon = self.get_provider_and_path(source.lower())
-						if highlight_type == 0: key = provider
+						if provider in ('REAL-DEBRID', 'ALLDEBRID'):
+							if self.external_cache_check: cache_flag = '[B]CACHED[/B]'
+							else: cache_flag = 'UNCHECKED'
+						else: cache_flag = '[B]CACHED[/B]'
+						if highlight_type == 0: key = provider_lower
 						else: key = basic_quality
-						set_properties({'highlight': self.info_highlights_dict[key], 'source_type': 'DIRECT', 'provider': provider.upper()})
-					set_properties({'name': name.upper(), 'source_site': source_site, 'provider_icon': provider_icon, 'quality_icon': quality_icon, 'count': '%02d.' % count,
-							'size_label': get('size_label', 'N/A'), 'extraInfo': extraInfo, 'quality': quality.upper(), 'hash': get('hash', 'N/A'), 'source': json.dumps(item)})	
-					yield listitem
-				except: pass
+						set_properties({'highlight': self.info_highlights_dict[key]})
+						if pack: set_properties({'source_type': '%s [B]PACK[/B]' % cache_flag})
+						else: set_properties({'source_type': '%s' % cache_flag})
+					set_properties({'provider': provider})
+				else:
+					source_site = source.upper()
+					provider, provider_icon = self.get_provider_and_path(source.lower())
+					if highlight_type == 0: key = provider
+					else: key = basic_quality
+					set_properties({'highlight': self.info_highlights_dict[key], 'source_type': 'DIRECT', 'provider': provider.upper()})
+				set_properties({'name': name.upper(), 'source_site': source_site, 'provider_icon': provider_icon, 'quality_icon': quality_icon, 'count': '%02d.' % count,
+						'size_label': get('size_label', 'N/A'), 'extraInfo': extraInfo, 'quality': quality.upper(), 'hash': get('hash', 'N/A'), 'source': json.dumps(item)})	
+				item_list.append((listitem, count))
+			except: pass
 		try:
+			item_list = []
 			highlight_type = self.info_highlights_dict['highlight_type']
-			if filtered_list: return list(builder(filtered_list))
-			self.item_list = list(builder(self.results))
+			if filtered_list:
+				threads = TaskPool().tasks_enumerate(builder, filtered_list, min(len(filtered_list), max_threads()))
+				[i.join() for i in threads]
+				item_list.sort(key=lambda k: k[1])
+				item_list = [i[0] for i in item_list]
+				return item_list
+			threads = TaskPool().tasks_enumerate(builder, self.results, min(len(self.results), max_threads()))
+			[i.join() for i in threads]
+			item_list.sort(key=lambda k: k[1])
+			self.item_list = [i[0] for i in item_list]
 			if self.prescrape:
 				prescrape_listitem = self.make_listitem()
 				prescrape_listitem.setProperty('perform_full_search', 'true')
@@ -191,11 +200,10 @@ class SourcesResults(BaseDialog):
 		except: pass
 
 	def make_filter_items(self):
-		def builder(data):
-			for item in data:
-				listitem = self.make_listitem()
-				listitem.setProperties({'label': item[0], 'filter_type': item[1], 'filter_value': item[2]})
-				yield listitem
+		def builder(count, item):
+			listitem = self.make_listitem()
+			listitem.setProperties({'label': item[0], 'filter_type': item[1], 'filter_value': item[2]})
+			self.filter_list.append((listitem, count))
 		duplicates = set()
 		qualities = [i.getProperty('quality') for i in self.item_list \
 							if not (i.getProperty('quality') in duplicates or duplicates.add(i.getProperty('quality'))) \
@@ -223,7 +231,11 @@ class SourcesResults(BaseDialog):
 		data.extend(qualities)
 		data.extend(providers)
 		data.extend([('Filter by [B]Title[/B]...', 'special', 'title'), ('Filter by [B]Info[/B]...', 'special', 'extraInfo')])
-		self.filter_list = list(builder(data))
+		self.filter_list = []
+		threads = TaskPool().tasks_enumerate(builder, data, min(len(data), max_threads()))
+		[i.join() for i in threads]
+		self.filter_list.sort(key=lambda k: k[1])
+		self.filter_list = [i[0] for i in self.filter_list]
 
 	def set_properties(self):
 		self.setProperty('window_format', self.window_format)

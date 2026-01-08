@@ -40,7 +40,8 @@ def build_episode_list(params):
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'meta': tmdb_id, 'season': season,
 												'episode': episode, 'episode_id': episode_id})
-				play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'episode_id': episode_id})
+				play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
+										'episode_id': episode_id, playback_key: playback_key})
 				cm_append(['extras', ('[B]Extras[/B]', 'RunPlugin(%s)' % extras_params)])
 				cm_append(['options', ('[B]Options[/B]', 'RunPlugin(%s)' % options_params)])
 				cm_append(['playback_options', ('[B]Playback Options[/B]', 'RunPlugin(%s)' % playback_options_params)])
@@ -98,7 +99,8 @@ def build_episode_list(params):
 	cm_sort_order = settings.cm_sort_order()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
-	play_mode = 'playback.%s' % settings.playback_key()
+	playback_key = settings.playback_key()
+	play_mode = 'playback.%s' % playback_key
 	watched_title = 'Trakt' if watched_indicators == 1 else 'FENLAM'
 	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), settings.tmdb_api_key(), settings.mpaa_region(), current_date)
 	meta_get = meta.get
@@ -230,7 +232,8 @@ def build_single_episode(list_type, params={}):
 				else: display_premiered = 'UNKNOWN'
 				display = '[%s] %s%s%s' % (display_premiered, title_str, seas_ep, ep_name)
 			else: display = '%s%s%s' % (title_str, seas_ep, ep_name)
-			play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'episode_id': episode_id})
+			play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
+									'episode_id': episode_id, playback_key: playback_key})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 			playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'meta': tmdb_id, 'season': season,
@@ -312,7 +315,8 @@ def build_single_episode(list_type, params={}):
 	cm_sort_order, ignore_articles = settings.cm_sort_order(), settings.ignore_articles()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
-	play_mode = 'playback.%s' % settings.playback_key()
+	playback_key = settings.playback_key()
+	play_mode = 'playback.%s' % playback_key
 	watched_db = ws.get_database(watched_indicators)
 	watched_title = 'Trakt' if watched_indicators == 1 else 'FENLAM'
 	if list_type == 'episode.next':

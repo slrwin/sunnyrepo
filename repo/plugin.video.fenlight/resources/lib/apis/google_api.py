@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from caches.settings_cache import get_setting
 from modules.utils import extract_json_object
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 # GOOGLE_MODELS = ('gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemma-3-27b-it', 'gemma-3-12b-it', 'gemma-3-1b-it', 'gemma-3-4b-it', 'gemini-3-flash-preview')
 

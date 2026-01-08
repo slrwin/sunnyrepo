@@ -402,6 +402,23 @@ def show_text(heading, text=None, file=None, font_size='small', kodi_log=False):
 def notification(line1, time=5000, icon=None):
 	kodi_dialog().notification('Fen Light', line1, icon or addon_icon(), time)
 
+def player_check(mode, params):
+	from modules.settings import playback_key
+	if mode == 'playback.%s' % playback_key():
+		from modules.sources import Sources
+		Sources().playback_prep(params)
+	elif mode == 'playback.video':
+		from modules.player import FenLightPlayer
+		FenLightPlayer().run(params.get('url', None), params.get('obj', None))
+	else: ok_dialog('External Playback Detected', 'Playback through external addons is not supported')
+
+def external_playback_check(params):
+	from modules.settings import playback_key
+	if not playback_key() in params:
+		ok_dialog('External Playback Detected', 'Playback through external addons is not supported')
+		return False
+	return True
+
 def timeIt(func):
 	# Thanks to 123Venom
 	import time
