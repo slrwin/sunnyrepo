@@ -200,7 +200,7 @@
 	    <fanart>fanart.png</fanart>
     </assets>
   </extension>
-</addon><addon id="service.subtitles.a4ksubtitles" name="a4kSubtitles" version="3.21.4" provider-name="Unknown">
+</addon><addon id="service.subtitles.a4ksubtitles" name="a4kSubtitles" version="3.22.0" provider-name="Unknown">
     <requires>
       <import addon="script.module.requests" />
       <import addon="vfs.libarchive" optional="true" />
@@ -225,6 +225,12 @@ Supports: OpenSubtitles, BSPlayer, Podnadpisi.NET, SubDL, Addic7ed
             <screenshot>screenshot-03.png</screenshot>
         </assets>
     <news>
+[v3.22.0]:
+  * Fix Podnadpisi service returning incorrect language codes.
+
+[v3.21.5]:
+  * SubSource: Fix language handling so all regional variants are detected instead of only one.
+
 [v3.21.4]:
   * SubSource: Fix foreign language handling in the new API.
   * Metainfo: Fix IMDb release year to correctly pull the first release date for TV shows.
