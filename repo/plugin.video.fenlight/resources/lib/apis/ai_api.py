@@ -14,16 +14,17 @@ from modules.kodi_utils import logger
 
 def ai_similar(media_info, dummy=None):
 	def _fetch_similar(dummy):
-		try:
-			data = ai_similar_call(media_type, tmdb_id, meta, limit)
-			data = data.get('recommendations') or data.get('recs') or []
-			if not isinstance(data, list) or not data: return []
-			recommendations = data[:limit]
-			threads = TaskPool().tasks_enumerate(_process_results, recommendations, min(len(recommendations), max_threads()))
-			[i.join() for i in threads]
-			recommendations_list.sort(key=lambda k: k['order'])
-			return {'results': recommendations_list, 'page': 1, 'total_pages': 1}
-		except: return []
+		# try:
+		data = ai_similar_call(media_type, tmdb_id, meta, limit)
+		logger('data', data)
+		data = data.get('recommendations') or data.get('recs') or []
+		if not isinstance(data, list) or not data: return []
+		recommendations = data[:limit]
+		threads = TaskPool().tasks_enumerate(_process_results, recommendations, min(len(recommendations), max_threads()))
+		[i.join() for i in threads]
+		recommendations_list.sort(key=lambda k: k['order'])
+		return {'results': recommendations_list, 'page': 1, 'total_pages': 1}
+		# except: return []
 	def _process_results(count, item):
 		title = item['title'].strip()
 		if not title: return
@@ -97,6 +98,7 @@ def ai_similar_call(media_type, tmdb_id, meta, limit, timeout=30):
 	try: model_info = next(i.model_info(model_id, media_type, meta, limit) for i in [google_api, groq_api] if i.model_present(model_id))
 	except: return {}
 	response = requests.post(model_info['similar']['url'], headers=model_info['similar']['headers'], json=model_info['similar']['payload'], timeout=timeout)
+	logger('response', response)
 	status_code = response.status_code
 	logger('ai_similar_call: %s' % model_id, status_code)
 	headers = response.headers
@@ -107,5 +109,6 @@ def ai_similar_call(media_type, tmdb_id, meta, limit, timeout=30):
 			return ai_similar_call(media_type, tmdb_id, meta, limit, timeout)
 		return {}
 	data = response.json()
+	logger('data', data)
 	result = model_info['similar']['parse'](data)
 	return result

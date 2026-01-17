@@ -35,24 +35,40 @@ def language_invoker_choice(params):
 
 def addon_icon_choice(params):
 	import os
+	import requests
+	import shutil
+	import urllib.request
 	from xml.dom.minidom import parse as mdParse
+	large_image_url = 'https://raw.githubusercontent.com/FenlightAnonyMouse/FenlightAnonyMouse.github.io/main/packages/addon_icons/%s'
+	small_image_url = 'https://raw.githubusercontent.com/FenlightAnonyMouse/FenlightAnonyMouse.github.io/main/packages/addon_icons/minis/%s'
+	set_icon = params.get('set_icon')
+	if set_icon: new_name = set_icon
+	else:
+		results = requests.get('https://api.github.com/repos/%s/%s/contents/packages/addon_icons' % (get_setting('update.username'), get_setting('update.location')))
+		if results.status_code != 200: return kodi_utils.ok_dialog(heading='Fen Light Icon Images', text='Error Fetching Icon Images')
+		results = results.json()
+		all_icons = [{'line1': i['name'], 'icon': large_image_url % i['name']} for i in results if i['type'] == 'file']
+		if not all_icons: kodi_utils.ok_dialog(heading='Fen Light Icon Images', text='Error Fetching Icon Images')
+		all_icons.sort(key=lambda k: k['line1'])
+		kwargs = {'items': json.dumps(all_icons), 'heading': 'Choose New Icon Image'}
+		new_icon = kodi_utils.select_dialog(all_icons, **kwargs)
+		if new_icon == None: return
+		if not kodi_utils.confirm_dialog(text='Set New Icon?'): return
+		new_name = new_icon['line1']
+	large_image_folder = os.path.join(kodi_utils.addon_path(), 'resources', 'media', 'addon_icons')
+	small_image_folder = os.path.join(large_image_folder, 'minis')
+	for item in [(large_image_folder, large_image_url), (small_image_folder, small_image_url)]:
+		urllib.request.urlretrieve(item[1] % new_name, kodi_utils.translate_path(os.path.join(item[0], new_name)))
+	new_icon_path = 'resources/media/addon_icons/%s' % new_name
 	addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.fenlight/addon.xml')
 	root = mdParse(addon_xml)
 	icon_instance = root.getElementsByTagName('icon')[0].firstChild
-	icons_path = 'special://home/addons/plugin.video.fenlight/resources/media/addon_icons'
-	all_icons = kodi_utils.list_dirs(kodi_utils.translate_path(icons_path))[1]
-	all_icons.sort()
-	list_items = [{'line1': i, 'icon': kodi_utils.translate_path(os.path.join(icons_path, i))} for i in all_icons]
-	kwargs = {'items': json.dumps(list_items), 'heading': 'Choose New Icon Image'}
-	new_icon = kodi_utils.select_dialog(all_icons, **kwargs)
-	if new_icon == None: return
-	new_icon_path = 'resources/media/addon_icons/%s' % new_icon
-	if not kodi_utils.confirm_dialog(text='Set New Icon?'): return
 	icon_instance.data = new_icon_path
 	new_xml = str(root.toxml()).replace('<?xml version="1.0" ?>', '')
 	with open(addon_xml, 'w') as f: f.write(new_xml)
 	set_setting('addon_icon_choice', new_icon_path)
-	set_setting('addon_icon_choice_name', new_icon)
+	set_setting('addon_icon_choice_name', new_name)
+	if set_icon: return
 	kodi_utils.execute_builtin('ActivateWindow(Home)', True)
 	kodi_utils.update_local_addons()
 	kodi_utils.disable_enable_addon()
@@ -550,7 +566,7 @@ def playback_choice(params):
 		if not episode_details:
 			kodi_utils.notification('No matching episode')
 			return playback_choice(params)
-		play_params = {'mode': play_command, 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false',
+		play_params = {'mode': play_mode, 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false',
 		'custom_season': episode_details['season'], 'custom_episode': episode_details['episode']}
 	elif choice == 'scrape_with_aliases':
 		if len(aliases) == 1: custom_title = aliases[0]
@@ -561,14 +577,14 @@ def playback_choice(params):
 			if custom_title == None: return kodi_utils.notification('Cancelled', 2500)
 		custom_title = kodi_utils.kodi_dialog().input('Title', defaultt=custom_title)
 		if not custom_title: return kodi_utils.notification('Cancelled', 2500)
-		if media_type in ('movie', 'movies'): play_params = {'mode': play_command, 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'],
+		if media_type in ('movie', 'movies'): play_params = {'mode': play_mode, 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'],
 						'custom_title': custom_title, 'prescrape': 'false'}
-		else: play_params = {'mode': play_command, 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode,
+		else: play_params = {'mode': play_mode, 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode,
 							'custom_title': custom_title, 'prescrape': 'false'}
 	elif choice == 'scrape_with_custom_values':
 		default_title, default_year = meta['title'], str(meta['year'])
-		if media_type in ('movie', 'movies'): play_params = {'mode': play_command, 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'prescrape': 'false'}
-		else: play_params = {'mode': play_command, 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false'}
+		if media_type in ('movie', 'movies'): play_params = {'mode': play_mode, 'media_type': 'movie', 'tmdb_id': meta['tmdb_id'], 'prescrape': 'false'}
+		else: play_params = {'mode': play_mode, 'media_type': 'episode', 'tmdb_id': meta['tmdb_id'], 'season': season, 'episode': episode, 'prescrape': 'false'}
 		if aliases:
 			if len(aliases) == 1: alias_title = aliases[0]
 			list_items = [{'line1': i, 'icon': poster} for i in aliases]

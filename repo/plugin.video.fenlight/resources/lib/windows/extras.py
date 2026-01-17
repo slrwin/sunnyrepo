@@ -142,10 +142,9 @@ class Extras(BaseDialog):
 			for item in cast:
 				try:
 					listitem = self.make_listitem()
-					thumbnail = item['thumbnail'] or icon
 					listitem.setProperty('name', item['name'])
 					listitem.setProperty('role', item['role'])
-					listitem.setProperty('thumbnail', thumbnail)
+					listitem.setProperty('thumbnail', item['thumbnail'] or icon)
 					yield listitem
 				except: pass
 		try:

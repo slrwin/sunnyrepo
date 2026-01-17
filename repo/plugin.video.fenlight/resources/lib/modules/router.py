@@ -2,7 +2,7 @@
 from xbmc import getInfoLabel
 from urllib.parse import parse_qsl
 from modules.kodi_utils import external, get_property
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 def sys_exit_check():
 	if get_property('fenlight.reuse_language_invoker') == 'false': return False
@@ -12,6 +12,7 @@ def routing(sys):
 	params = dict(parse_qsl(sys.argv[2][1:], keep_blank_values=True))
 	_get = params.get
 	mode = _get('mode', 'navigator.main')
+	logger(mode, params)
 	if 'navigator.' in mode:
 		from indexers.navigator import Navigator
 		exec('Navigator(params).%s()' % mode.split('.')[1])
@@ -285,7 +286,7 @@ def routing(sys):
 		from modules.kodi_utils import kodi_refresh
 		kodi_refresh()
 	elif mode == 'refresh_widgets':
-		from indexers.random_lists import refresh_widgets
+		from modules.kodi_utils import refresh_widgets
 		refresh_widgets()
 	elif mode == 'person_data_dialog':
 		from indexers.people import person_data_dialog

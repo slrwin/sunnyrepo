@@ -283,6 +283,13 @@ def reload_skin():
 def kodi_refresh():
 	execute_builtin('UpdateLibrary(video,special://skin/foo)')
 
+def refresh_widgets():
+	from caches.settings_cache import get_setting
+	from caches.random_widgets_cache import RandomWidgets
+	RandomWidgets().delete_like('random_list.%')
+	kodi_refresh()
+	if get_setting('fenlight.widget_refresh_notification', 'true') == 'true': notification('Widgets Refreshed', 2500)
+
 def run_plugin(params, block=False):
 	if isinstance(params, dict): params = build_url(params)
 	return execute_builtin('RunPlugin(%s)' % params, block)

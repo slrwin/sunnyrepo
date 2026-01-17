@@ -511,7 +511,7 @@ def default_settings():
 #======================================HIDDEN=============================================#
 #=========================================================================================#
 {'setting_id': 'reuse_language_invoker', 'setting_type': 'string', 'setting_default': 'true'},
-{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'fenlightam_icon_01'},
+{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'fenlightam_icon_01.png'},
 {'setting_id': 'widget_refresh_timer_name', 'setting_type': 'string', 'setting_default': 'Off'},
 {'setting_id': 'mpaa_region_display_name', 'setting_type': 'string', 'setting_default': 'United States'},
 {'setting_id': 'lists_cache_duraton_display_name', 'setting_type': 'string', 'setting_default': '1 Day'},

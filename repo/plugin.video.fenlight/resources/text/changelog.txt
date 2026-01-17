@@ -1,6 +1,10 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.68[/B][/COLOR]
+- A couple of quick fixes.
+
+
 [COLOR dodgerblue][B]Version 2.1.67[/B][/COLOR]
 - Fixed random list dynamic titles.
 - Other changes/fixes.

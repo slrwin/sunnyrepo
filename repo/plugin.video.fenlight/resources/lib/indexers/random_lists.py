@@ -2,7 +2,6 @@
 import sys
 import json
 import random
-from caches.settings_cache import get_setting
 from caches.random_widgets_cache import RandomWidgets
 from indexers.movies import Movies
 from indexers.tvshows import TVShows
@@ -11,11 +10,6 @@ from modules.settings import paginate, page_limit
 from modules import kodi_utils
 from modules.utils import manual_function_import, make_thread_list
 # logger = kodi_utils.logger
-
-def refresh_widgets():
-	RandomWidgets().delete_like('random_list.%')
-	kodi_utils.kodi_refresh()
-	if get_setting('fenlight.widget_refresh_notification', 'true') == 'true': kodi_utils.notification('Widgets Refreshed', 2500)
 
 def get_persistent_content(database, key, is_external):
 	results, refresh_cache, key = None, True, 'random_list.%s' % key

@@ -127,7 +127,6 @@ class WidgetRefresher:
 	def run(self):
 		kodi_utils.logger('Fen Light', 'WidgetRefresher Service Starting')
 		from time import time
-		from indexers.random_lists import refresh_widgets
 		monitor, player = kodi_utils.kodi_monitor(), kodi_utils.kodi_player()
 		wait_for_abort, self.is_playing = monitor.waitForAbort, player.isPlayingVideo
 		wait_for_abort(10)
@@ -142,7 +141,7 @@ class WidgetRefresher:
 				if self.condition_check(): continue
 				if self.next_refresh < time():
 					kodi_utils.logger('Fen Light', 'WidgetRefresher Service - Widgets Refreshed')
-					refresh_widgets()
+					kodi_utils.refresh_widgets()
 					self.set_next_refresh(time())
 			except: pass
 		try: del monitor
@@ -183,7 +182,7 @@ class AddonXMLCheck:
 		from xml.dom.minidom import parse as mdParse
 		self.addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.fenlight/addon.xml')
 		self.root = mdParse(self.addon_xml)
-		self.change_file = False
+		self.change_list = []
 		self.check_property('reuse_language_invoker', 'reuselanguageinvoker')
 		self.check_property('addon_icon_choice', 'icon')
 		self.change_xml_file()
@@ -196,17 +195,22 @@ class AddonXMLCheck:
 		current_property = tag_instance.data
 		if current_property != current_addon_setting:
 			tag_instance.data = current_addon_setting
-			self.change_file = True
+			self.change_list.append(tag_name)
 
 	def change_xml_file(self):
-		if not self.change_file: return
-		kodi_utils.notification('Refreshing Addon XML After Update. Restarting Addons')
+		if not self.change_list: return
+		if 'icon' in self.change_list: self.reassign_addon_icon()
+		kodi_utils.notification('Refreshing Addon XML. Restarting Addons')
 		new_xml = str(self.root.toxml()).replace('<?xml version="1.0" ?>', '')
 		with open(self.addon_xml, 'w') as f: f.write(new_xml)
 		kodi_utils.logger('Fen Light', 'AddonXMLCheck Service - Change Detected. Restarting Addons')
 		kodi_utils.execute_builtin('ActivateWindow(Home)', True)
 		kodi_utils.update_local_addons()
 		kodi_utils.disable_enable_addon()
+
+	def reassign_addon_icon(self):
+		from indexers.dialogs import addon_icon_choice
+		addon_icon_choice({'set_icon': get_setting('addon_icon_choice_name', 'fenlight_icon_01.png')})
 
 class PlaybackKeymaker:
 	def run(self):

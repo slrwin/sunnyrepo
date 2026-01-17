@@ -169,7 +169,7 @@ def tmdb_movies_popular(page_no):
 	api_key = tmdb_api_key()
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	string = 'tmdb_movies_popular_%s' % page_no
-	url = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&vote_count.gte=20&language=en-US&region=US&with_original_language=en&page=%s' % (api_key, page_no)
+	url = 'https://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&with_original_language=en&page=%s' % (api_key, page_no)
 	return lists_cache_object(get_data, string, url)
 
 def tmdb_movies_popular_today(page_no):
@@ -311,7 +311,7 @@ def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	string = 'tmdb_tv_popular_%s' % page_no
-	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&vote_count.gte=20&sort_by=popularity.desc&language=en-US&region=US&with_original_language=en' \
+	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&sort_by=popularity.desc&language=en-US&region=US&with_original_language=en' \
 	'&without_keywords=210024&page=%s' % (api_key, page_no)
 	return lists_cache_object(get_data, string, url)
 
@@ -320,7 +320,7 @@ def tmdb_tv_popular_today(page_no):
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	current_date, previous_date = get_dates(180, reverse=True)
 	string = 'tmdb_tv_popular_today_%s' % page_no
-	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&vote_count.gte=10&sort_by=popularity.desc&language=en-US&region=US&with_original_language=en&without_keywords=210024' \
+	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&sort_by=popularity.desc&language=en-US&region=US&with_original_language=en&without_keywords=210024' \
 	'&include_null_first_air_dates=false&first_air_date.gte=%s' \
 	'&first_air_date.lte=%s&page=%s' % (api_key, previous_date, current_date, page_no)
 	return lists_cache_object(get_data, string, url)
@@ -330,7 +330,7 @@ def tmdb_tv_premieres(page_no):
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	current_date, previous_date = get_dates(31, reverse=True)
 	string = 'tmdb_tv_premieres_%s' % page_no
-	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&vote_count.gte=10&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false' \
+	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&language=en-US&region=US&with_original_language=en&include_null_first_air_dates=false' \
 	'&first_air_date.gte=%s&first_air_date.lte=%s&without_keywords=210024&page=%s' % (api_key, previous_date, current_date, page_no)
 	return lists_cache_object(get_data, string, url)
 
@@ -339,7 +339,7 @@ def tmdb_tv_airing_today(page_no):
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	expiration = min(lists_cache_duraton(), 24)
 	string = 'tmdb_tv_airing_today_%s' % page_no
-	url = 'https://api.themoviedb.org/3/tv/airing_today?api_key=%s&vote_count.gte=20&language=en-US&region=US&with_original_language=en&without_keywords=210024&page=%s' \
+	url = 'https://api.themoviedb.org/3/tv/airing_today?api_key=%s&language=en-US&region=US&with_original_language=en&without_keywords=210024&page=%s' \
 	% (api_key, page_no)
 	return lists_cache_object(get_data, string, url, expiration=expiration)
 
@@ -347,7 +347,7 @@ def tmdb_tv_on_the_air(page_no):
 	api_key = tmdb_api_key()
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	string = 'tmdb_tv_on_the_air_%s' % page_no
-	url = 'https://api.themoviedb.org/3/tv/on_the_air?api_key=%s&vote_count.gte=20&language=en-US&region=US&with_original_language=en&without_keywords=210024&page=%s' \
+	url = 'https://api.themoviedb.org/3/tv/on_the_air?api_key=%s&language=en-US&region=US&with_original_language=en&without_keywords=210024&page=%s' \
 	% (api_key, page_no)
 	return lists_cache_object(get_data, string, url)
 
