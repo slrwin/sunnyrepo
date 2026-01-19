@@ -268,11 +268,12 @@ class MenuEditor:
 		return dict(parse_qsl(path.replace('plugin://plugin.video.fenlight/?','')))
 
 	def _get_icon_var(self, icon_path):
+		import os
 		try:
 			all_icons = kodi_utils.get_all_icon_vars()
 			icon_value = unquote(icon_path)
-			icon_value = icon_value.replace('image://', '').replace('.png/', '').replace('.png', '')
-			icon_value = icon_value.split(kodi_utils.translate_path('special://home/addons/plugin.video.fenlight/resources/media/icons/'))[1]
+			icon_value = path = os.path.basename(os.path.normpath(icon_value))
+			icon_value = icon_value.replace('.png/', '').replace('.png', '')
 			icon_var = [i for i in all_icons if i == icon_value][0]
 		except: icon_var = 'folder'
 		return icon_var

@@ -2,7 +2,7 @@
 import json
 from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
 from modules import kodi_utils, settings
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 def list_display_order_choice(params):
 	from modules.meta_lists import list_display_choices

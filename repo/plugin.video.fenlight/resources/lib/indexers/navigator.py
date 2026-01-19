@@ -354,7 +354,7 @@ class Navigator:
 			else:
 				from modules.meta_lists import anime_genres as function
 				action = 'tmdb_anime_genres'
-		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'genres')#, i['icon'])
+		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], i['icon'])
 		self.end_directory()
 
 	def search_history(self):
@@ -512,14 +512,19 @@ class Navigator:
 		from modules.episode_tools import single_last_watched_episodes
 		recommend_type = s.recommend_service()
 		menu_type = self.params_get('menu_type')
-		if menu_type == 'movie':
-			mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations' if recommend_type == 0 else 'imdb_more_like_this', 'movie'
-		else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations' if recommend_type == 0 else 'imdb_more_like_this', 'episode'
+		action_dict = {'movie': {'mode': 'build_movie_list', 'action': {0: 'tmdb_movies_recommendations', 1: 'imdb_more_like_this', 2: 'ai_similar'}, 'media_type': 'movie'},
+						'tvshow': {'mode': 'build_tvshow_list', 'action': {0: 'tmdb_tv_recommendations', 1: 'imdb_more_like_this', 2: 'ai_similar'}, 'media_type': 'episode'}}
+		action_params = action_dict[menu_type]
+		mode, action, media_type = action_params['mode'], action_params['action'][recommend_type], action_params['media_type']
 		recently_watched = get_recently_watched(media_type)
 		if media_type == 'episode': recently_watched = single_last_watched_episodes(recently_watched)
 		for item in recently_watched:
-			if media_type == 'movie': name, tmdb_id = item['title'], item['media_id']
-			else: name, tmdb_id = '%s - %sx%s' % (item['title'], str(item['season']), str(item['episode'])), item['media_ids']['tmdb']
+			if media_type == 'movie':
+				name = item['title']
+				tmdb_id = item['media_id'] if recommend_type in (0, 1) else 'movie|%s' % item['media_id']
+			else:
+				name = '%s - %sx%s' % (item['title'], str(item['season']), str(item['episode']))
+				tmdb_id = item['media_ids']['tmdb'] if recommend_type in (0, 1) else 'tvshow|%s' % item['media_ids']['tmdb']
 			params = {'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Because You Watched %s' % name}
 			if recommend_type == 1: params['get_imdb'] = 'true'
 			self.add(params, name, 'because_you_watched')

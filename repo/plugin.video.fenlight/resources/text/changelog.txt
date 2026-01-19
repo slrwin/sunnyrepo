@@ -1,29 +1,30 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.69[/B][/COLOR]
+- Another All Debrid fix.
+- Re-added Genres icons. Previously hosted on imgur, but some countries were blocked so they were recently removed.
+- Added 'AI Similar' as a choice for Because You Watched content.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 2.1.68[/B][/COLOR]
 - A couple of quick fixes.
-
 
 [COLOR dodgerblue][B]Version 2.1.67[/B][/COLOR]
 - Fixed random list dynamic titles.
 - Other changes/fixes.
-
 
 [COLOR dodgerblue][B]Version 2.1.66[/B][/COLOR]
 - Fixed All Debrid again.
 - Switched to using list_id where possible for trakt lists, rather than user/slug. [COLOR darkgoldenrod]Thanks to user monpaf for the heads up and example code.[/COLOR]
 - Other changes/fixes.
 
-
 [COLOR dodgerblue][B]Version 2.1.64/65[/B][/COLOR]
 - Added block for unsupported external players.
 - Other changes/fixes.
 
-
 [COLOR dodgerblue][B]Version 2.1.63[/B][/COLOR]
 - Quick fix for Discover.
-
 
 [COLOR dodgerblue][B]Version 2.1.62[/B][/COLOR]
 - Added Google AI and Groq AI to Meta Accounts settings. Use your API keys here, and you can currently use this AI for Similar titles recommended by the AI. Found in context menu for Movies and TV Shows, and also in the Extras window. Access settings for the similars in Features->AI Generated Similar Titles.

@@ -139,7 +139,7 @@ class AllDebridAPI:
 		try:
 			extensions = supported_video_extensions()
 			correct_files = []
-			transfer_id, links = self.parse_magnet(magnet_url)
+			transfer_id, links = self.parse_magnet(magnet_url=magnet_url)
 			if not transfer_id: return None
 			valid_results = [i for i in links if any(i.get('n').lower().endswith(x) for x in extensions) and not i.get('l', '') == '']
 			if valid_results:
@@ -168,7 +168,7 @@ class AllDebridAPI:
 		transfer_id = None
 		try:
 			extensions = supported_video_extensions()
-			transfer_id, links = self.parse_magnet(magnet_url)
+			transfer_id, links = self.parse_magnet(magnet_url=magnet_url)
 			if not transfer_id: return None
 			end_results = [{'link': i['l'], 'filename': i['n'], 'size': i['s']} for i in links
 							if any(i.get('n').lower().endswith(x) for x in extensions) and not i.get('l', '') == '']
@@ -180,10 +180,11 @@ class AllDebridAPI:
 			except: pass
 			return None
 
-	def parse_magnet(self, magnet_url):
-		transfer_id = self.create_transfer(magnet_url)
-		if not transfer_id: return None, []
-		sleep(1000)
+	def parse_magnet(self, magnet_url=None, transfer_id=None):
+		if magnet_url:
+			transfer_id = self.create_transfer(magnet_url)
+			if not transfer_id: return None, []
+			sleep(1000)
 		transfer_info = self.list_transfer(transfer_id)
 		if transfer_info['statusCode'] != 4: return transfer_id, []
 		links = self.correct_files_list(transfer_info.get('files', []))

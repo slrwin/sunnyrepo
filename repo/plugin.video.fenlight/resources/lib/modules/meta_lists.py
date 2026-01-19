@@ -121,31 +121,31 @@ def regions():
 
 def movie_genres():
 	return [
-{'id': '28', 'name': 'Action'},      {'id': '12', 'name': 'Adventure'},  {'id': '16', 'name': 'Animation'},
-{'id': '35', 'name': 'Comedy'},      {'id': '80', 'name': 'Crime'},      {'id': '99', 'name': 'Documentary'},
-{'id': '18', 'name': 'Drama'},       {'id': '10751', 'name': 'Family'},  {'id': '14', 'name': 'Fantasy'},
-{'id': '36', 'name': 'History'},     {'id': '27', 'name': 'Horror'},     {'id': '10402', 'name': 'Music'},
-{'id': '9648', 'name': 'Mystery'},   {'id': '10749', 'name': 'Romance'}, {'id': '878', 'name': 'Science Fiction'},
-{'id': '10770', 'name': 'TV Movie'}, {'id': '53', 'name': 'Thriller'},   {'id': '10752', 'name': 'War'},
-{'id': '37', 'name': 'Western'}
+{'name': 'Action', 'id': '28', 'icon': 'genre_action'}, {'name': 'Adventure', 'id': '12', 'icon': 'genre_adventure'}, {'name': 'Animation', 'id': '16', 'icon': 'genre_animation'},
+{'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'}, {'name': 'Documentary', 'id': '99', 'icon': 'genre_documentary'},
+{'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Fantasy', 'id': '14', 'icon': 'genre_fantasy'},
+{'name': 'History', 'id': '36', 'icon': 'genre_history'}, {'name': 'Horror', 'id': '27', 'icon': 'genre_horror'}, {'name': 'Music', 'id': '10402', 'icon': 'genre_music'},
+{'name': 'Mystery', 'id': '9648', 'icon': 'genre_mystery'}, {'name': 'Romance', 'id': '10749', 'icon': 'genre_romance'},
+{'name': 'Science Fiction', 'id': '878', 'icon': 'genre_scifi'}, {'name': 'TV Movie', 'id': '10770', 'icon': 'genre_soap'}, {'name': 'Thriller', 'id': '53', 'icon': 'genre_thriller'},
+{'name': 'War', 'id': '10752', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
 def tvshow_genres():
 	return [
-{'id': '10759', 'name': 'Action & Adventure'}, {'id': '16', 'name': 'Animation'},   {'id': '35', 'name': 'Comedy'},
-{'id': '80', 'name': 'Crime'},                 {'id': '99', 'name': 'Documentary'}, {'id': '18', 'name': 'Drama'},
-{'id': '10751', 'name': 'Family'},             {'id': '10762', 'name': 'Kids'},     {'id': '9648', 'name': 'Mystery'},
-{'id': '10763', 'name': 'News'},               {'id': '10764', 'name': 'Reality'},  {'id': '10765', 'name': 'Sci-Fi & Fantasy'},
-{'id': '10766', 'name': 'Soap'},               {'id': '10767', 'name': 'Talk'},     {'id': '10768', 'name': 'War & Politics'},
-{'id': '37', 'name': 'Western'}
+{'name': 'Action & Adventure', 'id': '10759', 'icon': 'genre_action'}, {'name': 'Animation', 'id': '16', 'icon': 'genre_animation'},
+{'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'}, {'name': 'Documentary', 'id': '99', 'icon': 'genre_documentary'},
+{'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Kids', 'id': '10762', 'icon': 'genre_kids'},
+{'name': 'Mystery', 'id': '9648', 'icon': 'genre_mystery'}, {'name': 'News', 'id': '10763', 'icon': 'genre_news'}, {'name': 'Reality', 'id': '10764', 'icon': 'genre_reality'},
+{'name': 'Sci-Fi & Fantasy', 'id': '10765', 'icon': 'genre_scifi'}, {'name': 'Soap', 'id': '10766', 'icon': 'genre_soap'}, {'name': 'Talk', 'id': '10767', 'icon': 'genre_talk'},
+{'name': 'War & Politics', 'id': '10768', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
 def anime_genres():
 	return [
-{'id': '10759', 'name': 'Action & Adventure'}, {'id': '35', 'name': 'Comedy'},              {'id': '80', 'name': 'Crime'},
-{'id': '18', 'name': 'Drama'},                 {'id': '10751', 'name': 'Family'},           {'id': '10762', 'name': 'Kids'},
-{'id': '9648', 'name': 'Mystery'},             {'id': '10765', 'name': 'Sci-Fi & Fantasy'}, {'id': '10768', 'name': 'War & Politics'},
-{'id': '37', 'name': 'Western'}
+{'name': 'Action & Adventure', 'id': '10759', 'icon': 'genre_action'}, {'name': 'Comedy', 'id': '35', 'icon': 'genre_comedy'}, {'name': 'Crime', 'id': '80', 'icon': 'genre_crime'},
+{'name': 'Drama', 'id': '18', 'icon': 'genre_drama'}, {'name': 'Family', 'id': '10751', 'icon': 'genre_family'}, {'name': 'Kids', 'id': '10762', 'icon': 'genre_kids'},
+{'name': 'Mystery', 'id': '9648', 'icon': 'genre_mystery'}, {'name': 'Sci-Fi & Fantasy', 'id': '10765', 'icon': 'genre_scifi'},
+{'name': 'War & Politics', 'id': '10768', 'icon': 'genre_war'}, {'name': 'Western', 'id': '37', 'icon': 'genre_western'}
 	]
 
 def networks():

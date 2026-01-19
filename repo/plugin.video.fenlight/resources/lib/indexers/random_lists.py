@@ -145,6 +145,7 @@ class RandomLists():
 	def random_because_you_watched(self):
 		from apis.tmdb_api import tmdb_movies_recommendations, tmdb_tv_recommendations
 		from apis.imdb_api import imdb_more_like_this
+		from apis.ai_api import ai_similar
 		from modules.episode_tools import single_last_watched_episodes
 		from modules.settings import tmdb_api_key, mpaa_region, recommend_service, recommend_seed
 		from modules.metadata import movie_meta, tvshow_meta
@@ -164,13 +165,16 @@ class RandomLists():
 				if recommend_type == 0:
 					list_function = tmdb_movies_recommendations if self.menu_type == 'movie' else tmdb_tv_recommendations
 					result = list_function(seed_tmdb_id, 1)['results']
-				else:
+				elif recommend_type == 1:
 					meta_function = movie_meta if self.menu_type == 'movie' else tvshow_meta
 					result = imdb_more_like_this(meta_function('tmdb_id', seed_tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id'])
+				else:
+					key_id = 'movie|%s' % seed_tmdb_id if self.menu_type == 'movie' else 'tvshow|%s' % seed_tmdb_id
+					result = ai_similar(key_id)['results']
 				random.shuffle(result)
 				if cache_to_memory: set_persistent_content(self.database, '%s_%s' % (self.menu_type, self.action), {'name': list_name, 'result': result})
 			else: list_name, result = random_list['name'], random_list['result']
-			if recommend_type == 0: self.params['list'] = [i['id'] for i in result]
+			if recommend_type in (0, 2): self.params['list'] = [i['id'] for i in result]
 			else: self.params.update({'list': result, 'id_type': 'imdb_id'})
 			self.list_items = self.function(self.params).worker()
 			self.category_name =  list_name

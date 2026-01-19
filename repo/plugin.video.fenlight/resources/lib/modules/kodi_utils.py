@@ -91,7 +91,7 @@ def addon_fanart():
 	return get_property('fenlight.addon_fanart') or translate_path(addon_info('fanart'))
 
 def get_icon(image_name, image_folder='icons'):
-	return translate_path('special://home/addons/plugin.video.fenlight/resources/media/%s/%s.png' % (image_folder, image_name))
+	return 'https://raw.githubusercontent.com/FenlightAnonyMouse/FenlightAnonyMouse.github.io/main/packages/media/%s/%s.png' % (image_folder, image_name)
 
 def get_addon_fanart():
 	return get_property('fenlight.default_addon_fanart') or addon_fanart()
@@ -453,9 +453,15 @@ def focus_index(index):
 	except: pass
 
 def get_all_icon_vars():
-	icon_items = list_dirs(translate_path('special://home/addons/plugin.video.fenlight/resources/media/icons'))[1]
-	icon_items = [i.replace('.png', '') for i in icon_items]
-	return icon_items
+	import requests
+	from caches.main_cache import cache_object
+	def _process(dummy):
+		try:
+			results = requests.get( 'https://api.github.com/repos/FenlightAnonyMouse/FenlightAnonyMouse.github.io/contents/packages/media/icons')
+			results = [i['name'].replace('.png', '') for i in results.json()]
+			return results
+		except: return ['folder.png']
+	return cache_object(_process, 'all_icons', 'foo', False, 1)
 
 def upload_logfile(params):
 	import json

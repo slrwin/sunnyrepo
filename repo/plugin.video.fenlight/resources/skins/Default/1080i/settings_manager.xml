@@ -756,7 +756,7 @@
                           <property name="setting_label">Service used for Because You Watched</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.recommend_service_name)]</property>
-                          <property name="setting_description">Choose which service provides recommendations for the Because You Watched menus. Options are Recommended (TMDb) or More Like This (IMDb)</property>
+                          <property name="setting_description">Choose which service provides recommendations for the Because You Watched menus. Options are Recommended (TMDb), More Like This (IMDb) or AI Similar (AI)</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=recommend_service)</onclick>
                       </item>
                       <item>

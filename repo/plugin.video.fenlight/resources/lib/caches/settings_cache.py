@@ -196,7 +196,7 @@ def default_settings():
 #==================== General
 {'setting_id': 'auto_start_fenlight', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'addon_icon_choice', 'setting_type': 'string', 'setting_default': 'resources/media/addon_icons/fenlight_icon_01.png'},
-{'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': kodi_utils.addon_fanart(), 'browse_mode': '2'},
+{'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': kodi_utils.get_addon_fanart(), 'browse_mode': '2'},
 {'setting_id': 'limit_concurrent_threads', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'max_threads', 'setting_type': 'action', 'setting_default': '60', 'min_value': '10', 'max_value': '250'},
 #==================== Manage Updates
@@ -240,7 +240,8 @@ def default_settings():
 {'setting_id': 'paginate.limit_addon', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'paginate.limit_widgets', 'setting_type': 'action', 'setting_default': '20'},
 {'setting_id': 'ignore_articles', 'setting_type': 'boolean', 'setting_default': 'true'},
-{'setting_id': 'recommend_service', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recommended (TMDb)', '1': 'More Like This (IMDb)'}},
+{'setting_id': 'recommend_service', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Recommended (TMDb)', '1': 'More Like This (IMDb)',
+'2': 'AI Similar (AI)'}},
 {'setting_id': 'recommend_seed', 'setting_type': 'action', 'setting_default': '5', 'settings_options': {'1': 'Last Watched Only', '2': 'Last 2 Watched',
 '3': 'Last 3 Watched', '4': 'Last 4 Watched', '5': 'Last 5 Watched'}},
 {'setting_id': 'mpaa_region', 'setting_type': 'string', 'setting_default': 'US'},

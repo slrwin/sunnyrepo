@@ -12,7 +12,6 @@ def routing(sys):
 	params = dict(parse_qsl(sys.argv[2][1:], keep_blank_values=True))
 	_get = params.get
 	mode = _get('mode', 'navigator.main')
-	logger(mode, params)
 	if 'navigator.' in mode:
 		from indexers.navigator import Navigator
 		exec('Navigator(params).%s()' % mode.split('.')[1])
