@@ -200,7 +200,7 @@
 	    <fanart>fanart.png</fanart>
     </assets>
   </extension>
-</addon><addon id="service.subtitles.a4ksubtitles" name="a4kSubtitles" version="3.22.0" provider-name="Unknown">
+</addon><addon id="service.subtitles.a4ksubtitles" name="a4kSubtitles" version="3.23.0" provider-name="Unknown">
     <requires>
       <import addon="script.module.requests" />
       <import addon="vfs.libarchive" optional="true" />
@@ -225,6 +225,10 @@ Supports: OpenSubtitles, BSPlayer, Podnadpisi.NET, SubDL, Addic7ed
             <screenshot>screenshot-03.png</screenshot>
         </assets>
     <news>
+[v3.23.0]:
+  * Fix Podnadpisi download handling.
+  * Reduce logs verbosity without debug enabled.
+
 [v3.22.0]:
   * Fix Podnadpisi service returning incorrect language codes.
 
