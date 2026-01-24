@@ -53,10 +53,15 @@ class OnUpdateChanges:
 		except: pass
 		return kodi_utils.logger('Fen Light', 'OnUpdateChanges Service Finished')
 
-	def context_menu_update_03(self):
-		from caches.settings_cache import default_setting_values
-		set_setting('context_menu.order', default_setting_values('context_menu.order')['setting_default'])
-		set_setting('extras.enabled', default_setting_values('extras.enabled')['setting_default'])
+	def ai_similar_update_01(self):
+		# 2.1.70 Only keep for this one update
+		from caches.base_cache import clear_cache
+		clear_cache('ai_functions', silent=True)
+
+	def addon_icon_reset(self):
+		# 2.1.70 Keep for a couple of updates.
+		set_setting('addon_icon_choice', 'resources/media/addon_icons/fenlight_icon_01.png')
+		set_setting('addon_icon_choice_name', 'fenlight_icon_01.png')
 
 class CustomFonts:
 	def run(self):

@@ -228,6 +228,7 @@ class Navigator:
 		self.add({'mode': 'clear_cache', 'cache': 'main', 'isFolder': 'false'}, 'Clear Main Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'meta', 'isFolder': 'false'}, 'Clear Meta Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'list', 'isFolder': 'false'}, 'Clear Lists Cache', 'settings')
+		self.add({'mode': 'clear_cache', 'cache': 'ai_functions', 'isFolder': 'false'}, 'Clear AI Data Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'tmdb_list', 'isFolder': 'false'}, 'Clear TMDb Personal List Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'trakt', 'isFolder': 'false'}, 'Clear Trakt Cache', 'settings')
 		self.add({'mode': 'clear_cache', 'cache': 'imdb', 'isFolder': 'false'}, 'Clear IMDb Cache', 'settings')
@@ -322,14 +323,14 @@ class Navigator:
 	def networks(self):
 		menu_type = self.params_get('menu_type')
 		if menu_type == 'movie': return
-		from modules.meta_lists import networks as function
-		mode, action = 'build_tvshow_list', 'tmdb_tv_networks'
-		for i in sorted(function(), key=lambda k: k['name']):
-			self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'networks')
+		from modules.meta_lists import networks
+		for i in sorted(networks(), key=lambda k: k['name']): self.add({'mode': 'build_tvshow_list', 'action': 'tmdb_tv_networks', 'key_id': i['id'], 'name': i['name']}, i['name'],
+																		self.get_icon(i['logo'], 'network_icons'), original_image=True)
 		self.end_directory()
 
 	def providers(self):
 		menu_type = self.params_get('menu_type')
+		tmdb_img = 'https://image.tmdb.org/t/p/original/%s'
 		if menu_type == 'movie':
 			from modules.meta_lists import watch_providers_movies as function
 			mode, action = 'build_movie_list', 'tmdb_movies_providers'
@@ -338,7 +339,7 @@ class Navigator:
 			mode = 'build_tvshow_list'
 			if menu_type == 'tvshow': action = 'tmdb_tv_providers'
 			else: action = 'tmdb_anime_providers'
-		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], 'providers')
+		for i in function(): self.add({'mode': mode, 'action': action, 'key_id': i['id'], 'name': i['name']}, i['name'], tmdb_img % i['logo'], original_image=True)
 		self.end_directory()
 
 	def genres(self):

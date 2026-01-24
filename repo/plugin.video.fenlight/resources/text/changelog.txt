@@ -1,6 +1,11 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.70[/B][/COLOR]
+- Re-added TV Show Network icons. Previously hosted on imgur, but some countries were blocked so they were recently removed.
+- Some changes to AI Similar code.
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 2.1.69[/B][/COLOR]
 - Another All Debrid fix.
 - Re-added Genres icons. Previously hosted on imgur, but some countries were blocked so they were recently removed.

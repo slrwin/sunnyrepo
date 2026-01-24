@@ -512,7 +512,7 @@ def default_settings():
 #======================================HIDDEN=============================================#
 #=========================================================================================#
 {'setting_id': 'reuse_language_invoker', 'setting_type': 'string', 'setting_default': 'true'},
-{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'fenlightam_icon_01.png'},
+{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'fenlight_icon_01.png'},
 {'setting_id': 'widget_refresh_timer_name', 'setting_type': 'string', 'setting_default': 'Off'},
 {'setting_id': 'mpaa_region_display_name', 'setting_type': 'string', 'setting_default': 'United States'},
 {'setting_id': 'lists_cache_duraton_display_name', 'setting_type': 'string', 'setting_default': '1 Day'},
@@ -563,9 +563,6 @@ def default_settings():
 {'setting_id': 'extras.movie.button15', 'setting_type': 'string', 'setting_default': 'show_genres'},
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
 {'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
-{'setting_id': 'updatechecks.personal_lists_01', 'setting_type': 'string', 'setting_default': 'false'},
-{'setting_id': 'updatechecks.personal_lists_02', 'setting_type': 'string', 'setting_default': 'false'},
-{'setting_id': 'updatechecks.context_menu_update_01', 'setting_type': 'string', 'setting_default': 'false'},
-{'setting_id': 'updatechecks.context_menu_update_02', 'setting_type': 'string', 'setting_default': 'false'},
-{'setting_id': 'updatechecks.context_menu_update_03', 'setting_type': 'string', 'setting_default': 'false'}
+{'setting_id': 'updatechecks.ai_similar_update_01', 'setting_type': 'string', 'setting_default': 'false'},
+{'setting_id': 'updatechecks.addon_icon_reset', 'setting_type': 'string', 'setting_default': 'false'}
 	]

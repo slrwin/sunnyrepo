@@ -208,7 +208,7 @@ class MenuEditor:
 
 	def _icon_select(self, default_icon=''):
 		if default_icon.startswith('http') or 'plugin.video.fenlight' in default_icon: return default_icon
-		all_icons = kodi_utils.get_all_icon_vars()
+		all_icons = kodi_utils.get_all_icons()
 		if default_icon:
 			try:
 				all_icons.remove(default_icon)
@@ -270,7 +270,7 @@ class MenuEditor:
 	def _get_icon_var(self, icon_path):
 		import os
 		try:
-			all_icons = kodi_utils.get_all_icon_vars()
+			all_icons = kodi_utils.get_all_icons()
 			icon_value = unquote(icon_path)
 			icon_value = path = os.path.basename(os.path.normpath(icon_value))
 			icon_value = icon_value.replace('.png/', '').replace('.png', '')

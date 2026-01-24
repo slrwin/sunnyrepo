@@ -91,7 +91,8 @@ def addon_fanart():
 	return get_property('fenlight.addon_fanart') or translate_path(addon_info('fanart'))
 
 def get_icon(image_name, image_folder='icons'):
-	return 'https://raw.githubusercontent.com/FenlightAnonyMouse/FenlightAnonyMouse.github.io/main/packages/media/%s/%s.png' % (image_folder, image_name)
+	return 'https://raw.githubusercontent.com/%s/%s/main/packages/media/%s/%s.png' \
+			% (get_property('fenlight.update.username'), get_property('fenlight.update.location'), image_folder, image_name)
 
 def get_addon_fanart():
 	return get_property('fenlight.default_addon_fanart') or addon_fanart()
@@ -452,16 +453,28 @@ def focus_index(index):
 	try: current_window.getControl(focus_id).selectItem(index)
 	except: pass
 
-def get_all_icon_vars():
+def get_all_icons():
 	import requests
 	from caches.main_cache import cache_object
 	def _process(dummy):
 		try:
-			results = requests.get( 'https://api.github.com/repos/FenlightAnonyMouse/FenlightAnonyMouse.github.io/contents/packages/media/icons')
+			results = requests.get('https://api.github.com/repos/%s/%s/contents/packages/media/icons' % (username, location))
 			results = [i['name'].replace('.png', '') for i in results.json()]
 			return results
 		except: return ['folder.png']
-	return cache_object(_process, 'all_icons', 'foo', False, 1)
+	username, location = get_property('fenlight.update.username'), get_property('fenlight.update.location')
+	return cache_object(_process, 'all_icons', 'foo', False, 168)
+
+def get_all_addon_icons():
+	import requests
+	from caches.main_cache import cache_object
+	def _process(dummy):
+		try:
+			results = requests.get('https://api.github.com/repos/%s/%s/contents/packages/addon_icons' % (username, location))
+			return results
+		except: return []
+	username, location = get_property('fenlight.update.username'), get_property('fenlight.update.location')
+	return cache_object(_process, 'all_addon_icons', 'foo', True, 168)
 
 def upload_logfile(params):
 	import json

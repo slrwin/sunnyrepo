@@ -223,6 +223,10 @@ def clear_cache(cache_type, silent=False):
 		if not _confirm(): return
 		from caches.lists_cache import lists_cache
 		success = lists_cache.delete_all_lists()
+	elif cache_type == 'ai_functions':
+		if not _confirm(): return
+		from caches.lists_cache import lists_cache
+		success = lists_cache.delete_all_ai_lists()
 	elif cache_type == 'tmdb_list':
 		if not _confirm(): return
 		from caches.tmdb_lists import tmdb_lists_cache
@@ -238,10 +242,10 @@ def clear_all_cache():
 	if not kodi_utils.confirm_dialog(): return
 	progressDialog = kodi_utils.progress_dialog()
 	line = 'Clearing....[CR]%s'
-	caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
-			('trakt', 'Trakt Cache'), ('imdb', 'IMDb Cache'), ('list', 'List Data Cache'), ('tmdb_list', 'TMDb Personal List Cache'),
-			('main', 'Main Cache'), ('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'),
-			('oc_cloud', 'OffCloud Cloud'), ('ed_cloud', 'Easy Debrid Cloud'), ('tb_cloud', 'TorBox Cloud'))
+	caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'), ('trakt', 'Trakt Cache'),
+			('imdb', 'IMDb Cache'), ('list', 'List Data Cache'), ('ai_functions', 'AI Data Cache'), ('tmdb_list', 'TMDb Personal List Cache'), ('main', 'Main Cache'),
+			('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'), ('oc_cloud', 'OffCloud Cloud'),
+			('ed_cloud', 'Easy Debrid Cloud'), ('tb_cloud', 'TorBox Cloud'))
 	for count, cache_type in enumerate(caches, 1):
 		try:
 			progressDialog.update(line % (cache_type[1]), int(float(count) / float(len(caches)) * 100))
