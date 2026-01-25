@@ -184,28 +184,6 @@ def routing(sys):
 		elif mode == 'alldebrid.delete':
 			from indexers.alldebrid import ad_delete
 			ad_delete(_get('id'))
-	elif 'offcloud' in mode:
-		if mode == 'offcloud.oc_cloud':
-			from indexers.offcloud import oc_cloud
-			oc_cloud()
-		elif mode == 'offcloud.browse_oc_cloud':
-			from indexers.offcloud import browse_oc_cloud
-			browse_oc_cloud(_get('folder_id'))
-		elif mode == 'offcloud.resolve_oc':
-			from indexers.offcloud import resolve_oc
-			resolve_oc(params)
-		elif mode == 'offcloud.oc_account_info':
-			from indexers.offcloud import oc_account_info
-			oc_account_info()
-		elif mode == 'offcloud.authenticate':
-			from apis.offcloud_api import OffcloudAPI
-			OffcloudAPI().auth()
-		elif mode == 'offcloud.revoke_authentication':
-			from apis.offcloud_api import OffcloudAPI
-			OffcloudAPI().revoke()
-		elif mode == 'offcloud.delete':
-			from indexers.offcloud import oc_delete
-			oc_delete(_get('folder_id'))
 	elif 'easydebrid' in mode:
 		if mode == 'easydebrid.authenticate':
 			from apis.easydebrid_api import EasyDebridAPI

@@ -6,7 +6,7 @@ from threading import Thread
 from caches.external_cache import external_cache
 from caches.settings_cache import get_setting
 from modules import kodi_utils, source_utils
-from modules.debrid import RD_check, PM_check, AD_check, OC_check, ED_check ,TB_check, query_local_cache
+from modules.debrid import RD_check, PM_check, AD_check, ED_check ,TB_check, query_local_cache
 from modules.utils import clean_file_name
 # logger = kodi_utils.logger
 
@@ -33,7 +33,7 @@ class source:
 		self.count_tuple_final = (('final_4k', '4K', self._quality_length), ('final_1080p', '1080p', self._quality_length), ('final_720p', '720p', self._quality_length),
 									('final_sd', '', self._quality_length_sd), ('final_total', '', self.quality_length_final))
 		self.debrid_runners = {'Real-Debrid': ('Real-Debrid', RD_check), 'Premiumize.me': ('Premiumize.me', PM_check), 'AllDebrid': ('AllDebrid', AD_check),
-							'Offcloud': ('Offcloud', OC_check), 'EasyDebrid': ('EasyDebrid', ED_check), 'TorBox': ('TorBox', TB_check)}
+								'EasyDebrid': ('EasyDebrid', ED_check), 'TorBox': ('TorBox', TB_check)}
 
 	def results(self, info):
 		if not self.source_dict: return

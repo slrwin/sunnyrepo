@@ -244,7 +244,7 @@ def tv_progress_location():
 	return int(get_setting('fenlight.tv_progress_location', '0'))
 
 def check_prescrape_sources(scraper, media_type):
-	if scraper in ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'oc_cloud', 'tb_cloud', 'folders'): return get_setting('fenlight.check.%s' % scraper) == 'true'
+	if scraper in ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'tb_cloud', 'folders'): return get_setting('fenlight.check.%s' % scraper) == 'true'
 	if get_setting('fenlight.check.%s' % scraper) == 'true' and auto_play(media_type): return True
 	else: return False
 
@@ -283,7 +283,7 @@ def results_sort_order():
 def active_internal_scrapers():
 	settings = ['provider.external', 'provider.easynews', 'provider.folders']
 	settings_append = settings.append
-	for item in [('rd', 'provider.rd_cloud'), ('pm', 'provider.pm_cloud'), ('ad', 'provider.ad_cloud'), ('oc', 'provider.oc_cloud'), ('tb', 'provider.tb_cloud')]:
+	for item in [('rd', 'provider.rd_cloud'), ('pm', 'provider.pm_cloud'), ('ad', 'provider.ad_cloud'), ('tb', 'provider.tb_cloud')]:
 		if enabled_debrids_check(item[0]): settings_append(item[1])
 	active = [i.split('.')[1] for i in settings if get_setting('fenlight.%s' % i) == 'true']
 	return active
@@ -294,15 +294,14 @@ def provider_sort_ranks():
 	rd_priority = int(get_setting('fenlight.rd.priority', '8'))
 	ad_priority = int(get_setting('fenlight.ad.priority', '9'))
 	pm_priority = int(get_setting('fenlight.pm.priority', '10'))
-	oc_priority = int(get_setting('fenlight.oc.priority', '10'))
 	ed_priority = int(get_setting('fenlight.ed.priority', '10'))
 	tb_priority = int(get_setting('fenlight.tb.priority', '10'))
-	return {'easynews': en_priority, 'real-debrid': rd_priority, 'premiumize.me': pm_priority, 'alldebrid': ad_priority, 'offcloud': oc_priority, 'easydebrid': ed_priority,
-	'torbox': tb_priority, 'rd_cloud': rd_priority, 'pm_cloud': pm_priority, 'ad_cloud': ad_priority, 'oc_cloud': oc_priority, 'tb_cloud': tb_priority, 'folders': fo_priority}
+	return {'easynews': en_priority, 'real-debrid': rd_priority, 'premiumize.me': pm_priority, 'alldebrid': ad_priority, 'easydebrid': ed_priority,
+	'torbox': tb_priority, 'rd_cloud': rd_priority, 'pm_cloud': pm_priority, 'ad_cloud': ad_priority, 'tb_cloud': tb_priority, 'folders': fo_priority}
 
 def sort_to_top(provider):
 	sort_to_top_dict = {'folders': 'fenlight.results.sort_folders_first', 'rd_cloud': 'fenlight.results.sort_rdcloud_first', 'pm_cloud': 'fenlight.results.sort_pmcloud_first',
-						'ad_cloud': 'fenlight.results.sort_adcloud_first', 'oc_cloud': 'fenlight.results.sort_occloud_first', 'tb_cloud': 'fenlight.results.sort_tbcloud_first'}
+						'ad_cloud': 'fenlight.results.sort_adcloud_first', 'tb_cloud': 'fenlight.results.sort_tbcloud_first'}
 	return get_setting(sort_to_top_dict[provider]) == 'true'
 
 def auto_resume(media_type, autoplay_status):
@@ -314,7 +313,7 @@ def scraping_settings():
 		highlight = get_setting('fenlight.scraper_single_highlight', 'FF008EB2')
 		return {'highlight_type': 1, '4k': highlight, '1080p': highlight, '720p': highlight, 'sd': highlight}
 	easynews_highlight, debrid_cloud_highlight, folders_highlight = '', '', ''
-	rd_highlight, pm_highlight, ad_highlight, oc_highlight, ed_highlight, tb_highlight = '', '', '', '', '', ''
+	rd_highlight, pm_highlight, ad_highlight, ed_highlight, tb_highlight = '', '', '', '', ''
 	highlight_4K, highlight_1080P, highlight_720P, highlight_SD = '', '', '', ''
 	if highlight_type == 0:
 		easynews_highlight = get_setting('fenlight.provider.easynews_highlight', 'FF00B3B2')
@@ -323,7 +322,6 @@ def scraping_settings():
 		rd_highlight = get_setting('fenlight.provider.rd_highlight', 'FF3C9900')
 		pm_highlight = get_setting('fenlight.provider.pm_highlight', 'FFFF3300')
 		ad_highlight = get_setting('fenlight.provider.ad_highlight', 'FFE6B800')
-		oc_highlight = get_setting('fenlight.provider.oc_highlight', 'FF008EB2')
 		ed_highlight = get_setting('fenlight.provider.ed_highlight', 'FF3233FF')
 		tb_highlight = get_setting('fenlight.provider.tb_highlight', 'FF01662A')
 	else:
@@ -332,9 +330,9 @@ def scraping_settings():
 		highlight_720P = get_setting('fenlight.scraper_720p_highlight', 'FF3C9900')
 		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF')
 	return {'highlight_type': highlight_type, 'real-debrid': rd_highlight, 'premiumize': pm_highlight, 'alldebrid': ad_highlight,
-			'offcloud': oc_highlight, 'easydebrid': ed_highlight, 'torbox': tb_highlight, 'rd_cloud': debrid_cloud_highlight,
-			'pm_cloud': debrid_cloud_highlight, 'ad_cloud': debrid_cloud_highlight, 'oc_cloud': debrid_cloud_highlight, 'tb_cloud': debrid_cloud_highlight,
-			'easynews': easynews_highlight, 'folders': folders_highlight, '4k': highlight_4K, '1080p': highlight_1080P, '720p': highlight_720P, 'sd': highlight_SD}
+			'easydebrid': ed_highlight, 'torbox': tb_highlight, 'rd_cloud': debrid_cloud_highlight, 'pm_cloud': debrid_cloud_highlight, 'ad_cloud': debrid_cloud_highlight,
+			'tb_cloud': debrid_cloud_highlight, 'easynews': easynews_highlight, 'folders': folders_highlight,
+			'4k': highlight_4K, '1080p': highlight_1080P, '720p': highlight_720P, 'sd': highlight_SD}
 
 def external_cache_check():
 	return get_setting('fenlight.external.cache_check') == 'true'

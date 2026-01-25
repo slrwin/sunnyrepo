@@ -100,7 +100,6 @@ class FenLightPlayer(xbmc.Player):
 			ku.hide_busy_dialog()
 			if not self.media_marked: self.media_watched_marker()
 			self.clear_playback_properties()
-			self.clear_playing_item()
 		except:
 			ku.hide_busy_dialog()
 			self.sources_object.playback_successful = False
@@ -247,13 +246,6 @@ class FenLightPlayer(xbmc.Player):
 		ku.clear_property('fenlight.window_stack')
 		ku.clear_property('script.trakt.ids')
 		ku.clear_property('subs.player_filename')
-
-	def clear_playing_item(self):
-		if self.playing_item['cache_provider'] == 'Offcloud':
-			if self.playing_item.get('direct_debrid_link', False): return
-			if st.store_resolved_to_cloud('Offcloud', 'package' in self.playing_item): return
-			from apis.offcloud_api import Offcloud
-			Offcloud.clear_played_torrent(self.playing_item)
 
 	def run_error(self):
 		try: self.sources_object.playback_successful = False
