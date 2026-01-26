@@ -2,7 +2,7 @@
 from xbmc import getInfoLabel
 from urllib.parse import parse_qsl
 from modules.kodi_utils import external, get_property
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 def sys_exit_check():
 	if get_property('fenlight.reuse_language_invoker') == 'false': return False
