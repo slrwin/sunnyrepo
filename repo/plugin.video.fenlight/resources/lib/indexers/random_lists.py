@@ -183,6 +183,7 @@ class RandomLists():
 
 	def random_trakt_lists(self):
 		from apis.trakt_api import trakt_get_lists, get_trakt_list_contents
+		from caches.trakt_cache import get_list_custom_sort
 		from indexers.trakt_lists import build_trakt_list
 		list_type = self.params.get('list_type')
 		list_type_name = 'Trakt My Lists' if list_type == 'my_lists' else 'Trakt Liked Lists' if list_type == 'liked_lists' else 'Trakt User Lists'
@@ -194,7 +195,10 @@ class RandomLists():
 			user, slug, list_id = random_list['user']['username'], random_list['user']['ids']['slug'], random_list['ids']['trakt']
 			list_name = random_list['name']
 			with_auth = list_type == 'my_lists'
-			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id)
+			sort_info = get_list_custom_sort(list_id)
+			if sort_info: sort_by, sort_how = sort_info['sort_by'], sort_info['sort_how']
+			else: sort_by, sort_how = random_list['sort_by'], random_list['sort_how']
+			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, sort_by, sort_how)
 			random.shuffle(result)
 			if paginate(self.is_external): data = random.sample(result, min(len(result), page_limit(self.is_external)))
 			else: data = random.sample(result, len(result))

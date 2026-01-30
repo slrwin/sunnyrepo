@@ -672,11 +672,11 @@ class Extras(BaseDialog):
 			self.close_all()
 			self.close()
 
-	def set_returning_focus(self, window_id, focus, sleep_time=700):
+	def set_returning_focus(self, list_id, focus, sleep_time=700):
 		try:
 			self.sleep(sleep_time)
-			self.setFocusId(window_id)
-			self.select_item(window_id, focus)
+			self.setFocusId(list_id)
+			self.select_item(list_id, focus)
 		except: self.set_default_focus()
 
 	def set_current_params(self, set_starting_position=True):

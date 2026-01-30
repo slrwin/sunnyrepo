@@ -1081,9 +1081,17 @@
         <!-- RPDb Ratings Posters -->
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rpdb_api),empty_setting)</visible>
                           <property name="setting_label">Ratings Posters</property>
                           <property name="setting_type">separator</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.rpdb_api),empty_setting)</visible>
+                          <property name="setting_label">[I]Enter an RPDb API Key in Meta Accounts[/I]</property>
+                          <property name="setting_type">info</property>
+                          <property name="setting_value">...</property>
+                          <property name="setting_description">Navigate within these settings to Meta Accounts->RPDb (Ratings Posters) and enter an API key to access this</property>
                           <onclick>noop</onclick>
                       </item>
                       <item>

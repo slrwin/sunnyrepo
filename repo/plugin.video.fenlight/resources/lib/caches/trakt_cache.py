@@ -71,6 +71,42 @@ def cache_trakt_object(function, string, url):
 	trakt_cache.set(string, result)
 	return result
 
+def set_list_custom_sort(list_id, data):
+	string = 'trakt_list_custom_sort_%s' % list_id
+	try:
+		dbcon = connect_database('trakt_db')
+		dbcon.execute('INSERT OR REPLACE INTO trakt_data (id, data) VALUES (?, ?)', (string, repr(data)))
+		clear_trakt_list_contents_data('my_lists')
+		clear_trakt_list_contents_data('liked_lists')
+		return True
+	except: return False
+
+def delete_list_custom_sort(list_id):
+	string = 'trakt_list_custom_sort_%s' % list_id
+	try:
+		dbcon = connect_database('trakt_db')
+		dbcon.execute('DELETE FROM trakt_data WHERE id=?', (string,))
+		clear_trakt_list_contents_data('my_lists')
+		clear_trakt_list_contents_data('liked_lists')
+		return True
+	except: return False
+
+def get_list_custom_sort(list_id):
+	string = 'trakt_list_custom_sort_%s' % list_id
+	try:
+		dbcon = connect_database('trakt_db')
+		cache_data = dbcon.execute('SELECT data FROM trakt_data WHERE id = ?', (string,)).fetchone()
+		return eval(cache_data[0])
+	except: return {}
+
+def get_all_lists_custom_sort():
+	try:
+		dbcon = connect_database('trakt_db')
+		all_cache_data = dbcon.execute('SELECT data FROM trakt_data WHERE id LIKE %s' % "'trakt_list_custom_sort_%'").fetchall()
+		all_cache_data = (eval(i[0]) for i in all_cache_data)
+		return dict([(i['list_id'], {'sort_by': i['sort_by'], 'sort_how': i['sort_how']}) for i in all_cache_data])
+	except: return {}
+
 def reset_activity(latest_activities):
 	string = 'trakt_get_activity'
 	try:
@@ -152,7 +188,8 @@ def clear_all_trakt_cache_data(silent=False, refresh=True):
 			except: pass
 		main_cache.clean_database()
 		dbcon = connect_database('trakt_db')
-		for table in ('trakt_data', 'progress', 'watched', 'watched_status'): dbcon.execute('DELETE FROM %s' % table)
+		for table in ('trakt_data', 'progress', 'watched', 'watched_status'):
+			dbcon.execute('DELETE FROM %s WHERE id NOT LIKE %s' % (table, "'trakt_list_custom_sort_%'"))
 		dbcon.execute('VACUUM')
 		if refresh:
 			from apis.trakt_api import trakt_sync_activities
