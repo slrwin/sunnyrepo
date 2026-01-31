@@ -464,7 +464,7 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 		results_append = results.append
 		try:
 			data = get_trakt(params)
-			if custom_sort: data = sort_list(sort_by, sort_how, data, settings.ignore_articles())
+			if custom_sort and not skip_sort: data = sort_list(sort_by, sort_how, data, settings.ignore_articles())
 			for c, i in enumerate(data):
 				try:
 					_type = i['type']
@@ -480,14 +480,18 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 				except: pass
 		except: pass
 		return results
-	custom_sort = sort_by != 'default'
-	method = None if custom_sort else 'sort_by_headers'
+	if sort_by == 'skip':
+		skip_sort, custom_sort, method = True, False, None
+	else:
+		skip_sort = False
+		custom_sort = sort_by != 'default'
+		method = None if custom_sort else 'sort_by_headers'
 	if list_type == 'my_lists':
 		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
 		params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'method': method, 'with_auth': with_auth}
 	elif list_id is not None:
 		string = 'trakt_list_contents_%s_%s' % (list_type, list_id)
-		params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, list_id), 'params': {'extended':'full'}, 'method': method}
+		params = {'path': 'lists/%s/items', 'path_insert': list_id, 'params': {'extended':'full'}, 'method': method}
 	else:
 		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
 		if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full'}, 'method': method}
@@ -516,13 +520,14 @@ def get_trakt_list_selection(included_lists):
 	def personal_lists():
 		trakt_my_lists = trakt_get_lists('my_lists')
 		_lists = [{'name': item['name'], 'display': '[B]PERSONAL:[/B] [I]%s[/I]' % item['name'].upper(), 'user': item['user']['ids']['slug'],
-					'slug': item['ids']['slug'], 'list_type': 'my_lists', 'item_count': item['item_count']} for item in trakt_my_lists]
+			'slug': item['ids']['slug'], 'list_type': 'my_lists', 'list_id': item['ids']['trakt'], 'item_count': item['item_count']} for item in trakt_my_lists]
 		_lists.sort(key=lambda k: k['name'])
 		return _lists
 	def liked_lists():
 		trakt_liked_lists = trakt_get_lists('liked_lists')
 		_lists = [{'name': item['list']['name'], 'display': '[B]LIKED:[/B] [I]%s[/I]' % item['list']['name'].upper(), 'user': item['list']['user']['ids']['slug'],
-						'slug': item['list']['ids']['slug'], 'list_type': 'liked_lists', 'item_count': item['list']['item_count']} for item in trakt_liked_lists]
+			'slug': item['list']['ids']['slug'], 'list_type': 'liked_lists', 'list_id': item['list']['ids']['trakt'], 'item_count': item['list']['item_count']} \
+			for item in trakt_liked_lists]
 		_lists.sort(key=lambda k: (k['display']))
 		return _lists
 	list_dict = {'default': default_lists, 'personal': personal_lists, 'liked': liked_lists}

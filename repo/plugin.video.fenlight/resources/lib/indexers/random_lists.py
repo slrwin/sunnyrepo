@@ -183,7 +183,6 @@ class RandomLists():
 
 	def random_trakt_lists(self):
 		from apis.trakt_api import trakt_get_lists, get_trakt_list_contents
-		from caches.trakt_cache import get_list_custom_sort
 		from indexers.trakt_lists import build_trakt_list
 		list_type = self.params.get('list_type')
 		list_type_name = 'Trakt My Lists' if list_type == 'my_lists' else 'Trakt Liked Lists' if list_type == 'liked_lists' else 'Trakt User Lists'
@@ -192,13 +191,10 @@ class RandomLists():
 			if list_type == 'my_lists': self.random_results = [i for i in trakt_get_lists(list_type) if i['item_count']]
 			else: self.random_results = [i['list'] for i in trakt_get_lists(list_type) if i['list']['item_count']]
 			random_list = random.choice(self.random_results)
-			user, slug, list_id = random_list['user']['username'], random_list['user']['ids']['slug'], random_list['ids']['trakt']
+			user, slug, list_id = random_list['user']['username'], random_list['ids']['slug'], random_list['ids']['trakt']
 			list_name = random_list['name']
 			with_auth = list_type == 'my_lists'
-			sort_info = get_list_custom_sort(list_id)
-			if sort_info: sort_by, sort_how = sort_info['sort_by'], sort_info['sort_how']
-			else: sort_by, sort_how = random_list['sort_by'], random_list['sort_how']
-			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, sort_by, sort_how)
+			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, 'skip')
 			random.shuffle(result)
 			if paginate(self.is_external): data = random.sample(result, min(len(result), page_limit(self.is_external)))
 			else: data = random.sample(result, len(result))
@@ -270,7 +266,7 @@ class RandomLists():
 		if not random_list:
 			user, slug, list_id = self.params_get('user'), self.params_get('slug'), self.params_get('list_id')
 			with_auth = list_type == 'my_lists'
-			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id)
+			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, 'skip')
 			random.shuffle(result)
 			if paginate(self.is_external): result = random.sample(result, min(len(result), page_limit(self.is_external)))
 			result = [dict(i, **{'order': c}) for c, i in enumerate(result)]

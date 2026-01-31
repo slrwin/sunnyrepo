@@ -99,9 +99,9 @@ def get_trakt_lists(params):
 				cm_append(('[B]Set Custom Sort[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.list.set_list_custom_sort', 'list_id': list_id,
 					'sort_by': sort_by, 'sort_how': sort_how})))
 				cm_append(('[B]Make Custom Poster[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.list.make_custom_artwork', 'action': 'make_poster',
-					'custom_image': custom_poster, 'list_name': list_name, 'list_type': list_type, 'user': user, 'list_slug': slug})))
+					'custom_image': custom_poster, 'list_name': list_name, 'list_type': list_type, 'list_id': list_id, 'user': user, 'list_slug': slug})))
 				cm_append(('[B]Make Custom Fanart[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.list.make_custom_artwork', 'action': 'make_fanart',
-					'custom_image': custom_fanart, 'list_name': list_name, 'list_type': list_type, 'user': user, 'list_slug': slug})))
+					'custom_image': custom_fanart, 'list_name': list_name, 'list_type': list_type, 'list_id': list_id, 'user': user, 'list_slug': slug})))
 				if custom_poster: cm_append(('[B]Delete Custom Poster[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.list.delete_current_image', 'custom_image': custom_poster})))
 				if custom_fanart: cm_append(('[B]Delete Custom Fanart[/B]', 'RunPlugin(%s)' % build_url({'mode': 'trakt.list.delete_current_image', 'custom_image': custom_fanart})))
 				listitem = make_listitem()
@@ -286,20 +286,24 @@ def build_trakt_list(params):
 		kodi_utils.set_view_mode('view.%s' % content, content, is_external)
 
 def make_custom_artwork(params):
-	action, list_name, list_type, user, slug, custom_image = params['action'], params['list_name'], params['list_type'], params['user'], params['list_slug'], params['custom_image']
+	action, list_name, list_type, list_id = params['action'], params['list_name'], params['list_type'], params['list_id'],
+	user, slug, custom_image = params['user'], params['list_slug'], params['custom_image']
 	art_type, image_type = ('Posters', 'poster') if action == 'make_poster' else ('Fanart', 'fanart')
 	shuffle_art = kodi_utils.confirm_dialog(
 		heading='Trakt My Lists', text='Use [B]4 Random[/B] %s from List?[CR]OR[CR]Use [B]First 4[/B] %s from List?' % (art_type, art_type),
 		ok_label='4 Random', cancel_label='First 4')
 	if shuffle_art == None: return
-	new_image = trakt_image_maker(list_name, list_type, image_type, user, slug, custom_image, shuffle_art)
+	new_image = trakt_image_maker(list_name, list_type, list_id, image_type, user, slug, custom_image, shuffle_art)
 	kodi_utils.kodi_refresh()
 
-def trakt_image_maker(list_name, list_type, image_type, user, slug, custom_image, shuffle_sort_order):
+def trakt_image_maker(list_name, list_type, list_id, image_type, user, slug, custom_image, shuffle_sort_order):
+	from caches.trakt_cache import get_list_custom_sort
 	from modules import metadata
 	from modules.utils import make_image
 	kodi_utils.show_busy_dialog()
-	content = get_trakt_list_contents(list_type, user, slug, True)
+	sort_info = get_list_custom_sort(list_id)
+	sort_by, sort_how = sort_info['sort_by'], sort_info['sort_how']
+	content = get_trakt_list_contents(list_type, user, slug, True, list_id, sort_by, sort_how)
 	if shuffle_sort_order: shuffle(content)
 	images = []
 	api_key, mpaa, current_time, current_timestamp = tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp()
