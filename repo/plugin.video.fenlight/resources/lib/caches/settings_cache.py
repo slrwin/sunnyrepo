@@ -553,5 +553,5 @@ def default_settings():
 {'setting_id': 'extras.movie.button15', 'setting_type': 'string', 'setting_default': 'show_genres'},
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
 {'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
-{'setting_id': 'updatechecks.clear_trakt_list_data', 'setting_type': 'string', 'setting_default': 'false'}
+{'setting_id': 'updatechecks.clear_trakt_list_data_02', 'setting_type': 'string', 'setting_default': 'false'}
 	]

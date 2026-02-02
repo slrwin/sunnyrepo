@@ -76,8 +76,6 @@ def set_list_custom_sort(list_id, data):
 	try:
 		dbcon = connect_database('trakt_db')
 		dbcon.execute('INSERT OR REPLACE INTO trakt_data (id, data) VALUES (?, ?)', (string, repr(data)))
-		clear_trakt_list_contents_data('my_lists')
-		clear_trakt_list_contents_data('liked_lists')
 		return True
 	except: return False
 
@@ -86,8 +84,6 @@ def delete_list_custom_sort(list_id):
 	try:
 		dbcon = connect_database('trakt_db')
 		dbcon.execute('DELETE FROM trakt_data WHERE id=?', (string,))
-		clear_trakt_list_contents_data('my_lists')
-		clear_trakt_list_contents_data('liked_lists')
 		return True
 	except: return False
 

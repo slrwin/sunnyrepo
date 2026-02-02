@@ -72,8 +72,8 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 	response.encoding = 'utf-8'
 	result = response.json() if 'json' in headers.get('Content-Type', '') else response.text
 	if method == 'sort_by_headers':
-		try: result = sort_list(headers.get('X-Sort-By', 'title'), headers.get('X-Sort-How', 'asc'), result, settings.ignore_articles())
-		except: pass
+		sort_by, sort_how = headers.get('X-Sort-By', 'title'), headers.get('X-Sort-How', 'asc')
+		result = {'sort_by': sort_by, 'sort_how': sort_how, 'data': result}
 	if pagination: return (result, headers.get('X-Pagination-Page-Count', page_no))
 	else: return result
 
@@ -459,29 +459,7 @@ def trakt_lists_with_media(media_type, imdb_id):
 	return cache_object(_process, string, 'foo', False, 168)
 
 def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort_by='default', sort_how='default'):
-	def _process(params):
-		results = []
-		results_append = results.append
-		try:
-			data = get_trakt(params)
-			if custom_sort and not skip_sort: data = sort_list(sort_by, sort_how, data, settings.ignore_articles())
-			for c, i in enumerate(data):
-				try:
-					_type = i['type']
-					if _type in ('movie', 'show'):
-						r_key = 'released' if _type == 'movie' else 'first_aired'
-						data = {'media_ids': i[_type]['ids'], 'title': i[_type]['title'], 'type': _type, 'order': c, 'released': i[_type][r_key], 'media_type': _type}
-					elif _type == 'season':
-						data = {'tmdb_id': i['show']['ids']['tmdb'], 'season': i[_type]['number'], 'type': _type, 'custom_order': c}
-					elif _type == 'episode':
-						data = {'media_ids': i['show']['ids'], 'title': i['show']['title'], 'type': _type,
-								'season': i[_type]['season'], 'episode': i[_type]['number'], 'custom_order': c}
-					results_append(data)
-				except: pass
-		except: pass
-		return results
-	if sort_by == 'skip':
-		skip_sort, custom_sort, method = True, False, None
+	if sort_by == 'skip': skip_sort, custom_sort, method = True, False, None
 	else:
 		skip_sort = False
 		custom_sort = sort_by != 'default'
@@ -496,7 +474,33 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
 		if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full'}, 'method': method}
 		else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'method': method, 'with_auth': with_auth}
-	return trakt_cache.cache_trakt_object(_process, string, params)
+	data = trakt_cache.cache_trakt_object(get_trakt, string, params)
+	if not skip_sort:
+		results = []
+		results_append = results.append
+		if not custom_sort:
+			sort_by, sort_how = data['sort_by'], data['sort_how']
+			data = data['data']
+		for i in data:
+			if i['type'] == 'season': i['season']['title'] = '%s - %s' % (i['show']['title'], i['season']['title'])
+			elif i['type'] == 'episode': i['episode']['title'] = '%s - %s' % (i['show']['title'], i['episode']['title'])
+			else: pass
+		data = sort_list(sort_by, sort_how, data, settings.ignore_articles())
+		for c, i in enumerate(data):
+			try:
+				_type = i['type']
+				if _type in ('movie', 'show'):
+					r_key = 'released' if _type == 'movie' else 'first_aired'
+					data = {'media_ids': i[_type]['ids'], 'title': i[_type]['title'], 'type': _type, 'order': c, 'released': i[_type][r_key], 'media_type': _type}
+				elif _type == 'season':
+					data = {'tmdb_id': i['show']['ids']['tmdb'], 'season': i[_type]['number'], 'type': _type, 'custom_order': c}
+				elif _type == 'episode':
+					data = {'media_ids': i['show']['ids'], 'title': i['show']['title'], 'type': _type,
+							'season': i[_type]['season'], 'episode': i[_type]['number'], 'custom_order': c}
+				results_append(data)
+			except: pass
+		data = results
+	return data
 
 def trakt_get_lists(list_type, page_no='1'):
 	if list_type in ('trending', 'popular'):

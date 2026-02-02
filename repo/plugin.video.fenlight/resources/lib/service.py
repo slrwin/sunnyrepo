@@ -56,8 +56,8 @@ class OnUpdateChanges:
 		except: pass
 		return kodi_utils.logger('Fen Light', 'OnUpdateChanges Service Finished')
 
-	def clear_trakt_list_data(self):
-		# Active for 2.1.74 only.
+	def clear_trakt_list_data_02(self):
+		# Active for 2.1.76.
 		from caches.trakt_cache import clear_daily_cache
 		clear_daily_cache()
 
