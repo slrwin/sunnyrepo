@@ -191,7 +191,9 @@ class RandomLists():
 			if list_type == 'my_lists': self.random_results = [i for i in trakt_get_lists(list_type) if i['item_count']]
 			else: self.random_results = [i['list'] for i in trakt_get_lists(list_type) if i['list']['item_count']]
 			random_list = random.choice(self.random_results)
-			user, slug, list_id = random_list['user']['username'], random_list['ids']['slug'], random_list['ids']['trakt']
+			if list_type == 'my_lists': slug = random_list['ids']['slug']
+			else: slug = random_list['user']['ids']['slug']
+			user, list_id = random_list['user']['username'], random_list['ids']['trakt']
 			list_name = random_list['name']
 			with_auth = list_type == 'my_lists'
 			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, 'skip')

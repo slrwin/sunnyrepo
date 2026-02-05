@@ -184,8 +184,8 @@ def clear_all_trakt_cache_data(silent=False, refresh=True):
 			except: pass
 		main_cache.clean_database()
 		dbcon = connect_database('trakt_db')
-		for table in ('trakt_data', 'progress', 'watched', 'watched_status'):
-			dbcon.execute('DELETE FROM %s WHERE id NOT LIKE %s' % (table, "'trakt_list_custom_sort_%'"))
+		for table in ('progress', 'watched', 'watched_status'): dbcon.execute('DELETE FROM %s' % table)
+		dbcon.execute('DELETE FROM trakt_data WHERE id NOT LIKE %s' % "'trakt_list_custom_sort_%'")
 		dbcon.execute('VACUUM')
 		if refresh:
 			from apis.trakt_api import trakt_sync_activities

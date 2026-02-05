@@ -129,6 +129,10 @@ class TVShows:
 				self.id_type = 'imdb_id'
 				self.list = imdb_more_like_this(self.params_get('key_id'))
 			kodi_utils.add_items(handle, self.worker())
+			if self.total_pages and self.total_pages > 2 and settings.jump_to_enabled() and not self.is_external:
+				url_params = json.dumps({**self.new_page, **{'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name}})
+				kodi_utils.add_dir(handle, {'mode': 'navigate_to_page_choice', 'current_page': page_no, 'total_pages': self.total_pages, 'url_params': url_params},
+											'Jump To...', 'item_jump', kodi_utils.get_icon('item_jump_landscape'), isFolder=False)
 			if self.new_page and not self.widget_hide_next_page:
 				self.new_page.update({'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name})
 				if self.is_anime_list is not None: self.new_page['is_anime_list'] == {True: 'true', False: 'false'}[self.is_anime_list]

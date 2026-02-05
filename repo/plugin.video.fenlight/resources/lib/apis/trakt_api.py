@@ -476,8 +476,6 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 		else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'method': method, 'with_auth': with_auth}
 	data = trakt_cache.cache_trakt_object(get_trakt, string, params)
 	if not skip_sort:
-		results = []
-		results_append = results.append
 		if not custom_sort:
 			sort_by, sort_how = data['sort_by'], data['sort_how']
 			data = data['data']
@@ -486,21 +484,22 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 			elif i['type'] == 'episode': i['episode']['title'] = '%s - %s' % (i['show']['title'], i['episode']['title'])
 			else: pass
 		data = sort_list(sort_by, sort_how, data, settings.ignore_articles())
-		for c, i in enumerate(data):
-			try:
-				_type = i['type']
-				if _type in ('movie', 'show'):
-					r_key = 'released' if _type == 'movie' else 'first_aired'
-					data = {'media_ids': i[_type]['ids'], 'title': i[_type]['title'], 'type': _type, 'order': c, 'released': i[_type][r_key], 'media_type': _type}
-				elif _type == 'season':
-					data = {'tmdb_id': i['show']['ids']['tmdb'], 'season': i[_type]['number'], 'type': _type, 'custom_order': c}
-				elif _type == 'episode':
-					data = {'media_ids': i['show']['ids'], 'title': i['show']['title'], 'type': _type,
-							'season': i[_type]['season'], 'episode': i[_type]['number'], 'custom_order': c}
-				results_append(data)
-			except: pass
-		data = results
-	return data
+	results = []
+	results_append = results.append
+	for c, i in enumerate(data):
+		try:
+			_type = i['type']
+			if _type in ('movie', 'show'):
+				r_key = 'released' if _type == 'movie' else 'first_aired'
+				data = {'media_ids': i[_type]['ids'], 'title': i[_type]['title'], 'type': _type, 'order': c, 'released': i[_type][r_key], 'media_type': _type}
+			elif _type == 'season':
+				data = {'tmdb_id': i['show']['ids']['tmdb'], 'season': i[_type]['number'], 'type': _type, 'custom_order': c}
+			elif _type == 'episode':
+				data = {'media_ids': i['show']['ids'], 'title': i['show']['title'], 'type': _type,
+						'season': i[_type]['season'], 'episode': i[_type]['number'], 'custom_order': c}
+			results_append(data)
+		except: pass
+	return results
 
 def trakt_get_lists(list_type, page_no='1'):
 	if list_type in ('trending', 'popular'):

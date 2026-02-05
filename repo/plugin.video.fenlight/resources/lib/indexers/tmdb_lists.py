@@ -11,7 +11,7 @@ from caches.tmdb_lists import tmdb_lists_cache
 from indexers.movies import Movies
 from indexers.tvshows import TVShows
 from modules.utils import paginate_list, sort_for_article, gen_md5, jsondate_to_datetime as js2date
-from modules.settings import paginate, page_limit, lists_sort_order, widget_hide_next_page, ignore_articles
+from modules.settings import paginate, page_limit, lists_sort_order, widget_hide_next_page, ignore_articles, jump_to_enabled
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
@@ -118,6 +118,7 @@ def build_tmdb_list(params):
 		use_result = 'result' in params
 		list_name, list_id, sort_order, updated_at = params.get('list_name'), params.get('list_id'), params.get('sort_order'), params.get('updated_at')
 		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
+		new_params = {'mode': 'tmdblist.build_tmdb_list', 'list_id': list_id, 'paginate_start': paginate_start}
 		if page_no == 1 and not is_external: kodi_utils.set_property('fenlight.exit_params', kodi_utils.folder_path())
 		if use_result: result = params.get('result', [])
 		else: result = get_tmdb_list(params)
@@ -135,9 +136,12 @@ def build_tmdb_list(params):
 		item_list.sort(key=lambda k: k[1])
 		if use_result: return content, [i[0] for i in item_list]
 		kodi_utils.add_items(handle, [i[0] for i in item_list])
+		if total_pages > 2 and jump_to_enabled() and not is_external:
+				kodi_utils.add_dir(handle, {'mode': 'navigate_to_page_choice', 'current_page': page_no, 'total_pages': total_pages, 'url_params': json.dumps(new_params)},
+											'Jump To...', 'item_jump', kodi_utils.get_icon('item_jump_landscape'), isFolder=False)
 		if total_pages > page_no and not hide_next_page:
 			new_page = str(page_no + 1)
-			new_params = {'mode': 'tmdblist.build_tmdb_list', 'list_id': list_id, 'paginate_start': paginate_start, 'new_page': new_page}
+			new_params['new_page'] = new_page
 			kodi_utils.add_dir(handle, new_params, 'Next Page (%s) >>' % new_page, 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
 	except: pass
 	kodi_utils.set_content(handle, content)

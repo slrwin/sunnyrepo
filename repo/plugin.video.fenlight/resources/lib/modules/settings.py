@@ -365,6 +365,9 @@ def calendar_sort_order():
 def ignore_articles():
 	return get_setting('fenlight.ignore_articles', 'false') == 'true'
 
+def jump_to_enabled():
+	return get_setting('fenlight.paginate.jump_to', 'true') == 'true'
+
 def date_offset():
 	return int(get_setting('fenlight.datetime.offset', '0')) + 5
 

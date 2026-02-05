@@ -12,7 +12,7 @@ from indexers.seasons import single_seasons
 from indexers.episodes import build_single_episode
 from modules import kodi_utils
 from modules.utils import paginate_list, gen_md5, get_datetime, get_current_timestamp
-from modules.settings import paginate, page_limit, widget_hide_next_page, tmdb_api_key, mpaa_region
+from modules.settings import paginate, page_limit, widget_hide_next_page, tmdb_api_key, mpaa_region, jump_to_enabled
 # logger = kodi_utils.logger
 
 def search_trakt_lists(params):
@@ -240,44 +240,48 @@ def build_trakt_list(params):
 		return data, total_pages, paginate_start
 	handle, is_external, list_name, content = int(sys.argv[1]), kodi_utils.external(), params.get('list_name'), 'movies'
 	hide_next_page = is_external and widget_hide_next_page()
-	try:
-		threads, item_list = [], []
-		item_list_extend = item_list.extend
-		paginate_enabled = paginate(is_external)
-		use_result = 'result' in params
-		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
-		if page_no == 1 and not is_external: kodi_utils.set_property('fenlight.exit_params', kodi_utils.folder_path())
-		if use_result: result = params.get('result', [])
-		else:
-			user, slug, list_id, list_type = params.get('user'), params.get('slug'), params.get('list_id'), params.get('list_type')
-			sort_by, sort_how = params.get('sort_by'), params.get('sort_how')
-			with_auth = list_type == 'my_lists'
-			result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, sort_by, sort_how)
-		process_list, total_pages, paginate_start = _paginate_list(result, page_no, paginate_start)
-		all_movies = [i for i in process_list if i['type'] == 'movie']
-		all_tvshows = [i for i in process_list if i['type'] == 'show']
-		all_seasons = [i for i in process_list if i['type'] == 'season']
-		all_episodes = [i for i in process_list if i['type'] == 'episode']
-		movie_list = {'list': [(i['order'], i['media_ids']) for i in all_movies], 'id_type': 'trakt_dict', 'custom_order': 'true'}
-		tvshow_list = {'list': [(i['order'], i['media_ids']) for i in all_tvshows], 'id_type': 'trakt_dict', 'custom_order': 'true'}
-		season_list = {'list': all_seasons}
-		episode_list = {'list': all_episodes}
-		content = max([('movies', len(all_movies)), ('tvshows', len(all_tvshows)), ('seasons', len(all_seasons)), ('episodes', len(all_episodes))], key=lambda k: k[1])[0]
-		for item in ((Movies, movie_list, 'movies'), (TVShows, tvshow_list, 'tvshows'),
-					(single_seasons, season_list, 'seasons'), (build_single_episode, episode_list, 'episodes')):
-			threaded_object = Thread(target=_process, args=item)
-			threaded_object.start()
-			threads.append(threaded_object)
-		[i.join() for i in threads]
-		item_list.sort(key=lambda k: k[1])
-		if use_result: return content, [i[0] for i in item_list]
-		kodi_utils.add_items(handle, [i[0] for i in item_list])
-		if total_pages > page_no and not hide_next_page:
-			new_page = str(page_no + 1)
-			new_params = {'mode': 'trakt.list.build_trakt_list', 'list_type': list_type, 'list_name': list_name,
-							'user': user, 'slug': slug, 'paginate_start': paginate_start, 'new_page': new_page}
-			kodi_utils.add_dir(handle, new_params, 'Next Page (%s) >>' % new_page, 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
-	except: pass
+	# try:
+	threads, item_list = [], []
+	item_list_extend = item_list.extend
+	paginate_enabled = paginate(is_external)
+	use_result = 'result' in params
+	page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
+	if page_no == 1 and not is_external: kodi_utils.set_property('fenlight.exit_params', kodi_utils.folder_path())
+	if use_result: result = params.get('result', [])
+	else:
+		user, slug, list_id, list_type = params.get('user'), params.get('slug'), params.get('list_id'), params.get('list_type')
+		sort_by, sort_how = params.get('sort_by'), params.get('sort_how')
+		with_auth = list_type == 'my_lists'
+		result = get_trakt_list_contents(list_type, user, slug, with_auth, list_id, sort_by, sort_how)
+	process_list, total_pages, paginate_start = _paginate_list(result, page_no, paginate_start)
+	all_movies = [i for i in process_list if i['type'] == 'movie']
+	all_tvshows = [i for i in process_list if i['type'] == 'show']
+	all_seasons = [i for i in process_list if i['type'] == 'season']
+	all_episodes = [i for i in process_list if i['type'] == 'episode']
+	movie_list = {'list': [(i['order'], i['media_ids']) for i in all_movies], 'id_type': 'trakt_dict', 'custom_order': 'true'}
+	tvshow_list = {'list': [(i['order'], i['media_ids']) for i in all_tvshows], 'id_type': 'trakt_dict', 'custom_order': 'true'}
+	season_list = {'list': all_seasons}
+	episode_list = {'list': all_episodes}
+	content = max([('movies', len(all_movies)), ('tvshows', len(all_tvshows)), ('seasons', len(all_seasons)), ('episodes', len(all_episodes))], key=lambda k: k[1])[0]
+	for item in ((Movies, movie_list, 'movies'), (TVShows, tvshow_list, 'tvshows'),
+				(single_seasons, season_list, 'seasons'), (build_single_episode, episode_list, 'episodes')):
+		threaded_object = Thread(target=_process, args=item)
+		threaded_object.start()
+		threads.append(threaded_object)
+	[i.join() for i in threads]
+	item_list.sort(key=lambda k: k[1])
+	if use_result: return content, [i[0] for i in item_list]
+	new_params = {'mode': 'trakt.list.build_trakt_list', 'list_type': list_type, 'list_name': list_name,
+					'user': user, 'slug': slug, 'paginate_start': paginate_start}
+	kodi_utils.add_items(handle, [i[0] for i in item_list])
+	if total_pages > 2 and jump_to_enabled() and not is_external:
+			kodi_utils.add_dir(handle, {'mode': 'navigate_to_page_choice', 'current_page': page_no, 'total_pages': total_pages, 'url_params': json.dumps(new_params)},
+										'Jump To...', 'item_jump', kodi_utils.get_icon('item_jump_landscape'), isFolder=False)
+	if total_pages > page_no and not hide_next_page:
+		new_page = str(page_no + 1)
+		new_params['new_page'] = new_page
+		kodi_utils.add_dir(handle, new_params,  'Next Page (%s) >>' % new_page, 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
+	# except: pass
 	kodi_utils.set_content(handle, content)
 	kodi_utils.set_category(handle, list_name)
 	kodi_utils.end_directory(handle, cacheToDisc=False if is_external else True)

@@ -745,6 +745,14 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>
+                          <property name="setting_label">Enable Jump To Navigation</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.paginate.jump_to)]</property>
+                          <property name="setting_description">Enable this and Fen Light include a "Jump To..." item at the end of each page of paginated personal lists. You can use this to jump to a specific page in the list</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=paginate.jump_to)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
                           <property name="setting_label">Ignore Articles when Sorting Lists</property>
                           <property name="setting_type">boolean</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.ignore_articles)]</property>

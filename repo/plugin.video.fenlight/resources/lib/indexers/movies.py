@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import json
 from modules.metadata import movie_meta, movieset_meta
 from modules.utils import get_datetime, get_current_timestamp, paginate_list, jsondate_to_datetime, TaskPool, manual_function_import
 from modules import kodi_utils, settings, watched_status
@@ -19,7 +20,8 @@ class Movies:
 		self.params = params
 		self.params_get = self.params.get
 		self.category_name = self.params_get('category_name', None) or self.params_get('name', None) or 'Movies'
-		self.id_type, self.list, self.action = self.params_get('id_type', 'tmdb_id'), self.params_get('list', []), self.params_get('action', None)
+		self.id_type, self.list = self.params_get('id_type', 'tmdb_id'), self.params_get('list', [])
+		self.mode, self.action = self.params_get('mode', None), self.params_get('action', None)
 		self.items, self.new_page, self.total_pages, self.is_external = [], {}, None, kodi_utils.external()
 		if self.is_external:
 			self.widget_hide_next_page = settings.widget_hide_next_page()
@@ -106,9 +108,13 @@ class Movies:
 				self.id_type = 'imdb_id'
 				self.list = imdb_more_like_this(self.params_get('key_id'))
 			kodi_utils.add_items(handle, self.worker())
+			if self.total_pages and self.total_pages > 2 and settings.jump_to_enabled() and not self.is_external:
+				url_params = json.dumps({**self.new_page, **{'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name}})
+				kodi_utils.add_dir(handle, {'mode': 'navigate_to_page_choice', 'current_page': page_no, 'total_pages': self.total_pages, 'url_params': url_params},
+											'Jump To...', 'item_jump', kodi_utils.get_icon('item_jump_landscape'), isFolder=False)
 			if self.new_page and not self.widget_hide_next_page:
-								self.new_page.update({'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name})
-								kodi_utils.add_dir(handle, self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
+				self.new_page.update({'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name})
+				kodi_utils.add_dir(handle, self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
 		except: pass
 		kodi_utils.set_content(handle, 'movies')
 		kodi_utils.set_category(handle, self.category_name)
