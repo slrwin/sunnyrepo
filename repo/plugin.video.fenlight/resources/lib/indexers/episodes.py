@@ -19,15 +19,7 @@ def build_episode_list(params):
 				episode_date, premiered = adjust_premiered_date(item_get('premiered'), adjust_hours)
 				episode_type = item_get('episode_type') or ''
 				episode_id = item_get('episode_id') or None
-				if season_special: playcount, progress = 0, None
-				else:
-					playcount = ws.get_watched_status_episode(watched_info, (season, episode))
-					if playcount and hide_watched: continue
-					if total_seasons: progress = ws.get_progress_status_all_episode(bookmarks, season, episode)
-					else: progress = ws.get_progress_status_episode(bookmarks, episode)
-				if playcount or not hide_thumb: thumb = item_get('thumb', None) or show_landscape or show_fanart
-				else: thumb = show_landscape or show_fanart
-
+				thumb = item_get('thumb', None) or show_landscape or show_fanart
 				try: year = premiered.split('-')[0]
 				except: year = show_year or '2050'
 				duration = item_get('duration')
@@ -38,6 +30,12 @@ def build_episode_list(params):
 					display, unaired = '[COLOR red][I]%s[/I][/COLOR]' % ep_name, True
 					item['title'] = display
 				else: display, unaired = ep_name, False
+				if season_special: playcount, progress = 0, None
+				else:
+					playcount = ws.get_watched_status_episode(watched_info, (season, episode))
+					if playcount and hide_watched: continue
+					if total_seasons: progress = ws.get_progress_status_all_episode(bookmarks, season, episode)
+					else: progress = ws.get_progress_status_episode(bookmarks, episode)
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'meta': tmdb_id, 'season': season,
@@ -91,7 +89,6 @@ def build_episode_list(params):
 					})
 				yield (play_params, listitem, False)
 			except: pass
-	hide_thumb = False
 	kodi_actor, make_listitem, build_url = kodi_utils.kodi_actor(), kodi_utils.make_listitem, kodi_utils.build_url
 	poster_empty, fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
 	handle, is_external = int(sys.argv[1]), kodi_utils.external()

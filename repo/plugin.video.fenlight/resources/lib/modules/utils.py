@@ -12,7 +12,7 @@ from importlib import import_module
 from datetime import datetime, timedelta, date
 from modules.settings import max_threads
 from modules.kodi_utils import sleep
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 class TaskPool:
 	def __init__(self):
@@ -310,13 +310,11 @@ def sort_list(sort_key, sort_direction, list_data, ignore_articles):
 	except: return list_data
 
 def paginate_list(item_list, page, limit=20, paginate_start=0):
-	logger('paginate_start', paginate_start)
 	if paginate_start:
 		item_list = item_list[paginate_start:]
 		pages = list(chunks(item_list, limit))
 		pages.insert(0, [])
 	else: pages = list(chunks(item_list, limit))
-	logger('pages', len(pages))
 	result = (pages[page - 1], len(pages))
 	return result
 
