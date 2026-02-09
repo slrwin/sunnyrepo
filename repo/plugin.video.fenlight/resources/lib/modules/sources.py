@@ -41,7 +41,10 @@ class Sources():
 		if params: self.params = params
 		params_get = self.params.get
 		if not kodi_utils.external_playback_check(self.params): return
-		self.play_type, self.background, self.prescrape = params_get('play_type', ''), params_get('background', 'false') == 'true', params_get('prescrape', self.prescrape) == 'true'
+		self.watching_count = 0
+		self.play_type = params_get('play_type', '')
+		self.background = params_get('background', 'false') == 'true'
+		self.prescrape = params_get('prescrape', self.prescrape) == 'true'
 		self.random, self.random_continual = params_get('random', 'false') == 'true', params_get('random_continual', 'false') == 'true'
 		if 'external_cache_check' in self.params: self.external_cache_check = params_get('external_cache_check') == 'true'
 		else: self.external_cache_check = settings.external_cache_check()
@@ -311,9 +314,10 @@ class Sources():
 		return sourceDict
 
 	def filter_external_sources(self, sourceDict):
-		if settings.external_filter_sources() and any([self.disabled_ext_ignored, len(sourceDict) <= 5]): return sourceDict
-		sourceDict.sort(key=lambda k: k[1].priority)
-		sourceDict = sourceDict[:5]
+		if settings.external_filter_sources():
+			if any([self.disabled_ext_ignored, len(sourceDict) <= 5]): return sourceDict
+			sourceDict.sort(key=lambda k: k[1].priority)
+			sourceDict = sourceDict[:5]
 		return sourceDict
 
 	def folder_sources(self):
@@ -704,9 +708,16 @@ class Sources():
 			self.resolve_dialog_made, self.prescrape, self.prescrape_sources = False, False, []
 			self.get_sources()
 
+	# def still_watching_check(self):
+	# 	player = kodi_utils.kodi_player()
+	# 	if player.isPlayingVideo():
+	# 		watch_count = get_property('fenlight.watch_count.%s' % self.tmdb_id)
+	# 	return True
+
 	def continue_resolve_check(self):
 		try:
 			if not self.background or self.autoscrape_nextep: return True
+			# if not self.still_watching_check(): return False
 			if self.autoplay_nextep: return self.autoplay_nextep_handler()
 			return self.random_continual_handler()
 		except: return False
@@ -732,7 +743,7 @@ class Sources():
 					if remaining_time <= window_time:
 						continue_nextep = True
 						break
-					kodi_utils.sleep(100)
+					kodi_utils.sleep(1000)
 				except: pass
 			if continue_nextep:
 				if use_window: action = self._make_nextep_dialog(default_action=default_action)

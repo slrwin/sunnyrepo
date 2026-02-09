@@ -228,7 +228,7 @@ class source:
 					else: quality, extraInfo = source_utils.get_file_info(url=i_get('url'))
 					try:
 						size = i_get('size')
-						if 'package' in i and provider not in ('torrentio', 'comet', 'knightcrawler', 'mediafusion', 'selfhosted'):
+						if 'package' in i and provider not in ('torrentio', 'knightcrawler', 'selfhosted'):
 							if i_get('package') == 'season': divider = self.season_divider
 							else: divider = self.show_divider
 							size = float(size) / divider

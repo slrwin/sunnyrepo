@@ -35,8 +35,8 @@ class SetAddonConstants:
 class DatabaseMaintenance:
 	def run(self):
 		kodi_utils.logger('Fen Light', 'DatabaseMaintenance Service Starting')
-		from caches.base_cache import make_databases
-		make_databases()
+		from caches.base_cache import check_databases_integrity
+		check_databases_integrity(silent=True)
 		return kodi_utils.logger('Fen Light', 'DatabaseMaintenance Service Finished')
 
 class SyncSettings:

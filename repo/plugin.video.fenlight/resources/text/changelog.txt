@@ -1,6 +1,9 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.82[/B][/COLOR]
+- Some quick fixes.
+
 [COLOR dodgerblue][B]Version 2.1.81[/B][/COLOR]
 - Quick fix for sorting in Trakt lists.
 
