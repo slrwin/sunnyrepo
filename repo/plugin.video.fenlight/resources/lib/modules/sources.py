@@ -64,6 +64,7 @@ class Sources():
 		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')		
 		self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
 		self.episode_group_label, self.episode_id = params_get('episode_group_label', ''), params_get('episode_id', None)
+		self.playcount = params_get('playcount', None)
 		if self.media_type == 'episode':
 			self.season, self.episode = int(params_get('season')), int(params_get('episode'))
 			self.custom_season, self.custom_episode = params_get('custom_season', None), params_get('custom_episode', None)
@@ -527,7 +528,7 @@ class Sources():
 				ep_thumb = episode_data.get('thumb', None) or self.meta.get('fanart') or ''
 				episode_type = episode_data.get('episode_type', '')
 				self.meta.update({'season': episode_data['season'], 'episode': episode_data['episode'], 'premiered': episode_data['premiered'], 'episode_type': episode_type,
-								'ep_name': episode_data['title'], 'ep_thumb': ep_thumb, 'plot': episode_data['plot'], 'tvshow_plot': self.meta['plot'],
+								'ep_name': episode_data['title'], 'ep_thumb': ep_thumb, 'plot': episode_data['plot'], 'tvshow_plot': self.meta['plot'], 'playcount': self.playcount,
 								'custom_season': self.custom_season, 'custom_episode': self.custom_episode})
 			except: pass
 		self.meta.update({'media_type': self.media_type, 'background': self.background, 'custom_title': self.custom_title, 'custom_year': self.custom_year})

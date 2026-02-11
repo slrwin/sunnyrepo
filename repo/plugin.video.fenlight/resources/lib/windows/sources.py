@@ -356,7 +356,7 @@ class SourcesPlayback(BaseDialog):
 	def set_resolver_properties(self):
 		if self.meta_get('media_type') == 'movie': self.text = self.meta_get('plot')
 		else:
-			if avoid_episode_spoilers(): plot = self.meta_get('tvshow_plot') or '* Hidden to Prevent Spoilers *'
+			if avoid_episode_spoilers() and int(self.meta_get('playcount', '0')) == 0: plot = self.meta_get('tvshow_plot') or '* Hidden to Prevent Spoilers *'
 			else: plot = self.meta_get('plot', '') or self.meta_get('tvshow_plot', '')
 			self.text = '[B]%02dx%02d - %s[/B][CR][CR]%s' % (self.meta_get('season'), self.meta_get('episode'), self.meta_get('ep_name', 'N/A').upper(), plot)
 		self.setProperty('window_mode', self.window_mode)

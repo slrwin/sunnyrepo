@@ -53,7 +53,7 @@ class NextEpisode(BaseDialog):
 			self.setProperty('episode_status.highlight', status_highlight)
 
 	def get_thumb(self):
-		if avoid_episode_spoilers(): thumb = self.meta.get('fanart', '') or addon_fanart()
+		if avoid_episode_spoilers() and int(self.meta.get('playcount', '0')) == 0: thumb = self.meta.get('fanart', '') or addon_fanart()
 		else: thumb = self.meta.get('ep_thumb', None) or self.meta.get('fanart', '') or addon_fanart()
 		return thumb
 

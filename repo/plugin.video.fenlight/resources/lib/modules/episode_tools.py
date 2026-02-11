@@ -6,7 +6,7 @@ from datetime import date
 from modules.sources import Sources
 from modules.settings import date_offset, watched_indicators, ignore_articles, playback_key
 from modules.metadata import episodes_meta, all_episodes_meta
-from modules.watched_status import get_next_episodes, get_hidden_progress_items, watched_info_episode, get_next
+from modules.watched_status import get_watched_status_episode, get_next_episodes, get_hidden_progress_items, watched_info_episode, get_next
 from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
 from modules import kodi_utils
 # logger = kodi_utils.logger
@@ -22,7 +22,9 @@ class EpisodeTools:
 			play_type = self.nextep_settings['play_type']
 			season_data = self.meta_get('season_data')
 			current_season, current_episode = int(self.meta_get('season')), int(self.meta_get('episode'))
-			season, episode = get_next(current_season, current_episode, watched_info_episode(self.meta_get('tmdb_id')), season_data, 0)
+			watched_info = watched_info_episode(self.meta_get('tmdb_id'))
+			season, episode = get_next(current_season, current_episode, watched_info, season_data, 0)
+			playcount = get_watched_status_episode(watched_info, (season, episode))
 			ep_data = episodes_meta(season, self.meta)
 			if not ep_data: return 'no_next_episode'
 			ep_data = next((i for i in ep_data if i['episode'] == episode), None)
@@ -33,9 +35,10 @@ class EpisodeTools:
 			custom_title = self.meta_get('custom_title', None)
 			title = custom_title or self.meta_get('title')
 			display_name = '%s - %dx%.2d' % (title, int(season), int(episode))
+
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_data['title'], 'ep_thumb': ep_data.get('thumb', None),
 							'episode': episode, 'premiered': premiered, 'plot': ep_data['plot']})
-			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season,
+			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season, 'playcount': playcount,
 						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type}
 			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
 			if custom_title: url_params['custom_title'] = custom_title

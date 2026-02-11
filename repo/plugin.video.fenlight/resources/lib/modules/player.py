@@ -121,13 +121,14 @@ class FenLightPlayer(xbmc.Player):
 			poster = self.meta_get('poster') or ku.get_icon('box_office')
 			fanart = self.meta_get('fanart') or ku.get_addon_fanart()
 			clearlogo = self.meta_get('clearlogo') or ''
-			duration, plot, genre, trailer, mpaa = self.meta_get('duration'), self.meta_get('plot'), self.meta_get('genre', ''), self.meta_get('trailer'), self.meta_get('mpaa')
+			duration, genre, trailer, mpaa = self.meta_get('duration'), self.meta_get('genre', ''), self.meta_get('trailer'), self.meta_get('mpaa')
 			rating, votes = self.meta_get('rating'), self.meta_get('votes')
 			premiered, studio, tagline = self.meta_get('premiered'), self.meta_get('studio', ''), self.meta_get('tagline')
 			director, writer, country = self.meta_get('director', ''), self.meta_get('writer', ''), self.meta_get('country', '')
 			cast = self.meta_get('short_cast', []) or self.meta_get('cast', []) or []
 			listitem.setLabel(self.title)
 			if self.media_type == 'movie':
+				plot = self.meta_get('plot')
 				listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo})
 				info_tag = listitem.getVideoInfoTag(True)
 				info_tag.setMediaType('movie'), info_tag.setTitle(self.title), info_tag.setOriginalTitle(self.meta_get('original_title')), info_tag.setPlot(plot)
@@ -137,6 +138,8 @@ class FenLightPlayer(xbmc.Player):
 				info_tag.setWriters(writer), info_tag.setDirectors(director), info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
 				info_tag.setCast([ku.kodi_actor()(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
 			else:
+				if st.avoid_episode_spoilers() and int(self.meta_get('playcount', '0')) == 0: plot = self.meta_get('tvshow_plot') or '* Hidden to Prevent Spoilers *'
+				else: plot = self.meta_get('plot') or self.meta_get('tvshow_plot')
 				listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'tvshow.poster': poster, 'tvshow.clearlogo': clearlogo})
 				info_tag = listitem.getVideoInfoTag(True)
 				info_tag.setMediaType('episode'), info_tag.setTitle(self.meta_get('ep_name')), info_tag.setOriginalTitle(self.meta_get('original_title'))

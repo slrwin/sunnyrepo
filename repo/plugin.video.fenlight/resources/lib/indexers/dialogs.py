@@ -2,24 +2,21 @@
 import json
 from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
 from modules import kodi_utils, settings
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 def navigate_to_page_choice(params):
 	def _builder():
 		for item in start_list:
-			if item == 'Exit List': line1 = 'Exit List'
-			elif item == current_page: line1 = '[COLOR blue][B]Page %s   |   Current Page[/B][/COLOR]' % item
+			if item == current_page: line1 = '[COLOR blue][B]Page %s   |   Current Page[/B][/COLOR]' % item
 			else: line1 = 'Page %s' % item
 			yield {'line1': line1}
 	try:
 		current_page, total_pages = int(params.get('current_page')), int(params.get('total_pages'))
-		start_list = ['Exit List']
-		start_list.extend([i for i in range(1, total_pages+1)])
+		start_list = [i for i in range(1, total_pages+1)]
 		list_items = list(_builder())
-		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
+		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'set_focus': current_page - 1}
 		new_page = kodi_utils.select_dialog(start_list, **kwargs)
 		if new_page == None or new_page == current_page: return
-		if new_page == 'Exit List': return kodi_utils.run_plugin({'mode': 'navigator.exit_media_menu'})
 		url_params = json.loads(params['url_params'])
 		url_params.update({'new_page': new_page, 'refreshed': 'true'})
 		kodi_utils.container_update(url_params)

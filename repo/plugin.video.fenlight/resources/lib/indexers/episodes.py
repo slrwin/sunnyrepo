@@ -19,7 +19,14 @@ def build_episode_list(params):
 				episode_date, premiered = adjust_premiered_date(item_get('premiered'), adjust_hours)
 				episode_type = item_get('episode_type') or ''
 				episode_id = item_get('episode_id') or None
-				thumb = item_get('thumb', None) or show_landscape or show_fanart
+				if season_special: playcount, progress = 0, None
+				else:
+					playcount = ws.get_watched_status_episode(watched_info, (season, episode))
+					if playcount and hide_watched: continue
+					if total_seasons: progress = ws.get_progress_status_all_episode(bookmarks, season, episode)
+					else: progress = ws.get_progress_status_episode(bookmarks, episode)
+				if no_spoilers and not playcount: thumb, plot = show_landscape or show_fanart, tvshow_plot or '* Hidden to Prevent Spoilers *'
+				else: thumb, plot = item_get('thumb', None) or show_landscape or show_fanart, item_get('plot') or tvshow_plot
 				try: year = premiered.split('-')[0]
 				except: year = show_year or '2050'
 				duration = item_get('duration')
@@ -30,17 +37,11 @@ def build_episode_list(params):
 					display, unaired = '[COLOR red][I]%s[/I][/COLOR]' % ep_name, True
 					item['title'] = display
 				else: display, unaired = ep_name, False
-				if season_special: playcount, progress = 0, None
-				else:
-					playcount = ws.get_watched_status_episode(watched_info, (season, episode))
-					if playcount and hide_watched: continue
-					if total_seasons: progress = ws.get_progress_status_all_episode(bookmarks, season, episode)
-					else: progress = ws.get_progress_status_episode(bookmarks, episode)
 				extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 				options_params = build_url({'mode': 'options_menu_choice', 'content': 'episode', 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
 				playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'episode', 'meta': tmdb_id, 'season': season,
 												'episode': episode, 'episode_id': episode_id})
-				play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
+				play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'playcount': playcount,
 										'episode_id': episode_id, playback_key: playback_key})
 				cm_append(['extras', ('[B]Extras[/B]', 'RunPlugin(%s)' % extras_params)])
 				cm_append(['options', ('[B]Options[/B]', 'RunPlugin(%s)' % options_params)])
@@ -65,10 +66,9 @@ def build_episode_list(params):
 				cm = [i[1] for i in cm]
 				info_tag = listitem.getVideoInfoTag(True)
 				info_tag.setMediaType('episode'), info_tag.setTitle(display), info_tag.setOriginalTitle(orig_title), info_tag.setTvShowTitle(title), info_tag.setGenres(genre)
-				info_tag.setPlaycount(playcount), info_tag.setSeason(season), info_tag.setEpisode(episode), info_tag.setPlot(item_get('plot') or tvshow_plot)
+				info_tag.setPlaycount(playcount), info_tag.setSeason(season), info_tag.setEpisode(episode), info_tag.setPlot(plot)
 				info_tag.setDuration(duration), info_tag.setIMDBNumber(imdb_id), info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': str(tmdb_id), 'tvdb': str(tvdb_id)})
-				info_tag.setFirstAired(premiered)
-				info_tag.setTvShowStatus(show_status)
+				info_tag.setFirstAired(premiered), info_tag.setTvShowStatus(show_status)
 				info_tag.setCountries(country), info_tag.setTrailer(trailer), info_tag.setDirectors(item_get('director'))
 				info_tag.setYear(int(year)), info_tag.setRating(item_get('rating')), info_tag.setVotes(item_get('votes')), info_tag.setMpaa(mpaa)
 				info_tag.setStudios(studio), info_tag.setWriters(item_get('writer'))
@@ -82,9 +82,7 @@ def build_episode_list(params):
 				listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'landscape': show_landscape,
 								'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
 				set_properties({
-					'episode_type': episode_type,
-					'fenlight.extras_params': extras_params,
-					'fenlight.options_params': options_params,
+					'episode_type': episode_type, 'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params,
 					'fenlight.playback_options_params': playback_options_params
 					})
 				yield (play_params, listitem, False)
@@ -92,6 +90,7 @@ def build_episode_list(params):
 	kodi_actor, make_listitem, build_url = kodi_utils.kodi_actor(), kodi_utils.make_listitem, kodi_utils.build_url
 	poster_empty, fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
 	handle, is_external = int(sys.argv[1]), kodi_utils.external()
+	no_spoilers = settings.avoid_episode_spoilers()
 	item_list = []
 	append = item_list.append
 	watched_indicators, adjust_hours = settings.watched_indicators(), settings.date_offset()
@@ -196,7 +195,6 @@ def build_single_episode(list_type, params={}):
 			show_fanart = meta_get('fanart') or fanart_empty
 			show_clearlogo = meta_get('clearlogo') or ''
 			show_landscape = meta_get('landscape') or ''
-			thumb = item_get('thumb', None) or show_landscape or show_fanart
 			try: year = premiered.split('-')[0]
 			except: year = show_year or '2050'
 			try:
@@ -208,12 +206,6 @@ def build_single_episode(list_type, params={}):
 			else: title_str = ''
 			if display_format in (0, 1): seas_ep = '%sx%s - ' % (str_season_zfill2, str_episode_zfill2)
 			else: seas_ep = ''
-			duration = item_get('duration')
-			if not duration:
-				duration = meta_get('duration')
-				item['duration'] = duration
-			bookmarks = ws.get_bookmarks_episode(tmdb_id, season, watched_db)
-			progress = ws.get_progress_status_episode(bookmarks, episode)
 			if not list_type_starts_with('next_'):
 				playcount = ws.get_watched_status_episode(watched_info, (season, episode))
 				if playcount and hide_watched: return
@@ -232,6 +224,14 @@ def build_single_episode(list_type, params={}):
 				else: display_premiered = 'UNKNOWN'
 				display = '[%s] %s%s%s' % (display_premiered, title_str, seas_ep, ep_name)
 			else: display = '%s%s%s' % (title_str, seas_ep, ep_name)
+			if no_spoilers and not playcount: thumb, plot = show_landscape or show_fanart, tvshow_plot or '* Hidden to Prevent Spoilers *'
+			else: thumb, plot = item_get('thumb', None) or show_landscape or show_fanart, item_get('plot') or tvshow_plot
+			duration = item_get('duration')
+			if not duration:
+				duration = meta_get('duration')
+				item['duration'] = duration
+			bookmarks = ws.get_bookmarks_episode(tmdb_id, season, watched_db)
+			progress = ws.get_progress_status_episode(bookmarks, episode)
 			play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
 									'episode_id': episode_id, playback_key: playback_key})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
@@ -273,9 +273,8 @@ def build_single_episode(list_type, params={}):
 			cm = [i[1] for i in cm]
 			info_tag = listitem.getVideoInfoTag(True)
 			info_tag.setMediaType('episode'), info_tag.setOriginalTitle(orig_title), info_tag.setTvShowTitle(title), info_tag.setTitle(display), info_tag.setGenres(genre)
-			info_tag.setPlaycount(playcount), info_tag.setSeason(season), info_tag.setEpisode(episode), info_tag.setPlot(item_get('plot') or tvshow_plot)
+			info_tag.setPlaycount(playcount), info_tag.setSeason(season), info_tag.setEpisode(episode), info_tag.setPlot(plot), info_tag.setFirstAired(premiered)
 			info_tag.setDuration(duration), info_tag.setIMDBNumber(imdb_id), info_tag.setUniqueIDs({'imdb': imdb_id, 'tmdb': str(tmdb_id), 'tvdb': str(tvdb_id)})
-			info_tag.setFirstAired(premiered)
 			info_tag.setCountries(meta_get('country', [])), info_tag.setTrailer(trailer), info_tag.setTvShowStatus(show_status)
 			info_tag.setStudios(studio), info_tag.setWriters(item_get('writer')), info_tag.setDirectors(item_get('director'))
 			info_tag.setYear(int(year)), info_tag.setRating(item_get('rating')), info_tag.setVotes(item_get('votes')), info_tag.setMpaa(mpaa)
@@ -289,9 +288,7 @@ def build_single_episode(list_type, params={}):
 			listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'landscape': show_landscape,
 							'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
 			set_properties({
-				'episode_type': episode_type,
-				'fenlight.extras_params': extras_params,
-				'fenlight.options_params': options_params,
+				'episode_type': episode_type, 'fenlight.extras_params': extras_params, 'fenlight.options_params': options_params,
 				'fenlight.playback_options_params': playback_options_params
 				})
 			item_list_append({'list_items': (play_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
@@ -306,7 +303,7 @@ def build_single_episode(list_type, params={}):
 	resinsert = ''
 	item_list_append = item_list.append
 	window_command = 'ActivateWindow(Videos,%s,return)' if is_external else 'Container.Update(%s)'
-	browse_season = True
+	no_spoilers = settings.avoid_episode_spoilers()
 	watched_indicators, display_format = settings.watched_indicators(), settings.single_ep_display_format(is_external)
 	current_date, current_time, adjust_hours = get_datetime(), get_current_timestamp(), settings.date_offset()
 	unwatched_info = settings.single_ep_unwatched_episodes()
