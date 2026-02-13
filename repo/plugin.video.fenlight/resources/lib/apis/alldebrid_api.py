@@ -8,7 +8,7 @@ from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
 from modules.utils import copy2clip, make_qrcode, make_tinyurl
 from modules.source_utils import supported_video_extensions, seas_ep_filter, extras
-from modules.kodi_utils import progress_dialog, notification, hide_busy_dialog, show_busy_dialog, confirm_dialog, sleep, ok_dialog, progress_dialog, \
+from modules.kodi_utils import progress_dialog, notification, hide_busy_dialog, show_busy_dialog, sleep, ok_dialog, progress_dialog, \
 								notification, hide_busy_dialog
 # from modules.kodi_utils import logger
 

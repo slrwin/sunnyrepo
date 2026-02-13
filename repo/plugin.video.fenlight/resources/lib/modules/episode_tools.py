@@ -21,6 +21,7 @@ class EpisodeTools:
 		try:
 			play_type = self.nextep_settings['play_type']
 			season_data = self.meta_get('season_data')
+			watch_count = self.meta_get('watch_count')
 			current_season, current_episode = int(self.meta_get('season')), int(self.meta_get('episode'))
 			watched_info = watched_info_episode(self.meta_get('tmdb_id'))
 			season, episode = get_next(current_season, current_episode, watched_info, season_data, 0)
@@ -35,11 +36,10 @@ class EpisodeTools:
 			custom_title = self.meta_get('custom_title', None)
 			title = custom_title or self.meta_get('title')
 			display_name = '%s - %dx%.2d' % (title, int(season), int(episode))
-
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_data['title'], 'ep_thumb': ep_data.get('thumb', None),
 							'episode': episode, 'premiered': premiered, 'plot': ep_data['plot']})
 			url_params = {'media_type': 'episode', 'tmdb_id': self.meta_get('tmdb_id'), 'tvshowtitle': self.meta_get('rootname'), 'season': season, 'playcount': playcount,
-						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type}
+						'episode': episode, 'background': 'true', 'nextep_settings': self.nextep_settings, 'play_type': play_type, 'watch_count': watch_count}
 			if play_type == 'autoscrape_nextep': url_params['prescrape'] = 'false'
 			if custom_title: url_params['custom_title'] = custom_title
 			if 'custom_year' in self.meta: url_params['custom_year'] = self.meta_get('custom_year')
@@ -70,6 +70,8 @@ class EpisodeTools:
 				episode_history = {tmdb_key: episode_list}
 				kodi_utils.set_property('fenlight.random_episode_history', json.dumps(episode_history))
 			title, season, episode = self.meta['title'], int(chosen_episode['season']), int(chosen_episode['episode'])
+			watched_info = watched_info_episode(tmdb_id)
+			playcount = get_watched_status_episode(watched_info, (season, episode))
 			query = title + ' S%.2dE%.2d' % (season, episode)
 			display_name = '%s - %dx%.2d' % (title, season, episode)
 			ep_name, plot = chosen_episode['title'], chosen_episode['plot']
@@ -78,7 +80,8 @@ class EpisodeTools:
 			except: premiered = chosen_episode['premiered']
 			self.meta.update({'media_type': 'episode', 'rootname': display_name, 'season': season, 'ep_name': ep_name, 'ep_thumb': ep_thumb,
 							'episode': episode, 'premiered': premiered, 'plot': plot})
-			url_params = {'media_type': 'episode', 'tmdb_id': tmdb_id, 'tvshowtitle': self.meta_get('rootname'), 'season': season, 'episode': episode, 'autoplay': 'true'}
+			url_params = {'media_type': 'episode', 'tmdb_id': tmdb_id, 'tvshowtitle': self.meta_get('rootname'), 'season': season, 'episode': episode,
+						'playcount': playcount, 'autoplay': 'true'}
 			if continual: url_params['random_continual'] = 'true'
 			else: url_params['random'] = 'true'
 			if not first_run:

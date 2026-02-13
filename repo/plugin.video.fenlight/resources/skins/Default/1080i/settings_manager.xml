@@ -2749,6 +2749,15 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(80)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),true) + String.IsEqual(Window(10000).Property(fenlight.autoplay_next_episode),true)</visible>
+                          <property name="setting_label">    - Check Still Watching After... (0=Off)</property>
+                          <property name="setting_type">numeric</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoplay_watching_check)]</property>
+                          <property name="setting_description">Choose after how many auto played episodes Fen Light will ask if you are still watching. Set to 0 to disable</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=autoplay_watching_check)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(80)</visible>
                           <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false)</visible>
                           <property name="setting_label">Autoscrape Next Episode</property>
                           <property name="setting_type">boolean</property>

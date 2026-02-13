@@ -205,13 +205,15 @@ class FenLightPlayer(xbmc.Player):
 		try:
 			play_type = 'autoplay_nextep' if self.autoplay_nextep else 'autoscrape_nextep'
 			nextep_settings = st.auto_nextep_settings(play_type)
+			watching_check = nextep_settings['watching_check']
+			still_watching_check = 15 if self.meta_get('watch_count') == watching_check else 0
 			final_chapter = self.final_chapter(90) if nextep_settings['use_chapters'] else None
 			percentage = 100 - final_chapter if final_chapter else nextep_settings['window_percentage']
-			window_time = round((percentage/100) * self.total_time)
+			window_time = round((percentage/100) * self.total_time) + still_watching_check
 			use_window = nextep_settings['alert_method'] == 0
 			default_action = nextep_settings['default_action']
 			self.start_prep = nextep_settings['scraper_time'] + window_time
-			self.nextep_settings = {'use_window': use_window, 'window_time': window_time, 'default_action': default_action, 'play_type': play_type}
+			self.nextep_settings = {'use_window': use_window, 'window_time': window_time, 'default_action': default_action, 'play_type': play_type, 'watching_check': watching_check}
 		except: pass
 
 	def final_chapter(self, threshhold):

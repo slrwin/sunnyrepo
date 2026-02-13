@@ -41,7 +41,6 @@ class Sources():
 		if params: self.params = params
 		params_get = self.params.get
 		if not kodi_utils.external_playback_check(self.params): return
-		self.watching_count = 0
 		self.play_type = params_get('play_type', '')
 		self.background = params_get('background', 'false') == 'true'
 		self.prescrape = params_get('prescrape', self.prescrape) == 'true'
@@ -64,7 +63,7 @@ class Sources():
 		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')		
 		self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
 		self.episode_group_label, self.episode_id = params_get('episode_group_label', ''), params_get('episode_id', None)
-		self.playcount = params_get('playcount', None)
+		self.playcount, self.watch_count = params_get('playcount', None), params_get('watch_count', 1)
 		if self.media_type == 'episode':
 			self.season, self.episode = int(params_get('season')), int(params_get('episode'))
 			self.custom_season, self.custom_episode = params_get('custom_season', None), params_get('custom_episode', None)
@@ -528,8 +527,8 @@ class Sources():
 				ep_thumb = episode_data.get('thumb', None) or self.meta.get('fanart') or ''
 				episode_type = episode_data.get('episode_type', '')
 				self.meta.update({'season': episode_data['season'], 'episode': episode_data['episode'], 'premiered': episode_data['premiered'], 'episode_type': episode_type,
-								'ep_name': episode_data['title'], 'ep_thumb': ep_thumb, 'plot': episode_data['plot'], 'tvshow_plot': self.meta['plot'], 'playcount': self.playcount,
-								'custom_season': self.custom_season, 'custom_episode': self.custom_episode})
+								'ep_name': episode_data['title'], 'ep_thumb': ep_thumb, 'plot': episode_data['plot'], 'tvshow_plot': self.meta['plot'],
+								'playcount': self.playcount, 'watch_count': self.watch_count, 'custom_season': self.custom_season, 'custom_episode': self.custom_episode})
 			except: pass
 		self.meta.update({'media_type': self.media_type, 'background': self.background, 'custom_title': self.custom_title, 'custom_year': self.custom_year})
 
@@ -571,6 +570,11 @@ class Sources():
 	def _make_nextep_dialog(self, default_action='cancel'):
 		try: action = open_window(('windows.playback_notifications', 'NextEpisode'), 'playback_notifications.xml', meta=self.meta, default_action=default_action)
 		except: action = 'cancel'
+		return action
+
+	def _make_still_watching_dialog(self):
+		try: action = open_window(('windows.playback_notifications', 'StillWatching'), 'playback_notifications.xml', meta=self.meta)
+		except: action = 'no'
 		return action
 
 	def _kill_progress_dialog(self):
@@ -709,16 +713,21 @@ class Sources():
 			self.resolve_dialog_made, self.prescrape, self.prescrape_sources = False, False, []
 			self.get_sources()
 
-	# def still_watching_check(self):
-	# 	player = kodi_utils.kodi_player()
-	# 	if player.isPlayingVideo():
-	# 		watch_count = get_property('fenlight.watch_count.%s' % self.tmdb_id)
-	# 	return True
+	def still_watching_check(self):
+		watching_check = self.nextep_settings['watching_check']
+		if watching_check == 0: return True
+		player = kodi_utils.kodi_player()
+		if not player.isPlayingVideo(): return False
+		watch_count = self.meta.get('watch_count')
+		if watch_count == watching_check: still_watching, watch_count = self._make_still_watching_dialog(), 0
+		else: still_watching = True
+		watch_count += 1
+		self.meta['watch_count'] = watch_count
+		return still_watching
 
 	def continue_resolve_check(self):
 		try:
 			if not self.background or self.autoscrape_nextep: return True
-			# if not self.still_watching_check(): return False
 			if self.autoplay_nextep: return self.autoplay_nextep_handler()
 			return self.random_continual_handler()
 		except: return False
@@ -732,6 +741,9 @@ class Sources():
 
 	def autoplay_nextep_handler(self):
 		if not self.nextep_settings: return False
+		if not self.still_watching_check():
+			kodi_utils.notification('Cancel Autoplay')
+			return False
 		player = kodi_utils.kodi_player()
 		if player.isPlayingVideo():
 			total_time = player.getTotalTime()

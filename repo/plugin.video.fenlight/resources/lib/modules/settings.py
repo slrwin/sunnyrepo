@@ -155,12 +155,14 @@ def auto_nextep_settings(play_type):
 	play_type = 'autoplay' if play_type == 'autoplay_nextep' else 'autoscrape'
 	window_percentage = 100 - int(get_setting('fenlight.%s_next_window_percentage' % play_type, '95'))
 	use_chapters = get_setting('fenlight.%s_use_chapters' % play_type, 'true') == 'true'
+	watching_check = int(get_setting('fenlight.autoplay_watching_check', '3'))
 	scraper_time = int(get_setting('fenlight.results.timeout', '60')) + 20
 	if play_type == 'autoplay':
 		alert_method = int(get_setting('fenlight.autoplay_alert_method', '0'))
 		default_action = {'0': 'play', '1': 'cancel', '2': 'pause'}[get_setting('fenlight.autoplay_default_action', '1')]
 	else: alert_method, default_action = '', ''
-	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'alert_method': alert_method, 'default_action': default_action, 'use_chapters': use_chapters}
+	return {'scraper_time': scraper_time, 'window_percentage': window_percentage, 'alert_method': alert_method,
+			'default_action': default_action, 'use_chapters': use_chapters, 'watching_check': watching_check}
 
 def filter_status(filter_type):
 	return int(get_setting('fenlight.filter.%s' % filter_type, '0'))

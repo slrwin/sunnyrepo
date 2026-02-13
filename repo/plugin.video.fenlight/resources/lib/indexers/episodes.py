@@ -232,7 +232,7 @@ def build_single_episode(list_type, params={}):
 				item['duration'] = duration
 			bookmarks = ws.get_bookmarks_episode(tmdb_id, season, watched_db)
 			progress = ws.get_progress_status_episode(bookmarks, episode)
-			play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode,
+			play_params = build_url({'mode': play_mode, 'media_type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'playcount': playcount,
 									'episode_id': episode_id, playback_key: playback_key})
 			extras_params = build_url({'mode': 'extras_menu_choice', 'tmdb_id': tmdb_id, 'media_type': 'episode', 'is_external': is_external})
 			options_params = build_url({'mode': 'options_menu_choice', 'content': list_type, 'tmdb_id': tmdb_id, 'poster': show_poster, 'is_external': is_external})
