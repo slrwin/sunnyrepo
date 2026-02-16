@@ -14,15 +14,16 @@ from modules.episode_tools import EpisodeTools
 # logger = kodi_utils.logger
 
 class Extras(BaseDialog):
-	button_ids = (10, 11, 12, 13, 14, 15, 16, 17, 50)
-	plot_id, cast_id, recommended_id, more_like_this_id, ai_similar_id, reviews_id, comments_id, trivia_id = 2000, 2050, 2051, 2052, 2053, 2054, 2055, 2056
-	blunders_id, parentsguide_id, in_lists_id, videos_id, year_id, genres_id, networks_id, collection_id = 2057, 2058, 2059, 2060, 2061, 2062, 2063, 2064
+	button_ids = (10, 11, 12, 13, 14, 15, 16, 17, 2050)
+	plot_id, cast_id, recommended_id, related_id, more_like_this_id, ai_similar_id, reviews_id, comments_id, trivia_id = 2050, 2051, 2052, 2053, 2054, 2055, 2056, 2057, 2058
+	blunders_id, parentsguide_id, in_lists_id, videos_id, year_id, genres_id, networks_id, collection_id = 2059, 2060, 2061, 2062, 2063, 2064, 2065, 2066
 	parentsguide_icons = {'Sex & Nudity': kodi_utils.get_icon('sex_nudity'), 'Violence & Gore': kodi_utils.get_icon('violence'), 'Profanity': kodi_utils.get_icon('bad_language'),
 							'Alcohol, Drugs & Smoking': kodi_utils.get_icon('drugs_alcohol'), 'Frightening & Intense Scenes': kodi_utils.get_icon('horror')}
 	def __init__(self, *args, **kwargs):
 		BaseDialog.__init__(self, *args)
 		self.control_id = None
-		self.items_list_ids = (Extras.recommended_id, Extras.more_like_this_id, Extras.ai_similar_id, Extras.year_id, Extras.genres_id, Extras.networks_id, Extras.collection_id)
+		self.items_list_ids = (Extras.recommended_id, Extras.related_id, Extras.more_like_this_id, Extras.ai_similar_id, Extras.year_id,
+								Extras.genres_id, Extras.networks_id, Extras.collection_id)
 		self.text_list_ids = (Extras.reviews_id, Extras.trivia_id, Extras.blunders_id, Extras.parentsguide_id, Extras.comments_id)
 		self.open_folder_list_ids = (Extras.in_lists_id,)
 		self.empty_poster = kodi_utils.get_icon('box_office')
@@ -30,7 +31,7 @@ class Extras(BaseDialog):
 		self.button_label_values = kodi_utils.extras_button_label_values()
 		self.set_starting_constants(kwargs)
 		self.set_properties()
-		self.tasks = (self.set_artwork, self.set_infoline1, self.set_infoline2, self.make_ratings, self.make_cast, self.make_recommended,
+		self.tasks = (self.set_artwork, self.set_infoline1, self.set_infoline2, self.make_ratings, self.make_cast, self.make_recommended, self.make_related,
 					self.make_more_like_this, self.make_ai_similar, self.make_reviews, self.make_comments, self.make_in_lists, self.make_trivia,
 					self.make_blunders, self.make_parentsguide, self.make_videos, self.make_year, self.make_genres, self.make_network, self.make_collection)
 
@@ -165,6 +166,32 @@ class Extras(BaseDialog):
 			self.item_action_dict[Extras.recommended_id] = 'tmdb_id'
 			self.add_items(Extras.recommended_id, item_list)
 		except: pass
+
+	def make_related(self):
+		if not Extras.related_id in self.enabled_lists: return
+		def builder(position, item):
+			try:
+				details = function('trakt_dict', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
+				listitem = self.make_listitem()
+				listitem.setProperty('name', details['title'])
+				listitem.setProperty('release_date', details['year'])
+				listitem.setProperty('vote_average', '%.1f' % details['rating'])
+				listitem.setProperty('thumbnail', details['poster'] or self.empty_poster)
+				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
+				item_list_append((listitem, position))
+			except: pass
+		if self.media_type == 'movie': data_function, function = trakt_api.trakt_movies_related, movie_meta
+		else: data_function, function = trakt_api.trakt_tv_related, tvshow_meta
+		data = [i['ids'] for i in data_function(self.imdb_id)]
+		item_list = []
+		item_list_append = item_list.append
+		threads = list(make_thread_list_enumerate(builder, data))
+		[i.join() for i in threads]
+		item_list.sort(key=lambda k: k[1])
+		item_list = [i[0] for i in item_list]
+		self.setProperty('related.number', 'x%s' % len(item_list))
+		self.item_action_dict[Extras.related_id] = 'tmdb_id'
+		self.add_items(Extras.related_id, item_list)
 
 	def make_more_like_this(self):
 		if not Extras.more_like_this_id in self.enabled_lists: return
@@ -652,8 +679,7 @@ class Extras(BaseDialog):
 
 	def assign_buttons(self):
 		setting_id_base = 'fenlight.extras.%s.button' % self.media_type
-		butts = Extras.button_ids[:-1]
-		for item in butts:
+		for item in Extras.button_ids[:-1]:
 			setting_id = setting_id_base + str(item)
 			try:
 				button_action = self.get_setting(setting_id)
@@ -664,7 +690,7 @@ class Extras(BaseDialog):
 				button_label = self.button_label_values[self.media_type][button_action]
 			self.setProperty('button%s.label' % item, button_label)
 			self.button_action_dict[item] = button_action
-		self.button_action_dict[50] = 'show_plot'
+		self.button_action_dict[2050] = 'show_plot'
 
 	def set_default_focus(self):
 		try: self.setFocusId(10)

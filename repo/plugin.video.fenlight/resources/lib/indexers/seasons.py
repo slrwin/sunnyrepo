@@ -49,12 +49,10 @@ def build_season_list(params):
 				if playcount:
 					if hide_watched: continue
 				elif not unaired and not season_special:
-						cm_append(['mark_watched', ('[B]Mark Watched %s[/B]' % watched_title, 'RunPlugin(%s)' \
-								% build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_watched',
+						cm_append(['mark_watched', ('[B]Mark Watched[/B]', 'RunPlugin(%s)' % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_watched',
 															'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number}))])
 				if progress:
-					cm_append(['mark_watched', ('[B]Mark Unwatched %s[/B]' % watched_title, 'RunPlugin(%s)' \
-								% build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_unwatched',
+					cm_append(['mark_watched', ('[B]Mark Unwatched[/B]', 'RunPlugin(%s)' % build_url({'mode': 'watched_status.mark_season', 'action': 'mark_as_unwatched',
 														'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number}))])
 				set_properties({'watchedepisodes': str(watched), 'unwatchedepisodes': str(unwatched)})
 				set_properties({'totalepisodes': str(aired_eps), 'watchedprogress': str(visible_progress),
@@ -88,7 +86,6 @@ def build_season_list(params):
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
 	use_name = settings.use_season_name()
-	watched_title = 'Trakt' if watched_indicators == 1 else 'FENLAM'
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], settings.tmdb_api_key(), settings.mpaa_region(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'

@@ -179,6 +179,11 @@ def trakt_revoke_authentication(dummy=''):
 	data = {'token': get_setting('fenlight.trakt.token'), 'client_id': CLIENT_ID, 'client_secret': CLIENT_SECRET}
 	response = call_trakt("oauth/revoke", data=data, with_auth=False)
 
+def trakt_movies_related(imdb_id):
+	string = 'trakt_movies_related_%s' % imdb_id
+	params = {'path': 'movies/%s/related?extended=full', 'path_insert': imdb_id, 'params': {'limit': 20}}
+	return lists_cache_object(get_trakt, string, params)
+
 def trakt_movies_trending(page_no):
 	string = 'trakt_movies_trending_%s' % page_no
 	params = {'path': 'movies/trending/%s', 'params': {'limit': 20}, 'page_no': page_no}
@@ -209,8 +214,13 @@ def trakt_movies_most_favorited(page_no):
 def trakt_recommendations(media_type):
 	string = 'trakt_recommendations_%s' % (media_type)
 	params = {'path': '/recommendations/%s', 'path_insert': media_type, 'with_auth': True,
-			'params': {'limit': 50, 'ignore_collected': 'true', 'ignore_watchlisted': 'true'}, 'pagination': False}
+				'params': {'limit': 50, 'ignore_collected': 'true', 'ignore_watchlisted': 'true'}, 'pagination': False}
 	return trakt_cache.cache_trakt_object(get_trakt, string, params)
+
+def trakt_tv_related(imdb_id):
+	string = 'trakt_tv_related_%s' % imdb_id
+	params = {'path': 'shows/%s/related?extended=full', 'path_insert': imdb_id, 'params': {'limit': 20}}
+	return lists_cache_object(get_trakt, string, params)
 
 def trakt_tv_trending(page_no):
 	string = 'trakt_tv_trending_%s' % page_no

@@ -56,10 +56,15 @@ class OnUpdateChanges:
 		except: pass
 		return kodi_utils.logger('Fen Light', 'OnUpdateChanges Service Finished')
 
-	def clear_trakt_list_data_02(self):
-		# Active for 2.1.76.
-		from caches.trakt_cache import clear_daily_cache
-		clear_daily_cache()
+	def clear_context_menu_order_01(self):
+		# Active for 2.1.85.
+		from caches.settings_cache import restore_setting_default
+		restore_setting_default({'setting_id': 'context_menu.order', 'silent': 'true'})
+
+	def clear_extras_menu_order_01(self):
+		# Active for 2.1.85.
+		from caches.settings_cache import restore_setting_default
+		restore_setting_default({'setting_id': 'extras.enabled', 'silent': 'true'})
 
 class CustomFonts:
 	def run(self):

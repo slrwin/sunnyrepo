@@ -121,13 +121,19 @@ class TVShows:
 				results = data['results']
 				self.list = [i['id'] for i in results]
 				if data['total_pages'] > page_no: self.new_page = {'url': url, 'new_page': str(data['page'] + 1)}
+			elif self.action == 'trakt_tv_related':
+				self.id_type = 'trakt_dict'
+				key_id = self.params_get('key_id')
+				if not key_id.startswith('tt'): key_id = tvshow_meta('tmdb_id', key_id, settings.tmdb_api_key(), settings.mpaa_region(), get_datetime())['imdb_id']
+				data = function(key_id)
+				self.list = [i['ids'] for i in data]
 			elif self.action == 'imdb_more_like_this':
 				from apis.imdb_api import imdb_more_like_this
-				if self.params_get('get_imdb'):
-					self.params['key_id'] = tvshow_meta('tmdb_id', self.params_get('key_id'), settings.tmdb_api_key(), settings.mpaa_region(),
-											get_datetime(), get_current_timestamp())['imdb_id']
 				self.id_type = 'imdb_id'
-				self.list = imdb_more_like_this(self.params_get('key_id'))
+				key_id = self.params_get('key_id')
+				if self.params_get('get_imdb'):
+					key_id = tvshow_meta('tmdb_id', key_id, settings.tmdb_api_key(), settings.mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id']
+				self.list = imdb_more_like_this(key_id)
 			kodi_utils.add_items(handle, self.worker())
 			if self.total_pages and self.total_pages > 2 and settings.jump_to_enabled() and not self.is_external:
 				url_params = json.dumps({**self.new_page, **{'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name}})
@@ -177,10 +183,12 @@ class TVShows:
 										'is_external': self.is_external})
 			browse_recommended_params = self.build_url({'mode': 'build_tvshow_list', 'action': 'tmdb_tv_recommendations', 'key_id': tmdb_id, 'is_external': self.is_external,
 										'name': 'Recommended based on %s' % title})
+			browse_related_params = self.build_url({'mode': 'build_tvshow_list', 'action': 'trakt_tv_related', 'key_id': imdb_id, 'is_external': self.is_external,
+										'name': 'Related to %s' % title})
 			browse_more_like_this_params = self.build_url({'mode': 'build_tvshow_list', 'action': 'imdb_more_like_this', 'key_id': imdb_id, 'is_external': self.is_external,
 										'name': 'More Like This based on %s' % title, 'is_external': self.is_external})
 			browse_similar_params = self.build_url({'mode': 'build_tvshow_list', 'action': 'ai_similar', 'is_external': self.is_external,
-										'key_id': 'tvshow|%s' % tmdb_id, 'name': 'AI Similar based on %s' % title})
+										'key_id': 'tvshow|%s' % tmdb_id, 'name': 'Similar based on %s' % title})
 			trakt_manager_params = self.build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id, 'media_type': 'tvshow', 'icon': poster})
 			personal_manager_params = self.build_url({'mode': 'personallists_manager_choice', 'list_type': 'tvshow', 'tmdb_id': tmdb_id, 'title': title,
 										'premiered': premiered, 'current_time': self.current_time, 'icon': poster})
@@ -196,8 +204,9 @@ class TVShows:
 			else: cm_append(['extras', ('[B]Extras[/B]', 'RunPlugin(%s)' % extras_params)])
 			cm_append(['options', ('[B]Options[/B]', 'RunPlugin(%s)' % options_params)])
 			cm_append(['recommended', ('[B]Browse Recommended[/B]', self.window_command % browse_recommended_params)])
+			cm_append(['related', ('[B]Browse Related[/B]', self.window_command % browse_related_params)])
 			cm_append(['more_like_this', ('[B]Browse More Like This[/B]', self.window_command % browse_more_like_this_params)])
-			cm_append(['similar', ('[B]Browse AI Similar[/B]', self.window_command % browse_similar_params)])
+			cm_append(['similar', ('[B]Browse Similar[/B]', self.window_command % browse_similar_params)])
 			if imdb_id:
 				browse_in_trakt_list_params = self.build_url({'mode': 'trakt.list.in_trakt_lists', 'media_type': 'tvshow', 'imdb_id': imdb_id, 'is_external': self.is_external,
 											'category_name': '%s In Trakt Lists' % title})
@@ -210,12 +219,10 @@ class TVShows:
 			if playcount:
 				if self.widget_hide_watched: return
 			elif not unaired:
-				cm_append(['mark_watched', ('[B]Mark Watched %s[/B]' % self.watched_title, 'RunPlugin(%s)' % \
-							self.build_url({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_watched',
+				cm_append(['mark_watched', ('[B]Mark Watched[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_watched',
 																			'title': title,'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id}))])
 			if progress:
-				cm_append(['mark_watched', ('[B]Mark Unwatched %s[/B]' % self.watched_title, 'RunPlugin(%s)' % \
-							self.build_url({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_unwatched',
+				cm_append(['mark_watched', ('[B]Mark Unwatched[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'watched_status.mark_tvshow', 'action': 'mark_as_unwatched',
 																			'title': title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id}))])
 			set_properties({'watchedepisodes': str(total_watched), 'unwatchedepisodes': str(total_unwatched)})
 			set_properties({'watchedprogress': visible_progress, 'totalepisodes': str(total_aired_eps), 'totalseasons': str(total_seasons)})
@@ -242,6 +249,7 @@ class TVShows:
 				'fenlight.extras_params': extras_params,
 				'fenlight.options_params': options_params,
 				'fenlight.browse_recommended_params': browse_recommended_params,
+				'fenlight.browse_related_params': browse_related_params,
 				'fenlight.browse_more_like_this_params': browse_more_like_this_params,
 				'fenlight.browse_similar_params': browse_similar_params,
 				'fenlight.browse_in_trakt_list_params': browse_in_trakt_list_params,
@@ -264,7 +272,6 @@ class TVShows:
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = settings.watched_indicators()
-		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'FENLAM'
 		self.watched_info = watched_status.watched_info_tvshow(watched_status.get_database(self.watched_indicators))
 		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'
 		if self.custom_order:

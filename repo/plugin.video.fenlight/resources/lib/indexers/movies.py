@@ -100,13 +100,19 @@ class Movies:
 				self.movieset_list_active = True
 				data = sorted(movieset_meta(self.params_get('key_id'), self.tmdb_api_key)['parts'], key=lambda k: k['release_date'] or '2050')
 				self.list = [i['id'] for i in data]
+			elif self.action == 'trakt_movies_related':
+				self.id_type = 'trakt_dict'
+				key_id = self.params_get('key_id')
+				if not key_id.startswith('tt'): key_id = movie_meta('tmdb_id', key_id, settings.tmdb_api_key(), settings.mpaa_region(), get_datetime())['imdb_id']
+				data = function(key_id)
+				self.list = [i['ids'] for i in data]
 			elif self.action == 'imdb_more_like_this':
 				from apis.imdb_api import imdb_more_like_this
-				if self.params_get('get_imdb'):
-					self.params['key_id'] = movie_meta('tmdb_id', self.params_get('key_id'), self.tmdb_api_key, self.mpaa_region,
-														get_datetime(), get_current_timestamp())['imdb_id']
 				self.id_type = 'imdb_id'
-				self.list = imdb_more_like_this(self.params_get('key_id'))
+				key_id = self.params_get('key_id')
+				if self.params_get('get_imdb'):
+					key_id = movie_meta('tmdb_id', key_id, settings.tmdb_api_key(), settings.mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id']
+				self.list = imdb_more_like_this(key_id)
 			kodi_utils.add_items(handle, self.worker())
 			if self.total_pages and self.total_pages > 2 and settings.jump_to_enabled() and not self.is_external:
 				url_params = json.dumps({**self.new_page, **{'mode': 'build_movie_list', 'action': self.action, 'category_name': self.category_name}})
@@ -157,10 +163,12 @@ class Movies:
 			playback_options_params = self.build_url({'mode': 'playback_choice', 'media_type': 'movie', 'meta': tmdb_id})
 			browse_recommended_params = self.build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_recommendations', 'is_external': self.is_external,
 										'key_id': tmdb_id, 'name': 'Recommended based on %s' % title})
+			browse_related_params = self.build_url({'mode': 'build_movie_list', 'action': 'trakt_movies_related', 'key_id': imdb_id, 'is_external': self.is_external,
+										'name': 'Related to %s' % title})
 			browse_more_like_this_params = self.build_url({'mode': 'build_movie_list', 'action': 'imdb_more_like_this', 'key_id': imdb_id, 'is_external': self.is_external,
 										'name': 'More Like This based on %s' % title})
 			browse_similar_params = self.build_url({'mode': 'build_movie_list', 'action': 'ai_similar', 'is_external': self.is_external,
-										'key_id': 'movie|%s' % tmdb_id, 'name': 'AI Similar based on %s' % title})
+										'key_id': 'movie|%s' % tmdb_id, 'name': 'Similar based on %s' % title})
 			trakt_manager_params = self.build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': 'None', 'media_type': 'movie', 'icon': poster})
 			personal_manager_params = self.build_url({'mode': 'personallists_manager_choice', 'list_type': 'movie', 'tmdb_id': tmdb_id, 'title': title,
 										'premiered': premiered, 'current_time': self.current_time, 'icon': poster})
@@ -168,21 +176,22 @@ class Movies:
 			favorites_manager_params = self.build_url({'mode': 'favorites_manager_choice', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'title': title})
 			belongs_to_movieset = 'true' if all([movieset_id, movieset_name]) else 'false'
 			movieset_active = self.open_movieset and belongs_to_movieset == 'true'
-			if self.open_extras or movieset_active: cm_append(['extras', ('[B]Playback[/B]', 'RunPlugin(%s)' % play_params)])
+			if self.open_extras or movieset_active: cm_append(['extras', ('[B]Play[/B]', 'RunPlugin(%s)' % play_params)])
 			if not self.open_extras or movieset_active: cm_append(['extras', ('[B]Extras[/B]', 'RunPlugin(%s)' % extras_params)])
 			if movieset_active: url_params = self.build_url({'mode': 'open_movieset_choice', 'key_id': movieset_id, 'name': movieset_name, 'is_external': self.is_external})
 			elif self.open_extras: url_params = extras_params
 			else: url_params = play_params
 			cm_append(['options', ('[B]Options[/B]', 'RunPlugin(%s)' % options_params)])
-			cm_append(['playback_options', ('[B]Playback Options[/B]', 'RunPlugin(%s)' % playback_options_params)])
+			cm_append(['playback_options', ('[B]Play Options[/B]', 'RunPlugin(%s)' % playback_options_params)])
 			if belongs_to_movieset == 'true' and not self.movieset_list_active and not self.open_movieset:
 				browse_movie_set_params = self.build_url({'mode': 'build_movie_list', 'action': 'tmdb_movies_sets', 'key_id': movieset_id,
 										'name': movieset_name, 'is_external': self.is_external})
 				cm_append(['browse_movie_set', ('[B]Browse Movie Set[/B]', self.window_command % browse_movie_set_params)])
 			else: browse_movie_set_params = ''
 			cm_append(['recommended', ('[B]Browse Recommended[/B]', self.window_command % browse_recommended_params)])
+			cm_append(['related', ('[B]Browse Related[/B]', self.window_command % browse_related_params)])
 			cm_append(['more_like_this', ('[B]Browse More Like This[/B]', self.window_command % browse_more_like_this_params)])
-			cm_append(['similar', ('[B]Browse AI Similar[/B]', self.window_command % browse_similar_params)])
+			cm_append(['similar', ('[B]Browse Similar[/B]', self.window_command % browse_similar_params)])
 			if imdb_id:
 				browse_in_trakt_list_params = self.build_url({'mode': 'trakt.list.in_trakt_lists', 'media_type': 'movie', 'imdb_id': imdb_id, 'is_external': self.is_external,
 											'category_name': '%s In Trakt Lists' % title})
@@ -194,12 +203,10 @@ class Movies:
 			cm_append(['favorites_manager', ('[B]Favorites Manager[/B]', 'RunPlugin(%s)' % favorites_manager_params)])
 			if playcount:
 				if self.widget_hide_watched: return
-				cm_append(['mark_watched', ('[B]Mark Unwatched %s[/B]' % self.watched_title, 'RunPlugin(%s)' % \
-							self.build_url({'mode': 'watched_status.mark_movie', 'action': 'mark_as_unwatched',
+				cm_append(['mark_watched', ('[B]Mark Unwatched[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'watched_status.mark_movie', 'action': 'mark_as_unwatched',
 											'tmdb_id': tmdb_id, 'title': title}))])
 			elif not unaired:
-				cm_append(['mark_watched', ('[B]Mark Watched %s[/B]' % self.watched_title, 'RunPlugin(%s)' % \
-							self.build_url({'mode': 'watched_status.mark_movie', 'action': 'mark_as_watched',
+				cm_append(['mark_watched', ('[B]Mark Watched[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'watched_status.mark_movie', 'action': 'mark_as_watched',
 											'tmdb_id': tmdb_id, 'title': title}))])
 			if progress:
 				cm_append(['mark_watched', ('[B]Clear Progress[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'watched_status.erase_bookmark', 'media_type': 'movie',
@@ -232,6 +239,7 @@ class Movies:
 				'fenlight.playback_options_params': playback_options_params,
 				'fenlight.browse_movie_set_params': browse_movie_set_params,
 				'fenlight.browse_recommended_params': browse_recommended_params,
+				'fenlight.browse_related_params': browse_related_params,
 				'fenlight.browse_more_like_this_params': browse_more_like_this_params,
 				'fenlight.browse_similar_params': browse_similar_params,
 				'fenlight.browse_in_trakt_list_params': browse_in_trakt_list_params,
@@ -249,7 +257,6 @@ class Movies:
 		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), settings.watched_indicators()
 		self.cm_sort_order = settings.cm_sort_order()
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
-		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'FENLAM'
 		watched_db = watched_status.get_database(self.watched_indicators)
 		self.watched_info, self.bookmarks = watched_status.watched_info_movie(watched_db), watched_status.get_bookmarks_movie(watched_db)
 		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'

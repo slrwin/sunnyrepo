@@ -514,6 +514,7 @@ def playback_choice(params):
 	from modules.source_utils import get_aliases_titles, make_alias_dict
 	from modules import metadata
 	media_type, season, episode, episode_id = params.get('media_type'), params.get('season', ''), params.get('episode', ''), params.get('episode_id', None)
+	playcount = params.get('playcount', '0')
 	playback_key = settings.playback_key()
 	play_mode = 'playback.%s' % playback_key
 	meta = params.get('meta')
@@ -633,6 +634,7 @@ def playback_choice(params):
 			_process_params('', 'true', 'ignore_scrape_filters')
 			kodi_utils.set_property('fs_filterless_search', 'true')
 	else: episodes_data = metadata.episodes_meta(orig_season, meta)
+	if media_type == 'episode': play_params['playcount'] = playcount
 	play_params[playback_key] = playback_key
 	from modules.sources import Sources
 	Sources().playback_prep(play_params)
@@ -711,9 +713,7 @@ def extras_buttons_choice(params):
 	return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
 
 def extras_lists_choice(params={}):
-	choices = [('Plot', 2000), ('Cast', 2050), ('Recommended', 2051), ('More Like This', 2052), ('AI Similar', 2053), ('Reviews', 2054),
-			('Comments', 2055), ('Trivia', 2056), ('Blunders', 2057), ('Parental Guide', 2058), ('In Trakt Lists', 2059), ('Videos', 2060),
-			('More from Year', 2061), ('More from Genres', 2062), ('More from Networks', 2063), ('More from Collection', 2064)]
+	choices = [(i,c) for c, i in enumerate(kodi_utils.extras_items(), 2050)]
 	list_items = [{'line1': i[0]} for i in choices]
 	current_settings = settings.extras_enabled_menus()
 	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]

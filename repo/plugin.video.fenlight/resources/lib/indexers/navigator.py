@@ -506,8 +506,10 @@ class Navigator:
 		from modules.episode_tools import single_last_watched_episodes
 		recommend_type = s.recommend_service()
 		menu_type = self.params_get('menu_type')
-		action_dict = {'movie': {'mode': 'build_movie_list', 'action': {0: 'tmdb_movies_recommendations', 1: 'imdb_more_like_this', 2: 'ai_similar'}, 'media_type': 'movie'},
-						'tvshow': {'mode': 'build_tvshow_list', 'action': {0: 'tmdb_tv_recommendations', 1: 'imdb_more_like_this', 2: 'ai_similar'}, 'media_type': 'episode'}}
+		action_dict = {'movie':
+		{'mode': 'build_movie_list', 'action': {0: 'tmdb_movies_recommendations', 1: 'imdb_more_like_this', 2: 'ai_similar', 3: 'trakt_movies_related'}, 'media_type': 'movie'},
+						'tvshow':
+		{'mode': 'build_tvshow_list', 'action': {0: 'tmdb_tv_recommendations', 1: 'imdb_more_like_this', 2: 'ai_similar', 3: 'trakt_tv_related'}, 'media_type': 'episode'}}
 		action_params = action_dict[menu_type]
 		mode, action, media_type = action_params['mode'], action_params['action'][recommend_type], action_params['media_type']
 		recently_watched = get_recently_watched(media_type)
@@ -515,11 +517,11 @@ class Navigator:
 		for item in recently_watched:
 			if media_type == 'movie':
 				name = item['title']
-				tmdb_id = item['media_id'] if recommend_type in (0, 1) else 'movie|%s' % item['media_id']
+				key_id = item['media_id'] if recommend_type in (0, 1, 3) else 'movie|%s' % item['media_id']
 			else:
 				name = '%s - %sx%s' % (item['title'], str(item['season']), str(item['episode']))
-				tmdb_id = item['media_ids']['tmdb'] if recommend_type in (0, 1) else 'tvshow|%s' % item['media_ids']['tmdb']
-			params = {'mode': mode, 'action': action, 'key_id': tmdb_id, 'name': 'Because You Watched %s' % name}
+				key_id = item['media_ids']['tmdb'] if recommend_type in (0, 1, 3) else 'tvshow|%s' % item['media_ids']['tmdb']
+			params = {'mode': mode, 'action': action, 'key_id': key_id, 'name': 'Because You Watched %s' % name}
 			if recommend_type == 1: params['get_imdb'] = 'true'
 			self.add(params, name, 'because_you_watched')
 		self.end_directory()

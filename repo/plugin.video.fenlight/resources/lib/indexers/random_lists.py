@@ -145,6 +145,7 @@ class RandomLists():
 	def random_because_you_watched(self):
 		from apis.tmdb_api import tmdb_movies_recommendations, tmdb_tv_recommendations
 		from apis.imdb_api import imdb_more_like_this
+		from apis.trakt_api import trakt_movies_related, trakt_tv_related
 		from apis.ai_api import ai_similar
 		from modules.episode_tools import single_last_watched_episodes
 		from modules.settings import tmdb_api_key, mpaa_region, recommend_service, recommend_seed
@@ -155,10 +156,8 @@ class RandomLists():
 		recommend_type = recommend_service()
 		try:
 			if not random_list:
-				if self.menu_type == 'movie': mode, action, media_type = 'build_movie_list', 'tmdb_movies_recommendations', 'movie'
-				else: mode, action, media_type = 'build_tvshow_list', 'tmdb_tv_recommendations', 'episode'
-				recently_watched = get_recently_watched(media_type)
-				if media_type == 'episode': recently_watched = single_last_watched_episodes(recently_watched)
+				recently_watched = get_recently_watched('movie' if self.menu_type == 'movie' else 'episode')
+				if self.menu_type == 'tvshow': recently_watched = single_last_watched_episodes(recently_watched)
 				recent_seed = random.choice(recently_watched[:recommend_seed()])
 				seed_tmdb_id = recent_seed['media_id'] if self.menu_type == 'movie' else recent_seed['media_ids']['tmdb']
 				list_name = 'Because You Watched... %s' % recent_seed['title']
@@ -168,14 +167,19 @@ class RandomLists():
 				elif recommend_type == 1:
 					meta_function = movie_meta if self.menu_type == 'movie' else tvshow_meta
 					result = imdb_more_like_this(meta_function('tmdb_id', seed_tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id'])
-				else:
+				elif recommend_type == 2:
 					key_id = 'movie|%s' % seed_tmdb_id if self.menu_type == 'movie' else 'tvshow|%s' % seed_tmdb_id
 					result = ai_similar(key_id)['results']
+				else:
+					meta_function = movie_meta if self.menu_type == 'movie' else tvshow_meta
+					list_function = trakt_movies_related if self.menu_type == 'movie' else trakt_tv_related
+					result = list_function(meta_function('tmdb_id', seed_tmdb_id, tmdb_api_key(), mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id'])
 				random.shuffle(result)
 				if cache_to_memory: set_persistent_content(self.database, '%s_%s' % (self.menu_type, self.action), {'name': list_name, 'result': result})
 			else: list_name, result = random_list['name'], random_list['result']
 			if recommend_type in (0, 2): self.params['list'] = [i['id'] for i in result]
-			else: self.params.update({'list': result, 'id_type': 'imdb_id'})
+			elif recommend_type == 1: self.params.update({'list': result, 'id_type': 'imdb_id'})
+			else: self.params.update({'list': [i['ids'] for i in result], 'id_type': 'trakt_dict'})
 			self.list_items = self.function(self.params).worker()
 			self.category_name =  list_name
 		except: kodi_utils.clear_property('fenlight.random_because_you_watched')

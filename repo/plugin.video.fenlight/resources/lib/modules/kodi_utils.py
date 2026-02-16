@@ -17,22 +17,26 @@ def random_episodes_check():
 
 def extras_button_label_values():
 	return {'movie':
-				{'movies_play': 'Playback', 'show_trailers': 'Trailer', 'show_images': 'Images',  'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
+				{'movies_play': 'Play', 'show_trailers': 'Trailer', 'show_images': 'Images',  'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
 				'show_director': 'Director', 'show_options': 'Options', 'show_recommended': 'Recommended', 'show_more_like_this': 'More Like This',
 				'show_trakt_manager': 'Trakt Lists', 'show_personallists_manager': 'Personal Lists', 'show_tmdb_manager': 'TMDb Lists', 'show_favorites_manager': 'Favorites Lists',
-				'playback_choice': 'Playback Options', 'show_plot': 'Plot', 'show_keywords': 'Keywords', 'show_in_trakt_lists': 'In Trakt Lists', 'close_all': 'Close All Dialogs'},
+				'playback_choice': 'Play Options', 'show_plot': 'Plot', 'show_keywords': 'Keywords', 'show_in_trakt_lists': 'In Trakt Lists', 'close_all': 'Close'},
 			'tvshow':
 				{'tvshow_browse': 'Browse', 'show_trailers': 'Trailer', 'show_images': 'Images', 'show_extrainfo': 'Extra Info', 'show_genres': 'Genres',
 				'play_nextep': 'Play Next', 'show_options': 'Options', 'show_recommended': 'Recommended', 'show_more_like_this': 'More Like This',
 				'show_trakt_manager': 'Trakt Lists', 'show_personallists_manager': 'Personal Lists', 'show_tmdb_manager': 'TMDb Lists', 'show_favorites_manager': 'Favorites Lists',
-				'play_random_episode': 'Play Random', 'show_plot': 'Plot', 'show_keywords': 'Keywords', 'show_in_trakt_lists': 'In Trakt Lists', 'close_all': 'Close All Dialogs'}}
+				'play_random_episode': 'Play Random', 'show_plot': 'Plot', 'show_keywords': 'Keywords', 'show_in_trakt_lists': 'In Trakt Lists', 'close_all': 'Close'}}
+
+def extras_items():
+	return ('Plot', 'Cast', 'Recommended', 'Related', 'More Like This', 'Similar', 'Reviews', 'Comments', 'Trivia', 'Blunders', 'Parental Guide', 'In Trakt Lists', 'Videos',
+			'More from Year', 'More from Genres', 'More from Networks', 'More from Collection')
 
 def context_menu_items():
-	return {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Playback Options', 'browse_movie_set': 'Browse Movie Set', 'browse_seasons': 'Browse TV Seasons',
-			'browse_episodes': 'Browse Season Episodes', 'recommended': 'Browse Recommended', 'more_like_this': 'Browse More Like This', 'similar': 'Browse Similar',
-			'in_trakt_list': 'In Trakt Lists', 'trakt_manager':'Trakt Lists Manager', 'personal_manager': 'Personal Lists Manager', 'tmdb_manager': 'TMDb Lists Manager',
-			'favorites_manager': 'Favorites Manager', 'mark_watched': 'Mark Watched/Unwatched', 'unmark_previous_episode': 'Unmark Previous Watched Episode',
-			'exit': 'Exit List', 'refresh': 'Refresh Widgets', 'reload': 'Reload Widgets'}
+	return {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Play Options', 'browse_movie_set': 'Browse Movie Set', 'browse_seasons': 'Browse TV Seasons',
+			'browse_episodes': 'Browse Season Episodes', 'recommended': 'Browse Recommended', 'related': 'Browse Related', 'more_like_this': 'Browse More Like This',
+			'similar': 'Browse Similar', 'in_trakt_list': 'In Trakt Lists', 'trakt_manager':'Trakt Lists Manager', 'personal_manager': 'Personal Lists Manager',
+			'tmdb_manager': 'TMDb Lists Manager', 'favorites_manager': 'Favorites Manager', 'mark_watched': 'Mark Watched/Unwatched',
+			'unmark_previous_episode': 'Unmark Previous Watched Episode', 'exit': 'Exit List', 'refresh': 'Refresh Widgets', 'reload': 'Reload Widgets'}
 
 def video_extensions():
 	return ('m4v', '3g2', '3gp', 'nsv', 'tp', 'ts', 'ty', 'pls', 'rm', 'rmvb', 'mpd', 'ifo', 'mov', 'qt', 'divx', 'xvid', 'bivx', 'vob', 'nrg', 'img', 'iso', 'udf', 'pva',
