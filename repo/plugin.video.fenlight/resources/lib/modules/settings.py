@@ -136,6 +136,9 @@ def autoscrape_next_episode():
 	if not auto_play('episode') and get_setting('fenlight.autoscrape_next_episode', 'false') == 'true': return True
 	else: return False
 
+def autoscrape_confirm():
+	return get_setting('fenlight.autoscrape_confirm', 'false') == 'true'
+
 def auto_rescrape_cache_ignored():
 	return int(get_setting('fenlight.results.auto_rescrape_cache_ignored', '1'))
 
@@ -217,6 +220,9 @@ def easynews_playback_method(query):
 	setting = queries[query]()
 	return setting
 
+def easynews_playback_method_retries():
+	return int(get_setting('fenlight.easynews.playback_method_retries', '1')) + 1
+
 def easynews_authorized():
 	easynews_user = get_setting('fenlight.easynews_user', 'empty_setting')
 	easynews_password = get_setting('fenlight.easynews_password', 'empty_setting')
@@ -255,12 +261,12 @@ def external_scraper_info():
 	if module in ('empty_setting', ''): return None, ''
 	return module, module.split('.')[-1]
 
-def external_filter_sources():
-	return get_setting('fenlight.external.filter_sources', 'true') == 'true'
-
 def filter_by_name(scraper):
 	if get_property('fs_filterless_search') == 'true': return False
 	return get_setting('fenlight.%s.title_filter' % scraper, 'false') == 'true'
+
+def uncached_min_seeders():
+	return int(get_setting('fenlight.results.uncached_min_seeders', '0'))
 
 def easynews_language_filter():
 	enabled = get_setting('fenlight.easynews.filter_lang') == 'true'

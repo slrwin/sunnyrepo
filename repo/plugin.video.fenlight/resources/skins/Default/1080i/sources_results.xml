@@ -77,7 +77,7 @@
                     <width>650</width>
                     <height>950</height>
                     <aspectratio aligny="top">stretch</aspectratio>
-                    <texture diffuse="fenlight_diffuse/poster_w217_h320.png" />
+                    <texture diffuse="fenlight_diffuse/poster-50.png" background="true" />
                 </control>
                 <control type="fixedlist" id="2000">
                     <pagecontrol>2060</pagecontrol>

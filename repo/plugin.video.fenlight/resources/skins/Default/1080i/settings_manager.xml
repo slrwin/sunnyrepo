@@ -1494,15 +1494,6 @@
                       <item>
                           <visible>Container(2000).HasFocus(60)</visible>
                           <visible>String.IsEqual(Window(10000).Property(fenlight.provider.external),true)</visible>
-                          <property name="setting_label">Filter External Scrapers</property>
-                          <property name="setting_type">boolean</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.external.filter_sources)]</property>
-                          <property name="setting_description">Enable this and Fen Light will filter the external scrapers based on their priority determined by the scraper pack used</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=external.filter_sources)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(60)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(fenlight.provider.external),true)</visible>
                           <visible>!String.IsEqual(Window(10000).Property(fenlight.external_scraper.name),empty_setting)</visible>
                           <property name="setting_label">Open External Scraper Settings</property>
                           <property name="setting_type">action</property>
@@ -2346,6 +2337,14 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(70)</visible>
+                          <property name="setting_label">Uncached Results Minimum Seeders</property>
+                          <property name="setting_type">numeric</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.uncached_min_seeders)]</property>
+                          <property name="setting_description">Enter here the Minimum Seeders a result must have to be displayed by Fen Light</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=results.uncached_min_seeders)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(70)</visible>
                           <property name="setting_label">Limit Results Per Quality</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.results.limit_number_quality_name)]</property>
@@ -2783,6 +2782,16 @@
                           <property name="setting_description">Enable this and Fen Light will attempt to use video file Chapter information to ascertain when to show the Next Episode alert. If unsuccessful, then the percentage of playback value will be used instead</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoscrape_use_chapters)</onclick>
                       </item>
+                      
+                      <item>
+                          <visible>Container(2000).HasFocus(80)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.auto_play_episode),false) + String.IsEqual(Window(10000).Property(fenlight.autoscrape_next_episode),true)</visible>
+                          <property name="setting_label">    - Confirm Before Autoscrape?</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.autoscrape_confirm)]</property>
+                          <property name="setting_description">Enable this and Fen Light will confirm you wish to autoscrape the next episode towards the end of the current eisodes runtime</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=autoscrape_confirm)</onclick>
+                      </item>
                       <item>
                           <visible>Container(2000).HasFocus(80)</visible>
                           <property name="setting_label">Automatically Resume Playback</property>
@@ -2820,8 +2829,19 @@
                           <visible>Container(2000).HasFocus(80)</visible>
                           <visible>String.IsEqual(Window(10000).Property(fenlight.provider.easynews),true)</visible>
                           <visible>![String.IsEmpty(Window(10000).Property(fenlight.easynews_user)) + String.IsEmpty(Window(10000).Property(fenlight.easynews_password))]</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.easynews.playback_method),1) | String.IsEqual(Window(10000).Property(fenlight.easynews.playback_method),3)</visible>
+                          <property name="setting_label">    - Set Max. Retries for Playback</property>
+                          <property name="setting_type">numeric</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.easynews.playback_method_retries)]</property>
+                          <property name="setting_description">Choose the maximum retries allowed for Easynews playback attempts</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=easynews.playback_method_retries)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(80)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.provider.easynews),true)</visible>
+                          <visible>![String.IsEmpty(Window(10000).Property(fenlight.easynews_user)) + String.IsEmpty(Window(10000).Property(fenlight.easynews_password))]</visible>
                           <visible>String.IsEqual(Window(10000).Property(fenlight.easynews.playback_method),2) | String.IsEqual(Window(10000).Property(fenlight.easynews.playback_method),3)</visible>
-                          <property name="setting_label">    - Exclude NO SEEK for My Services Menu Playback</property>
+                          <property name="setting_label">    - Exclude NO SEEK Playback for My Services</property>
                           <property name="setting_type">boolean</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.easynews.playback_method_limited)]</property>
                           <property name="setting_description">Enable this and Fen Light will not use the NO SEEK Easynews Playback Method when resolving regular files from the My Services->Easynews location</property>

@@ -374,7 +374,6 @@ class Extras(BaseDialog):
 
 	def make_videos(self):
 		if not Extras.videos_id in self.enabled_lists: return
-		if not self.youtube_installed_check(): return
 		def _sort_trailers(trailers):
 			official_trailers = [i for i in trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()]
 			other_official_trailers = [i for i in trailers if i['official'] and i['type'] == 'Trailer' and not i in official_trailers]
@@ -583,7 +582,8 @@ class Extras(BaseDialog):
 		return self.show_text_media(text=self.plot)
 
 	def show_trailers(self):
-		if not self.youtube_installed_check(): return self.notification('Youtube Plugin needed for playback')
+		if not kodi_utils.addon_installed('plugin.video.youtube') or not kodi_utils.addon_enabled('plugin.video.youtube'):
+			return kodi_utils.notification('Youtube Plugin needed for playback')
 		self.set_current_params(set_starting_position=False)
 		self.window_player_url = self.meta_get('trailer')
 		return window_player(self)
@@ -781,11 +781,6 @@ class Extras(BaseDialog):
 			line2 = '[B]  •  [/B]'.join([self.get_progress(percent_watched), self.get_finish(percent_watched)])
 		else: line2 = '[B]  •  [/B]'.join([i for i in (self.get_next_episode(), self.get_last_aired(), self.get_next_aired()) if i])
 		self.set_label(3001, line2)
-
-	def youtube_installed_check(self):
-		if not self.addon_installed('plugin.video.youtube'): return False
-		if not self.addon_enabled('plugin.video.youtube'): return False
-		return True
 
 	def close_all(self):
 		kodi_utils.clear_property('fenlight.window_stack')

@@ -34,7 +34,7 @@
                     <align>center</align>
                     <aligny>center</aligny>
                     <aspectratio>keep</aspectratio>
-                    <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Window.Property(poster)]</texture>
+                    <texture diffuse="fenlight_diffuse/poster-50.png" background="true">$INFO[Window.Property(poster)]</texture>
                 </control>
                 <control type="image">
                     <left>7</left>

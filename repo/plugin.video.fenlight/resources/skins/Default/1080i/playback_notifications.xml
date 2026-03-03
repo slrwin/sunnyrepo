@@ -99,7 +99,7 @@
             <control type="group">
                 <visible>String.IsEqual(Window.Property(mode),still_watching)</visible>
                 <left>275</left>
-                <!-- Still Watching Ends? -->
+                <!-- Still Watching? -->
                 <control type="label">
                     <left>80</left>
                     <aligny>center</aligny>
@@ -113,7 +113,7 @@
             <control type="group">
                 <visible>String.IsEqual(Window.Property(mode),stinger)</visible>
                 <left>275</left>
-                <!-- Attention!!! -->
+                <!-- Keep Watching During Credits!!! -->
                 <control type="label">
                     <left>80</left>
                     <aligny>center</aligny>

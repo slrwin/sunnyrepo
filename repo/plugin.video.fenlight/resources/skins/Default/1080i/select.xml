@@ -82,24 +82,24 @@
                 </control>
                 <control type="group">
                     <control type="image">
+                        <visible>String.IsEqual(Window().Property(multi_choice),false)</visible>
                         <left>770</left>
                         <top>65</top>
                         <height>720</height>
                         <width>500</width>
                         <aspectratio aligny="bottom">keep</aspectratio>
-                        <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Container(2025).ListItem.Property(icon)]</texture>
+                        <texture diffuse="fenlight_diffuse/poster_large_w217_h320.png">$INFO[Container(2025).ListItem.Property(icon)]</texture>
                         <fadetime>100</fadetime>
-                        <visible>String.IsEqual(Window().Property(multi_choice),false)</visible>
                     </control>
                     <control type="image">
+                        <visible>String.IsEqual(Window().Property(multi_choice),true)</visible>
                         <left>820</left>
                         <top>370</top>
                         <height>400</height>
                         <width>400</width>
                         <aspectratio aligny="bottom">keep</aspectratio>
-                        <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Container(2025).ListItem.Property(icon)]</texture>
+                        <texture diffuse="fenlight_diffuse/poster_large_w217_h320.png">$INFO[Container(2025).ListItem.Property(icon)]</texture>
                         <fadetime>100</fadetime>
-                        <visible>String.IsEqual(Window().Property(multi_choice),true)</visible>
                     </control>
                 </control>
             </control>

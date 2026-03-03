@@ -116,7 +116,8 @@ def window_player(obj):
 	try:
 		window_player_url = obj.window_player_url
 		if 'plugin.video.youtube' in window_player_url:
-			if not kodi_utils.addon_installed('plugin.video.youtube') or not kodi_utils.addon_enabled('plugin.video.youtube'): return
+			if not kodi_utils.addon_installed('plugin.video.youtube') or not kodi_utils.addon_enabled('plugin.video.youtube'):
+				return kodi_utils.notification('Youtube Plugin needed for playback')
 		kodi_utils.clear_property('fenlight.window_loaded')
 		current_params = obj.current_params
 		player = kodi_utils.kodi_player()

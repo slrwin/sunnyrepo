@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import json
 from modules.metadata import tvshow_meta
 from modules.utils import get_datetime, get_current_timestamp, paginate_list, TaskPool, manual_function_import
 from modules import kodi_utils, settings, watched_status
@@ -20,7 +21,6 @@ class TVShows:
 	'trakt_anime_trending', 'trakt_anime_trending_recent', 'trakt_anime_most_watched', 'trakt_anime_most_favorited')
 	trakt_special = ('trakt_tv_certifications', 'trakt_anime_certifications')
 	trakt_personal = ('trakt_collection', 'trakt_watchlist', 'trakt_collection_lists', 'trakt_watchlist_lists', 'trakt_favorites')
-	trakt_search = ('trakt_tv_search', 'trakt_anime_search')
 	
 	def __init__(self, params):
 		self.params = params
@@ -42,7 +42,6 @@ class TVShows:
 		elif self.action in self.personal:
 			if settings.include_anime_tvshow(): self.is_anime_list = None
 			else: self.is_anime_list = False
-		elif self.action == 'tmdb_tv_search': self.is_anime_list = None
 		else: self.is_anime_list = None
 
 	def fetch_list(self):
@@ -99,13 +98,6 @@ class TVShows:
 				try:
 					if total_pages > page_no: self.new_page = {'new_page': str(page_no + 1), 'paginate_start': self.paginate_start}
 				except: pass
-			elif self.action in self.trakt_search:
-				key_id = self.params_get('key_id', None) or self.params_get('query')
-				if not key_id: return
-				self.id_type = 'trakt_dict'
-				data, total_pages = function(key_id, page_no)
-				self.list = [i['show']['ids'] for i in data]
-				if int(total_pages) > page_no: self.new_page = {'new_page': str(page_no + 1), 'key_id': key_id}
 			elif self.action == 'trakt_recommendations':
 				self.id_type = 'trakt_dict'
 				data = function('shows')
@@ -189,6 +181,8 @@ class TVShows:
 										'name': 'More Like This based on %s' % title, 'is_external': self.is_external})
 			browse_similar_params = self.build_url({'mode': 'build_tvshow_list', 'action': 'ai_similar', 'is_external': self.is_external,
 										'key_id': 'tvshow|%s' % tmdb_id, 'name': 'Similar based on %s' % title})
+			browse_in_trakt_list_params = self.build_url({'mode': 'trakt.list.in_trakt_lists', 'media_type': 'tvshow', 'imdb_id': imdb_id, 'is_external': self.is_external,
+										'category_name': '%s In Trakt Lists' % title})
 			trakt_manager_params = self.build_url({'mode': 'trakt_manager_choice', 'tmdb_id': tmdb_id, 'imdb_id': imdb_id, 'tvdb_id': tvdb_id, 'media_type': 'tvshow', 'icon': poster})
 			personal_manager_params = self.build_url({'mode': 'personallists_manager_choice', 'list_type': 'tvshow', 'tmdb_id': tmdb_id, 'title': title,
 										'premiered': premiered, 'current_time': self.current_time, 'icon': poster})
@@ -207,11 +201,7 @@ class TVShows:
 			cm_append(['related', ('[B]Browse Related[/B]', self.window_command % browse_related_params)])
 			cm_append(['more_like_this', ('[B]Browse More Like This[/B]', self.window_command % browse_more_like_this_params)])
 			cm_append(['similar', ('[B]Browse Similar[/B]', self.window_command % browse_similar_params)])
-			if imdb_id:
-				browse_in_trakt_list_params = self.build_url({'mode': 'trakt.list.in_trakt_lists', 'media_type': 'tvshow', 'imdb_id': imdb_id, 'is_external': self.is_external,
-											'category_name': '%s In Trakt Lists' % title})
-				cm_append(['in_trakt_list', ('[B]In Trakt Lists[/B]', self.window_command % browse_in_trakt_list_params)])
-			else: browse_in_trakt_list_params = ''
+			cm_append(['in_trakt_list', ('[B]In Trakt Lists[/B]', self.window_command % browse_in_trakt_list_params)])
 			cm_append(['trakt_manager', ('[B]Trakt Lists Manager[/B]', 'RunPlugin(%s)' % trakt_manager_params)])
 			cm_append(['personal_manager', ('[B]Personal Lists Manager[/B]', 'RunPlugin(%s)' % personal_manager_params)])
 			cm_append(['tmdb_manager', ('[B]TMDb Lists Manager[/B]', 'RunPlugin(%s)' % tmdb_manager_params)])

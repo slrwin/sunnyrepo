@@ -100,7 +100,7 @@ class Sources():
 		self.active_external = 'external' in self.active_internal_scrapers
 		if self.active_external:
 			self.debrid_enabled = debrid.debrid_enabled()
-			if not self.debrid_enabled: return self.disable_external('No Debrid Services Enabled')
+			if not self.debrid_enabled and all(scraper == 'external' for scraper in self.active_internal_scrapers): return self.disable_external('No Debrid Services Enabled')
 			self.ext_folder, self.ext_name = settings.external_scraper_info()
 			if not self.ext_folder or not self.ext_name: return self.disable_external('Error Importing External Module')
 
@@ -157,7 +157,9 @@ class Sources():
 
 	def process_results(self, results):
 		results = self.sort_results(results)
+		min_seeders = settings.uncached_min_seeders()
 		self.uncached_results = [i for i in results if 'Uncached' in i.get('cache_provider', '')]
+		self.uncached_results = [i for i in self.uncached_results if int(i.get('seeders', '0')) >= min_seeders]
 		results = [i for i in results if not i in self.uncached_results]
 		if self.ignore_scrape_filters: self.filters_ignored = True
 		else:
@@ -309,15 +311,8 @@ class Sources():
 
 	def external_sources(self):
 		append_module_to_syspath('special://home/addons/%s/lib' % self.ext_folder)
-		try: sourceDict = self.filter_external_sources(manual_function_import(self.ext_name, 'sources')(specified_folders=['torrents'], ret_all=self.disabled_ext_ignored))
+		try: sourceDict = manual_function_import(self.ext_name, 'sources')(specified_folders=['torrents'], ret_all=self.disabled_ext_ignored)
 		except: sourceDict = []
-		return sourceDict
-
-	def filter_external_sources(self, sourceDict):
-		if settings.external_filter_sources():
-			if any([self.disabled_ext_ignored, len(sourceDict) <= 5]): return sourceDict
-			sourceDict.sort(key=lambda k: k[1].priority)
-			sourceDict = sourceDict[:5]
 		return sourceDict
 
 	def folder_sources(self):
@@ -572,8 +567,8 @@ class Sources():
 		except: action = 'cancel'
 		return action
 
-	def _make_still_watching_dialog(self):
-		try: action = open_window(('windows.playback_notifications', 'StillWatching'), 'playback_notifications.xml', meta=self.meta)
+	def _make_still_watching_dialog(self, check_text):
+		try: action = open_window(('windows.playback_notifications', 'StillWatching'), 'playback_notifications.xml', meta=self.meta, check_text=check_text)
 		except: action = 'no'
 		return action
 
@@ -614,6 +609,7 @@ class Sources():
 	def play_file(self, results, source={}):
 		self.playback_successful, self.cancel_all_playback = None, False
 		retry_easynews = settings.easynews_playback_method('retry')
+		retry_easynews_limit = settings.easynews_playback_method_retries()
 		try:
 			kodi_utils.hide_busy_dialog()
 			url = None
@@ -640,7 +636,7 @@ class Sources():
 				resolve_item['resolve_display'] = '%02d. [B]%s[/B][CR]%s[CR]%s' % (count, provider_text, extra_info, display_name)
 				processed_items_append(resolve_item)
 				if provider == 'easynews' and retry_easynews:
-					for retry in range(1, 2):
+					for retry in range(1, retry_easynews_limit):
 						resolve_item = dict(item)
 						resolve_item['resolve_display'] = '%02d. [B]%s (RETRYx%s)[/B][CR]%s[CR]%s' % (count, provider_text, retry, extra_info, display_name)
 						processed_items_append(resolve_item)
@@ -719,7 +715,7 @@ class Sources():
 		player = kodi_utils.kodi_player()
 		if not player.isPlayingVideo(): return False
 		watch_count = self.meta.get('watch_count')
-		if watch_count == watching_check: still_watching, watch_count = self._make_still_watching_dialog(), 0
+		if watch_count == watching_check: still_watching, watch_count = self._make_still_watching_dialog('Are you still watching [B]%s[/B]?'), 0
 		else: still_watching = True
 		watch_count += 1
 		self.meta['watch_count'] = watch_count
@@ -742,7 +738,7 @@ class Sources():
 	def autoplay_nextep_handler(self):
 		if not self.nextep_settings: return False
 		if not self.still_watching_check():
-			kodi_utils.notification('Cancel Autoplay')
+			kodi_utils.notification('Cancel Autoplay', icon=self.meta.get('poster'))
 			return False
 		player = kodi_utils.kodi_player()
 		if player.isPlayingVideo():
@@ -779,6 +775,8 @@ class Sources():
 		else: return False
 
 	def autoscrape_nextep_handler(self):
+		if settings.autoscrape_confirm():
+			if not self._make_still_watching_dialog('Autoscrape Next Episode of [B]%s[/B]?'): return kodi_utils.notification('Cancel Autoscrape', icon=self.meta.get('poster'))
 		player = kodi_utils.kodi_player()
 		if player.isPlayingVideo():
 			results = self.get_sources()

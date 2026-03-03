@@ -53,7 +53,7 @@
                 <top>360</top>
                 <width max="420">auto</width>
                 <aspectratio aligny="top">keep</aspectratio>
-                <texture diffuse="fenlight_diffuse/poster_w217_h320.png">$INFO[Container(2100).ListItem.Property(icon)]</texture>
+                <texture diffuse="fenlight_diffuse/poster-50.png" background="true">$INFO[Container(2100).ListItem.Property(icon)]</texture>
                 <fadetime>100</fadetime>
             </control>
             <!-- Filter List -->

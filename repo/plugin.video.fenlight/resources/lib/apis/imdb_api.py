@@ -74,7 +74,8 @@ def get_imdb(params):
 					if _id.replace('tt','').isnumeric(): yield (_id)
 				except: pass
 		try:
-			result = requests.get(url, timeout=20, headers=headers).text
+			result = requests.get(url, timeout=20, headers=headers)#.text
+			result = result.text
 			result = result.split('<span>Storyline</span>')[0].split('<span>More like this</span>')[1]
 			items = str(result).split('poster-card__title--clickable" aria-label="')
 		except: items = []
