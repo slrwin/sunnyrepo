@@ -156,7 +156,7 @@ class TVShows:
 			trailer, title, year = meta_get('trailer'), meta_get('title'), meta_get('year') or '2050'
 			tvdb_id, imdb_id = meta_get('tvdb_id'), meta_get('imdb_id')
 			if self.rpdb_api_key:
-				try: poster = meta_get('rpdb_poster') % self.rpdb_api_key
+				try: poster = meta_get('rpdb_poster') % self.rpdb_api_key + self.rpdb_format
 				except: poster = meta_get('poster') or self.poster_empty
 			else: poster = meta_get('poster') or self.poster_empty
 			fanart = meta_get('fanart') or self.fanart_empty
@@ -256,7 +256,8 @@ class TVShows:
 		self.poster_empty, self.fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
 		self.current_date, self.current_time = get_datetime(), get_current_timestamp()
 		self.tmdb_api_key, self.mpaa_region = settings.tmdb_api_key(), settings.mpaa_region()
-		self.rpdb_api_key = settings.rpdb_api_key('tvshow')
+		rpdb_info = settings.rpdb_info('movie')
+		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 		self.all_episodes, self.open_extras = settings.default_all_episodes(), settings.media_open_action('tvshow') == 1
 		self.cm_sort_order = settings.cm_sort_order()
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()

@@ -46,6 +46,8 @@ class People(BaseDialog):
 	def run(self):
 		self.doModal()
 		self.clearProperties()
+		self.clear_home_property('window_theme.people')
+		self.clear_home_property('window_theme.highlight.people')
 
 	def onClick(self, controlID):
 		self.control_id = None
@@ -249,6 +251,9 @@ class People(BaseDialog):
 		self.enable_scrollbars = extras_enable_scrollbars()
 
 	def set_properties(self):
+		window_theme_opacity = self.get_home_property('window_theme_opacity')
+		self.set_home_property('window_theme.people', self.get_home_property('window_theme').replace('FF', window_theme_opacity))
+		self.set_home_property('window_theme.highlight.people',  '%sCCCCCC' % window_theme_opacity)
 		self.setProperty('name', self.person_name)
 		self.setProperty('id', str(self.person_id))
 		self.setProperty('image', self.person_image)

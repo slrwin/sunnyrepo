@@ -2,7 +2,7 @@
 import sys
 from modules import kodi_utils, settings
 from modules.metadata import tvshow_meta
-from modules.utils import get_datetime, adjust_premiered_date, make_thread_list
+from modules.utils import get_datetime, adjust_premiered_date, TaskPool
 from modules.watched_status import get_database, watched_info_season, get_watched_status_season, get_progress_status_season
 # logger = kodi_utils.logger
 
@@ -84,7 +84,8 @@ def build_season_list(params):
 	current_date = get_datetime()
 	cm_sort_order = settings.cm_sort_order()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
-	rpdb_api_key = settings.rpdb_api_key('tvshow')
+	rpdb_info = settings.rpdb_info('movie')
+	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	use_name = settings.use_season_name()
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], settings.tmdb_api_key(), settings.mpaa_region(), current_date)
 	meta_get = meta.get
@@ -94,9 +95,8 @@ def build_season_list(params):
 	cast = meta_get('short_cast', []) or meta_get('cast', []) or []
 	mpaa, votes, trailer, studio, country = meta_get('mpaa'), meta_get('votes'), str(meta_get('trailer')), meta_get('studio'), meta_get('country')
 	episode_run_time, season_data, total_seasons = meta_get('duration'), meta_get('season_data'), meta_get('total_seasons')
-	rpdb_api_key = settings.rpdb_api_key('tvshow')
 	if rpdb_api_key:
-		try: show_poster = meta_get('rpdb_poster') % rpdb_api_key
+		try: show_poster = meta_get('rpdb_poster') % rpdb_api_key + rpdb_format
 		except: show_poster = meta_get('poster') or poster_empty
 	else: show_poster = meta_get('poster') or poster_empty
 	show_fanart = meta_get('fanart') or fanart_empty
@@ -117,9 +117,7 @@ def build_season_list(params):
 	kodi_utils.set_view_mode('view.seasons', 'seasons', is_external)
 
 def single_seasons(seasons_list):
-	def _process(item): season_results_append(build_season_list(item))
 	season_results = []
-	season_results_append = season_results.append
-	threads = make_thread_list(_process, seasons_list)
+	threads = TaskPool().tasks(lambda x: season_results.append(build_season_list(x)), seasons_list, min(len(seasons_list), settings.max_threads()))
 	[i.join() for i in threads]
 	return [i for i in season_results if i]

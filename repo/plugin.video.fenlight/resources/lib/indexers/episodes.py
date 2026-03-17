@@ -95,7 +95,8 @@ def build_episode_list(params):
 	current_date, hide_watched = get_datetime(), is_external and settings.widget_hide_watched()
 	cm_sort_order = settings.cm_sort_order()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
-	rpdb_api_key = settings.rpdb_api_key('tvshow')
+	rpdb_info = settings.rpdb_info('movie')
+	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	playback_key = settings.playback_key()
 	play_mode = 'playback.%s' % playback_key
 	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), settings.tmdb_api_key(), settings.mpaa_region(), current_date)
@@ -106,7 +107,7 @@ def build_episode_list(params):
 	cast = meta_get('short_cast', []) or meta_get('cast', []) or []
 	season = params['season']
 	if rpdb_api_key:
-		try: show_poster = meta_get('rpdb_poster') % rpdb_api_key
+		try: show_poster = meta_get('rpdb_poster') % rpdb_api_key + rpdb_format
 		except: show_poster = meta_get('poster') or poster_empty
 	else: show_poster = meta_get('poster') or poster_empty
 	show_fanart = meta_get('fanart') or fanart_empty
@@ -186,7 +187,7 @@ def build_single_episode(list_type, params={}):
 			mpaa, tvshow_plot, studio, show_status = meta_get('mpaa'), meta_get('plot'), meta_get('studio'), meta_get('status')
 			cast = meta_get('short_cast', []) or meta_get('cast', []) or []
 			if rpdb_api_key:
-				try: show_poster = meta_get('rpdb_poster') % rpdb_api_key
+				try: show_poster = meta_get('rpdb_poster') % rpdb_api_key + rpdb_format
 				except: show_poster = meta_get('poster') or poster_empty
 			else: show_poster = meta_get('poster') or poster_empty
 			show_fanart = meta_get('fanart') or fanart_empty
@@ -306,7 +307,8 @@ def build_single_episode(list_type, params={}):
 	api_key, mpaa_region_value = settings.tmdb_api_key(), settings.mpaa_region()
 	cm_sort_order, ignore_articles = settings.cm_sort_order(), settings.ignore_articles()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
-	rpdb_api_key = settings.rpdb_api_key('tvshow')
+	rpdb_info = settings.rpdb_info('movie')
+	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	playback_key = settings.playback_key()
 	play_mode = 'playback.%s' % playback_key
 	watched_db = ws.get_database(watched_indicators)

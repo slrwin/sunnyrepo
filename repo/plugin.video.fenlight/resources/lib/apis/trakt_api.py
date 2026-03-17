@@ -10,7 +10,7 @@ from caches.lists_cache import lists_cache_object
 from modules import kodi_utils, settings
 from modules.metadata import movie_meta_external_id, tvshow_meta_external_id
 from modules.utils import sort_list, sort_for_article, get_datetime, timedelta, replace_html_codes, copy2clip, make_qrcode, make_tinyurl, \
-							make_thread_list, jsondate_to_datetime as js2date
+							TaskPool, jsondate_to_datetime as js2date
 # logger = kodi_utils.logger
 
 def no_client_key():
@@ -294,13 +294,14 @@ def trakt_get_hidden_items(list_type):
 	def _get_trakt_ids(item):
 		results_append(get_trakt_tvshow_id(item['show']['ids']))
 	def _process(params):
-		threads = list(make_thread_list(_get_trakt_ids, get_trakt(params)))
+		data = get_trakt(params)
+		threads = TaskPool().tasks(_get_trakt_ids, data, min(len(data), settings.max_threads()))
 		[i.join() for i in threads]
 		return results
 	results = []
 	results_append = results.append
 	string = 'trakt_hidden_items_%s' % list_type
-	params = {'path': 'users/hidden/%s', 'path_insert': list_type, 'params': {'limit': 1500, 'type': 'show'}, 'with_auth': True, 'pagination': False}
+	params = {'path': 'users/hidden/%s', 'path_insert': list_type, 'params': {'limit': 999, 'type': 'show'}, 'with_auth': True, 'pagination': False}
 	return trakt_cache.cache_trakt_object(_process, string, params)
 
 def trakt_watched_status_mark(action, media, media_id, tvdb_id=0, season=None, episode=None, key='tmdb'):
@@ -378,7 +379,7 @@ def trakt_fetch_collection_watchlist(list_type, media_type):
 	collected_at = 'listed_at' if list_type == 'watchlist' else 'collected_at' if media_type == 'movie' else 'last_collected_at'
 	string = 'trakt_%s_%s' % (list_type, string_insert)
 	path = 'sync/%s/%s?extended=full'
-	params = {'path': path, 'path_insert': (list_type, url_type), 'with_auth': True, 'pagination': False}
+	params = {'path': path, 'path_insert': (list_type, url_type), 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
 	return trakt_cache.cache_trakt_object(_process, string, params)
 
 def add_to_list(user, slug, data):
@@ -476,14 +477,14 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 		method = None if custom_sort else 'sort_by_headers'
 	if list_type == 'my_lists':
 		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
-		params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'method': method, 'with_auth': with_auth}
+		params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full', 'limit': 999}, 'method': method, 'with_auth': with_auth}
 	elif list_id is not None:
 		string = 'trakt_list_contents_%s_%s' % (list_type, list_id)
-		params = {'path': 'lists/%s/items', 'path_insert': list_id, 'params': {'extended':'full'}, 'method': method}
+		params = {'path': 'lists/%s/items', 'path_insert': list_id, 'params': {'extended':'full', 'limit': 999}, 'method': method}
 	else:
 		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
-		if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full'}, 'method': method}
-		else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full'}, 'method': method, 'with_auth': with_auth}
+		if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full', 'limit': 999}, 'method': method}
+		else: params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full', 'limit': 999}, 'method': method, 'with_auth': with_auth}
 	data = trakt_cache.cache_trakt_object(get_trakt, string, params)
 	if not skip_sort:
 		if not custom_sort:
@@ -519,7 +520,7 @@ def trakt_get_lists(list_type, page_no='1'):
 	else:
 		if list_type == 'my_lists': string, path = 'trakt_my_lists', 'users/me/lists%s'
 		elif list_type == 'liked_lists': string, path = 'trakt_liked_lists', 'users/likes/lists%s'
-		params = {'path': path, 'params': {'limit': 1000}, 'pagination': False, 'with_auth': True}
+		params = {'path': path, 'params': {'limit': 999}, 'pagination': False, 'with_auth': True}
 		return trakt_cache.cache_trakt_object(get_trakt, string, params)
 
 def get_trakt_list_selection(included_lists):
@@ -636,9 +637,9 @@ def trakt_indicators_movies():
 		insert_append(('movie', tmdb_id, '', '', item['last_watched_at'], movie['title']))
 	insert_list = []
 	insert_append = insert_list.append
-	params = {'path': 'sync/watched/movies%s', 'with_auth': True, 'pagination': False}
+	params = {'path': 'sync/watched/movies%s', 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
 	result = get_trakt(params)
-	threads = list(make_thread_list(_process, result))
+	threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
 	[i.join() for i in threads]
 	trakt_cache.trakt_watched_cache.set_bulk_movie_watched(insert_list)
 
@@ -659,14 +660,14 @@ def trakt_indicators_tv():
 				insert_append(('episode', tmdb_id, season_no, e['number'], last_watched_at, title))
 	insert_list = []
 	insert_append = insert_list.append
-	params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
+	params = {'path': 'users/me/watched/shows?extended=full%s', 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
 	result = get_trakt(params)
-	threads = list(make_thread_list(_process, result))
+	threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
 	[i.join() for i in threads]
 	trakt_cache.trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
 
 def trakt_playback_progress():
-	params = {'path': 'sync/playback%s', 'with_auth': True, 'pagination': False}
+	params = {'path': 'sync/playback%s', 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
 	return get_trakt(params)
 
 def trakt_comments(media_type, imdb_id):
@@ -699,7 +700,7 @@ def trakt_progress_movies(progress_info):
 	insert_append = insert_list.append
 	progress_items = [i for i in progress_info  if i['type'] == 'movie' and i['progress'] > 1]
 	if not progress_items: return
-	threads = list(make_thread_list(_process, progress_items))
+	threads = TaskPool().tasks(_process, progress_items, min(len(progress_items), settings.max_threads()))
 	[i.join() for i in threads]
 	trakt_cache.trakt_watched_cache.set_bulk_movie_progress(insert_list)
 
@@ -725,7 +726,7 @@ def trakt_progress_tv(progress_info):
 	if not progress_items: return
 	all_shows = [i['show'] for i in progress_items]
 	all_shows = [i for n, i in enumerate(all_shows) if not i in all_shows[n + 1:]] # remove duplicates
-	threads = list(make_thread_list(_process_tmdb_ids, all_shows))
+	threads = TaskPool().tasks(_process_tmdb_ids, all_shows, min(len(all_shows), settings.max_threads()))
 	[i.join() for i in threads]
 	insert_list = list(_process())
 	trakt_cache.trakt_watched_cache.set_bulk_tvshow_progress(insert_list)
@@ -756,7 +757,7 @@ def trakt_get_my_calendar(recently_aired, current_date):
 		return data
 	start, finish = trakt_calendar_days(recently_aired, current_date)
 	string = 'trakt_get_my_calendar_%s_%s' % (start, finish)
-	params = {'path': 'calendars/my/shows/%s/%s', 'path_insert': (start, finish), 'with_auth': True, 'pagination': False}
+	params = {'path': 'calendars/my/shows/%s/%s', 'path_insert': (start, finish), 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
 	return trakt_cache.cache_trakt_object(_process, string, params)
 
 def trakt_calendar_days(recently_aired, current_date):

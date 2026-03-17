@@ -31,9 +31,6 @@ class Movies:
 		self.play_mode = 'playback.%s' % settings.playback_key()
 		self.custom_order = self.params_get('custom_order', 'false') == 'true'
 		self.paginate_start = int(self.params_get('paginate_start', '0'))
-		self.tmdb_api_key = settings.tmdb_api_key()
-		self.rpdb_api_key = settings.rpdb_api_key('movie')
-		self.mpaa_region = settings.mpaa_region()
 		self.append = self.items.append
 		self.movieset_list_active = False
 
@@ -144,7 +141,7 @@ class Movies:
 			tmdb_id, imdb_id = meta_get('tmdb_id'), meta_get('imdb_id')
 			str_tmdb_id = str(tmdb_id)
 			if self.rpdb_api_key:
-				try: poster = meta_get('rpdb_poster') % self.rpdb_api_key
+				try: poster = meta_get('rpdb_poster') % self.rpdb_api_key + self.rpdb_format
 				except: poster = meta_get('poster') or self.poster_empty
 			else: poster = meta_get('poster') or self.poster_empty
 			fanart = meta_get('fanart') or self.fanart_empty
@@ -255,6 +252,10 @@ class Movies:
 		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), settings.watched_indicators()
 		self.cm_sort_order = settings.cm_sort_order()
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
+		self.tmdb_api_key = settings.tmdb_api_key()
+		self.mpaa_region = settings.mpaa_region()
+		rpdb_info = settings.rpdb_info('movie')
+		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 		watched_db = watched_status.get_database(self.watched_indicators)
 		self.watched_info, self.bookmarks = watched_status.watched_info_movie(watched_db), watched_status.get_bookmarks_movie(watched_db)
 		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'

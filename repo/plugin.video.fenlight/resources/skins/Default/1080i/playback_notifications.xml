@@ -2,6 +2,7 @@
 <window>
     <onload>Dialog.Close(fullscreeninfo,true)</onload>
     <onload>Dialog.Close(videoosd,true)</onload>
+    <animation effect="slide" end="900,0" time="0" condition="String.IsEqual(Window.Property(right_align),true)">Conditional</animation>
     <animation effect="fade" end="100" time="600">WindowOpen</animation>
     <controls>
         <control type="image">
@@ -12,13 +13,6 @@
             <left>20</left>
             <top>20</top>
             <height>160</height>
-            <control type="image">
-                <left>-1</left>
-                <top>-1</top>
-                <width>286</width>
-                <height>162</height>
-                <texture border="16" colordiffuse="FFCCCCCC">fenlight_common/dialog.png</texture>
-            </control>
             <control type="image">
                 <width>284</width>
                 <texture colordiffuse="FF000000" diffuse="fenlight_diffuse/landscape_w284_h160.png">fenlight_common/white.png</texture>
@@ -66,7 +60,6 @@
                 <width>45</width>
                 <height>45</height>
                 <align>left</align>
-                <aligny>top</aligny>
                 <aspectratio aligny="top">keep</aspectratio>
                 <texture colordiffuse="FFB7B4BB">$INFO[Window(10000).Property(fenlight.addon_icon_mini)]</texture>
             </control>

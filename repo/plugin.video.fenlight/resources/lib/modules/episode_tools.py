@@ -4,10 +4,10 @@ import json
 import random
 from datetime import date
 from modules.sources import Sources
-from modules.settings import date_offset, watched_indicators, ignore_articles, playback_key
+from modules.settings import date_offset, watched_indicators, ignore_articles, playback_key, max_threads
 from modules.metadata import episodes_meta, all_episodes_meta
 from modules.watched_status import get_watched_status_episode, get_next_episodes, get_hidden_progress_items, watched_info_episode, get_next
-from modules.utils import adjust_premiered_date, get_datetime, make_thread_list, title_key
+from modules.utils import adjust_premiered_date, get_datetime, title_key, TaskPool
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
@@ -135,7 +135,7 @@ def build_next_episode_manager():
 	hidden_list = get_hidden_progress_items(indicators)
 	if indicators == 0: icon, mode = kodi_utils.get_icon('folder'), 'hide_unhide_progress_items'
 	else: icon, mode = kodi_utils.get_icon('trakt'), 'trakt.hide_unhide_progress_items'
-	threads = list(make_thread_list(_process, show_list))
+	threads = TaskPool().tasks(_process, show_list, min(len(show_list), max_threads()))
 	[i.join() for i in threads]
 	item_list = sorted(list_items, key=lambda k: (title_key(k['sort_title'], ignore_articles())), reverse=False)
 	item_list = [i['listitem'] for i in item_list]

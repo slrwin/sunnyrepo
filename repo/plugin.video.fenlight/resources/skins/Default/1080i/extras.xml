@@ -177,122 +177,122 @@
                     </control>
                     <!-- Line 4 -->
                     <control type="grouplist">
-                    <top>165</top>
-                    <width max="1110">auto</width>
-                    <orientation>horizontal</orientation>
-                    <itemgap>30</itemgap>
-                    <align>center</align>
-                    <control type="grouplist">
-                        <width>130</width>
+                        <top>165</top>
+                        <width max="1110">auto</width>
                         <orientation>horizontal</orientation>
-                        <itemgap>0</itemgap>
+                        <itemgap>30</itemgap>
                         <align>center</align>
-                        <visible>String.IsEqual(Window.Property(metascore_rating),true)</visible>
-                        <control type="image" id="4101">
-                            <width>52</width>
-                            <height>32</height>
-                            <aspectratio>keep</aspectratio>
-                            <align>right</align>
-                            <aligny>center</aligny>
+                        <control type="grouplist">
+                            <width>130</width>
+                            <orientation>horizontal</orientation>
+                            <itemgap>0</itemgap>
+                            <align>center</align>
+                            <visible>String.IsEqual(Window.Property(metascore_rating),true)</visible>
+                            <control type="image" id="4101">
+                                <width>52</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <align>right</align>
+                                <aligny>center</aligny>
+                            </control>
+                            <control type="label" id="4001">
+                                <width max="75">auto</width>
+                                <height>32</height>
+                                <font>font13</font> <!-- FENLIGHT_30 -->
+                                <textcolor>FFCCCCCC</textcolor>
+                                <align>left</align>
+                                <aligny>center</aligny>
+                            </control>
                         </control>
-                        <control type="label" id="4001">
-                            <width max="75">auto</width>
-                            <height>32</height>
-                            <font>font13</font> <!-- FENLIGHT_30 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <align>left</align>
-                            <aligny>center</aligny>
+                        <control type="grouplist">
+                            <width>130</width>
+                            <orientation>horizontal</orientation>
+                            <itemgap>0</itemgap>
+                            <align>center</align>
+                            <visible>String.IsEqual(Window.Property(tomatometer_rating),true)</visible>
+                            <control type="image" id="4102">
+                                <width>52</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <align>right</align>
+                                <aligny>center</aligny>
+                            </control>
+                            <control type="label" id="4002">
+                                <width max="75">auto</width>
+                                <height>32</height>
+                                <font>font13</font> <!-- FENLIGHT_30 -->
+                                <textcolor>FFCCCCCC</textcolor>
+                                <align>left</align>
+                                <aligny>center</aligny>
+                            </control>
+                        </control>
+                        <control type="grouplist">
+                            <width>130</width>
+                            <orientation>horizontal</orientation>
+                            <itemgap>0</itemgap>
+                            <align>center</align>
+                            <visible>String.IsEqual(Window.Property(tomatousermeter_rating),true)</visible>
+                            <control type="image" id="4103">
+                                <width>52</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <align>right</align>
+                                <aligny>center</aligny>
+                            </control>
+                            <control type="label" id="4003">
+                                <width max="75">auto</width>
+                                <height>32</height>
+                                <font>font13</font> <!-- FENLIGHT_30 -->
+                                <textcolor>FFCCCCCC</textcolor>
+                                <align>left</align>
+                                <aligny>center</aligny>
+                            </control>
+                        </control>
+                        <control type="grouplist">
+                            <width>130</width>
+                            <orientation>horizontal</orientation>
+                            <itemgap>10</itemgap>
+                            <align>center</align>
+                            <visible>String.IsEqual(Window.Property(imdb_rating),true)</visible>
+                            <control type="image" id="4104">
+                                <width>52</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <align>right</align>
+                                <aligny>center</aligny>
+                            </control>
+                            <control type="label" id="4004">
+                                <width max="75">auto</width>
+                                <height>32</height>
+                                <font>font13</font> <!-- FENLIGHT_30 -->
+                                <textcolor>FFCCCCCC</textcolor>
+                                <align>left</align>
+                                <aligny>center</aligny>
+                            </control>
+                        </control>
+                        <control type="grouplist">
+                            <width>130</width>
+                            <orientation>horizontal</orientation>
+                            <itemgap>0</itemgap>
+                            <align>center</align>
+                            <visible>String.IsEqual(Window.Property(tmdb_rating),true)</visible>
+                            <control type="image" id="4105">
+                                <width>52</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <align>right</align>
+                                <aligny>center</aligny>
+                            </control>
+                            <control type="label" id="4005">
+                                <width max="75">auto</width>
+                                <height>32</height>
+                                <font>font13</font> <!-- FENLIGHT_30 -->
+                                <textcolor>FFCCCCCC</textcolor>
+                                <align>left</align>
+                                <aligny>center</aligny>
+                            </control>
                         </control>
                     </control>
-                    <control type="grouplist">
-                        <width>130</width>
-                        <orientation>horizontal</orientation>
-                        <itemgap>0</itemgap>
-                        <align>center</align>
-                        <visible>String.IsEqual(Window.Property(tomatometer_rating),true)</visible>
-                        <control type="image" id="4102">
-                            <width>52</width>
-                            <height>32</height>
-                            <aspectratio>keep</aspectratio>
-                            <align>right</align>
-                            <aligny>center</aligny>
-                        </control>
-                        <control type="label" id="4002">
-                            <width max="75">auto</width>
-                            <height>32</height>
-                            <font>font13</font> <!-- FENLIGHT_30 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <align>left</align>
-                            <aligny>center</aligny>
-                        </control>
-                    </control>
-                    <control type="grouplist">
-                        <width>130</width>
-                        <orientation>horizontal</orientation>
-                        <itemgap>0</itemgap>
-                        <align>center</align>
-                        <visible>String.IsEqual(Window.Property(tomatousermeter_rating),true)</visible>
-                        <control type="image" id="4103">
-                            <width>52</width>
-                            <height>32</height>
-                            <aspectratio>keep</aspectratio>
-                            <align>right</align>
-                            <aligny>center</aligny>
-                        </control>
-                        <control type="label" id="4003">
-                            <width max="75">auto</width>
-                            <height>32</height>
-                            <font>font13</font> <!-- FENLIGHT_30 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <align>left</align>
-                            <aligny>center</aligny>
-                        </control>
-                    </control>
-                    <control type="grouplist">
-                        <width>130</width>
-                        <orientation>horizontal</orientation>
-                        <itemgap>10</itemgap>
-                        <align>center</align>
-                        <visible>String.IsEqual(Window.Property(imdb_rating),true)</visible>
-                        <control type="image" id="4104">
-                            <width>52</width>
-                            <height>32</height>
-                            <aspectratio>keep</aspectratio>
-                            <align>right</align>
-                            <aligny>center</aligny>
-                        </control>
-                        <control type="label" id="4004">
-                            <width max="75">auto</width>
-                            <height>32</height>
-                            <font>font13</font> <!-- FENLIGHT_30 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <align>left</align>
-                            <aligny>center</aligny>
-                        </control>
-                    </control>
-                    <control type="grouplist">
-                        <width>130</width>
-                        <orientation>horizontal</orientation>
-                        <itemgap>0</itemgap>
-                        <align>center</align>
-                        <visible>String.IsEqual(Window.Property(tmdb_rating),true)</visible>
-                        <control type="image" id="4105">
-                            <width>52</width>
-                            <height>32</height>
-                            <aspectratio>keep</aspectratio>
-                            <align>right</align>
-                            <aligny>center</aligny>
-                        </control>
-                        <control type="label" id="4005">
-                            <width max="75">auto</width>
-                            <height>32</height>
-                            <font>font13</font> <!-- FENLIGHT_30 -->
-                            <textcolor>FFCCCCCC</textcolor>
-                            <align>left</align>
-                            <aligny>center</aligny>
-                        </control>
-                    </control>
-                </control>
                 </control>
             </control>
             <!-- Body -->
@@ -322,8 +322,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -339,8 +339,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>  
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -356,8 +356,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>  
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -373,8 +373,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>  
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -393,8 +393,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus> 
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -410,9 +410,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
-                            <align>center</align>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>                         <align>center</align>
                             <aligny>center</aligny>
                         </control>
                         <control type="button" id="16">
@@ -427,8 +426,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -444,8 +443,8 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -471,8 +470,8 @@
                             <height>390</height>
                             <onup>14</onup>
                             <ondown>2051</ondown>
-                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
-                            <texturenofocus colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texturenofocus>
+                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                         </control>
                         <control type="textbox">
                             <top>65</top>
@@ -589,7 +588,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2051) | Control.HasFocus(4051)] + Container(2051).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -597,7 +596,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2051) | Control.HasFocus(4051)] + Container(2051).HasNext</visible>
                         </control>
                     </control>
@@ -689,7 +688,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2052) | Control.HasFocus(4052)] + Container(2052).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -697,7 +696,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2052) | Control.HasFocus(4052)] + Container(2052).HasNext</visible>
                         </control>
                     </control>
@@ -789,7 +788,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2053) | Control.HasFocus(4053)] + Container(2053).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -797,7 +796,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2053) | Control.HasFocus(4053)] + Container(2053).HasNext</visible>
                         </control>
                     </control>
@@ -889,7 +888,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2054) | Control.HasFocus(4054)] + Container(2054).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -897,7 +896,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2054) | Control.HasFocus(4054)] + Container(2054).HasNext</visible>
                         </control>
                     </control>
@@ -989,7 +988,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2055) | Control.HasFocus(4055)] + Container(2055).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -997,7 +996,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2055) | Control.HasFocus(4055)] + Container(2055).HasNext</visible>
                         </control>
                     </control>
@@ -1029,7 +1028,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1048,7 +1047,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1082,7 +1081,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2056) | Control.HasFocus(4056)] + Container(2056).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1090,7 +1089,7 @@
                             <left>1125</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2056) | Control.HasFocus(4056)] + Container(2056).HasNext</visible>
                         </control>
                     </control>
@@ -1122,7 +1121,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1141,7 +1140,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1175,7 +1174,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2057) | Control.HasFocus(4057)] + Container(2057).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1183,7 +1182,7 @@
                             <left>1125</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2057) | Control.HasFocus(4057)] + Container(2057).HasNext</visible>
                         </control>
                     </control>
@@ -1215,7 +1214,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1234,7 +1233,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1268,7 +1267,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2058) | Control.HasFocus(4058)] + Container(2058).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1276,7 +1275,7 @@
                             <left>1125</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2058) | Control.HasFocus(4058)] + Container(2058).HasNext</visible>
                         </control>
                     </control>
@@ -1308,7 +1307,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1327,7 +1326,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1361,7 +1360,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2059) | Control.HasFocus(4059)] + Container(2059).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1369,7 +1368,7 @@
                             <left>1125</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2059) | Control.HasFocus(4057)] + Container(2059).HasNext</visible>
                         </control>
                     </control>
@@ -1400,7 +1399,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>230</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
                                     <left>6</left>
@@ -1408,7 +1407,7 @@
                                     <width>224</width>
                                     <height>320</height>
                                     <aspectratio>scale</aspectratio>
-                                    <texture>$INFO[ListItem.Property(thumbnail)]</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>6</left>
@@ -1439,7 +1438,7 @@
                                 <control type="image">
                                     <width>230</width>
                                     <height>360</height>
-                                    <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
                                     <left>6</left>
@@ -1447,7 +1446,7 @@
                                     <width>224</width>
                                     <height>320</height>
                                     <aspectratio>scale</aspectratio>
-                                    <texture colordiffuse="FF1F2020">$INFO[ListItem.Property(thumbnail)]</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>6</left>
@@ -1508,14 +1507,16 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>230</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
-                                    <left>-100</left>
-                                    <top>-35</top>
-                                    <width>430</width>
-                                    <height>430</height>
-                                    <aspectratio>keep</aspectratio>
+                                    <left>-35</left>
+                                    <top>20</top>
+                                    <width>300</width>
+                                    <height>300</height>
+                                    <align>center</align>
+                                    <aligny>center</aligny>
+                                    <aspectratio>scale</aspectratio>
                                     <texture colordiffuse="0DFFFFFF">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
@@ -1543,15 +1544,25 @@
                                 <control type="image">
                                     <width>230</width>
                                     <height>360</height>
-                                    <texture colordiffuse="FFB7B4BB" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
                                     <visible>Control.HasFocus(2061) | Control.HasFocus(4061)</visible>
                                     <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4061)">Conditional</animation>
                                 </control>
                                 <control type="image">
                                     <height>360</height>
                                     <width>230</width>
-                                    <texture colordiffuse="FF1F2020" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                     <visible>![Control.HasFocus(2061) | Control.HasFocus(4061)]</visible>
+                                </control>
+                                <control type="image">
+                                    <left>-35</left>
+                                    <top>20</top>
+                                    <width>300</width>
+                                    <height>300</height>
+                                    <align>center</align>
+                                    <aligny>center</aligny>
+                                    <aspectratio>scale</aspectratio>
+                                    <texture colordiffuse="1A1F2020">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>5</left>
@@ -1608,7 +1619,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2061) | Control.HasFocus(4061)] + Container(2061).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1616,7 +1627,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2061) | Control.HasFocus(4061)] + Container(2061).HasNext</visible>
                         </control>
                     </control>
@@ -1707,7 +1718,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2062) | Control.HasFocus(4062)] + Container(2062).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1715,7 +1726,7 @@
                             <left>1125</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2062) | Control.HasFocus(4062)] + Container(2062).HasNext</visible>
                         </control>
                     </control>
@@ -1807,7 +1818,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2063) | Control.HasFocus(4063)] + Container(2063).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1815,7 +1826,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2063) | Control.HasFocus(4063)] + Container(2063).HasNext</visible>
                         </control>
                     </control>
@@ -1897,7 +1908,7 @@
                             <ondown>2065</ondown>
                             <texturesliderbackground colordiffuse="FF1F2020">fenlight_common/white.png</texturesliderbackground>
                             <texturesliderbar colordiffuse="FF555556">fenlight_common/white.png</texturesliderbar>
-                            <texturesliderbarfocus colordiffuse="FFB7B4BB">fenlight_common/white.png</texturesliderbarfocus>
+                            <texturesliderbarfocus colordiffuse="FFCCCCCC">fenlight_common/white.png</texturesliderbarfocus>
                             <showonepage>false</showonepage>
                             <orientation>Horizontal</orientation>
                             <visible>String.IsEqual(Window.Property(enable_scrollbars),true) + [Control.HasFocus(2064) | Control.HasFocus(4064)]</visible>
@@ -1907,7 +1918,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2064) | Control.HasFocus(4064)] + Container(2064).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -1915,7 +1926,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2064) | Control.HasFocus(4064)] + Container(2064).HasNext</visible>
                         </control>
                     </control>
@@ -2007,7 +2018,7 @@
                             <left>20</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2065) | Control.HasFocus(4065)] + Container(2065).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -2015,7 +2026,7 @@
                             <left>1135</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2065) | Control.HasFocus(4065)] + Container(2065).HasNext</visible>
                         </control>
                     </control>
@@ -2046,13 +2057,13 @@
                             <control type="image">
                                 <height>360</height>
                                 <width>933</width>
-                                <texture colordiffuse="FF1F2020">fenlight_common/white.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 <visible>Integer.IsGreater(Container(2066).NumItems,1)</visible>
                             </control>
                             <control type="image">
                                 <height>360</height>
                                 <width>1169</width>
-                                <texture colordiffuse="FF1F2020">fenlight_common/white.png</texture>
+                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texture>
                                 <visible>Integer.IsGreater(Container(2066).NumItems,2)</visible>
                             </control>
                             <control type="image">
@@ -2141,7 +2152,7 @@
                             <left>480</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2066) | Control.HasFocus(4066)] + Container(2066).HasPrevious</visible>
                         </control>
                         <control type="image">
@@ -2149,7 +2160,7 @@
                             <left>1120</left>
                             <width>25</width>
                             <height>25</height>
-                            <texture colordiffuse="FFCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
+                            <texture colordiffuse="CCCCCCCC" background="true" flipx="true">fenlight_common/arrow_left.png</texture>
                             <visible>[Control.HasFocus(2066) | Control.HasFocus(4066)] + Container(2066).HasNext</visible>
                         </control>
                     </control>

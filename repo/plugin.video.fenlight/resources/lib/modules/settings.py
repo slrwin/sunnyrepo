@@ -139,20 +139,8 @@ def autoscrape_next_episode():
 def autoscrape_confirm():
 	return get_setting('fenlight.autoscrape_confirm', 'false') == 'true'
 
-def auto_rescrape_cache_ignored():
-	return int(get_setting('fenlight.results.auto_rescrape_cache_ignored', '1'))
-
-def auto_rescrape_imdb_year():
-	return int(get_setting('fenlight.results.auto_rescrape_imdb_year', '0'))
-
-def auto_rescrape_with_all():
-	return int(get_setting('fenlight.results.auto_rescrape_with_all', '0'))
-
 def autoplay_prescrape(scrape_provider):
 	return get_setting('fenlight.autoplay.%s' % scrape_provider, 'false') == 'true'
-
-def auto_episode_group():
-	return int(get_setting('fenlight.results.auto_episode_group', '0'))
 
 def auto_nextep_settings(play_type):
 	play_type = 'autoplay' if play_type == 'autoplay_nextep' else 'autoscrape'
@@ -176,8 +164,11 @@ def limit_number_quality():
 def limit_number_total():
 	return int(get_setting('fenlight.results.limit_number_total', '0'))
 
-def ignore_results_filter():
-	return int(get_setting('fenlight.results.ignore_filter', '0'))
+def rescrape_settings():
+	rescrapes = [('cache_ignored', '1', '1'), ('imdb_year', '0', '2'), ('with_all', '0', '3'), ('episode_group', '0', '4'), ('ignore_filters', '0', '5')]
+	r_list = sorted([(i[0], int(get_setting('fenlight.rescrape.%s' % i[0], i[1])), int(get_setting('fenlight.rescrape.%s.priority' % i[0], i[2]))  ) \
+					for i in rescrapes if int(get_setting('fenlight.rescrape.%s' % i[0], i[1])) in (1, 2)], key=lambda x: x[1])
+	return [(i[0], i[1]) for i in r_list]
 
 def trakt_sync_interval():
 	setting = get_setting('fenlight.trakt.sync_interval', '60')
@@ -232,6 +223,9 @@ def easynews_authorized():
 
 def extras_enable_extra_ratings():
 	return get_setting('fenlight.extras.enable_extra_ratings', 'true') == 'true'
+
+def extras_enabled_ratings():
+	return get_setting('fenlight.extras.enabled_ratings', 'Meta, Tom/Critic, Tom/User, IMDb, TMDb').split(', ')
 
 def extras_enable_scrollbars():
 	return get_setting('fenlight.extras.enable_scrollbars', 'true')
@@ -316,27 +310,28 @@ def auto_resume(media_type, autoplay_status):
 	return {0: False, 1: True, 2: autoplay_status}[int(get_setting('fenlight.auto_resume_%s' % media_type))]
 
 def scraping_settings():
+	window_theme_opacity = get_setting('fenlight.window_theme_opacity')
 	highlight_type = int(get_setting('fenlight.highlight.type', '0'))
 	if highlight_type == 2:
-		highlight = get_setting('fenlight.scraper_single_highlight', 'FF008EB2')
+		highlight = get_setting('fenlight.scraper_single_highlight', 'FF008EB2').replace('FF', window_theme_opacity, 1)
 		return {'highlight_type': 1, '4k': highlight, '1080p': highlight, '720p': highlight, 'sd': highlight}
 	easynews_highlight, debrid_cloud_highlight, folders_highlight = '', '', ''
 	rd_highlight, pm_highlight, ad_highlight, ed_highlight, tb_highlight = '', '', '', '', ''
 	highlight_4K, highlight_1080P, highlight_720P, highlight_SD = '', '', '', ''
 	if highlight_type == 0:
-		easynews_highlight = get_setting('fenlight.provider.easynews_highlight', 'FF00B3B2')
-		debrid_cloud_highlight = get_setting('fenlight.provider.debrid_cloud_highlight', 'FF7A01CC')
-		folders_highlight = get_setting('fenlight.provider.folders_highlight', 'FFB36B00')
-		rd_highlight = get_setting('fenlight.provider.rd_highlight', 'FF3C9900')
-		pm_highlight = get_setting('fenlight.provider.pm_highlight', 'FFFF3300')
-		ad_highlight = get_setting('fenlight.provider.ad_highlight', 'FFE6B800')
-		ed_highlight = get_setting('fenlight.provider.ed_highlight', 'FF3233FF')
-		tb_highlight = get_setting('fenlight.provider.tb_highlight', 'FF01662A')
+		easynews_highlight = get_setting('fenlight.provider.easynews_highlight', 'FF00B3B2').replace('FF', window_theme_opacity, 1)
+		debrid_cloud_highlight = get_setting('fenlight.provider.debrid_cloud_highlight', 'FF7A01CC').replace('FF', window_theme_opacity, 1)
+		folders_highlight = get_setting('fenlight.provider.folders_highlight', 'FFB36B00').replace('FF', window_theme_opacity, 1)
+		rd_highlight = get_setting('fenlight.provider.rd_highlight', 'FF3C9900').replace('FF', window_theme_opacity, 1)
+		pm_highlight = get_setting('fenlight.provider.pm_highlight', 'FFFF3300').replace('FF', window_theme_opacity, 1)
+		ad_highlight = get_setting('fenlight.provider.ad_highlight', 'FFE6B800').replace('FF', window_theme_opacity, 1)
+		ed_highlight = get_setting('fenlight.provider.ed_highlight', 'FF3233FF').replace('FF', window_theme_opacity, 1)
+		tb_highlight = get_setting('fenlight.provider.tb_highlight', 'FF01662A').replace('FF', window_theme_opacity, 1)
 	else:
-		highlight_4K = get_setting('fenlight.scraper_4k_highlight', 'FFFF00FE')
-		highlight_1080P = get_setting('fenlight.scraper_1080p_highlight', 'FFE6B800')
-		highlight_720P = get_setting('fenlight.scraper_720p_highlight', 'FF3C9900')
-		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF')
+		highlight_4K = get_setting('fenlight.scraper_4k_highlight', 'FFFF00FE').replace('FF', window_theme_opacity, 1)
+		highlight_1080P = get_setting('fenlight.scraper_1080p_highlight', 'FFE6B800').replace('FF', window_theme_opacity, 1)
+		highlight_720P = get_setting('fenlight.scraper_720p_highlight', 'FF3C9900').replace('FF', window_theme_opacity, 1)
+		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF').replace('FF', window_theme_opacity, 1)
 	return {'highlight_type': highlight_type, 'real-debrid': rd_highlight, 'premiumize': pm_highlight, 'alldebrid': ad_highlight,
 			'easydebrid': ed_highlight, 'torbox': tb_highlight, 'rd_cloud': debrid_cloud_highlight, 'pm_cloud': debrid_cloud_highlight, 'ad_cloud': debrid_cloud_highlight,
 			'tb_cloud': debrid_cloud_highlight, 'easynews': easynews_highlight, 'folders': folders_highlight,
@@ -429,9 +424,9 @@ def cm_sort_order():
 def cm_default_order():
 	return {i: c for c, i in enumerate(default_setting_values('context_menu.order')['setting_default'].split(','))}
 
-def rpdb_api_key(media_type):
-	if int(get_setting('fenlight.rpdb_enabled', '0')) not in {'movie': (1, 3), 'tvshow': (2, 3)}[media_type]: return None
-	return get_setting('fenlight.rpdb_api')
+def rpdb_info(media_type):
+	if int(get_setting('fenlight.rpdb_enabled', '0')) not in {'movie': (1, 3), 'tvshow': (2, 3)}[media_type]: return {'rpdb_api_key': None, 'rpdb_format': None}
+	return {'rpdb_api_key': get_setting('fenlight.rpdb_api'), 'rpdb_format': get_setting('fenlight.rpdb_format')}
 
 def use_season_name():
 	return get_setting('fenlight.use_season_name', 'false') == 'true'

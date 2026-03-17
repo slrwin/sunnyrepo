@@ -19,13 +19,15 @@ class Extras(BaseDialog):
 	blunders_id, parentsguide_id, in_lists_id, videos_id, year_id, genres_id, networks_id, collection_id = 2059, 2060, 2061, 2062, 2063, 2064, 2065, 2066
 	parentsguide_icons = {'Sex & Nudity': kodi_utils.get_icon('sex_nudity'), 'Violence & Gore': kodi_utils.get_icon('violence'), 'Profanity': kodi_utils.get_icon('bad_language'),
 							'Alcohol, Drugs & Smoking': kodi_utils.get_icon('drugs_alcohol'), 'Frightening & Intense Scenes': kodi_utils.get_icon('horror')}
+	meta_ratings_values = (('Meta', 'metascore', 1), ('Tom/Critic', 'tomatometer', 2), ('Tom/User', 'tomatousermeter', 3), ('IMDb', 'imdb', 4), ('TMDb', 'tmdb', 5))
+	
 	def __init__(self, *args, **kwargs):
 		BaseDialog.__init__(self, *args)
 		self.control_id = None
-		self.items_list_ids = (Extras.recommended_id, Extras.related_id, Extras.more_like_this_id, Extras.ai_similar_id, Extras.year_id,
-								Extras.genres_id, Extras.networks_id, Extras.collection_id)
-		self.text_list_ids = (Extras.reviews_id, Extras.trivia_id, Extras.blunders_id, Extras.parentsguide_id, Extras.comments_id)
-		self.open_folder_list_ids = (Extras.in_lists_id,)
+		self.items_list_ids = (self.recommended_id, self.related_id, self.more_like_this_id, self.ai_similar_id, self.year_id,
+								self.genres_id, self.networks_id, self.collection_id)
+		self.text_list_ids = (self.reviews_id, self.trivia_id, self.blunders_id, self.parentsguide_id, self.comments_id)
+		self.open_folder_list_ids = (self.in_lists_id,)
 		self.empty_poster = kodi_utils.get_icon('box_office')
 		self.addon_fanart = kodi_utils.addon_fanart()
 		self.button_label_values = kodi_utils.extras_button_label_values()
@@ -46,11 +48,13 @@ class Extras(BaseDialog):
 	def run(self):
 		self.doModal()
 		self.clearProperties()
+		self.clear_home_property('window_theme.extras')
+		self.clear_home_property('window_theme.highlight.extras')
 		if self.selected: self.execute_code(self.selected)
 
 	def onClick(self, controlID):
 		self.control_id = None
-		if controlID in Extras.button_ids: return exec('self.%s()' % self.button_action_dict[controlID])
+		if controlID in self.button_ids: return exec('self.%s()' % self.button_action_dict[controlID])
 		else: self.control_id = controlID
 
 	def onAction(self, action):
@@ -67,10 +71,10 @@ class Extras(BaseDialog):
 			self.show_extrainfo(meta)
 		elif action in self.context_actions:
 			focus_id = self.getFocusId()
-			if focus_id == Extras.cast_id:
+			if focus_id == self.cast_id:
 				person_name = self.get_listitem(focus_id).getProperty(self.item_action_dict[focus_id])
 				return people.person_search(person_name)
-			elif focus_id == Extras.in_lists_id:
+			elif focus_id == self.in_lists_id:
 				kodi_utils.show_busy_dialog()
 				try:
 					list_item, position = self.get_listitem(focus_id), self.get_position(focus_id)
@@ -92,16 +96,16 @@ class Extras(BaseDialog):
 				self.set_current_params()
 				self.new_params = {'mode': 'extras_menu_choice', 'tmdb_id': chosen_var, 'media_type': self.media_type, 'is_external': self.is_external, 'stacked': 'true'}
 				return window_manager(self)
-			elif self.control_id == Extras.cast_id:
+			elif self.control_id == self.cast_id:
 				self.set_current_params()
 				self.new_params = {'mode': 'person_data_dialog', 'key_id': chosen_var, 'reference_tmdb_id': self.tmdb_id, 'is_external': self.is_external, 'stacked': 'true'}
 				return window_manager(self)
-			elif self.control_id == Extras.videos_id:
+			elif self.control_id == self.videos_id:
 				self.set_current_params(set_starting_position=False)
 				self.window_player_url = 'plugin://plugin.video.youtube/play/?video_id=%s' % chosen_var
 				return window_player(self)
 			elif self.control_id in self.text_list_ids:
-				if self.control_id == Extras.parentsguide_id: return self.show_text_media(text=chosen_var)
+				if self.control_id == self.parentsguide_id: return self.show_text_media(text=chosen_var)
 				else: return self.select_item(self.control_id, self.show_text_media(text=self.get_attribute(self, chosen_var), current_index=position))
 			elif self.control_id in self.open_folder_list_ids:
 				try: chosen_var = self.get_listitem(self.control_id).getProperty(self.item_action_dict[self.control_id])
@@ -117,27 +121,33 @@ class Extras(BaseDialog):
 			else: return
 
 	def make_ratings(self, win_prop=4000):
-		data = self.get_omdb_ratings()
+		data, current_settings = self.get_omdb_ratings()
 		if not data: return
-		active_extra_ratings = False
-		if self.rating: data['tmdb']['rating'] = self.rating
-		for prop, _id in (('metascore', 1), ('tomatometer', 2), ('tomatousermeter', 3), ('imdb', 4), ('tmdb', 5)):
-			rating, icon = data[prop]['rating'], data[prop]['icon']
-			if rating in ('', '%'): continue
-			if prop == 'tmdb' and not active_extra_ratings: continue
-			self.setProperty('%s_rating' % prop, 'true'), self.set_label(win_prop + _id, rating), self.set_image(win_prop + 100 + _id, 'fenlight_flags/ratings/%s' % icon)
-			active_extra_ratings = True
-		if win_prop == 4000 and self.getProperty('tmdb_rating') == 'true': self.set_infoline1(remove_rating=True)
+		if len(current_settings) == 1:
+			rating = data[next((i[1] for i in self.meta_ratings_values if i[0] == current_settings[0]))]['rating']
+			if rating in ('', '%'): return
+			self.rating = rating
+			return self.set_infoline1()
+		elif win_prop == 4000: self.set_infoline1(remove_rating=True)
+		for check, prop, _id in self.meta_ratings_values:
+			try:
+				if check not in current_settings: continue
+				rating = data[prop]['rating']
+				if rating in ('', '%'): continue
+				self.setProperty('%s_rating' % prop, 'true')
+				self.set_label(win_prop + _id, rating)
+				self.set_image(win_prop + 100 + _id, 'fenlight_flags/ratings/%s' % data[prop]['icon'])
+			except: pass
 
 	def make_plot_and_tagline(self):
 		self.plot = self.meta_get('tvshow_plot', '') or self.meta_get('plot', '') or ''
 		if not self.plot: return
 		self.tagline = self.meta_get('tagline') or ''
 		if self.tagline: self.plot = '[I]%s[/I][CR][CR]%s' % (self.tagline, self.plot)
-		if Extras.plot_id in self.enabled_lists: self.setProperty('plot_enabled', 'true')
+		if self.plot_id in self.enabled_lists: self.setProperty('plot_enabled', 'true')
 
 	def make_cast(self):
-		if not Extras.cast_id in self.enabled_lists: return
+		if not self.cast_id in self.enabled_lists: return
 		def builder():
 			cast = self.meta_get('cast')
 			for item in cast:
@@ -152,23 +162,23 @@ class Extras(BaseDialog):
 			icon = kodi_utils.get_icon('empty_person')
 			item_list = list(builder())
 			self.setProperty('cast.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.cast_id] = 'name'
-			self.add_items(Extras.cast_id, item_list)
+			self.item_action_dict[self.cast_id] = 'name'
+			self.add_items(self.cast_id, item_list)
 		except: pass
 
 	def make_recommended(self):
-		if not Extras.recommended_id in self.enabled_lists: return
+		if not self.recommended_id in self.enabled_lists: return
 		try:
 			function = tmdb_api.tmdb_movies_recommendations if self.media_type == 'movie' else tmdb_api.tmdb_tv_recommendations
 			data = function(self.tmdb_id, 1)['results']
 			item_list = list(self.make_tmdb_listitems(data))
 			self.setProperty('recommended.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.recommended_id] = 'tmdb_id'
-			self.add_items(Extras.recommended_id, item_list)
+			self.item_action_dict[self.recommended_id] = 'tmdb_id'
+			self.add_items(self.recommended_id, item_list)
 		except: pass
 
 	def make_related(self):
-		if not Extras.related_id in self.enabled_lists: return
+		if not self.related_id in self.enabled_lists: return
 		def builder(position, item):
 			try:
 				details = function('trakt_dict', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
@@ -190,11 +200,11 @@ class Extras(BaseDialog):
 		item_list.sort(key=lambda k: k[1])
 		item_list = [i[0] for i in item_list]
 		self.setProperty('related.number', 'x%s' % len(item_list))
-		self.item_action_dict[Extras.related_id] = 'tmdb_id'
-		self.add_items(Extras.related_id, item_list)
+		self.item_action_dict[self.related_id] = 'tmdb_id'
+		self.add_items(self.related_id, item_list)
 
 	def make_more_like_this(self):
-		if not Extras.more_like_this_id in self.enabled_lists: return
+		if not self.more_like_this_id in self.enabled_lists: return
 		def builder(position, item):
 			try:
 				details = function('imdb_id', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
@@ -215,11 +225,11 @@ class Extras(BaseDialog):
 		item_list.sort(key=lambda k: k[1])
 		item_list = [i[0] for i in item_list]
 		self.setProperty('more_like_this.number', 'x%s' % len(item_list))
-		self.item_action_dict[Extras.more_like_this_id] = 'tmdb_id'
-		self.add_items(Extras.more_like_this_id, item_list)
+		self.item_action_dict[self.more_like_this_id] = 'tmdb_id'
+		self.add_items(self.more_like_this_id, item_list)
 
 	def make_ai_similar(self):
-		if not Extras.ai_similar_id in self.enabled_lists: return
+		if not self.ai_similar_id in self.enabled_lists: return
 		def builder(position, item):
 			try:
 				details = function('tmdb_id', item['id'], self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
@@ -241,12 +251,12 @@ class Extras(BaseDialog):
 			item_list.sort(key=lambda k: k[1])
 			item_list = [i[0] for i in item_list]
 			self.setProperty('ai_similar.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.ai_similar_id] = 'tmdb_id'
-			self.add_items(Extras.ai_similar_id, item_list)
+			self.item_action_dict[self.ai_similar_id] = 'tmdb_id'
+			self.add_items(self.ai_similar_id, item_list)
 		except: pass
 
 	def make_reviews(self):
-		if not Extras.reviews_id in self.enabled_lists: return
+		if not self.reviews_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_reviews:
 				try:
@@ -259,12 +269,12 @@ class Extras(BaseDialog):
 			self.all_reviews = imdb_api.imdb_reviews(self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('imdb_reviews.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.reviews_id] = 'content_list'
-			self.add_items(Extras.reviews_id, item_list)
+			self.item_action_dict[self.reviews_id] = 'content_list'
+			self.add_items(self.reviews_id, item_list)
 		except: pass
 
 	def make_comments(self):
-		if not Extras.comments_id in self.enabled_lists: return
+		if not self.comments_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_comments:
 				try:
@@ -277,12 +287,12 @@ class Extras(BaseDialog):
 			self.all_comments = trakt_api.trakt_comments(self.media_type, self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('trakt_comments.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.comments_id] = 'content_list'
-			self.add_items(Extras.comments_id, item_list)
+			self.item_action_dict[self.comments_id] = 'content_list'
+			self.add_items(self.comments_id, item_list)
 		except: pass
 
 	def make_in_lists(self):
-		if not Extras.in_lists_id in self.enabled_lists: return
+		if not self.in_lists_id in self.enabled_lists: return
 		def builder():
 			for count, item in enumerate(self.all_in_lists, 1):
 				try:
@@ -307,12 +317,12 @@ class Extras(BaseDialog):
 			self.all_in_lists = trakt_api.trakt_lists_with_media(self.media_type, self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('trakt_in_lists.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.in_lists_id] = 'content_list'
-			self.add_items(Extras.in_lists_id, item_list)
+			self.item_action_dict[self.in_lists_id] = 'content_list'
+			self.add_items(self.in_lists_id, item_list)
 		except: pass
 
 	def make_trivia(self):
-		if not Extras.trivia_id in self.enabled_lists: return
+		if not self.trivia_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_trivia:
 				try:
@@ -325,12 +335,12 @@ class Extras(BaseDialog):
 			self.all_trivia = imdb_api.imdb_trivia(self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('imdb_trivia.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.trivia_id] = 'content_list'
-			self.add_items(Extras.trivia_id, item_list)
+			self.item_action_dict[self.trivia_id] = 'content_list'
+			self.add_items(self.trivia_id, item_list)
 		except: pass
 
 	def make_blunders(self):
-		if not Extras.blunders_id in self.enabled_lists: return
+		if not self.blunders_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_blunders:
 				try:
@@ -343,12 +353,12 @@ class Extras(BaseDialog):
 			self.all_blunders = imdb_api.imdb_blunders(self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('imdb_blunders.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.blunders_id] = 'content_list'
-			self.add_items(Extras.blunders_id, item_list)
+			self.item_action_dict[self.blunders_id] = 'content_list'
+			self.add_items(self.blunders_id, item_list)
 		except: pass
 
 	def make_parentsguide(self):
-		if not Extras.parentsguide_id in self.enabled_lists: return
+		if not self.parentsguide_id in self.enabled_lists: return
 		def builder():
 			for item in data:
 				try:
@@ -357,7 +367,7 @@ class Extras(BaseDialog):
 					ranking = item['ranking'].upper()
 					if ranking == 'NONE': ranking = 'NO RANK'
 					if item['content']: ranking += ' (x%02d)' % item['total_count']
-					icon = Extras.parentsguide_icons[name]
+					icon = self.parentsguide_icons[name]
 					listitem.setProperty('name', name)
 					listitem.setProperty('ranking', ranking)
 					listitem.setProperty('thumbnail', icon)
@@ -368,12 +378,12 @@ class Extras(BaseDialog):
 			data = imdb_api.imdb_parentsguide(self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('imdb_parentsguide.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.parentsguide_id] = 'content'
-			self.add_items(Extras.parentsguide_id, item_list)
+			self.item_action_dict[self.parentsguide_id] = 'content'
+			self.add_items(self.parentsguide_id, item_list)
 		except: pass
 
 	def make_videos(self):
-		if not Extras.videos_id in self.enabled_lists: return
+		if not self.videos_id in self.enabled_lists: return
 		def _sort_trailers(trailers):
 			official_trailers = [i for i in trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()]
 			other_official_trailers = [i for i in trailers if i['official'] and i['type'] == 'Trailer' and not i in official_trailers]
@@ -396,35 +406,35 @@ class Extras(BaseDialog):
 			all_trailers = _sort_trailers(self.meta_get('all_trailers', []))
 			item_list = list(builder())
 			self.setProperty('youtube_videos.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.videos_id] = 'key_id'
-			self.add_items(Extras.videos_id, item_list)
+			self.item_action_dict[self.videos_id] = 'key_id'
+			self.add_items(self.videos_id, item_list)
 		except: pass
 
 	def make_year(self):
-		if not Extras.year_id in self.enabled_lists: return
+		if not self.year_id in self.enabled_lists: return
 		try:
 			function = tmdb_api.tmdb_movies_year if self.media_type == 'movie' else tmdb_api.tmdb_tv_year
 			data = self.remove_current_tmdb_mediaitem(function(self.year, 1)['results'])
 			item_list = list(self.make_tmdb_listitems(data))
 			self.setProperty('more_from_year.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.year_id] = 'tmdb_id'
-			self.add_items(Extras.year_id, item_list)
+			self.item_action_dict[self.year_id] = 'tmdb_id'
+			self.add_items(self.year_id, item_list)
 		except: pass
 
 	def make_genres(self):
-		if not Extras.genres_id in self.enabled_lists: return
+		if not self.genres_id in self.enabled_lists: return
 		try:
 			function, genre_list = (tmdb_api.tmdb_movies_genres, movie_genres()) if self.media_type == 'movie' else (tmdb_api.tmdb_tv_genres, tvshow_genres())
 			genre_list = ','.join([i['id'] for i in genre_list if i['name'] in self.genre])
 			data = self.remove_current_tmdb_mediaitem(function(genre_list, 1)['results'])
 			item_list = list(self.make_tmdb_listitems(data))
 			self.setProperty('more_from_genres.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.genres_id] = 'tmdb_id'
-			self.add_items(Extras.genres_id, item_list)
+			self.item_action_dict[self.genres_id] = 'tmdb_id'
+			self.add_items(self.genres_id, item_list)
 		except: pass
 
 	def make_network(self):
-		if not Extras.networks_id in self.enabled_lists: return
+		if not self.networks_id in self.enabled_lists: return
 		try:
 			network = self.meta_get('studio')[0]
 			network_list = tmdb_api.tmdb_company_id(network)['results'] if self.media_type == 'movie' else networks()
@@ -433,13 +443,13 @@ class Extras(BaseDialog):
 			data = self.remove_current_tmdb_mediaitem(function(network_id, 1)['results'])
 			item_list = list(self.make_tmdb_listitems(data))
 			self.setProperty('more_from_networks.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.networks_id] = 'tmdb_id'
-			self.add_items(Extras.networks_id, item_list)
+			self.item_action_dict[self.networks_id] = 'tmdb_id'
+			self.add_items(self.networks_id, item_list)
 		except: pass
 
 	def make_collection(self):
 		if self.media_type != 'movie': return
-		if not Extras.collection_id in self.enabled_lists: return
+		if not self.collection_id in self.enabled_lists: return
 		try: coll_id = self.extra_info_get('collection_id')
 		except: return
 		if not coll_id: return
@@ -450,14 +460,18 @@ class Extras(BaseDialog):
 			self.setProperty('more_from_collection.overview', data['plot'] or data['title'])
 			self.setProperty('more_from_collection.poster', data['poster'] or self.empty_poster)
 			self.setProperty('more_from_collection.number', 'x%s' % len(item_list))
-			self.item_action_dict[Extras.collection_id] = 'tmdb_id'
-			self.add_items(Extras.collection_id, item_list)
+			self.item_action_dict[self.collection_id] = 'tmdb_id'
+			self.add_items(self.collection_id, item_list)
 		except: pass
 
 	def get_omdb_ratings(self):
-		if not self.display_extra_ratings: return None
+		if not self.display_extra_ratings: return None, None
+		current_settings = settings.extras_enabled_ratings()
+		if not current_settings: return None, None
 		data = self.meta_get('extra_ratings', None) or omdb_api.fetch_ratings_info(self.meta, self.omdb_api)
-		return data
+		if not data: return None, None
+		if data['tmdb']['rating'] == '' and self.rating is not None: data['tmdb']['rating'] = self.rating
+		return data, current_settings
 
 	def get_release_year(self, release_data):
 		try:
@@ -679,7 +693,7 @@ class Extras(BaseDialog):
 
 	def assign_buttons(self):
 		setting_id_base = 'fenlight.extras.%s.button' % self.media_type
-		for item in Extras.button_ids[:-1]:
+		for item in self.button_ids[:-1]:
 			setting_id = setting_id_base + str(item)
 			try:
 				button_action = self.get_setting(setting_id)
@@ -741,6 +755,9 @@ class Extras(BaseDialog):
 
 	def set_properties(self):
 		self.assign_buttons()
+		window_theme_opacity = self.get_home_property('window_theme_opacity')
+		self.set_home_property('window_theme.extras', self.get_home_property('window_theme').replace('FF', window_theme_opacity))
+		self.set_home_property('window_theme.highlight.extras',  '%sCCCCCC' % window_theme_opacity)
 		self.setProperty('media_type', self.media_type), self.setProperty('title', self.title), self.setProperty('year', self.year), self.setProperty('plot', self.plot)
 		self.setProperty('genre', ', '.join(self.genre)), self.setProperty('network', ', '.join(self.network)), self.setProperty('enable_scrollbars', self.enable_scrollbars)
 		self.setProperty('display_extra_ratings', 'true' if self.display_extra_ratings else 'false')

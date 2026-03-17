@@ -4,6 +4,34 @@ from caches.settings_cache import get_setting, set_setting, set_default, default
 from modules import kodi_utils, settings
 # logger = kodi_utils.logger
 
+def addon_theme_choice(params):
+	choices = kodi_utils.addon_themes()
+	list_items = [{'line1': i['name'], 'icon': kodi_utils.get_icon(i['icon'], 'themes')} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Assign a Theme'}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None: return
+	set_setting('window_theme', choice['value'][0])
+	set_setting('window_theme_contrast', choice['value'][1])
+	set_setting('window_theme_name', choice['name'])
+
+def addon_theme_opacity_choice(params):
+	choices = kodi_utils.addon_themes_opacity()
+	list_items = [{'line1': i['name']} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Assign an Opacity Level'}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None: return
+	set_setting('window_theme_opacity', choice['value'])
+	set_setting('window_theme_opacity_name', choice['name'])
+
+def rpdb_poster_format_choice(params):
+	choices = [{'name': 'default', 'value': ''}, {'name': 'blocks', 'value': '&theme=blocks'}, {'name': 'rounded', 'value': '&theme=rounded-blocks'}]
+	list_items = [{'line1': i['name'], 'icon': kodi_utils.get_icon('rpdb_%s' % i['name'], 'rpdb_posters', 'jpg')} for i in choices]
+	kwargs = {'items': json.dumps(list_items)}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None: return
+	set_setting('rpdb_format', choice['value'])
+	set_setting('rpdb_format_name', choice['name'])
+
 def navigate_to_page_choice(params):
 	def _builder():
 		for item in start_list:
@@ -712,6 +740,21 @@ def extras_buttons_choice(params):
 	button_dict[button_setting] = {'button_action': button_action, 'button_label': button_label, 'button_name': button_name}
 	return extras_buttons_choice({'button_dict': button_dict, 'orig_button_dict': orig_button_dict, 'media_type': media_type})
 
+def extras_ratings_choice(params={}):
+	choices = [('Metacritic', 'Meta', 'metacritic.png'), ('Tomato Rating Critic', 'Tom/Critic', 'rtcertified.png'),
+				('Tomato Rating User', 'Tom/User', 'popcorn.png'), ('IMDb', 'IMDb', 'imdb.png'), ('TMDb', 'TMDb', 'tmdb.png')]
+	list_items = [{'line1': i[0], 'icon': 'fenlight_flags/ratings/%s' % i[2]} for i in choices]
+	current_settings = settings.extras_enabled_ratings()
+	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]
+	except: preselect = []
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Ratings to Display', 'multi_choice': 'true', 'preselect': preselect}
+	selection = kodi_utils.select_dialog(choices, **kwargs)
+	if selection == None: return
+	if selection == []:
+		kodi_utils.ok_dialog(text='You must select at least 1 Ratings Provider')
+		return extras_ratings_choice()
+	set_setting('extras.enabled_ratings', ', '.join([i[1] for i in selection]))
+
 def extras_lists_choice(params={}):
 	choices = [(i,c) for c, i in enumerate(kodi_utils.extras_items(), 2050)]
 	list_items = [{'line1': i[0]} for i in choices]
@@ -762,23 +805,27 @@ def sources_folders_choice(params):
 	from windows.base_window import open_window
 	return open_window(('windows.settings_manager', 'SettingsManagerFolders'), 'settings_manager_folders.xml')
 
-def results_sorting_choice(params={}):
+def results_sorting_choice(params):
 	choices = [('Quality, Provider, Size', '0'), ('Quality, Size, Provider', '1'),
 				('Provider, Quality, Size', '2'), ('Provider, Size, Quality', '3'),
 				('Size, Quality, Provider', '4'), ('Size, Provider, Quality', '5')]
 	list_items = [{'line1': item[0]} for item in choices]
 	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
 	choice = kodi_utils.select_dialog(choices, **kwargs)
-	if choice:
-		set_setting('results.sort_order_display', choice[0])
-		set_setting('results.sort_order', choice[1])
+	if choice is None: return
+	set_setting('results.sort_order_display', choice[0])
+	set_setting('results.sort_order', choice[1])
 
-def results_format_choice(params={}):
-	from windows.base_window import open_window
-	choice = open_window(('windows.sources', 'SourcesChoice'), 'sources_choice.xml')
-	if choice: set_setting('results.list_format', choice)
+def results_format_choice(params):
+	choices = [('List', kodi_utils.get_icon('results_list', 'results')), ('Rows', kodi_utils.get_icon('results_row', 'results')),
+				('WideList', kodi_utils.get_icon('results_widelist', 'results'))]
+	list_items = [{'line1': item[0], 'icon': item[1]} for item in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Choose Results Format'}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice is None: return
+	set_setting('results.list_format', choice[0])
 
-def clear_favorites_choice(params={}):
+def clear_favorites_choice(params):
 	fl = [('Clear Movies Favorites', 'movie'), ('Clear TV Show Favorites', 'tvshow'), ('Clear People Favorites', 'people')]
 	list_items = [{'line1': item[0]} for item in fl]
 	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}

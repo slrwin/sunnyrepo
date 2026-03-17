@@ -4,6 +4,15 @@ import xbmc, xbmcgui, xbmcplugin, xbmcvfs, xbmcaddon
 import os
 from urllib.parse import urlencode, unquote
 
+def addon_themes():
+	return [{'name': 'Light', 'value': ('FF434343', 'FF2E2E2E'), 'icon': 'light'}, {'name': 'Medium', 'value': ('FF373737', 'FF4a4347'), 'icon': 'medium'},
+			{'name': 'Dark', 'value': ('FF1F2020', 'FF4F4F4F'), 'icon': 'dark'}]
+
+def addon_themes_opacity():
+	return [{'name': '100%', 'value': 'FF'}, {'name': '95%', 'value': 'F2'}, {'name': '90%', 'value': 'E6'}, {'name': '85%', 'value': 'D9'}, {'name': '80%', 'value': 'CC'},
+			{'name': '75%', 'value': 'BF'}, {'name': '70%', 'value': 'B3'}, {'name': '65%', 'value': 'A6'}, {'name': '60%', 'value': '99'}, {'name': '55%', 'value': '8C'},
+			{'name': '50%', 'value': '80'}]
+
 def random_valid_type_check():
 	return {'build_movie_list': 'movie', 'build_tvshow_list': 'tvshow', 'build_season_list': 'season', 'build_episode_list': 'episode',
 	'build_in_progress_episode': 'single_episode', 'build_recently_watched_episode': 'single_episode', 'build_next_episode': 'single_episode',
@@ -94,9 +103,9 @@ def addon_icon_mini():
 def addon_fanart():
 	return get_property('fenlight.addon_fanart') or translate_path(addon_info('fanart'))
 
-def get_icon(image_name, image_folder='icons'):
-	return 'https://raw.githubusercontent.com/%s/%s/main/packages/media/%s/%s.png' \
-			% (get_property('fenlight.update.username'), get_property('fenlight.update.location'), image_folder, image_name)
+def get_icon(image_name, image_folder='icons', image_type='png'):
+	return 'https://raw.githubusercontent.com/%s/%s/main/packages/media/%s/%s.%s' \
+			% (get_property('fenlight.update.username'), get_property('fenlight.update.location'), image_folder, image_name, image_type)
 
 def get_addon_fanart():
 	return get_property('fenlight.default_addon_fanart') or addon_fanart()
