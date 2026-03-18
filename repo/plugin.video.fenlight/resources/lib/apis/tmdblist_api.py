@@ -2,6 +2,7 @@
 from modules.kodi_utils import progress_dialog, notification, sleep, make_session
 from caches.tmdb_lists import tmdb_lists_cache_object, tmdb_lists_cache
 from caches.settings_cache import get_setting, set_setting
+from modules.settings import max_threads
 from modules.utils import copy2clip, make_qrcode, make_tinyurl, TaskPool
 # from modules.kodi_utils import logger
 
@@ -65,7 +66,7 @@ class TMDbListAPI:
 			results_extend(result['results'])
 			total_pages = result['total_pages']
 			if total_pages > 1:
-				threads = TaskPool().tasks(_process_multi, range(2, total_pages + 1), settings.max_threads())
+				threads = TaskPool().tasks(_process_multi, range(2, total_pages + 1), max_threads())
 				[i.join() for i in threads]
 			return results
 		account_id = get_setting('fenlight.tmdb.account_id')
@@ -84,7 +85,7 @@ class TMDbListAPI:
 			results_extend(result['results'])
 			total_pages = result['total_pages']
 			if total_pages > 1:
-				threads = TaskPool().tasks(_process_multi, range(2, total_pages + 1), settings.max_threads())
+				threads = TaskPool().tasks(_process_multi, range(2, total_pages + 1), max_threads())
 				[i.join() for i in threads]
 			return results
 		string = 'get_list_details_%s' % (list_id)

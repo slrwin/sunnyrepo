@@ -417,7 +417,7 @@ class Sources():
 											'skip_episode_group_check': True})
 						self.threads, self.disabled_ext_ignored, self.prescrape = [], True, True, False
 						return self.playback_prep()
-					if self.auto_episode_group == 2:
+					if next_setting == 2:
 						from indexers.dialogs import episode_groups_choice
 						try: group_id = episode_groups_choice({'meta': self.meta, 'poster': self.meta['poster']})
 						except: group_id = None

@@ -39,7 +39,8 @@ class EasyDebridAPI:
 
 	def check_cache(self, hashlist):
 		data = {'urls': hashlist}
-		return self._post('link/lookup', json=data)
+		result = self._post('link/lookup', json=data)
+		return result
 
 	def create_transfer(self, magnet_url):
 		result = self.add_magnet(magnet_url)
@@ -80,7 +81,7 @@ class EasyDebridAPI:
 		return url + '|' + urlencode(self.headers())
 
 	def headers(self):
-		return {'User-Agent': 'Fen Light for Kodi', 'Authorization': 'Bearer %s' % self.token}
+		return {'User-Agent': 'Fen Light for Kodi', 'Authorization': 'Bearer %s' % self.token, 'Content-Type': 'application/json'}
 
 	def _m2ts_check(self, folder_items):
 		for item in folder_items:

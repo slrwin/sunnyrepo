@@ -1,6 +1,11 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.88[/B][/COLOR]
+- Fixed TMDb lists issue.
+- Made cosmetic adjustments to Extras window.
+- Couple of other quick fixes.
+
 [COLOR dodgerblue][B]Version 2.1.87[/B][/COLOR]
 - Fixes for Trakt API changes. You may need to Clear Trakt Cache (Tools->Database & Cache Maintenance).I will not be relying on Trakt to perform the pagination, so your lists will display a maximum of 999 items. If you have a list/s with more than 999 items, reach out to me and I can get you some needed help.
 - Added Settings->General->Window Theme->"Assign Window Theme". Here you can choose between Light, Medium and Dark for the grey of custom Fen Light dialogs and windows.

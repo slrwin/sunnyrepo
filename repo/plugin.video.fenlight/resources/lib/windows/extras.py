@@ -122,12 +122,16 @@ class Extras(BaseDialog):
 
 	def make_ratings(self, win_prop=4000):
 		data, current_settings = self.get_omdb_ratings()
-		if not data: return
+		if not current_settings: return
+		if len(data) == 1: return
 		if len(current_settings) == 1:
-			rating = data[next((i[1] for i in self.meta_ratings_values if i[0] == current_settings[0]))]['rating']
-			if rating in ('', '%'): return
-			self.rating = rating
-			return self.set_infoline1()
+			try:
+				data = data[next((i[1] for i in self.meta_ratings_values if i[0] == current_settings[0]))]
+				rating = data['rating']
+				if rating in ('', '%'): return
+				if data['rating'] in ('', '%'): return
+				return self.set_infoline1(rating_data=data)
+			except: return
 		elif win_prop == 4000: self.set_infoline1(remove_rating=True)
 		for check, prop, _id in self.meta_ratings_values:
 			try:
@@ -470,7 +474,7 @@ class Extras(BaseDialog):
 		if not current_settings: return None, None
 		data = self.meta_get('extra_ratings', None) or omdb_api.fetch_ratings_info(self.meta, self.omdb_api)
 		if not data: return None, None
-		if data['tmdb']['rating'] == '' and self.rating is not None: data['tmdb']['rating'] = self.rating
+		if data['tmdb']['rating'] == '' and self.rating is not None: omdb_data['tmdb']['rating'] = self.rating
 		return data, current_settings
 
 	def get_release_year(self, release_data):
@@ -751,6 +755,7 @@ class Extras(BaseDialog):
 		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(float(self.meta_get('duration'))/60)
 		self.status_infoline_value = self.make_status_infoline()
 		self.stinger_dialog = self.make_stinger_dialog()
+		self.single_rating_data = {'rating': self.rating, 'icon': 'tmdb.png'}
 		self.make_plot_and_tagline()
 
 	def set_properties(self):
@@ -784,9 +789,13 @@ class Extras(BaseDialog):
 				stinger_dialog = {1: '%s Credits Stinger', 2: '%s & %s Credits Stinger'}[len(stinger_names)] % stinger_names
 		return stinger_dialog
 
-	def set_infoline1(self, remove_rating=False):
-		self.set_label(2001, '[B]  •  [/B]'.join([i for i in (self.year, None if remove_rating else self.rating, self.mpaa,
-																self.get_duration(), self.stinger_dialog, self.status_infoline_value) if i]))
+	def set_infoline1(self, rating_data=None, remove_rating=False):
+		if remove_rating: rating, image = None, ''
+		else:
+			data = rating_data or self.single_rating_data
+			rating, image = data['rating'], 'fenlight_flags/ratings/%s' % data['icon']
+		self.set_image(203, image)
+		self.set_label(2001, '[B]  •  [/B]'.join([i for i in (rating, self.year, self.mpaa, self.get_duration(), self.stinger_dialog, self.status_infoline_value) if i]))
 
 	def set_infoline2(self):
 		if self.media_type == 'movie':

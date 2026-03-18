@@ -158,13 +158,26 @@
                         <label>[I]$INFO[Window.Property(genre)][/I]</label>
                     </control>
                     <!-- Line 2 -->
-                    <control type="label" id="2001">
+                    <control type="grouplist">
                         <top>55</top>
                         <width max="1150">auto</width>
-                        <height>25</height>
-                        <font>font14</font> <!-- FENLIGHT_33 -->
-                        <textcolor>FFCCCCCC</textcolor>
+                        <orientation>horizontal</orientation>
+                        <itemgap>10</itemgap>
                         <align>center</align>
+                        <control type="image" id="203">
+                            <width>45</width>
+                            <height>45</height>
+                            <aspectratio>keep</aspectratio>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                        </control>
+                        <control type="label" id="2001">
+                            <width max="1026">auto</width>
+                            <height>32</height>
+                            <font>font13</font> <!-- FENLIGHT_30 -->
+                            <textcolor>FFCCCCCC</textcolor>
+                            <align>left</align>
+                        </control>
                     </control>
                     <!-- Line 3 -->
                     <control type="label" id="3001">
