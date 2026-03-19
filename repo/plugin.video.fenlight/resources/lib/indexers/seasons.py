@@ -84,7 +84,7 @@ def build_season_list(params):
 	current_date = get_datetime()
 	cm_sort_order = settings.cm_sort_order()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
-	rpdb_info = settings.rpdb_info('movie')
+	rpdb_info = settings.rpdb_info('tvshow')
 	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	use_name = settings.use_season_name()
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], settings.tmdb_api_key(), settings.mpaa_region(), current_date)

@@ -256,7 +256,7 @@ class TVShows:
 		self.poster_empty, self.fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
 		self.current_date, self.current_time = get_datetime(), get_current_timestamp()
 		self.tmdb_api_key, self.mpaa_region = settings.tmdb_api_key(), settings.mpaa_region()
-		rpdb_info = settings.rpdb_info('movie')
+		rpdb_info = settings.rpdb_info('tvshow')
 		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 		self.all_episodes, self.open_extras = settings.default_all_episodes(), settings.media_open_action('tvshow') == 1
 		self.cm_sort_order = settings.cm_sort_order()

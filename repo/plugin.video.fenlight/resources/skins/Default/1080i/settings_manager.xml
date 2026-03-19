@@ -671,6 +671,15 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(20)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rpdb_api),empty_setting)</visible>
+                          <property name="setting_label">Enable Poster Ratings (RPDb) for Extras Lists</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.enable_item_ratings)]</property>
+                          <property name="setting_description">Choose this and the widgets displayed in the Extras window will show RPDb ratings posters</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=extras.enable_item_ratings)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(20)</visible>
                           <property name="setting_label">Enable Scrollbars for Extras Lists</property>
                           <property name="setting_type">boolean</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.extras.enable_scrollbars)]</property>
@@ -699,6 +708,41 @@
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.media_open_action_tvshow_name)]</property>
                           <property name="setting_description">Choose the Open Action when a TV Show is selected in Fen Light. Choices Are None or Open Extras</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=media_open_action_tvshow)</onclick>
+                      </item>
+        <!-- RPDb Ratings Posters -->
+                      <item>
+                          <visible>Container(2000).HasFocus(20)</visible>
+                          <property name="setting_label">Ratings Posters</property>
+                          <property name="setting_type">separator</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(20)</visible>
+                          <visible>String.IsEqual(Window(10000).Property(fenlight.rpdb_api),empty_setting)</visible>
+                          <property name="setting_label">[I]Enter an RPDb API Key in Meta Accounts[/I]</property>
+                          <property name="setting_type">info</property>
+                          <property name="setting_value">...</property>
+                          <property name="setting_description">Navigate within these settings to Meta Accounts->RPDb (Ratings Posters) and enter an API key to access this</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(20)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rpdb_api),empty_setting)</visible>
+                          <property name="setting_label">Use RPDb Ratings Posters For...</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rpdb_enabled_name)]</property>
+                          <property name="setting_description">Choose which media types utilize that Rated Posters provided by RPDb. Choices are None, Movies, TV Shows or Both</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=rpdb_enabled)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(20)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rpdb_api),empty_setting)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rpdb_enabled),0)</visible>
+                          <property name="setting_label">    - RPDb Poster Format</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rpdb_format_name)]</property>
+                          <property name="setting_description">Choose the format used for RPDb Posters. Choices are Default, Blocks or Rounded</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=rpdb_poster_format_choice)</onclick>
                       </item>
         <!-- AI Generated Similar Titles -->
                       <item>

@@ -95,7 +95,7 @@ def build_episode_list(params):
 	current_date, hide_watched = get_datetime(), is_external and settings.widget_hide_watched()
 	cm_sort_order = settings.cm_sort_order()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
-	rpdb_info = settings.rpdb_info('movie')
+	rpdb_info = settings.rpdb_info('tvshow')
 	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	playback_key = settings.playback_key()
 	play_mode = 'playback.%s' % playback_key
@@ -307,7 +307,7 @@ def build_single_episode(list_type, params={}):
 	api_key, mpaa_region_value = settings.tmdb_api_key(), settings.mpaa_region()
 	cm_sort_order, ignore_articles = settings.cm_sort_order(), settings.ignore_articles()
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
-	rpdb_info = settings.rpdb_info('movie')
+	rpdb_info = settings.rpdb_info('tvshow')
 	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	playback_key = settings.playback_key()
 	play_mode = 'playback.%s' % playback_key

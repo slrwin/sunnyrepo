@@ -227,8 +227,11 @@ def extras_enable_extra_ratings():
 def extras_enabled_ratings():
 	return get_setting('fenlight.extras.enabled_ratings', 'Meta, Tom/Critic, Tom/User, IMDb, TMDb').split(', ')
 
+def extras_enable_item_ratings():
+	return get_setting('fenlight.extras.enable_item_ratings', 'false') =='true'
+
 def extras_enable_scrollbars():
-	return get_setting('fenlight.extras.enable_scrollbars', 'true')
+	return get_setting('fenlight.extras.enable_scrollbars', 'false')
 
 def extras_enabled_menus():
 	setting = get_setting('fenlight.extras.enabled', '2000,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062')
@@ -425,8 +428,10 @@ def cm_default_order():
 	return {i: c for c, i in enumerate(default_setting_values('context_menu.order')['setting_default'].split(','))}
 
 def rpdb_info(media_type):
-	if int(get_setting('fenlight.rpdb_enabled', '0')) not in {'movie': (1, 3), 'tvshow': (2, 3)}[media_type]: return {'rpdb_api_key': None, 'rpdb_format': None}
-	return {'rpdb_api_key': get_setting('fenlight.rpdb_api'), 'rpdb_format': get_setting('fenlight.rpdb_format')}
+	if media_type == 'extras': active = extras_enable_item_ratings()
+	else: active = int(get_setting('fenlight.rpdb_enabled', '0')) in {'movie': (1, 3), 'tvshow': (2, 3)}[media_type]
+	if active: return {'rpdb_api_key': get_setting('fenlight.rpdb_api'), 'rpdb_format': get_setting('fenlight.rpdb_format')}
+	else: return {'rpdb_api_key': None, 'rpdb_format': None}
 
 def use_season_name():
 	return get_setting('fenlight.use_season_name', 'false') == 'true'

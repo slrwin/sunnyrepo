@@ -122,6 +122,7 @@ class Extras(BaseDialog):
 
 	def make_ratings(self, win_prop=4000):
 		data, current_settings = self.get_omdb_ratings()
+		final_ratings = []
 		if not current_settings: return
 		if len(data) == 1: return
 		if len(current_settings) == 1:
@@ -138,10 +139,14 @@ class Extras(BaseDialog):
 				if check not in current_settings: continue
 				rating = data[prop]['rating']
 				if rating in ('', '%'): continue
-				self.setProperty('%s_rating' % prop, 'true')
-				self.set_label(win_prop + _id, rating)
-				self.set_image(win_prop + 100 + _id, 'fenlight_flags/ratings/%s' % data[prop]['icon'])
+				final_ratings.append({'prop': prop, '_id': _id, 'rating': rating, 'icon': data[prop]['icon']})
 			except: pass
+		if not final_ratings: return
+		if len(final_ratings) == 1: return self.set_infoline1(rating_data=final_ratings[0])
+		for item in final_ratings:
+			self.setProperty('%s_rating' % item['prop'], 'true')
+			self.set_label(win_prop + item['_id'], item['rating'])
+			self.set_image(win_prop + 100 + item['_id'], 'fenlight_flags/ratings/%s' % item['icon'])
 
 	def make_plot_and_tagline(self):
 		self.plot = self.meta_get('tvshow_plot', '') or self.meta_get('plot', '') or ''
@@ -185,12 +190,17 @@ class Extras(BaseDialog):
 		if not self.related_id in self.enabled_lists: return
 		def builder(position, item):
 			try:
-				details = function('trakt_dict', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
+				details = function('trakt_dict', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)
+				poster = details['poster']
+				if self.rpdb_api_key and poster:
+					try: poster = details['rpdb_poster'] % self.rpdb_api_key + self.rpdb_format
+					except: pass
+				elif not poster: poster = self.empty_poster
 				listitem = self.make_listitem()
 				listitem.setProperty('name', details['title'])
 				listitem.setProperty('release_date', details['year'])
 				listitem.setProperty('vote_average', '%.1f' % details['rating'])
-				listitem.setProperty('thumbnail', details['poster'] or self.empty_poster)
+				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
 				item_list_append((listitem, position))
 			except: pass
@@ -213,10 +223,15 @@ class Extras(BaseDialog):
 			try:
 				details = function('imdb_id', item, self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
 				listitem = self.make_listitem()
+				poster = details['poster']
+				if self.rpdb_api_key and poster:
+					try: poster = details['rpdb_poster'] % self.rpdb_api_key + self.rpdb_format
+					except: pass
+				elif not poster: poster = self.empty_poster
 				listitem.setProperty('name', details['title'])
 				listitem.setProperty('release_date', details['year'])
 				listitem.setProperty('vote_average', '%.1f' % details['rating'])
-				listitem.setProperty('thumbnail', details['poster'] or self.empty_poster)
+				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
 				item_list_append((listitem, position))
 			except: pass
@@ -238,10 +253,15 @@ class Extras(BaseDialog):
 			try:
 				details = function('tmdb_id', item['id'], self.tmdb_api_key, self.mpaa_region, self.current_date, current_time=None)					
 				listitem = self.make_listitem()
+				poster = details['poster']
+				if self.rpdb_api_key and poster:
+					try: poster = details['rpdb_poster'] % self.rpdb_api_key + self.rpdb_format
+					except: pass
+				elif not poster: poster = self.empty_poster
 				listitem.setProperty('name', details['title'])
 				listitem.setProperty('release_date', details['year'])
 				listitem.setProperty('vote_average', '%.1f' % details['rating'])
-				listitem.setProperty('thumbnail', details['poster'] or self.empty_poster)
+				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
 				item_list_append((listitem, position))
 			except: pass
@@ -474,7 +494,7 @@ class Extras(BaseDialog):
 		if not current_settings: return None, None
 		data = self.meta_get('extra_ratings', None) or omdb_api.fetch_ratings_info(self.meta, self.omdb_api)
 		if not data: return None, None
-		if data['tmdb']['rating'] == '' and self.rating is not None: omdb_data['tmdb']['rating'] = self.rating
+		if data['tmdb']['rating'] == '' and self.rating is not None: data['tmdb']['rating'] = self.rating
 		return data, current_settings
 
 	def get_release_year(self, release_data):
@@ -566,14 +586,17 @@ class Extras(BaseDialog):
 		for item in data:
 			try:
 				listitem = self.make_listitem()
-				poster_path = item['poster_path']
-				if poster_path: thumbnail = 'https://image.tmdb.org/t/p/%s%s' % ('w300', poster_path)
-				else: thumbnail = self.empty_poster
+				poster = 'https://image.tmdb.org/t/p/%s%s' % ('w300', item['poster_path']) if item['poster_path'] else ''
+				if self.rpdb_api_key and poster:
+					media = 'movie' if self.media_type == 'movie' else 'series'
+					try: poster = 'https://api.ratingposterdb.com/%s/tmdb/poster-default/%s-%s.jpg?fallback=true' % (self.rpdb_api_key, media, str(item['id'])) + self.rpdb_format
+					except: pass
+				elif not poster: poster = self.empty_poster
 				year = self.get_release_year(item[release_key])
 				listitem.setProperty('name', item[name_key])
 				listitem.setProperty('release_date', year)
 				listitem.setProperty('vote_average', '%.1f' % item['vote_average'])
-				listitem.setProperty('thumbnail', thumbnail)
+				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(item['id']))
 				yield listitem
 			except: pass
@@ -746,11 +769,13 @@ class Extras(BaseDialog):
 		self.tmdb_api_key, self.omdb_api, self.mpaa_region = settings.tmdb_api_key(), settings.omdb_api_key(), settings.mpaa_region()
 		self.display_extra_ratings = self.imdb_id and self.omdb_api not in ('empty_setting', '') and settings.extras_enable_extra_ratings()
 		self.title, self.year, self.rootname = self.meta_get('title'), str(self.meta_get('year')), self.meta_get('rootname')
+		rpdb_info = settings.rpdb_info('extras')
+		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 		self.poster = self.meta_get('poster') or self.empty_poster
 		self.fanart = self.meta_get('fanart') or self.addon_fanart
 		self.clearlogo = self.meta_get('clearlogo') or ''
 		self.landscape = self.meta_get('landscape') or ''
-		self.rating = str(round(self.meta_get('rating'), 1)) if self.meta_get('rating') not in (0, 0.0, None) else None
+		self.rating = str(round(self.meta_get('rating'), 1)) if self.meta_get('rating') not in ('', '%', 0, 0.0, None) else None
 		self.mpaa, self.genre, self.network = self.meta_get('mpaa'), self.meta_get('genre'), self.meta_get('studio') or ''
 		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(float(self.meta_get('duration'))/60)
 		self.status_infoline_value = self.make_status_infoline()
@@ -790,11 +815,13 @@ class Extras(BaseDialog):
 		return stinger_dialog
 
 	def set_infoline1(self, rating_data=None, remove_rating=False):
-		if remove_rating: rating, image = None, ''
+		if remove_rating:
+			rating = None
+			self.set_image(203, '')
 		else:
 			data = rating_data or self.single_rating_data
 			rating, image = data['rating'], 'fenlight_flags/ratings/%s' % data['icon']
-		self.set_image(203, image)
+			if rating: self.set_image(203, image)
 		self.set_label(2001, '[B]  •  [/B]'.join([i for i in (rating, self.year, self.mpaa, self.get_duration(), self.stinger_dialog, self.status_infoline_value) if i]))
 
 	def set_infoline2(self):

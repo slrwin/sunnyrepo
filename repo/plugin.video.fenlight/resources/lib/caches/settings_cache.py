@@ -227,6 +227,7 @@ def default_settings():
 #==================== Extras
 {'setting_id': 'extras.enable_extra_ratings', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'extras.enabled_ratings', 'setting_type': 'string', 'setting_default': 'Meta, Tom/Critic, Tom/User, IMDb, TMDb'},
+{'setting_id': 'extras.enable_item_ratings', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'extras.enable_scrollbars', 'setting_type': 'boolean', 'setting_default': 'false'},
 #==================== Special Open Actions
 {'setting_id': 'media_open_action_movie', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Open Extras', '2': 'Open Movie Set', '3': 'Both'}},
