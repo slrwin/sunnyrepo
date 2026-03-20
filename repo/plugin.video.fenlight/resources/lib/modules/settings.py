@@ -313,28 +313,27 @@ def auto_resume(media_type, autoplay_status):
 	return {0: False, 1: True, 2: autoplay_status}[int(get_setting('fenlight.auto_resume_%s' % media_type))]
 
 def scraping_settings():
-	window_theme_opacity = get_setting('fenlight.window_theme_opacity')
 	highlight_type = int(get_setting('fenlight.highlight.type', '0'))
 	if highlight_type == 2:
-		highlight = get_setting('fenlight.scraper_single_highlight', 'FF008EB2').replace('FF', window_theme_opacity, 1)
+		highlight = get_setting('fenlight.scraper_single_highlight', 'FF008EB2')
 		return {'highlight_type': 1, '4k': highlight, '1080p': highlight, '720p': highlight, 'sd': highlight}
 	easynews_highlight, debrid_cloud_highlight, folders_highlight = '', '', ''
 	rd_highlight, pm_highlight, ad_highlight, ed_highlight, tb_highlight = '', '', '', '', ''
 	highlight_4K, highlight_1080P, highlight_720P, highlight_SD = '', '', '', ''
 	if highlight_type == 0:
-		easynews_highlight = get_setting('fenlight.provider.easynews_highlight', 'FF00B3B2').replace('FF', window_theme_opacity, 1)
-		debrid_cloud_highlight = get_setting('fenlight.provider.debrid_cloud_highlight', 'FF7A01CC').replace('FF', window_theme_opacity, 1)
-		folders_highlight = get_setting('fenlight.provider.folders_highlight', 'FFB36B00').replace('FF', window_theme_opacity, 1)
-		rd_highlight = get_setting('fenlight.provider.rd_highlight', 'FF3C9900').replace('FF', window_theme_opacity, 1)
-		pm_highlight = get_setting('fenlight.provider.pm_highlight', 'FFFF3300').replace('FF', window_theme_opacity, 1)
-		ad_highlight = get_setting('fenlight.provider.ad_highlight', 'FFE6B800').replace('FF', window_theme_opacity, 1)
-		ed_highlight = get_setting('fenlight.provider.ed_highlight', 'FF3233FF').replace('FF', window_theme_opacity, 1)
-		tb_highlight = get_setting('fenlight.provider.tb_highlight', 'FF01662A').replace('FF', window_theme_opacity, 1)
+		easynews_highlight = get_setting('fenlight.provider.easynews_highlight', 'FF00B3B2')
+		debrid_cloud_highlight = get_setting('fenlight.provider.debrid_cloud_highlight', 'FF7A01CC')
+		folders_highlight = get_setting('fenlight.provider.folders_highlight', 'FFB36B00')
+		rd_highlight = get_setting('fenlight.provider.rd_highlight', 'FF3C9900')
+		pm_highlight = get_setting('fenlight.provider.pm_highlight', 'FFFF3300')
+		ad_highlight = get_setting('fenlight.provider.ad_highlight', 'FFE6B800')
+		ed_highlight = get_setting('fenlight.provider.ed_highlight', 'FF3233FF')
+		tb_highlight = get_setting('fenlight.provider.tb_highlight', 'FF01662A')
 	else:
-		highlight_4K = get_setting('fenlight.scraper_4k_highlight', 'FFFF00FE').replace('FF', window_theme_opacity, 1)
-		highlight_1080P = get_setting('fenlight.scraper_1080p_highlight', 'FFE6B800').replace('FF', window_theme_opacity, 1)
-		highlight_720P = get_setting('fenlight.scraper_720p_highlight', 'FF3C9900').replace('FF', window_theme_opacity, 1)
-		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF').replace('FF', window_theme_opacity, 1)
+		highlight_4K = get_setting('fenlight.scraper_4k_highlight', 'FFFF00FE')
+		highlight_1080P = get_setting('fenlight.scraper_1080p_highlight', 'FFE6B800')
+		highlight_720P = get_setting('fenlight.scraper_720p_highlight', 'FF3C9900')
+		highlight_SD = get_setting('fenlight.scraper_SD_highlight', 'FF0166FF')
 	return {'highlight_type': highlight_type, 'real-debrid': rd_highlight, 'premiumize': pm_highlight, 'alldebrid': ad_highlight,
 			'easydebrid': ed_highlight, 'torbox': tb_highlight, 'rd_cloud': debrid_cloud_highlight, 'pm_cloud': debrid_cloud_highlight, 'ad_cloud': debrid_cloud_highlight,
 			'tb_cloud': debrid_cloud_highlight, 'easynews': easynews_highlight, 'folders': folders_highlight,

@@ -198,7 +198,7 @@
                                 <animation effect="fade" start="100" end="60" time="0" condition="!Control.HasFocus(2000)">Conditional</animation>
                                 <control type="image">
                                     <width>1180</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.sources)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
                                     <width>200</width>
@@ -467,7 +467,7 @@
                                 <height>110</height>
                                 <control type="image">
                                     <width>925</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.sources)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
                                     <width>175</width>
@@ -727,7 +727,7 @@
                                 <height>110</height>
                                 <control type="image">
                                     <width>1700</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.sources)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
                                     <width>200</width>

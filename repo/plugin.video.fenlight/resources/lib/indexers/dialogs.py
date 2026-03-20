@@ -4,24 +4,29 @@ from caches.settings_cache import get_setting, set_setting, set_default, default
 from modules import kodi_utils, settings
 # logger = kodi_utils.logger
 
-def addon_theme_choice(params):
-	choices = kodi_utils.addon_themes()
-	list_items = [{'line1': i['name'], 'icon': kodi_utils.get_icon(i['icon'], 'themes')} for i in choices]
-	kwargs = {'items': json.dumps(list_items), 'heading': 'Assign a Theme'}
-	choice = kodi_utils.select_dialog(choices, **kwargs)
-	if choice == None: return
-	set_setting('window_theme', choice['value'][0])
-	set_setting('window_theme_contrast', choice['value'][1])
-	set_setting('window_theme_name', choice['name'])
-
-def addon_theme_opacity_choice(params):
-	choices = kodi_utils.addon_themes_opacity()
-	list_items = [{'line1': i['name']} for i in choices]
-	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Assign an Opacity Level'}
-	choice = kodi_utils.select_dialog(choices, **kwargs)
-	if choice == None: return
-	set_setting('window_theme_opacity', choice['value'])
-	set_setting('window_theme_opacity_name', choice['name'])
+def window_theme_choice(params):
+	if params['type'] == 'theme':
+		choices = kodi_utils.addon_themes()
+		list_items = [{'line1': i['name'], 'icon': kodi_utils.get_icon(i['icon'], 'themes')} for i in choices]
+		kwargs = {'items': json.dumps(list_items), 'heading': 'Assign a Theme', 'narrow_window': 'true'}
+		choice = kodi_utils.select_dialog(choices, **kwargs)
+		if choice == None: return
+		window_theme, window_theme_contrast, window_theme_name = choice['value'][0][2:], choice['value'][1], choice['name']
+		window_theme_opacity = get_setting('fenlight.window_theme_opacity', 'CC')
+		set_setting('window_theme_name', window_theme_name)
+	else:
+		choices = kodi_utils.addon_themes_opacity()
+		list_items = [{'line1': i['name']} for i in choices]
+		kwargs = {'items': json.dumps(list_items), 'heading': 'Assign an Opacity Level', 'narrow_window': 'true'}
+		choice = kodi_utils.select_dialog(choices, **kwargs)
+		if choice == None: return
+		window_theme_opacity, window_theme_opacity_name = choice['value'], choice['name']
+		window_theme = get_setting('fenlight.window_theme', 'FF1F2020')[2:]
+		window_theme_contrast = get_setting('fenlight.window_theme_contrast', 'FF4a4347')
+		set_setting('window_theme_opacity', window_theme_opacity)
+		set_setting('window_theme_opacity_name', window_theme_opacity_name)
+	set_setting('window_theme', window_theme_opacity + window_theme)
+	set_setting('window_theme_contrast', window_theme_contrast)
 
 def rpdb_poster_format_choice(params):
 	choices = [{'name': 'default', 'value': ''}, {'name': 'blocks', 'value': '&theme=blocks'}, {'name': 'rounded', 'value': '&theme=rounded-blocks'}]

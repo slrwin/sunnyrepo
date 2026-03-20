@@ -116,9 +116,10 @@ def build_tmdb_list(params):
 		user, slug, list_type = '', '', ''
 		paginate_enabled = paginate(is_external)
 		use_result = 'result' in params
-		list_name, list_id, sort_order, updated_at = params.get('list_name'), params.get('list_id'), params.get('sort_order'), params.get('updated_at')
+		list_name, list_id, media_type = params.get('list_name'), params.get('list_id'), params.get('media_type')
+		sort_order, updated_at = params.get('sort_order'), params.get('updated_at')
 		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
-		new_params = {'mode': 'tmdblist.build_tmdb_list', 'list_id': list_id, 'paginate_start': paginate_start}
+		new_params = {'mode': 'tmdblist.build_tmdb_list', 'list_id': list_id, 'media_type': media_type, 'paginate_start': paginate_start}
 		if page_no == 1 and not is_external: kodi_utils.set_property('fenlight.exit_params', kodi_utils.folder_path())
 		if use_result: result = params.get('result', [])
 		else: result = get_tmdb_list(params)
@@ -337,8 +338,10 @@ def get_all_tmdb_lists(sort_order=None):
 	return contents
 
 def get_tmdb_list(params):
-	list_id, sort_order = params['list_id'], params.get('sort_order', '0')
-	contents = tmdb_list_api.get_list_details(list_id)
+	list_id, sort_order, media_type= params['list_id'], params.get('sort_order', '0'), params.get('media_type')
+	if list_id in ('watchlist', 'favorites', 'recommendations'):
+		contents = [dict(i, **{'media_type': media_type}) for i in tmdb_list_api.get_watchfavrecs_list_details(list_id, media_type)]
+	else: contents = tmdb_list_api.get_list_details(list_id)
 	if sort_order:
 		try:
 			if sort_order in ('3', 'shuffle'):

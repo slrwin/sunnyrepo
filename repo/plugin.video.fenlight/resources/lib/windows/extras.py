@@ -581,23 +581,24 @@ class Extras(BaseDialog):
 		return [i for i in data if int(i['id']) != self.tmdb_id]
 
 	def make_tmdb_listitems(self, data):
+		used_ids = []
+		append = used_ids.append
 		name_key = 'title' if self.media_type == 'movie' else 'name'
 		release_key = 'release_date' if self.media_type == 'movie' else 'first_air_date'
 		for item in data:
 			try:
+				tmdb_id = item['id']
+				if tmdb_id in used_ids: continue
 				listitem = self.make_listitem()
+				year = self.get_release_year(item[release_key])
 				poster = 'https://image.tmdb.org/t/p/%s%s' % ('w300', item['poster_path']) if item['poster_path'] else ''
 				if self.rpdb_api_key and poster:
 					media = 'movie' if self.media_type == 'movie' else 'series'
 					try: poster = 'https://api.ratingposterdb.com/%s/tmdb/poster-default/%s-%s.jpg?fallback=true' % (self.rpdb_api_key, media, str(item['id'])) + self.rpdb_format
 					except: pass
 				elif not poster: poster = self.empty_poster
-				year = self.get_release_year(item[release_key])
-				listitem.setProperty('name', item[name_key])
-				listitem.setProperty('release_date', year)
-				listitem.setProperty('vote_average', '%.1f' % item['vote_average'])
-				listitem.setProperty('thumbnail', poster)
-				listitem.setProperty('tmdb_id', str(item['id']))
+				listitem.setProperties({'name': item[name_key], 'release_date': year, 'vote_average': '%.1f' % item['vote_average'], 'thumbnail': poster, 'tmdb_id': str(tmdb_id)})
+				append(tmdb_id)
 				yield listitem
 			except: pass
 
@@ -785,9 +786,7 @@ class Extras(BaseDialog):
 
 	def set_properties(self):
 		self.assign_buttons()
-		window_theme_opacity = self.get_home_property('window_theme_opacity')
-		self.set_home_property('window_theme.extras', self.get_home_property('window_theme').replace('FF', window_theme_opacity))
-		self.set_home_property('window_theme.highlight.extras',  '%sCCCCCC' % window_theme_opacity)
+		self.set_home_property('window_theme.extras', self.get_home_property('window_theme'))
 		self.setProperty('media_type', self.media_type), self.setProperty('title', self.title), self.setProperty('year', self.year), self.setProperty('plot', self.plot)
 		self.setProperty('genre', ', '.join(self.genre)), self.setProperty('network', ', '.join(self.network)), self.setProperty('enable_scrollbars', self.enable_scrollbars)
 		self.setProperty('display_extra_ratings', 'true' if self.display_extra_ratings else 'false')

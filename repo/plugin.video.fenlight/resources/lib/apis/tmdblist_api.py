@@ -76,6 +76,29 @@ class TMDbListAPI:
 		results_extend = results.extend
 		return tmdb_lists_cache_object(_process, string, 'dummy')
 
+	def get_watchfavrecs_list_details(self, list_id, media_type):
+		def _process_multi(page_no):
+			try:
+				results_extend(self.request_data(url % (self.base_url, account_id, media_type, list_id, page_no))['results'])
+			except: pass
+		def _process(dummy):
+			result = self.request_data(url % (self.base_url, account_id, media_type, list_id, 1))
+			results_extend(result['results'])
+			total_pages = result['total_pages']
+			if list_id == 'recommendations': total_pages = 2
+			if total_pages > 1:
+				threads = TaskPool().tasks(_process_multi, range(2, total_pages + 1), max_threads())
+				[i.join() for i in threads]
+			return results
+		if media_type != 'movie': media_type = 'tv'
+		account_id = get_setting('fenlight.tmdb.account_id')
+		string = 'get_%s_details_%s' % (list_id, media_type)
+		url = '%s/account/%s/%s/%s?page=%s'
+		if list_id == 'recommendations': url += '&language=en-US&region=US'
+		results = []
+		results_extend = results.extend
+		return tmdb_lists_cache_object(_process, string, 'dummy')
+
 	def get_list_details(self, list_id):
 		def _process_multi(page_no):
 			try: results_extend(self.request_data(url % (self.base_url, list_id, page_no))['results'])

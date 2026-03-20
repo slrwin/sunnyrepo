@@ -335,7 +335,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
                             <aligny>center</aligny>
@@ -352,7 +352,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>  
                             <align>center</align>
                             <aligny>center</aligny>
@@ -369,7 +369,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>  
                             <align>center</align>
                             <aligny>center</aligny>
@@ -386,7 +386,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>  
                             <align>center</align>
                             <aligny>center</aligny>
@@ -406,7 +406,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus> 
                             <align>center</align>
                             <aligny>center</aligny>
@@ -423,7 +423,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>                         <align>center</align>
                             <aligny>center</aligny>
                         </control>
@@ -439,7 +439,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
                             <aligny>center</aligny>
@@ -456,7 +456,7 @@
                             <font>font13</font> <!-- FENLIGHT_30 -->
                             <textcolor>FFCCCCCC</textcolor>
                             <focusedcolor>FF1F2020</focusedcolor>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                             <align>center</align>
                             <aligny>center</aligny>
@@ -483,7 +483,7 @@
                             <height>390</height>
                             <onup>14</onup>
                             <ondown>2051</ondown>
-                            <texturefocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texturefocus>
+                            <texturefocus colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texturefocus>
                             <texturenofocus colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">fenlight_common/circle.png</texturenofocus>
                         </control>
                         <control type="textbox">
@@ -1060,7 +1060,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1153,7 +1153,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1246,7 +1246,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1339,7 +1339,7 @@
                                 <control type="image">
                                     <height>360</height>
                                     <width>580</width>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="textbox">
                                     <top>15</top>
@@ -1420,7 +1420,7 @@
                                     <width>224</width>
                                     <height>320</height>
                                     <aspectratio>scale</aspectratio>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">$INFO[ListItem.Property(thumbnail)]</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>6</left>
@@ -1451,7 +1451,7 @@
                                 <control type="image">
                                     <width>230</width>
                                     <height>360</height>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                 </control>
                                 <control type="image">
                                     <left>6</left>
@@ -1459,7 +1459,7 @@
                                     <width>224</width>
                                     <height>320</height>
                                     <aspectratio>scale</aspectratio>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.extras)]" border="30">$INFO[ListItem.Property(thumbnail)]</texture>
+                                    <texture colordiffuse="FF1F2020" border="30">$INFO[ListItem.Property(thumbnail)]</texture>
                                 </control>
                                 <control type="textbox">
                                     <left>6</left>
@@ -1557,7 +1557,7 @@
                                 <control type="image">
                                     <width>230</width>
                                     <height>360</height>
-                                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme.highlight.extras)]" border="30">fenlight_common/circle.png</texture>
+                                    <texture colordiffuse="FFCCCCCC" border="30">fenlight_common/circle.png</texture>
                                     <visible>Control.HasFocus(2061) | Control.HasFocus(4061)</visible>
                                     <animation effect="fade" start="100" end="60" condition="Control.HasFocus(4061)">Conditional</animation>
                                 </control>

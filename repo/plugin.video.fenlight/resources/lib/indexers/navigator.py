@@ -104,20 +104,46 @@ class Navigator:
 	def my_content(self):
 		if s.trakt_user_active(): self.add({'mode': 'navigator.trakt_lists_personal'}, 'Trakt Lists', 'trakt')
 		self.add({'mode': 'navigator.trakt_lists_public'}, 'Trakt Public Lists', 'trakt')
-		if s.tmdblist_user_active(): self.add({'mode': 'tmdblist.get_tmdb_lists'}, 'TMDb Lists', 'tmdb')
+		if s.tmdblist_user_active(): self.add({'mode': 'navigator.tmdb_lists_personal'}, 'TMDb Lists', 'tmdb')
+		# if s.tmdblist_user_active(): self.add({'mode': 'tmdblist.get_tmdb_lists'}, 'TMDb Lists', 'tmdb')
 		self.add({'mode': 'personal_lists.get_personal_lists'}, 'Personal Lists', 'lists')
 		self.add({'mode': 'navigator.discover_contents', 'media_type': 'movie', 'show_new': 'false'}, 'Discover Lists (Movies)', 'movies')
 		self.add({'mode': 'navigator.discover_contents', 'media_type': 'tvshow', 'show_new': 'false'}, 'Discover Lists (TV Shows)', 'tv')
 		self.end_directory()
 
+	def tmdb_lists_personal(self):
+		self.add({'mode': 'navigator.tmdb_watchlists'}, 'Watchlist', 'tmdb')
+		self.add({'mode': 'navigator.tmdb_favorites'}, 'Favorites', 'tmdb')
+		self.add({'mode': 'navigator.tmdb_recommendations'}, 'Recommendations', 'tmdb')
+		self.add({'mode': 'tmdblist.get_tmdb_lists'}, 'My Lists', 'tmdb')
+		self.end_directory()
+
+	def tmdb_watchlists(self):
+		self.category_name = 'Watchlist'
+		self.add({'mode': 'tmdblist.build_tmdb_list', 'list_id': 'watchlist', 'media_type': 'movie'}, 'Movies Watchlist', 'tmdb')
+		self.add({'mode': 'tmdblist.build_tmdb_list', 'list_id': 'watchlist', 'media_type': 'tv'}, 'TV Shows Watchlist', 'tmdb')
+		self.end_directory()
+
+	def tmdb_favorites(self):
+		self.category_name = 'Favorites'
+		self.add({'mode': 'tmdblist.build_tmdb_list', 'list_id': 'favorites', 'media_type': 'movie'}, 'Movie Favorites', 'tmdb')
+		self.add({'mode': 'tmdblist.build_tmdb_list', 'list_id': 'favorites', 'media_type': 'tv'}, 'TV Show Favorites', 'tmdb')
+		self.end_directory()
+
+	def tmdb_recommendations(self):
+		self.category_name = 'Recommendations'
+		self.add({'mode': 'tmdblist.build_tmdb_list', 'list_id': 'recommendations', 'media_type': 'movie'}, 'Movie Recommendations', 'tmdb')
+		self.add({'mode': 'tmdblist.build_tmdb_list', 'list_id': 'recommendations', 'media_type': 'tv'}, 'TV Show Recommendations', 'tmdb')
+		self.end_directory()
+
 	def trakt_lists_personal(self):
-		self.add({'mode': 'navigator.trakt_collections'}, 'Trakt Collection', 'trakt')
-		self.add({'mode': 'navigator.trakt_watchlists'}, 'Trakt Watchlist', 'trakt')
-		self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'category_name': 'My Lists'}, 'Trakt My Lists', 'trakt')
-		self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'category_name': 'Liked Lists'}, 'Trakt Liked Lists', 'trakt')
-		self.add({'mode': 'navigator.trakt_favorites', 'category_name': 'Favorites'}, 'Trakt Favorites', 'trakt')
-		self.add({'mode': 'navigator.trakt_recommendations', 'category_name': 'Recommended'}, 'Trakt Recommended', 'trakt')
-		self.add({'mode': 'build_my_calendar'}, 'Trakt Calendar', 'trakt')
+		self.add({'mode': 'navigator.trakt_collections'}, 'Collection', 'trakt')
+		self.add({'mode': 'navigator.trakt_watchlists'}, 'Watchlist', 'trakt')
+		self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'my_lists', 'category_name': 'My Lists'}, 'My Lists', 'trakt')
+		self.add({'mode': 'trakt.list.get_trakt_lists', 'list_type': 'liked_lists', 'category_name': 'Liked Lists'}, 'Liked Lists', 'trakt')
+		self.add({'mode': 'navigator.trakt_favorites', 'category_name': 'Favorites'}, 'Favorites', 'trakt')
+		self.add({'mode': 'navigator.trakt_recommendations', 'category_name': 'Recommended'}, 'Recommended', 'trakt')
+		self.add({'mode': 'build_my_calendar'}, 'Calendar', 'trakt')
 		self.end_directory()
 
 	def trakt_lists_public(self):

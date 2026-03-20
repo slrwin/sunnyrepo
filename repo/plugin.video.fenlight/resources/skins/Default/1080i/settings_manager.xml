@@ -479,7 +479,7 @@
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.window_theme_name)]</property>
                           <property name="setting_description">Choose the theme Fen Light will use for custom windows. Choices are Light, Medium and Dark</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=addon_theme_choice)</onclick>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=window_theme_choice&amp;type=theme)</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(10)</visible>
@@ -487,7 +487,7 @@
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.window_theme_opacity_name)]</property>
                           <property name="setting_description">Choose the Opacity Fen Light will use for custom window themes. Choose between 10% - 100%</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=addon_theme_opacity_choice)</onclick>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=window_theme_choice&amp;type=opacity)</onclick>
                       </item>
         <!-- Manage Addon Updates -->
                       <item>
@@ -1061,7 +1061,7 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>
-                          <property name="setting_label">TMDb Lists Display Order</property>
+                          <property name="setting_label">TMDb My Lists Display Order</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdblist.list_sort_name)]</property>
                           <property name="setting_description">Choose the order in which your TMDb lists are presented. This is not for the contents of the lists, but rather the lists themselves</property>

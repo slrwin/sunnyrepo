@@ -27,6 +27,9 @@ class TMDbListsCache(BaseCache):
 			dbcon = self.manual_connect('tmdb_lists_db')
 			dbcon.execute('DELETE FROM tmdb_lists WHERE id = ?', ('get_user_lists',))
 			dbcon.execute('DELETE FROM tmdb_lists WHERE id LIKE %s' % "'get_list_details_%'")
+			dbcon.execute('DELETE FROM tmdb_lists WHERE id LIKE %s' % "'get_watchlist_details_%'")
+			dbcon.execute('DELETE FROM tmdb_lists WHERE id LIKE %s' % "'get_favorites_details_%'")
+			dbcon.execute('DELETE FROM tmdb_lists WHERE id LIKE %s' % "'get_recommendations_details_%'")
 			dbcon.execute('VACUUM')
 			return True
 		except: return False

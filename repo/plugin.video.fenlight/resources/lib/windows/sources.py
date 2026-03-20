@@ -49,7 +49,6 @@ class SourcesResults(BaseDialog):
 		self.doModal()
 		self.clearProperties()
 		self.clear_home_property('window_theme.sources')
-		self.clear_home_property('window_theme.highlight.sources')
 		hide_busy_dialog()
 		return self.selected
 
@@ -240,9 +239,7 @@ class SourcesResults(BaseDialog):
 		self.filter_list = [i[0] for i in self.filter_list]
 
 	def set_properties(self):
-		window_theme_opacity = self.get_home_property('window_theme_opacity')
-		self.set_home_property('window_theme.sources', self.get_home_property('window_theme').replace('FF', window_theme_opacity, 1))
-		self.set_home_property('window_theme.highlight.sources',  '%sCCCCCC' % window_theme_opacity)
+		self.set_home_property('window_theme.sources', self.get_home_property('window_theme'))
 		self.setProperty('window_format', self.window_format)
 		self.setProperty('fanart', self.meta_get('fanart') or self.addon_fanart)
 		self.setProperty('clearlogo', self.meta_get('clearlogo') or '')
@@ -410,13 +407,12 @@ class SourcesInfo(BaseDialog):
 		self.close()
 
 	def set_properties(self):
-		window_theme_opacity = self.get_home_property('window_theme_opacity')
 		self.setProperty('name', self.item_get_property('name'))
 		self.setProperty('source_type', self.item_get_property('source_type'))
 		self.setProperty('source_site', self.item_get_property('source_site'))
 		self.setProperty('size_label', self.item_get_property('size_label'))
 		self.setProperty('extraInfo', self.item_get_property('extraInfo'))
-		self.setProperty('highlight', self.item_get_property('highlight').replace(window_theme_opacity, 'FF', 1))
+		self.setProperty('highlight', self.item_get_property('highlight'))
 		self.setProperty('hash', self.item_get_property('hash'))
 		self.setProperty('provider', self.item_get_property('provider').lower())
 		self.setProperty('quality', self.item_get_property('quality').lower())

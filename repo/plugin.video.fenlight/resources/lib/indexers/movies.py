@@ -20,8 +20,8 @@ class Movies:
 		self.params = params
 		self.params_get = self.params.get
 		self.category_name = self.params_get('category_name', None) or self.params_get('name', None) or 'Movies'
-		self.id_type, self.list = self.params_get('id_type', 'tmdb_id'), self.params_get('list', [])
-		self.mode, self.action = self.params_get('mode', None), self.params_get('action', None)
+		self.id_type, self.list, self.action = self.params_get('id_type', 'tmdb_id'), self.params_get('list', []), self.params_get('action', None)
+		self.tmdb_api_key = settings.tmdb_api_key()
 		self.items, self.new_page, self.total_pages, self.is_external = [], {}, None, kodi_utils.external()
 		if self.is_external:
 			self.widget_hide_next_page = settings.widget_hide_next_page()
@@ -100,7 +100,7 @@ class Movies:
 			elif self.action == 'trakt_movies_related':
 				self.id_type = 'trakt_dict'
 				key_id = self.params_get('key_id')
-				if not key_id.startswith('tt'): key_id = movie_meta('tmdb_id', key_id, settings.tmdb_api_key(), settings.mpaa_region(), get_datetime())['imdb_id']
+				if not key_id.startswith('tt'): key_id = movie_meta('tmdb_id', key_id, self.tmdb_api_key, settings.mpaa_region(), get_datetime())['imdb_id']
 				data = function(key_id)
 				self.list = [i['ids'] for i in data]
 			elif self.action == 'imdb_more_like_this':
@@ -108,7 +108,7 @@ class Movies:
 				self.id_type = 'imdb_id'
 				key_id = self.params_get('key_id')
 				if self.params_get('get_imdb'):
-					key_id = movie_meta('tmdb_id', key_id, settings.tmdb_api_key(), settings.mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id']
+					key_id = movie_meta('tmdb_id', key_id, self.tmdb_api_key, settings.mpaa_region(), get_datetime(), get_current_timestamp())['imdb_id']
 				self.list = imdb_more_like_this(key_id)
 			kodi_utils.add_items(handle, self.worker())
 			if self.total_pages and self.total_pages > 2 and settings.jump_to_enabled() and not self.is_external:
@@ -252,7 +252,6 @@ class Movies:
 		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), settings.watched_indicators()
 		self.cm_sort_order = settings.cm_sort_order()
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
-		self.tmdb_api_key = settings.tmdb_api_key()
 		self.mpaa_region = settings.mpaa_region()
 		rpdb_info = settings.rpdb_info('movie')
 		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
