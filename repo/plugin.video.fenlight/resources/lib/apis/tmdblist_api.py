@@ -4,13 +4,14 @@ from caches.tmdb_lists import tmdb_lists_cache_object, tmdb_lists_cache
 from caches.settings_cache import get_setting, set_setting
 from modules.settings import max_threads
 from modules.utils import copy2clip, make_qrcode, make_tinyurl, TaskPool
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 session = make_session('https://api.themoviedb.org')
 
 class TMDbListAPI:
 	def __init__(self):
 		self.base_url = 'https://api.themoviedb.org/4'
+		self.base_url_v3 = 'https://api.themoviedb.org/3'
 		self.read_access_token = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMzcwYjYwNDQ3NzM3NzYyY2EzODQ1N2JkNzc1NzliMyIsIm5iZiI6MTY1MDIzNTExOS4wOSwic3ViIjoiNjI1Yzk2ZWZiYjI2MDIxMT'\
 								'gzNTQ0MTZhIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.8uevSMakSrdZb1t0ze4OIxq6PoL4N6DZN4VVkKUCayg'
 	
@@ -38,22 +39,36 @@ class TMDbListAPI:
 			except: success = False
 		progressDialog.close()
 		if success:
-			set_setting('tmdb.token', response['access_token'])
-			set_setting('tmdb.account_id', response['account_id'])
-			notice = 'Success'
-		else: notice = 'Failed'
+			access_token, account_id = response['access_token'], response['account_id']
+			response = requests.post('https://api.themoviedb.org/3/authentication/session/convert/4', json={'access_token': access_token}, headers=headers, timeout=20).json()
+			session_id = response.get('session_id')
+			if response.get('success') and session_id: success = True
+			else: success = False
+			if success:
+				response = requests.get(('https://api.themoviedb.org/3/account'), params={'session_id': session_id}, headers=headers, timeout=20).json()
+				username, account_session_id = response.get('username'), response.get('id')
+				if not session_id: success == False
+			if success:
+				set_setting('tmdb.token', access_token)
+				set_setting('tmdb.account_id', account_id)
+				set_setting('tmdb.username', username)
+				set_setting('tmdb.session_id', session_id)
+				set_setting('tmdb.account_session_id', str(account_session_id))
 		tmdb_lists_cache.clear_all()
-		notification(notice)
+		notification('Success' if success else 'Failed')
 	
 	def revoke(self):
 		import requests
 		headers = {'accept': 'application/json', 'content-type': 'application/json', 'Authorization': 'Bearer %s' % self.read_access_token}
-		data = requests.delete('%s/auth/access_token' % self.base_url, json={'access_token': self.read_access_token}, headers=headers, timeout=20).json()
+		data = requests.delete('https://api.themoviedb.org/3/auth/access_token', json={'access_token': self.read_access_token}, headers=headers, timeout=20).json()
 		if not 'success' in data: notice = 'Failed to Revoke Account Auth'
 		else:
 			notice = 'Success Auth Revoke'
 			set_setting('tmdb.token', 'empty_setting')
 			set_setting('tmdb.account_id', 'empty_setting')
+			set_setting('tmdb.username', 'empty_setting')
+			set_setting('tmdb.session_id', 'empty_setting')
+			set_setting('tmdb.account_session_id', 'empty_setting')
 			tmdb_lists_cache.clear_all()
 		return notification(notice)
 

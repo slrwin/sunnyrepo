@@ -681,11 +681,11 @@ def set_quality_choice(params):
 	try: preselect = [fl.index(i) for i in q_setting]
 	except: preselect = []
 	list_items = [{'line1': item, 'icon': icon} for item in dl]
-	kwargs = {'items': json.dumps(list_items), 'multi_choice': 'true', 'preselect': preselect}
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Choose the Included Qualities', 'multi_choice': 'true', 'preselect': preselect}
 	choice = kodi_utils.select_dialog(fl, **kwargs)
 	if choice is None: return
 	if choice == []:
-		kodi_utils.ok_dialog(text='Error')
+		kodi_utils.ok_dialog(text='You must select at least 1 Quality')
 		return set_quality_choice(params)
 	set_setting(quality_setting, ', '.join(choice))
 

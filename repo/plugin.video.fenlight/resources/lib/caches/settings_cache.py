@@ -330,7 +330,7 @@ def default_settings():
 {'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': 'b370b60447737762ca38457bd77579b3'},
 #==================== TMDb Lists
 {'setting_id': 'tmdb.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'tmdb.account_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'tmdb.username', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== RPDb
@@ -517,6 +517,9 @@ def default_settings():
 #=========================================================================================#
 #======================================HIDDEN=============================================#
 #=========================================================================================#
+{'setting_id': 'tmdb.account_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'tmdb.session_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'tmdb.account_session_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'reuse_language_invoker', 'setting_type': 'string', 'setting_default': 'true'},
 {'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'fenlight_icon_01.png'},
 {'setting_id': 'widget_refresh_timer_name', 'setting_type': 'string', 'setting_default': 'Off'},

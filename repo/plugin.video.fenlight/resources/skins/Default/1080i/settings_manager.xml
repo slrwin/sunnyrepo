@@ -1470,7 +1470,7 @@
                           <visible>!String.IsEqual(Window(10000).Property(fenlight.tmdb.token),empty_setting)</visible>
                           <property name="setting_label">Revoke Account Authorization</property>
                           <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdb.account_id)]</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdb.username)]</property>
                           <property name="setting_description">Revoke authorization of your TMDb account</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=tmdblist_api.revoke_authentication)</onclick>
                       </item>
