@@ -688,10 +688,68 @@ class Extras(BaseDialog):
 		self.selected = self.folder_runner({'mode': mode, 'action': action, 'key_id': self.tmdb_id, 'name': 'Recommended based on %s' % self.title})
 		self.close()
 
+	def show_related(self):
+		self.close_all()
+		mode, action = ('build_movie_list', 'trakt_movies_related') if self.media_type == 'movie' else ('build_tvshow_list', 'trakt_tv_related')
+		self.selected = self.folder_runner({'mode': mode, 'action': action, 'key_id': self.imdb_id, 'name': 'Related to %s' % self.title})
+		self.close()
+
 	def show_more_like_this(self):
+		return self.show_network()
 		self.close_all()
 		mode = 'build_movie_list' if self.media_type == 'movie' else 'build_tvshow_list'
 		self.selected = self.folder_runner({'mode': mode, 'action': 'imdb_more_like_this', 'key_id': self.imdb_id, 'name': 'More Like This based on %s' % self.title})
+		self.close()
+
+	def show_similar(self):
+		self.close_all()
+		mode = 'build_movie_list' if self.media_type == 'movie' else 'build_tvshow_list'
+		self.selected = self.folder_runner({'mode': mode, 'action': 'ai_similar', 'key_id': '%s|%s' % (self.media_type, self.tmdb_id), 'name': 'Similar based on %s' % self.title})
+		self.close()
+
+	def show_reviews(self):
+		if not self.all_reviews: return self.notification('No Reviews')
+		return self.select_item(self.control_id, self.show_text_media(text=self.all_reviews, current_index=0))
+
+	def show_comments(self):
+		if not self.all_comments: return self.notification('No Comments')
+		return self.select_item(self.control_id, self.show_text_media(text=self.all_comments, current_index=0))
+
+	def show_trivia(self):
+		if not self.all_trivia: return self.notification('No Trivia')
+		return self.select_item(self.control_id, self.show_text_media(text=self.all_trivia, current_index=0))
+
+	def show_blunders(self):
+		if not self.all_blunders: return self.notification('No Blunders')
+		return self.select_item(self.control_id, self.show_text_media(text=self.all_blunders, current_index=0))
+
+	def show_year(self):
+		if not self.year: return self.notification('Error getting Year')
+		self.close_all()
+		mode, action = ('build_movie_list', 'tmdb_movies_year') if self.media_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_year')
+		self.selected = self.folder_runner({'mode': mode, 'action': action, 'key_id': self.year, 'name': 'More from %s' % self.year})
+		self.close()
+
+	def show_genre(self):
+		try:
+			genre_list = ','.join([i['id'] for i in (movie_genres() if self.media_type == 'movie' else tvshow_genres()) if i['name'] in self.genre])
+			if not genre_list: return self.notification('Error getting Genres')
+		except: return self.notification('Error getting Genres')
+		self.close_all()
+		mode, action = ('build_movie_list', 'tmdb_movies_genres') if self.media_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_genres')
+		self.selected = self.folder_runner({'mode': mode, 'action': action, 'key_id': genre_list, 'name': 'More from %s' % ', '.join([i for i in self.genre])})
+		self.close()
+
+	def show_network(self):
+		try:
+			network = self.meta_get('studio')[0]
+			network_id = tmdb_api.tmdb_company_id(network)['results'] if self.media_type == 'movie' else networks()
+			network_id = next(i['id'] for i in network_id if i['name'] == network)
+			if not network_id: return self.notification('Error getting Network')
+		except: return self.notification('Error getting Network')
+		self.close_all()
+		mode, action = ('build_movie_list', 'tmdb_movies_companies') if self.media_type == 'movie' else ('build_tvshow_list', 'tmdb_tv_networks')
+		self.selected = self.folder_runner({'mode': mode, 'action': action, 'key_id': network_id, 'name': 'More from %s' % network})
 		self.close()
 
 	def show_in_trakt_lists(self):

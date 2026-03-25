@@ -4,7 +4,7 @@ from caches.tmdb_lists import tmdb_lists_cache_object, tmdb_lists_cache
 from caches.settings_cache import get_setting, set_setting
 from modules.settings import max_threads
 from modules.utils import copy2clip, make_qrcode, make_tinyurl, TaskPool
-from modules.kodi_utils import logger
+# from modules.kodi_utils import logger
 
 session = make_session('https://api.themoviedb.org')
 
@@ -105,9 +105,8 @@ class TMDbListAPI:
 				threads = TaskPool().tasks(_process_multi, range(2, total_pages + 1), max_threads())
 				[i.join() for i in threads]
 			return results
-		if media_type != 'movie': media_type = 'tv'
 		account_id = get_setting('fenlight.tmdb.account_id')
-		string = 'get_%s_details_%s' % (list_id, media_type)
+		string = 'get_watchfavrecs_list_details_%s_%s' % (list_id, media_type)
 		url = '%s/account/%s/%s/%s?page=%s'
 		if list_id == 'recommendations': url += '&language=en-US&region=US'
 		results = []

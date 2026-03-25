@@ -309,10 +309,10 @@ class RandomLists():
 
 	def tmdb_lists_contents(self):
 		from indexers.tmdb_lists import get_tmdb_list, build_tmdb_list
-		list_id, list_name = self.params.get('list_id'), self.params.get('list_name')
+		list_id, list_name, media_type = self.params.get('list_id'), self.params.get('list_name')or self.params.get('name'), self.params.get('media_type')
 		random_list, cache_to_memory = get_persistent_content(self.database, '%s_%s' % (self.mode, list_id), self.is_external)
 		if not random_list:
-			result = get_tmdb_list({'list_id': list_id})
+			result = get_tmdb_list({'list_id': list_id, 'media_type': media_type})
 			random.shuffle(result)
 			if paginate(self.is_external): data = random.sample(result, min(len(result), page_limit(self.is_external)))
 			else: data = random.sample(result, len(result))

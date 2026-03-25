@@ -107,7 +107,7 @@ def build_personal_list(params):
 		list_name, author, sort_order = params.get('list_name'), params.get('author'), params.get('sort_order')
 		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
 		new_params = {'mode': 'personal_lists.build_personal_list', 'list_name': list_name, 'author': author, 'sort_order': sort_order, 'seen': 'true',
-		'paginate_start': paginate_start}
+						'paginate_start': paginate_start}
 		if page_no == 1 and not is_external: kodi_utils.set_property('fenlight.exit_params', kodi_utils.folder_path())
 		if use_result: result = params.get('result', [])
 		else: result = get_personal_list(params)

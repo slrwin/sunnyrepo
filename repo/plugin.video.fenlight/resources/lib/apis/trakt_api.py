@@ -11,7 +11,7 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta_external_id, tvshow_meta_external_id
 from modules.utils import sort_list, sort_for_article, get_datetime, timedelta, replace_html_codes, copy2clip, make_qrcode, make_tinyurl, \
 							TaskPool, jsondate_to_datetime as js2date
-# logger = kodi_utils.logger
+logger = kodi_utils.logger
 
 def no_client_key():
 	kodi_utils.notification('Please set a valid Trakt Client ID Key')
@@ -480,7 +480,7 @@ def get_trakt_list_contents(list_type, user, slug, with_auth, list_id=None, sort
 		params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, slug), 'params': {'extended':'full', 'limit': 999}, 'method': method, 'with_auth': with_auth}
 	elif list_id is not None:
 		string = 'trakt_list_contents_%s_%s' % (list_type, list_id)
-		params = {'path': 'lists/%s/items', 'path_insert': list_id, 'params': {'extended':'full', 'limit': 999}, 'method': method}
+		params = {'path': 'users/%s/lists/%s/items', 'path_insert': (user, list_id), 'params': {'extended':'full', 'limit': 999}, 'method': method}
 	else:
 		string = 'trakt_list_contents_%s_%s_%s' % (list_type, user, slug)
 		if user == 'Trakt Official': params = {'path': 'lists/%s/items', 'path_insert': slug, 'params': {'extended':'full', 'limit': 999}, 'method': method}
