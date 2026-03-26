@@ -27,7 +27,7 @@
                     <texture>$INFO[Window(10000).Property(fenlight.addon_icon_mini)]</texture>
                 </control>
                 <control type="group">
-                    <visible>![Control.HasFocus(2050) | Control.HasFocus(2051) | Control.HasFocus(2052) | Control.HasFocus(2058) | Control.HasFocus(2060) | Control.HasFocus(2061) | Control.HasFocus(2062) | Control.HasFocus(2063)]</visible>
+                    <visible>String.IsEqual(ListItem.Property(info_alert),)</visible>
                     <control type="label">
                         <top>20</top>
                         <left>1590</left>
@@ -61,7 +61,7 @@
                         <height>35</height>
                         <aspectratio>keep</aspectratio>
                         <texture>fenlight_common/info.png</texture>
-                        <visible>Control.HasFocus(2050) | Control.HasFocus(2051) | Control.HasFocus(2052) | Control.HasFocus(2058) | Control.HasFocus(2060) | Control.HasFocus(2061) | Control.HasFocus(2062) | Control.HasFocus(2063)</visible>
+                        <visible>!String.IsEqual(ListItem.Property(info_alert),)</visible>
                     </control>
                     <control type="label">
                         <width max="600">auto</width>
@@ -70,40 +70,8 @@
                         <textcolor>FFCCCCCC</textcolor>
                         <align>right</align>
                         <aligny>bottom</aligny>
-                        <label>Press Info Button for [B]More Info[/B]</label>
-                        <visible>Control.HasFocus(2051) | Control.HasFocus(2052) | Control.HasFocus(2060) | Control.HasFocus(2061) | Control.HasFocus(2062) | Control.HasFocus(2063)</visible>
-                    </control>
-                    <control type="label">
-                        <width max="600">auto</width>
-                        <height>20</height>
-                        <font>font10</font> <!-- FENLIGHT_21 -->
-                        <textcolor>FFCCCCCC</textcolor>
-                        <align>right</align>
-                        <aligny>bottom</aligny>
-                        <label>Press Context Button for [B]Search[/B]</label>
-                        <visible>Control.HasFocus(2050)</visible>
-                    </control>
-                    <control type="label">
-                        <width max="600">auto</width>
-                        <height>20</height>
-                        <font>font10</font> <!-- FENLIGHT_21 -->
-                        <textcolor>FFCCCCCC</textcolor>
-                        <align>right</align>
-                        <aligny>bottom</aligny>
-                        <label>Press Context Button To [B]Like List[/B]</label>
-                        <visible>Control.HasFocus(2058)</visible>
-                        <visible>String.IsEqual(Container(2058).ListItem.Property(liked_status),false)</visible>
-                    </control>
-                    <control type="label">
-                        <width max="600">auto</width>
-                        <height>20</height>
-                        <font>font10</font> <!-- FENLIGHT_21 -->
-                        <textcolor>FFCCCCCC</textcolor>
-                        <align>right</align>
-                        <aligny>bottom</aligny>
-                        <label>Press Context Button To [B]UnLike List[/B]</label>
-                        <visible>Control.HasFocus(2058)</visible>
-                        <visible>String.IsEqual(Container(2058).ListItem.Property(liked_status),true)</visible>
+                        <label>$INFO[ListItem.Property(info_alert)]</label>
+                        <visible>!String.IsEqual(ListItem.Property(info_alert),)</visible>
                     </control>
                 </control>
             </control>
@@ -532,7 +500,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Cast | [/B]$INFO[Container(2051).ListItem.Property(name)]$INFO[Container(2051).ListItem.Property(role), • ]</label>
+                            <label>[B]Cast | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(role), • ]</label>
                             <visible>Control.HasFocus(2051)</visible>
                         </control>
                         <control type="fixedlist" id="2051">
@@ -632,7 +600,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Recommended | [/B]$INFO[Container(2052).ListItem.Property(name)]$INFO[Container(2052).ListItem.Property(release_date), • ]$INFO[Container(2052).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]Recommended | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2052)</visible>
                         </control>
                         <control type="fixedlist" id="2052">
@@ -732,7 +700,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Related | [/B]$INFO[Container(2053).ListItem.Property(name)]$INFO[Container(2053).ListItem.Property(release_date), • ]$INFO[Container(2053).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]Related | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2053)</visible>
                         </control>
                         <control type="fixedlist" id="2053">
@@ -832,7 +800,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]More Like This | [/B]$INFO[Container(2054).ListItem.Property(name)]$INFO[Container(2054).ListItem.Property(release_date), • ]$INFO[Container(2054).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]More Like This | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2054)</visible>
                         </control>
                         <control type="fixedlist" id="2054">
@@ -932,7 +900,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Similar | [/B]$INFO[Container(2055).ListItem.Property(name)]$INFO[Container(2055).ListItem.Property(release_date), • ]$INFO[Container(2055).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]Similar | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2055)</visible>
                         </control>
                         <control type="fixedlist" id="2055">
@@ -1663,7 +1631,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]Videos | [/B]$INFO[Container(2062).ListItem.Property(name)]</label>
+                            <label>[B]Videos | [/B]$INFO[ListItem.Property(name)]</label>
                             <visible>Control.HasFocus(2062)</visible>
                         </control>
                         <control type="fixedlist" id="2062">
@@ -1762,7 +1730,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]More from Year | [/B]$INFO[Container(2063).ListItem.Property(name)]$INFO[Container(2063).ListItem.Property(release_date), • ]$INFO[Container(2063).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]More from Year | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2063)</visible>
                         </control>
                         <control type="fixedlist" id="2063">
@@ -1862,7 +1830,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]More from Genres | [/B]$INFO[Container(2064).ListItem.Property(name)]$INFO[Container(2064).ListItem.Property(release_date), • ]$INFO[Container(2064).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]More from Genres | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2064)</visible>
                         </control>
                         <control type="fixedlist" id="2064">
@@ -1962,7 +1930,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]More from Networks | [/B]$INFO[Container(2065).ListItem.Property(name)]$INFO[Container(2065).ListItem.Property(release_date), • ]$INFO[Container(2065).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]More from Networks | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2065)</visible>
                         </control>
                         <control type="fixedlist" id="2065">
@@ -2062,7 +2030,7 @@
                             <height>20</height>
                             <font>font14</font> <!-- FENLIGHT_33 -->
                             <textcolor>FFCCCCCC</textcolor>
-                            <label>[B]$INFO[Window.Property(more_from_collection.name)] | [/B]$INFO[Container(2066).ListItem.Property(name)]$INFO[Container(2066).ListItem.Property(release_date), • ]$INFO[Container(2066).ListItem.Property(vote_average), • ]</label>
+                            <label>[B]$INFO[Window.Property(more_from_collection.name)] | [/B]$INFO[ListItem.Property(name)]$INFO[ListItem.Property(release_date), • ]$INFO[ListItem.Property(vote_average), • ]</label>
                             <visible>Control.HasFocus(2066)</visible>
                         </control>
                         <control type="group">

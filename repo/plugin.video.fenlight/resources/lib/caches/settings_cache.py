@@ -575,6 +575,5 @@ def default_settings():
 {'setting_id': 'extras.movie.button14', 'setting_type': 'string', 'setting_default': 'show_extrainfo'},
 {'setting_id': 'extras.movie.button15', 'setting_type': 'string', 'setting_default': 'show_genres'},
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
-{'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
-{'setting_id': 'updatechecks.clear_addon_theme_settings_01', 'setting_type': 'string', 'setting_default': 'false'}
+{'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'}
 	]

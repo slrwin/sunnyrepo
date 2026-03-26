@@ -20,6 +20,9 @@ class Extras(BaseDialog):
 	parentsguide_icons = {'Sex & Nudity': kodi_utils.get_icon('sex_nudity'), 'Violence & Gore': kodi_utils.get_icon('violence'), 'Profanity': kodi_utils.get_icon('bad_language'),
 							'Alcohol, Drugs & Smoking': kodi_utils.get_icon('drugs_alcohol'), 'Frightening & Intense Scenes': kodi_utils.get_icon('horror')}
 	meta_ratings_values = (('Meta', 'metascore', 1), ('Tom/Critic', 'tomatometer', 2), ('Tom/User', 'tomatousermeter', 3), ('IMDb', 'imdb', 4), ('TMDb', 'tmdb', 5))
+	media_alert = 'Press Info Button for [B]More Info[/B]'
+	actor_alert = 'Press Context Button for [B]Search[/B]'
+	list_alert = 'Press Context Button To [B]Like/Unlike List[/B]'
 	
 	def __init__(self, *args, **kwargs):
 		BaseDialog.__init__(self, *args)
@@ -34,8 +37,8 @@ class Extras(BaseDialog):
 		self.set_starting_constants(kwargs)
 		self.set_properties()
 		self.tasks = (self.set_artwork, self.set_infoline1, self.set_infoline2, self.make_ratings, self.make_cast, self.make_recommended, self.make_related,
-					self.make_more_like_this, self.make_ai_similar, self.make_reviews, self.make_comments, self.make_in_lists, self.make_trivia,
-					self.make_blunders, self.make_parentsguide, self.make_videos, self.make_year, self.make_genres, self.make_network, self.make_collection)
+					self.make_more_like_this, self.make_ai_similar, self.make_imdb_extras, self.make_comments, self.make_in_lists, self.make_videos, self.make_year,
+					self.make_genres, self.make_network, self.make_collection)
 
 	def onInit(self):
 		self.set_home_property('window_loaded', 'true')
@@ -155,6 +158,13 @@ class Extras(BaseDialog):
 		if self.tagline: self.plot = '[I]%s[/I][CR][CR]%s' % (self.tagline, self.plot)
 		if self.plot_id in self.enabled_lists: self.setProperty('plot_enabled', 'true')
 
+	def make_imdb_extras(self):
+		imdb_extras = imdb_api.imdb_extras(self.imdb_id)
+		self.make_reviews(imdb_extras['reviews'])
+		self.make_trivia(imdb_extras['trivia'])
+		self.make_blunders(imdb_extras['blunders'])
+		self.make_parentsguide(imdb_extras['parentsguide'])
+
 	def make_cast(self):
 		if not self.cast_id in self.enabled_lists: return
 		def builder():
@@ -165,6 +175,7 @@ class Extras(BaseDialog):
 					listitem.setProperty('name', item['name'])
 					listitem.setProperty('role', item['role'])
 					listitem.setProperty('thumbnail', item['thumbnail'] or icon)
+					listitem.setProperty('info_alert', self.actor_alert)
 					yield listitem
 				except: pass
 		try:
@@ -202,6 +213,7 @@ class Extras(BaseDialog):
 				listitem.setProperty('vote_average', '%.1f' % details['rating'])
 				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
+				listitem.setProperty('info_alert', self.media_alert)
 				item_list_append((listitem, position))
 			except: pass
 		if self.media_type == 'movie': data_function, function = trakt_api.trakt_movies_related, movie_meta
@@ -233,6 +245,7 @@ class Extras(BaseDialog):
 				listitem.setProperty('vote_average', '%.1f' % details['rating'])
 				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
+				listitem.setProperty('info_alert', self.media_alert)
 				item_list_append((listitem, position))
 			except: pass
 		data = imdb_api.imdb_more_like_this(self.imdb_id)
@@ -263,6 +276,7 @@ class Extras(BaseDialog):
 				listitem.setProperty('vote_average', '%.1f' % details['rating'])
 				listitem.setProperty('thumbnail', poster)
 				listitem.setProperty('tmdb_id', str(details['tmdb_id']))
+				listitem.setProperty('info_alert', self.media_alert)
 				item_list_append((listitem, position))
 			except: pass
 		try:
@@ -279,7 +293,7 @@ class Extras(BaseDialog):
 			self.add_items(self.ai_similar_id, item_list)
 		except: pass
 
-	def make_reviews(self):
+	def make_reviews(self, all_reviews):
 		if not self.reviews_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_reviews:
@@ -290,7 +304,7 @@ class Extras(BaseDialog):
 					yield listitem
 				except: pass
 		try:
-			self.all_reviews = imdb_api.imdb_reviews(self.imdb_id)
+			self.all_reviews = all_reviews
 			item_list = list(builder())
 			self.setProperty('imdb_reviews.number', 'x%s' % len(item_list))
 			self.item_action_dict[self.reviews_id] = 'content_list'
@@ -330,6 +344,7 @@ class Extras(BaseDialog):
 					listitem.setProperty('content_list', 'all_in_lists')
 					listitem.setProperty('thumbnail', icon)
 					listitem.setProperty('liked_status', liked)
+					listitem.setProperty('info_alert', self.list_alert)
 					yield listitem
 				except: pass
 		try:
@@ -345,7 +360,7 @@ class Extras(BaseDialog):
 			self.add_items(self.in_lists_id, item_list)
 		except: pass
 
-	def make_trivia(self):
+	def make_trivia(self, all_trivia):
 		if not self.trivia_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_trivia:
@@ -356,14 +371,14 @@ class Extras(BaseDialog):
 					yield listitem
 				except: pass
 		try:
-			self.all_trivia = imdb_api.imdb_trivia(self.imdb_id)
+			self.all_trivia = all_trivia
 			item_list = list(builder())
 			self.setProperty('imdb_trivia.number', 'x%s' % len(item_list))
 			self.item_action_dict[self.trivia_id] = 'content_list'
 			self.add_items(self.trivia_id, item_list)
 		except: pass
 
-	def make_blunders(self):
+	def make_blunders(self, all_blunders):
 		if not self.blunders_id in self.enabled_lists: return
 		def builder():
 			for item in self.all_blunders:
@@ -374,17 +389,17 @@ class Extras(BaseDialog):
 					yield listitem
 				except: pass
 		try:
-			self.all_blunders = imdb_api.imdb_blunders(self.imdb_id)
+			self.all_blunders = all_blunders
 			item_list = list(builder())
 			self.setProperty('imdb_blunders.number', 'x%s' % len(item_list))
 			self.item_action_dict[self.blunders_id] = 'content_list'
 			self.add_items(self.blunders_id, item_list)
 		except: pass
 
-	def make_parentsguide(self):
+	def make_parentsguide(self, all_parentsguide):
 		if not self.parentsguide_id in self.enabled_lists: return
 		def builder():
-			for item in data:
+			for item in all_parentsguide:
 				try:
 					listitem = self.make_listitem()
 					name = item['title']
@@ -399,7 +414,6 @@ class Extras(BaseDialog):
 					yield listitem
 				except: pass
 		try:
-			data = imdb_api.imdb_parentsguide(self.imdb_id)
 			item_list = list(builder())
 			self.setProperty('imdb_parentsguide.number', 'x%s' % len(item_list))
 			self.item_action_dict[self.parentsguide_id] = 'content'
@@ -597,7 +611,8 @@ class Extras(BaseDialog):
 					try: poster = 'https://api.ratingposterdb.com/%s/tmdb/poster-default/%s-%s.jpg?fallback=true' % (self.rpdb_api_key, media, str(item['id'])) + self.rpdb_format
 					except: pass
 				elif not poster: poster = self.empty_poster
-				listitem.setProperties({'name': item[name_key], 'release_date': year, 'vote_average': '%.1f' % item['vote_average'], 'thumbnail': poster, 'tmdb_id': str(tmdb_id)})
+				listitem.setProperties({'name': item[name_key], 'release_date': year, 'vote_average': '%.1f' % item['vote_average'],
+										'thumbnail': poster, 'tmdb_id': str(tmdb_id), 'info_alert': self.media_alert})
 				append(tmdb_id)
 				yield listitem
 			except: pass

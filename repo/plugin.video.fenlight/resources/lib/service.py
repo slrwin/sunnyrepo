@@ -56,12 +56,6 @@ class OnUpdateChanges:
 		except: pass
 		return kodi_utils.logger('Fen Light', 'OnUpdateChanges Service Finished')
 
-	def clear_addon_theme_settings_01(self):
-		# Active for 2.1.90.
-		from caches.settings_cache import restore_setting_default
-		for item in ('window_theme', 'window_theme_name', 'window_theme_contrast', 'window_theme_highlight', 'window_theme_opacity', 'window_theme_opacity_name'):
-			restore_setting_default({'setting_id': item, 'silent': 'true'})
-
 class CustomFonts:
 	def run(self):
 		kodi_utils.logger('Fen Light', 'CustomFonts Service Starting')

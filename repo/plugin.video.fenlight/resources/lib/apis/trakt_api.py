@@ -587,7 +587,7 @@ def trakt_like_a_list(params):
 		kodi_utils.notification('Error', 3000)
 		return False
 
-def trakt_like_a_list(params):
+def trakt_unlike_a_list(params):
 	user, list_slug, list_id = params.get('user'), params.get('list_slug'), params.get('list_id')
 	refresh = params.get('refresh', 'true') == 'true'
 	try:
