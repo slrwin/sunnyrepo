@@ -1052,6 +1052,29 @@
                           <property name="setting_description">Choose the sort order for your Trakt Watchlist media</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=sort.watchlist)</onclick>
                       </item>
+        <!-- Contents Sort Order For TMDb Lists -->
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
+                          <property name="setting_label">Contents Sort Order For TMDb Lists</property>
+                          <property name="setting_type">separator</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
+                          <property name="setting_label">TMDb Watchlist</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdbsort.watchlist_name)]</property>
+                          <property name="setting_description">Choose the sort order for your TMDb Collection media</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=tmdbsort.watchlist)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
+                          <property name="setting_label">TMDb Favorites</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdbsort.favorites_name)]</property>
+                          <property name="setting_description">Choose the sort order for your TMDb Watchlist media</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=tmdbsort.favorites)</onclick>
+                      </item>
         <!-- TMDb Lists -->
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>

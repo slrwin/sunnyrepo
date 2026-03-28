@@ -108,7 +108,7 @@ def PM_check(hash_list, cached_hashes):
 		add_to_local_cache(process_list, 'pm', expires)
 	return cached_hashes
 
-def ED_check(hash_list, cached_hashes):
+def ED_check(hashlist, cached_hashes):
 	expires = 24
 	cached_hashes, unchecked_hashes = cached_check(hash_list, cached_hashes, 'ed')
 	if unchecked_hashes:

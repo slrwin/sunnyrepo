@@ -156,9 +156,9 @@ class Sources():
 	def process_results(self, results):
 		results = self.sort_results(results)
 		min_seeders = settings.uncached_min_seeders()
-		self.uncached_results = [i for i in results if 'Uncached' in i.get('cache_provider', '')]
-		self.uncached_results = [i for i in self.uncached_results if int(i.get('seeders', '0')) >= min_seeders]
-		results = [i for i in results if not i in self.uncached_results]
+		all_uncached_results = [i for i in results if 'Uncached' in i.get('cache_provider', '')]
+		self.uncached_results = [i for i in all_uncached_results if int(i.get('seeders', '0')) >= min_seeders]
+		results = [i for i in results if not i in all_uncached_results]
 		if self.ignore_scrape_filters: self.filters_ignored = True
 		else:
 			results = self.filter_results(results)

@@ -39,31 +39,37 @@ class TMDbListAPI:
 			except: success = False
 		progressDialog.close()
 		if success:
-			access_token, account_id = response['access_token'], response['account_id']
-			response = requests.post('https://api.themoviedb.org/3/authentication/session/convert/4', json={'access_token': access_token}, headers=headers, timeout=20).json()
-			session_id = response.get('session_id')
-			if response.get('success') and session_id: success = True
-			else: success = False
-			if success:
-				response = requests.get(('https://api.themoviedb.org/3/account'), params={'session_id': session_id}, headers=headers, timeout=20).json()
-				username, account_session_id = response.get('username'), response.get('id')
-				if not session_id: success == False
-			if success:
-				set_setting('tmdb.token', access_token)
-				set_setting('tmdb.account_id', account_id)
-				set_setting('tmdb.username', username)
-				set_setting('tmdb.session_id', session_id)
-				set_setting('tmdb.account_session_id', str(account_session_id))
+			success = self.add_tmdb3_to_session(response['access_token'], response['account_id'])
 		tmdb_lists_cache.clear_all()
 		notification('Success' if success else 'Failed')
-	
+
+	def add_tmdb3_to_session(self, access_token, account_id):
+		import requests
+		headers = {'accept': 'application/json', 'content-type': 'application/json', 'Authorization': 'Bearer %s' % self.read_access_token}
+		response = requests.post('https://api.themoviedb.org/3/authentication/session/convert/4', json={'access_token': access_token}, headers=headers, timeout=20).json()
+		session_id = response.get('session_id')
+		if response.get('success') and session_id: success = True
+		else: success = False
+		if success:
+			response = requests.get(('https://api.themoviedb.org/3/account'), params={'session_id': session_id}, headers=headers, timeout=20).json()
+			username, account_session_id = response.get('username'), response.get('id')
+			if not account_session_id: success == False
+		if success:
+			set_setting('tmdb.token', access_token)
+			set_setting('tmdb.account_id', account_id)
+			set_setting('tmdb.username', username)
+			set_setting('tmdb.session_id', session_id)
+			set_setting('tmdb.account_session_id', str(account_session_id))
+			return True
+		return False
+
 	def revoke(self):
 		import requests
 		headers = {'accept': 'application/json', 'content-type': 'application/json', 'Authorization': 'Bearer %s' % self.read_access_token}
 		data = requests.delete('https://api.themoviedb.org/3/auth/access_token', json={'access_token': self.read_access_token}, headers=headers, timeout=20).json()
 		if not 'success' in data: notice = 'Failed to Revoke Account Auth'
 		else:
-			notice = 'Success Auth Revoke'
+			notice = 'Success! Auth Revoked'
 			set_setting('tmdb.token', 'empty_setting')
 			set_setting('tmdb.account_id', 'empty_setting')
 			set_setting('tmdb.username', 'empty_setting')
@@ -134,6 +140,16 @@ class TMDbListAPI:
 	def add_remove_from_list(self, list_id, items, action):
 		url = '%s/list/%s/items' % (self.base_url, list_id)
 		return self.request_data(url, data=items, method=action)
+
+	def add_remove_from_watchfavs(self, media_type, media_id, list_type, status):
+		if list_type == 'favorites': list_type = 'favorite'
+		account_session_id = get_setting('tmdb.account_session_id')
+		session_id = get_setting('tmdb.session_id')
+		if 'empty_setting' in [account_session_id, session_id]:
+			notification('Please Re-Authenticate you TMDB account')
+			return {'success': False}
+		url = '%s/account/%s/%s' % (self.base_url_v3, account_session_id, list_type)
+		return self.request_data(url, params={'session_id': session_id}, data={'media_type': media_type, 'media_id': str(media_id), list_type: status}, method='post')
 
 	def make_list(self, list_name):
 		url = '%s/list' % self.base_url

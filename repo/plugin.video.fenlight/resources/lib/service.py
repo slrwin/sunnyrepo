@@ -56,6 +56,28 @@ class OnUpdateChanges:
 		except: pass
 		return kodi_utils.logger('Fen Light', 'OnUpdateChanges Service Finished')
 
+	def update_users_tmdblist_authentication(self):
+		# For update 2.1.94 - 96.
+		from apis.tmdblist_api import tmdb_list_api
+		empty_setting_check = ('', 'None', None, 'empty_setting')
+		account_id = get_setting('fenlight.tmdb.account_id', 'empty_setting')
+		if account_id in empty_setting_check: return
+		access_token = get_setting('fenlight.tmdb.token', 'empty_setting')
+		if access_token in empty_setting_check: return
+		account_session_id = get_setting('fenlight.tmdb.account_session_id', 'empty_setting')
+		if account_session_id not in empty_setting_check: return
+		kodi_utils.sleep(10000)
+		text = 'You currently have an authorized TMDb account with Fen Light. New features (Adding/Removing items from Watchlist & Favorites) requires Fen Light to link this to ' \
+		'v3 of the TMDb API.'
+		kodi_utils.ok_dialog(heading='TMDb Account Information', text=text, ok_label='Continue..')
+		text = 'Would you like Fen Light to do that now (automatically)? If you choose not to do this now, you will have to revoke your TMDb authorization and then ' \
+		're-authorize it in the settings.'
+		if not kodi_utils.confirm_dialog(heading='TMDb Account Information', text=text, ok_label='Do Now', cancel_label='Do Later', default_control=10): return
+		success = tmdb_list_api.add_tmdb3_to_session(access_token, account_id)
+		if success: text = 'Success!![CR]Your TMDb account can now use the v3 features for Watchlist & Favorites'
+		else: text = 'Something went wrong[CR]Please revoke your TMDb authorization in settings and then re-authorize'
+		kodi_utils.ok_dialog(heading='TMDb Account Information', text=text)
+
 class CustomFonts:
 	def run(self):
 		kodi_utils.logger('Fen Light', 'CustomFonts Service Starting')
@@ -89,9 +111,12 @@ class TraktMonitor:
 				status = trakt_sync_activities()
 				if status == 'failed': kodi_utils.logger('Fen Light', trakt_service_string % ('Failed. Error from Trakt', next_update_string))
 				else:
-					if status in ('success', 'no account'): kodi_utils.logger('Fen Light', trakt_service_string % ('Success. %s' % trakt_success_line_dict[status], next_update_string))
-					else: kodi_utils.logger('Fen Light', trakt_service_string % ('Success. No Changes Needed', next_update_string))# 'not needed'
-					if status == 'success' and get_setting('fenlight.trakt.refresh_widgets', 'false') == 'true': kodi_utils.run_plugin({'mode': 'kodi_refresh'})
+					if status in ('success', 'no account'):
+						kodi_utils.logger('Fen Light', trakt_service_string % ('Success. %s' % trakt_success_line_dict[status], next_update_string))
+					else:
+						kodi_utils.logger('Fen Light', trakt_service_string % ('Success. No Changes Needed', next_update_string))# 'not needed'
+					if status == 'success' and get_setting('fenlight.trakt.refresh_widgets', 'false') == 'true':
+						kodi_utils.run_plugin({'mode': 'kodi_refresh'})
 			except Exception as e: kodi_utils.logger('Fen Light', trakt_service_string % ('Failed', 'The following Error Occured: %s' % str(e)))
 			wait_for_abort(wait_time)
 		try: del monitor
@@ -216,16 +241,22 @@ class FenLightMonitor(Monitor):
 		self.startServices()
 
 	def startServices(self):
-		SetAddonConstants().run()
-		DatabaseMaintenance().run()
-		SyncSettings().run()
-		OnUpdateChanges().run()
-		AddonXMLCheck().run()
+		try: SetAddonConstants().run()
+		except Exception as error: logger('SetAddonConstants', str(e))
+		try: DatabaseMaintenance().run()
+		except Exception as error: logger('DatabaseMaintenance', str(e))
+		try: SyncSettings().run()
+		except Exception as error: logger('SyncSettings', str(e))
+		try: OnUpdateChanges().run()
+		except Exception as error: logger('OnUpdateChanges', str(e))
+		try: AddonXMLCheck().run()
+		except Exception as error: logger('AddonXMLCheck', str(e))
 		Thread(target=CustomFonts().run).start()
 		Thread(target=TraktMonitor().run).start()
 		Thread(target=UpdateCheck().run).start()
 		Thread(target=WidgetRefresher().run).start()
-		AutoStart().run()
+		try: AutoStart().run()
+		except Exception as error: logger('AutoStart', str(e))
 
 	def onNotification(self, sender, method, data):
 		if method in ('GUI.OnScreensaverActivated', 'System.OnSleep'):

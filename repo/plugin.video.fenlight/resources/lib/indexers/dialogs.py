@@ -219,40 +219,52 @@ def personallists_manager_choice(params):
 	if action == 'remove' and any([kodi_utils.path_check(list_name) or kodi_utils.external()]): kodi_utils.kodi_refresh()
 
 def tmdblists_manager_choice(params):
-	from indexers.tmdb_lists import get_all_tmdb_lists, make_new_tmdb_list, add_to_tmdb_list, remove_from_tmdb_list, check_item_status
-	icon = params.get('icon', None) or kodi_utils.get_icon('tmdb')
-	all_lists = get_all_tmdb_lists('0')
-	choices = []
-	if not all_lists: action = 'add_new'
-	else:
-		choices = [('Add To TMDb List...', 'add'), ('Remove From TMDb List...', 'remove'), ('Add To [B]NEW[/B] TMDb List...', 'add_new')]
-		list_items = [{'line1': item[0], 'icon': icon} for item in choices]
-		kwargs = {'items': json.dumps(list_items), 'heading': 'TMDb Lists Manager'}
-		action = kodi_utils.select_dialog([i[1] for i in choices], **kwargs)
-		if action == None: return
-	if action == 'add_new':
-		list_id = make_new_tmdb_list({'external_creation': 'true'})
-		if not list_id: return kodi_utils.notification('Error Creating List')
-		action = 'add'
-	else:
-		choices = [('%s [I](x%02d)[/I]' % (i['name'], i['number_of_items']), i['id']) for i in all_lists]
-		list_items = [{'line1': i[0]} for i in choices]
-		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
-		list_id = kodi_utils.select_dialog([i[1] for i in choices], **kwargs)
-		if list_id == None: return
-	new_contents = {'items': [{'media_type': params['media_type'], 'media_id': params['tmdb_id']}]}
-	item_in_list = check_item_status(list_id, params['media_type'], params['tmdb_id'])
-	if action == 'add':
-		if item_in_list: return kodi_utils.notification('Item already in List')
-		add_to_tmdb_list(list_id, new_contents)
-	else:
-		if not item_in_list: return kodi_utils.notification('Item not in List')
-		remove_from_tmdb_list(list_id, new_contents)
 	from caches.tmdb_lists import tmdb_lists_cache
-	tmdb_lists_cache.clear_list(list_id)
-	tmdb_lists_cache.clear_all_lists()
-	kodi_utils.notification('Success', 3000)
-	if action == 'remove' and any([kodi_utils.path_check(str(list_id)) or kodi_utils.external()]): kodi_utils.kodi_refresh()
+	from indexers.tmdb_lists import get_all_tmdb_lists, make_new_tmdb_list, add_to_tmdb_list, remove_from_tmdb_list, check_item_status, check_item_status_watchfav, add_remove_watchfavs
+	icon = params.get('icon', None) or kodi_utils.get_icon('tmdb')
+	media_type, tmdb_id = params['media_type'], params['tmdb_id']
+	choices = [('Add To TMDb List...', 'list_add'), ('Remove From TMDb List...', 'list_remove'), ('Add To [B]NEW[/B] TMDb List...', 'list_add_new'),
+				('Add To [B]Watchlist[/B]', 'watchlist_add'), ('Remove From [B]Watchlist[/B]', 'watchlist_remove'),
+				('Add To [B]Favorites[/B]', 'favorites_add'), ('Remove From [B]Favorites[/B]', 'favorites_remove')]
+	list_items = [{'line1': item[0], 'icon': icon} for item in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': 'TMDb Lists Manager'}
+	action = kodi_utils.select_dialog([i[1] for i in choices], **kwargs)
+	if action == None: return
+	if action.startswith(('watchlist', 'favorites')):
+		from indexers.tmdb_lists import check_item_status_watchfav
+		list_id = action.split('_')[0]
+		status = True if 'add' in action else False
+		item_in_list = check_item_status_watchfav(list_id, media_type, tmdb_id)
+		if item_in_list and status: return kodi_utils.notification('Item already in %s' % list_id.capitalize())
+		if not item_in_list and not status: return kodi_utils.notification('Item not in %s' % list_id.capitalize())
+		success = add_remove_watchfavs(media_type, tmdb_id, list_id, status)
+		tmdb_lists_cache.clear_watchfavrecs(list_id, media_type)
+	else:
+		from indexers.tmdb_lists import get_all_tmdb_lists, make_new_tmdb_list, add_to_tmdb_list, remove_from_tmdb_list, check_item_status
+		all_lists = get_all_tmdb_lists('0')
+		if not all_lists: action = 'list_add_new'
+		if action == 'list_add_new':
+			list_id = make_new_tmdb_list({'external_creation': 'true'})
+			if not list_id: return kodi_utils.notification('Error Creating List')
+			action, item_in_list = 'list_add', False
+		else:
+			choices = [('%s [I](x%02d)[/I]' % (i['name'], i['number_of_items']), i['id']) for i in all_lists]
+			list_items = [{'line1': i[0]} for i in choices]
+			kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
+			list_id = kodi_utils.select_dialog([i[1] for i in choices], **kwargs)
+			if list_id == None: return
+			item_in_list = check_item_status(list_id, media_type, tmdb_id)
+		new_contents = {'items': [{'media_type': media_type, 'media_id': tmdb_id}]}
+		if action == 'list_add':
+			if item_in_list: return kodi_utils.notification('Item already in List')
+			success = add_to_tmdb_list(list_id, new_contents)
+		elif action == 'list_remove':
+			if not item_in_list: return kodi_utils.notification('Item not in List')
+			success = remove_from_tmdb_list(list_id, new_contents)
+		tmdb_lists_cache.clear_list(list_id)
+		tmdb_lists_cache.clear_all_lists()
+	kodi_utils.notification('Success' if success else 'Failed', 3000)
+	if 'remove' in action and any([kodi_utils.path_check(str(list_id)) or kodi_utils.external()]): kodi_utils.kodi_refresh()
 
 def favorites_manager_choice(params):
 	from caches.favorites_cache import favorites_cache

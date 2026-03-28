@@ -11,7 +11,7 @@ from caches.tmdb_lists import tmdb_lists_cache
 from indexers.movies import Movies
 from indexers.tvshows import TVShows
 from modules.utils import paginate_list, sort_for_article, gen_md5, jsondate_to_datetime as js2date
-from modules.settings import paginate, page_limit, lists_sort_order, widget_hide_next_page, ignore_articles, jump_to_enabled
+from modules.settings import paginate, page_limit, lists_sort_order, widget_hide_next_page, ignore_articles, jump_to_enabled, tmdblists_sort_order
 from modules import kodi_utils
 # logger = kodi_utils.logger
 
@@ -234,6 +234,13 @@ def tmdb_image_maker(list_name, list_id, image_type, custom_image, shuffle_sort_
 	kodi_utils.hide_busy_dialog()
 	return final_image
 
+def add_remove_watchfavs(media_type, media_id, list_type, status):
+	data = tmdb_list_api.add_remove_from_watchfavs(media_type, media_id, list_type, status)
+	if not data.get('success'):
+		kodi_utils.notification('Error Adding to List')
+		return False
+	return True
+
 def add_to_tmdb_list(list_id, items):
 	data = tmdb_list_api.add_remove_from_list(list_id, items, 'post')
 	if not data.get('success'):
@@ -265,6 +272,9 @@ def sort_order_tmdb_list():
 def check_item_status(list_id, media_type, media_id):
 	item_status = tmdb_list_api.item_status(list_id, media_type, media_id)
 	return item_status['success']
+
+def check_item_status_watchfav(list_id, media_type, media_id):
+	return int(media_id) in [i['id'] for i in tmdb_list_api.get_watchfavrecs_list_details(list_id, media_type)]
 
 def make_new_tmdb_list(params):
 	suggested_list_name, chosen_list = '', None
@@ -341,7 +351,8 @@ def get_tmdb_list(params):
 	list_id, media_type, sort_order = params['list_id'], params.get('media_type'), params.get('sort_order', '0')
 	if list_id in ('watchlist', 'favorites', 'recommendations'):
 		contents = [dict(i, **{'media_type': media_type}) for i in tmdb_list_api.get_watchfavrecs_list_details(list_id, media_type)]
-		# sort_order = str(lists_sort_order('collection'))
+		if list_id == 'recommendations': sort_order = None
+		else: sort_order = tmdblists_sort_order(list_id)
 	else: contents = tmdb_list_api.get_list_details(list_id)
 	contents = [dict(i, **{'title': i.get('title') or i.get('name'), 'release_date': i.get('release_date') or i.get('first_air_date')}) for i in contents]
 	if sort_order:
