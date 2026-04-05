@@ -76,11 +76,10 @@ def pick_best_tmdb_match(results, title, year):
 def get_currently_active_model():
 	model_id = None
 	try:
-		current_time = get_timestamp()
 		timeout_models = lists_cache.get('ai_model_failed') or []
 		model_order = [i for i in ai_model_order() for x in [google_api, groq_api] if x.model_present(i) and x.get_api() not in (None, 'None', '', 'empty_setting')]
 		if timeout_models:
-			timeout_ended_models = [i for i in timeout_models if i['timeout_ends'] <= current_time]
+			timeout_ended_models = [i for i in timeout_models if i['timeout_ends'] <= get_timestamp()]
 			if timeout_ended_models:
 				timeout_models = [i for i in timeout_models if i not in timeout_ended_models]
 				lists_cache.set('ai_model_failed', timeout_models, 24*365)

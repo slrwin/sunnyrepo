@@ -196,7 +196,7 @@ def default_settings():
 #==================== General
 {'setting_id': 'auto_start_fenlight', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'addon_icon_choice', 'setting_type': 'string', 'setting_default': 'resources/media/addon_icons/fenlight_icon_01.png'},
-{'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': kodi_utils.get_addon_fanart(), 'browse_mode': '2'},
+{'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': kodi_utils.addon_fanart(), 'browse_mode': '2'},
 {'setting_id': 'limit_concurrent_threads', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'max_threads', 'setting_type': 'action', 'setting_default': '60', 'min_value': '10', 'max_value': '250'},
 #==================== Window Theme
@@ -565,6 +565,7 @@ def default_settings():
 {'setting_id': 'folder5.movies_directory', 'setting_type': 'path', 'setting_default': 'None', 'browse_mode': '0'},
 {'setting_id': 'folder5.tv_shows_directory', 'setting_type': 'path', 'setting_default': 'None', 'browse_mode': '0'},
 {'setting_id': 'extras.enabled', 'setting_type': 'string', 'setting_default': '2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066'},
+{'setting_id': 'extras.order', 'setting_type': 'string', 'setting_default': '2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066'},
 {'setting_id': 'extras.tvshow.button10', 'setting_type': 'string', 'setting_default': 'tvshow_browse'},
 {'setting_id': 'extras.tvshow.button11', 'setting_type': 'string', 'setting_default': 'show_trailers'},
 {'setting_id': 'extras.tvshow.button12', 'setting_type': 'string', 'setting_default': 'show_keywords'},

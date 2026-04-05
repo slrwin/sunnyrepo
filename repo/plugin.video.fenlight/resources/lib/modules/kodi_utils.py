@@ -43,8 +43,11 @@ def extras_button_label_values():
 				'show_in_trakt_lists': 'In Trakt Lists', 'close_all': 'Close'}}
 
 def extras_items():
-	return ('Plot', 'Cast', 'Recommended', 'Related', 'More Like This', 'Similar', 'Reviews', 'Comments', 'Trivia', 'Blunders', 'Parental Guide', 'In Trakt Lists', 'Videos',
-			'More from Year', 'More from Genres', 'More from Networks', 'More from Collection')
+	return [{'name': 'Plot', 'value': 2050}, {'name': 'Cast', 'value': 2051}, {'name': 'Recommended', 'value': 2052}, {'name': 'Related', 'value': 2053},
+	{'name': 'More Like This', 'value': 2054}, {'name': 'Similar', 'value': 2055}, {'name': 'Reviews', 'value': 2056}, {'name': 'Comments', 'value': 2057},
+	{'name': 'Trivia', 'value': 2058}, {'name': 'Blunders', 'value': 2059}, {'name': 'Parental Guide', 'value': 2060}, {'name': 'In Trakt Lists', 'value': 2061},
+	{'name': 'Videos', 'value': 2062}, {'name': 'More from Year', 'value': 2063}, {'name': 'More from Genres', 'value': 2064}, {'name': 'More from Networks', 'value': 2065},
+	{'name': 'More from Collection', 'value': 2066}]
 
 def context_menu_items():
 	return {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Play Options', 'browse_movie_set': 'Browse Movie Set', 'browse_seasons': 'Browse TV Seasons',

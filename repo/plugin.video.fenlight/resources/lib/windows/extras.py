@@ -839,7 +839,7 @@ class Extras(BaseDialog):
 		self.extra_info_get = self.extra_info.get
 		self.tmdb_id, self.imdb_id = self.meta_get('tmdb_id'), self.meta_get('imdb_id')
 		self.folder_runner = kodi_utils.activate_window if self.is_external == 'true' else kodi_utils.container_update
-		self.enabled_lists, self.enable_scrollbars = settings.extras_enabled_menus(), settings.extras_enable_scrollbars()
+		self.enabled_lists, self.enable_scrollbars = settings.extras_enabled(), settings.extras_enable_scrollbars()
 		self.tmdb_api_key, self.omdb_api, self.mpaa_region = settings.tmdb_api_key(), settings.omdb_api_key(), settings.mpaa_region()
 		self.display_extra_ratings = self.imdb_id and self.omdb_api not in ('empty_setting', '') and settings.extras_enable_extra_ratings()
 		self.title, self.year, self.rootname = self.meta_get('title'), str(self.meta_get('year')), self.meta_get('rootname')

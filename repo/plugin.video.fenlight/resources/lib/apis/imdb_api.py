@@ -186,7 +186,7 @@ def refresh_imdb_meta_data(imdb_id):
 		return True
 	except: return False
 
-imdb_extras_query = """\
+imdb_extras_query = '''\
 query {
   title(id: "%s") {
     id
@@ -263,4 +263,4 @@ query {
       }
     }
   }
-}"""
+}'''

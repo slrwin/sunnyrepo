@@ -314,6 +314,49 @@ def ai_model_order_choice(params):
 		set_setting('ai_model.order', ','.join(current_order))
 	return ai_model_order_choice(params)
 
+def extras_lists_choice(params={}):
+	current_settings = settings.extras_enabled()
+	choices = kodi_utils.extras_items()
+	list_items = [{'line1': i['name']} for i in choices]
+	try: preselect = [choices.index(i) for i in choices if i['value'] in current_settings]
+	except: preselect = []
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Enable Content for Extras Lists', 'multi_choice': 'true', 'preselect': preselect}
+	selection = kodi_utils.select_dialog(choices, **kwargs)
+	if selection  == []: return set_setting('extras.enabled', 'noop')
+	elif selection == None: return
+	selection = [str(i['value']) for i in selection]
+	set_setting('extras.enabled', ','.join(selection))
+
+def extras_order_choice(params={}):
+	all_items = kodi_utils.extras_items()
+	enabled_items = settings.extras_enabled()
+	current_order = settings.extras_order()
+	active_items = [i for i in all_items if i['value'] in enabled_items]
+	active_items = sorted(active_items, key=lambda k: current_order.index(k['value']))
+	choices = [{'line1': 'Position %02d' % (count + 1), 'line2': 'Currently [B]%s[/B]' % (item['name']),
+			 'current_item': item, 'display_position': count + 1, 'position': count} for count, item in enumerate(active_items)]
+	kwargs = {'items': json.dumps(choices), 'heading': 'Choose Order Of Extras Lists', 'multi_line': 'true', 'narrow_window': 'true'}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None:
+		if params.get('remake', False):
+			from windows.base_window import ExtrasUtils
+			ExtrasUtils().run()
+		return
+	current_item = choice['current_item']
+	position = choice['position']
+	display_position = choice['display_position']
+	choices = [{'line1': item['name'], 'value': item['value']} for item in active_items if item != current_item]
+	kwargs = {'items': json.dumps(choices), 'narrow_window': 'true', 'heading': 'Choose List Item for Position %02d' % display_position}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice != None:
+		value = choice['value']
+		current_order.remove(value)
+		current_order.insert(position, value)
+		current_order = [str(i) for i in current_order]
+		set_setting('extras.order', ','.join(current_order))
+		params['remake'] = True
+	return extras_order_choice(params)
+
 def preferred_filters_choice(params):
 	from modules.source_utils import source_filters, include_exclude_filters
 	def _default_choices():
@@ -771,19 +814,6 @@ def extras_ratings_choice(params={}):
 		kodi_utils.ok_dialog(text='You must select at least 1 Ratings Provider')
 		return extras_ratings_choice()
 	set_setting('extras.enabled_ratings', ', '.join([i[1] for i in selection]))
-
-def extras_lists_choice(params={}):
-	choices = [(i,c) for c, i in enumerate(kodi_utils.extras_items(), 2050)]
-	list_items = [{'line1': i[0]} for i in choices]
-	current_settings = settings.extras_enabled_menus()
-	try: preselect = [choices.index(i) for i in choices if i[1] in current_settings]
-	except: preselect = []
-	kwargs = {'items': json.dumps(list_items), 'heading': 'Enable Content for Extras Lists', 'multi_choice': 'true', 'preselect': preselect}
-	selection = kodi_utils.select_dialog(choices, **kwargs)
-	if selection  == []: return set_setting('extras.enabled', 'noop')
-	elif selection == None: return
-	selection = [str(i[1]) for i in selection]
-	set_setting('extras.enabled', ','.join(selection))
 
 def set_language_filter_choice(params):
 	from modules.meta_lists import language_choices

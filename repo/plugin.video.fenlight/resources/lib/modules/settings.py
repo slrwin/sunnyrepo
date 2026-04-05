@@ -60,6 +60,11 @@ def download_directory(media_type):
 								None: 'fenlight.premium_download_directory', 'None': False}
 	return translate_path(get_setting(download_directories_dict[media_type]))
 
+def ai_model_active():
+	if get_setting('fenlight.google_api', 'empty_setting') not in (None, 'None', '', 'empty_setting'): return True
+	if get_setting('fenlight.groq_api', 'empty_setting') not in (None, 'None', '', 'empty_setting'): return True
+	return False
+
 def ai_model_order():
 	return get_setting('fenlight.ai_model.order', 'gemini-2.5-flash-lite,llama-3.3-70b-versatile,gemma-3-27b-it,llama-3.1-8b-instant').split(',')
 
@@ -236,8 +241,14 @@ def extras_enable_item_ratings():
 def extras_enable_scrollbars():
 	return get_setting('fenlight.extras.enable_scrollbars', 'false')
 
-def extras_enabled_menus():
+def extras_enabled():
 	setting = get_setting('fenlight.extras.enabled', '2000,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062')
+	if setting in ('', None, 'noop', []): return []
+	split_setting = setting.split(',')
+	return [int(i) for i in split_setting]
+
+def extras_order():
+	setting = get_setting('fenlight.extras.order', '2000,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062')
 	if setting in ('', None, 'noop', []): return []
 	split_setting = setting.split(',')
 	return [int(i) for i in split_setting]

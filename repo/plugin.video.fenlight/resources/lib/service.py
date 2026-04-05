@@ -27,7 +27,7 @@ class SetAddonConstants:
 			('fenlight.addon_icon', kodi_utils.translate_path(kodi_utils.addon_info('icon'))),
 			('fenlight.addon_icon_mini', os.path.join(kodi_utils.addon_info('path'), 'resources', 'media', 'addon_icons', 'minis',
 			os.path.basename(kodi_utils.translate_path(kodi_utils.addon_info('icon'))))),
-			('fenlight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart')))
+			('fenlight.addon_fanart', kodi_utils.addon_fanart())
 					]
 		for item in addon_items: kodi_utils.set_property(*item)
 		return kodi_utils.logger('Fen Light', 'SetAddonConstants Service Finished')
@@ -78,13 +78,14 @@ class OnUpdateChanges:
 		else: text = 'Something went wrong[CR]Please revoke your TMDb authorization in settings and then re-authorize'
 		kodi_utils.ok_dialog(heading='TMDb Account Information', text=text)
 
-class CustomFonts:
+class CustomWindowsPrepare:
 	def run(self):
-		kodi_utils.logger('Fen Light', 'CustomFonts Service Starting')
-		from windows.base_window import FontUtils
+		kodi_utils.logger('Fen Light', 'CustomWindowsPrepare Service Starting')
+		from windows.base_window import FontUtils, ExtrasUtils
 		monitor, player = kodi_utils.kodi_monitor(), kodi_utils.kodi_player()
 		wait_for_abort, is_playing = monitor.waitForAbort, player.isPlayingVideo
 		kodi_utils.clear_property(current_skin_prop)
+		ExtrasUtils().run()
 		font_utils = FontUtils()
 		while not monitor.abortRequested():
 			font_utils.execute_custom_fonts()
@@ -93,13 +94,13 @@ class CustomFonts:
 		except: pass
 		try: del player
 		except: pass
-		return kodi_utils.logger('Fen Light', 'CustomFonts Service Finished')
+		return kodi_utils.logger('Fen Light', 'CustomWindowsPrepare Service Finished')
 
 class TraktMonitor:
 	def run(self):
 		kodi_utils.logger('Fen Light', 'TraktMonitor Service Starting')
 		from apis.trakt_api import trakt_sync_activities
-		from modules.settings import trakt_sync_interval
+		from modules.settings import trakt_user_active, trakt_sync_interval
 		monitor, player = kodi_utils.kodi_monitor(), kodi_utils.kodi_player()
 		wait_for_abort, is_playing = monitor.waitForAbort, player.isPlayingVideo
 		while not monitor.abortRequested():
@@ -108,8 +109,10 @@ class TraktMonitor:
 			try:
 				sync_interval, wait_time = trakt_sync_interval()
 				next_update_string = update_string % sync_interval
-				status = trakt_sync_activities()
+				if trakt_user_active: status = trakt_sync_activities()
+				else: status = 'no_auth'
 				if status == 'failed': kodi_utils.logger('Fen Light', trakt_service_string % ('Failed. Error from Trakt', next_update_string))
+				elif status == 'no_auth': kodi_utils.logger('Fen Light', trakt_service_string % ('Not Run. No Current Trakt Account', next_update_string))
 				else:
 					if status in ('success', 'no account'):
 						kodi_utils.logger('Fen Light', trakt_service_string % ('Success. %s' % trakt_success_line_dict[status], next_update_string))
@@ -251,7 +254,7 @@ class FenLightMonitor(Monitor):
 		except Exception as error: logger('OnUpdateChanges', str(e))
 		try: AddonXMLCheck().run()
 		except Exception as error: logger('AddonXMLCheck', str(e))
-		Thread(target=CustomFonts().run).start()
+		Thread(target=CustomWindowsPrepare().run).start()
 		Thread(target=TraktMonitor().run).start()
 		Thread(target=UpdateCheck().run).start()
 		Thread(target=WidgetRefresher().run).start()

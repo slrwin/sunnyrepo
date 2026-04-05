@@ -201,7 +201,7 @@ class TVShows:
 			cm_append(['recommended', ('[B]Browse Recommended[/B]', self.window_command % browse_recommended_params)])
 			cm_append(['related', ('[B]Browse Related[/B]', self.window_command % browse_related_params)])
 			cm_append(['more_like_this', ('[B]Browse More Like This[/B]', self.window_command % browse_more_like_this_params)])
-			cm_append(['similar', ('[B]Browse Similar[/B]', self.window_command % browse_similar_params)])
+			if self.ai_model_active: cm_append(['similar', ('[B]Browse Similar[/B]', self.window_command % browse_similar_params)])
 			cm_append(['in_trakt_list', ('[B]In Trakt Lists[/B]', self.window_command % browse_in_trakt_list_params)])
 			cm_append(['trakt_manager', ('[B]Trakt Lists Manager[/B]', 'RunPlugin(%s)' % trakt_manager_params)])
 			cm_append(['personal_manager', ('[B]Personal Lists Manager[/B]', 'RunPlugin(%s)' % personal_manager_params)])
@@ -257,6 +257,7 @@ class TVShows:
 		self.poster_empty, self.fanart_empty = kodi_utils.get_icon('box_office'), kodi_utils.addon_fanart()
 		self.current_date, self.current_time = get_datetime(), get_current_timestamp()
 		self.mpaa_region = settings.mpaa_region()
+		self.ai_model_active = settings.ai_model_active()
 		rpdb_info = settings.rpdb_info('tvshow')
 		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 		self.all_episodes, self.open_extras = settings.default_all_episodes(), settings.media_open_action('tvshow') == 1

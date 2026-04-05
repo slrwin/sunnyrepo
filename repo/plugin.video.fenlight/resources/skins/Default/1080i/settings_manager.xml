@@ -636,11 +636,19 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(20)</visible>
-                          <property name="setting_label">Enable Content for Extras Lists</property>
+                          <property name="setting_label">Choose Content for Extras Lists</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">...</property>
                           <property name="setting_description">Choose what content is included within the Extras window</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=extras_lists_choice)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(20)</visible>
+                          <property name="setting_label">Choose Order for Extras Lists</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">...</property>
+                          <property name="setting_description">Choose how the content within the Extras window is ordered</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=extras_order_choice)</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(20)</visible>
