@@ -221,7 +221,7 @@ class TVShows:
 			if self.is_external:
 				cm.extend([['refresh', ('[B]Refresh Widgets[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'refresh_widgets'}))],
 						['reload', ('[B]Reload Widgets[/B]', 'RunPlugin(%s)' % self.build_url({'mode': 'kodi_refresh'}))]])
-			cm = self.sort_context_menu(cm)
+			cm = self.context_menu(cm)
 			listitem.setLabel(title)
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': thumb, 'icon': landscape,
@@ -262,7 +262,7 @@ class TVShows:
 		self.rpdb_api_key, self.rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 		self.all_episodes, self.open_extras = settings.default_all_episodes(), settings.media_open_action('tvshow') == 1
 		self.cm_sort_order = settings.cm_sort_order()
-		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
+		self.custom_cm_menu = self.cm_sort_order != settings.cm_default_order()
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = settings.watched_indicators()
 		self.watched_info = watched_status.watched_info_tvshow(watched_status.get_database(self.watched_indicators))
@@ -277,8 +277,8 @@ class TVShows:
 			self.items = [i[0] for i in self.items]
 		return self.items
 
-	def sort_context_menu(self, context_menu_items):
-		if self.perform_cm_sort:
+	def context_menu(self, context_menu_items):
+		if self.custom_cm_menu:
 			try: context_menu_items = sorted([i for i in context_menu_items if i[0] in self.cm_sort_order], key=lambda k: self.cm_sort_order[k[0]])
 			except: pass
 		return [i[1] for i in context_menu_items]

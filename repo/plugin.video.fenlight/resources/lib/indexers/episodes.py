@@ -58,7 +58,7 @@ def build_episode_list(params):
 				if is_external:
 					cm.extend([['refresh', ('[B]Refresh Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'refresh_widgets'}))],
 							['reload', ('[B]Reload Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'kodi_refresh'}))]])
-				if perform_cm_sort:
+				if custom_cm_menu:
 					try: cm = sorted([i for i in cm if i[0] in cm_sort_order], key=lambda k: cm_sort_order[k[0]])
 					except: pass
 				cm = [i[1] for i in cm]
@@ -94,7 +94,7 @@ def build_episode_list(params):
 	watched_indicators, adjust_hours = settings.watched_indicators(), settings.date_offset()
 	current_date, hide_watched = get_datetime(), is_external and settings.widget_hide_watched()
 	cm_sort_order = settings.cm_sort_order()
-	perform_cm_sort = cm_sort_order != settings.cm_default_order()
+	custom_cm_menu = cm_sort_order != settings.cm_default_order()
 	rpdb_info = settings.rpdb_info('tvshow')
 	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	playback_key = settings.playback_key()
@@ -263,7 +263,7 @@ def build_single_episode(list_type, params={}):
 			if is_external:
 				cm.extend([['refresh', ('[B]Refresh Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'refresh_widgets'}))],
 						['reload', ('[B]Reload Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'kodi_refresh'}))]])
-			if perform_cm_sort:
+			if custom_cm_menu:
 				try: cm = sorted([i for i in cm if i[0] in cm_sort_order], key=lambda k: cm_sort_order[k[0]])
 				except: pass
 			cm = [i[1] for i in cm]
@@ -306,7 +306,7 @@ def build_single_episode(list_type, params={}):
 	hide_watched = is_external and settings.widget_hide_watched() and list_type != 'episode.recently_watched'
 	api_key, mpaa_region_value = settings.tmdb_api_key(), settings.mpaa_region()
 	cm_sort_order, ignore_articles = settings.cm_sort_order(), settings.ignore_articles()
-	perform_cm_sort = cm_sort_order != settings.cm_default_order()
+	custom_cm_menu = cm_sort_order != settings.cm_default_order()
 	rpdb_info = settings.rpdb_info('tvshow')
 	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	playback_key = settings.playback_key()

@@ -383,7 +383,7 @@ class Sources():
 
 	def _process_post_results(self):
 		if not self.retry_actions: return self._no_results()
-		next_action, next_setting = self.retry_actions.pop(0)
+		next_action, next_setting, order = self.retry_actions.pop(0)
 		if next_action == 'cache_ignored':
 			if next_setting in (1, 2) and self.active_external and self.orig_results and self.external_cache_check \
 																				and debrid.debrid_for_ext_cache_check(self.debrid_enabled):

@@ -295,6 +295,9 @@ def default_settings():
 {'setting_id': 'rpdb_enabled', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'Movies', '2': 'TV Shows', '3': 'Both'}},
 {'setting_id': 'rpdb_format', 'setting_type': 'string', 'setting_default': ''},
 #==================== Context Menu
+{'setting_id': 'context_menu.enabled', 'setting_type': 'string',
+'setting_default': 'extras,options,playback_options,browse_movie_set,browse_seasons,browse_episodes,recommended,related,more_like_this,similar,in_trakt_list,' \
+'trakt_manager,personal_manager,tmdb_manager,favorites_manager,mark_watched,unmark_previous_episode,exit,refresh,reload'},
 {'setting_id': 'context_menu.order', 'setting_type': 'string',
 'setting_default': 'extras,options,playback_options,browse_movie_set,browse_seasons,browse_episodes,recommended,related,more_like_this,similar,in_trakt_list,' \
 'trakt_manager,personal_manager,tmdb_manager,favorites_manager,mark_watched,unmark_previous_episode,exit,refresh,reload'},
@@ -429,15 +432,15 @@ def default_settings():
 {'setting_id': 'results.list_format', 'setting_type': 'string', 'setting_default': 'List'},
 #==================== Rescrape
 {'setting_id': 'rescrape.cache_ignored', 'setting_type': 'action', 'setting_default': '1', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
-{'setting_id': 'rescrape.cache_ignored.priority', 'setting_type': 'action', 'setting_default': '1', 'min_value': '1', 'max_value': '5'},
+{'setting_id': 'rescrape.cache_ignored.order', 'setting_type': 'action', 'setting_default': '0', 'min_value': '1', 'max_value': '5'},
 {'setting_id': 'rescrape.imdb_year', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
-{'setting_id': 'rescrape.imdb_year.priority', 'setting_type': 'action', 'setting_default': '2', 'min_value': '1', 'max_value': '5'},
+{'setting_id': 'rescrape.imdb_year.order', 'setting_type': 'action', 'setting_default': '1', 'min_value': '1', 'max_value': '5'},
 {'setting_id': 'rescrape.with_all', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
-{'setting_id': 'rescrape.with_all.priority', 'setting_type': 'action', 'setting_default': '3', 'min_value': '1', 'max_value': '5'},
+{'setting_id': 'rescrape.with_all.order', 'setting_type': 'action', 'setting_default': '2', 'min_value': '1', 'max_value': '5'},
 {'setting_id': 'rescrape.episode_group', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
-{'setting_id': 'rescrape.episode_group.priority', 'setting_type': 'action', 'setting_default': '4', 'min_value': '1', 'max_value': '5'},
+{'setting_id': 'rescrape.episode_group.order', 'setting_type': 'action', 'setting_default': '3', 'min_value': '1', 'max_value': '5'},
 {'setting_id': 'rescrape.ignore_filters', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Auto', '2': 'Prompt'}},
-{'setting_id': 'rescrape.ignore_filters.priority', 'setting_type': 'action', 'setting_default': '5', 'min_value': '1', 'max_value': '5'},
+{'setting_id': 'rescrape.ignore_filters.order', 'setting_type': 'action', 'setting_default': '4', 'min_value': '1', 'max_value': '5'},
 #==================== Sorting and Filtering
 {'setting_id': 'results.sort_order_display', 'setting_type': 'string', 'setting_default': 'Quality, Size, Provider'},
 {'setting_id': 'results.filter_size_method', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Off', '1': 'Use Line Speed', '2': 'Use Size'}},
@@ -566,6 +569,8 @@ def default_settings():
 {'setting_id': 'folder5.tv_shows_directory', 'setting_type': 'path', 'setting_default': 'None', 'browse_mode': '0'},
 {'setting_id': 'extras.enabled', 'setting_type': 'string', 'setting_default': '2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066'},
 {'setting_id': 'extras.order', 'setting_type': 'string', 'setting_default': '2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066'},
+{'setting_id': 'rescrape.enabled', 'setting_type': 'string', 'setting_default': 'cache_ignored,imdb_year,with_all,episode_group,ignore_filters'},
+{'setting_id': 'rescrape.order', 'setting_type': 'string', 'setting_default': 'cache_ignored,imdb_year,with_all,episode_group,ignore_filters'},
 {'setting_id': 'extras.tvshow.button10', 'setting_type': 'string', 'setting_default': 'tvshow_browse'},
 {'setting_id': 'extras.tvshow.button11', 'setting_type': 'string', 'setting_default': 'show_trailers'},
 {'setting_id': 'extras.tvshow.button12', 'setting_type': 'string', 'setting_default': 'show_keywords'},

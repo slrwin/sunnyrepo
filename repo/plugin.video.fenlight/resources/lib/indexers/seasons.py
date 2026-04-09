@@ -60,7 +60,7 @@ def build_season_list(params):
 				if is_external:
 					cm.extend([['refresh', ('[B]Refresh Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'refresh_widgets'}))],
 							['reload', ('[B]Reload Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'kodi_refresh'}))]])
-				if perform_cm_sort:
+				if custom_cm_menu:
 					try: cm = sorted([i for i in cm if i[0] in cm_sort_order], key=lambda k: cm_sort_order[k[0]])
 					except: pass
 				cm = [i[1] for i in cm]
@@ -83,7 +83,7 @@ def build_season_list(params):
 	watched_indicators, adjust_hours, hide_watched = settings.watched_indicators(), settings.date_offset(), is_external and settings.widget_hide_watched()
 	current_date = get_datetime()
 	cm_sort_order = settings.cm_sort_order()
-	perform_cm_sort = cm_sort_order != settings.cm_default_order()
+	custom_cm_menu = cm_sort_order != settings.cm_default_order()
 	rpdb_info = settings.rpdb_info('tvshow')
 	rpdb_api_key, rpdb_format = rpdb_info['rpdb_api_key'], rpdb_info['rpdb_format']
 	use_name = settings.use_season_name()

@@ -124,66 +124,87 @@ def addon_icon_choice(params):
 	kodi_utils.update_local_addons()
 	kodi_utils.disable_enable_addon()
 
-def context_menu_order_choice(params):
-	options = kodi_utils.context_menu_items()
-	default_control = params.get('default_control') or 11
-	current_settings = settings.cm_sort_order()
-	current_settings = sorted(current_settings, key=current_settings.get)
-	default_settings = default_setting_values('context_menu.order')['setting_default'].split(',')
-	removed_settings = [i for i in default_settings if not i in current_settings]
-	not_default = default_settings != current_settings
-	if not_default:
-		start_choices = [{'name': 'EDIT current items', 'action': 'edit'}, {'name': 'RESTORE to default', 'action': 'restore'}]
-		if removed_settings: start_choices.insert(0, {'name': 'RE-ADD a removed item', 'action': 'readd'})
-		list_items = [{'line1': i['name']} for i in start_choices]
-		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Context Menu Editor Action...'}
-		start_choice = kodi_utils.select_dialog(start_choices, **kwargs)
-		if start_choice == None: return
-		start_choice = start_choice['action']
-		if start_choice == 'restore':
-			confirm = kodi_utils.confirm_dialog(heading='Context Menu', text='Would you like to RESTORE your Context Menu to default?')
-			if not confirm: return context_menu_order_choice(params)
-			set_setting('context_menu.order', default_setting_values('context_menu.order')['setting_default'])
-			kodi_utils.ok_dialog(text='Context Menu Restored to Default')
-			return context_menu_order_choice(params)
-	else: start_choice = 'edit'
-	current_choices = [(options[i], i, current_settings.index(i)) for i in current_settings]
-	removed_choices = [(options[i], i) for i in removed_settings]
-	choices = current_choices if start_choice == 'edit' else removed_choices
-	list_items = [{'line1': i[0]} for i in choices]
-	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Choose Item to Edit...'}
-	item_choice = kodi_utils.select_dialog(choices, **kwargs)
-	if item_choice == None:
-		if removed_settings: return context_menu_order_choice(params)
-		return
-	current_display_name, current_name = item_choice[0], item_choice[1]
-	if start_choice == 'edit':
-		current_position = item_choice[2]
-		params['default_control'] = 10
-		action_choices = [{'name': 'Remove [B]%s[/B]' % current_display_name, 'action': 'remove'}, {'name': 'Move [B]%s[/B]' % current_display_name, 'action': 'move'}]
-		list_items = [{'line1': i['name']} for i in action_choices]
-		kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Chose Action...'}
-		action_choice = kodi_utils.select_dialog(action_choices, **kwargs)
-		if action_choice == None: return context_menu_order_choice(params)
-		action_choice = action_choice['action']
-		if action_choice == 'remove':
-			current_settings.remove(item_choice[1])
-			set_setting('context_menu.order', ','.join(current_settings))
-			kodi_utils.ok_dialog(text='[B]%s[/B] removed from Context Menu' % current_display_name)
-			return context_menu_order_choice(params)
-		current_choices.remove(item_choice)
+def rescrape_actions_choice(params):
+	set_focus = params.get('set_focus', 0)
+	action_values, order_values = {0: 'Off', 1: 'Auto', 2: 'Prompt'}, {0: 'Highest', 1: 'High', 2: 'Middle', 3: 'Low', 4: 'Lowest'}
+	rescrape_settings = settings.rescrape_settings()
+	choices = [dict(i, **{'line1': '%02d, %s' % (int(k[2]) + 1, i['name']),
+				'line2': 'Current | Action: [B]%s[/B] | Order: [B]%s[/B]' % (action_values[k[1]], order_values[k[2]]), 'value': i['value'],
+				'action': k[1], 'order': k[2]}) for i in kodi_utils.rescrape_items() for k in rescrape_settings if k[0] == i['value']]
+	choices = [dict(i, **{'position': c}) for c, i in enumerate(sorted(choices, key=lambda k: k['order']))]
+	kwargs = {'items': json.dumps(choices), 'heading': 'Choose Properties for Rescrape Functions', 'multi_line': 'true', 'narrow_window': 'true', 'set_focus': set_focus}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None: return
+	choice_value, choice_action, choice_order = choice['value'], choice['action'], choice['order']
+	params['set_focus'] = choice['position']
+	choices = [{'line1': 'Set Action', 'action': 'set_action'}, {'line1': 'Set Order', 'action': 'set_order'}]
+	kwargs = {'items': json.dumps(choices), 'heading': 'Choose Properties for Rescrape Functions', 'narrow_window': 'true', 'set_focus': set_focus}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None: return rescrape_actions_choice(params)
+	action = choice['action']
+	if action == 'set_action':
+		choices = [{'line1': 'Off', 'value': '0'}, {'line1': 'Auto', 'value': '1'}, {'line1': 'Prompt', 'value': '2'}]
+		heading, setting = 'Choose Action Value', 'rescrape.%s' % choice_value
+		kwargs = {'items': json.dumps(choices), 'heading': heading, 'narrow_window': 'true'}
+		choice = kodi_utils.select_dialog(choices, **kwargs)
+		if choice == None: return rescrape_actions_choice(params)
+		setting_value = choice['value']
+		set_setting(setting, setting_value)
 	else:
-		current_position = None
-		params['default_control'] = 11
-	list_items = [{'line1': 'Place below [B]%s[/B]' % i[0]} for i in current_choices]
-	list_items.insert(0, {'line1': 'Place at Top of List'})
-	kwargs = kwargs = {'items': json.dumps(list_items), 'heading': 'Move %s to New Position' % item_choice[0], 'narrow_window': 'true'}
-	move_choice = kodi_utils.select_dialog([list_items.index(i) for i in list_items], **kwargs)
-	if move_choice == None: return context_menu_order_choice(params)
-	if start_choice == 'edit': current_settings.remove(current_name)
-	current_settings.insert(move_choice, current_name)
-	set_setting('context_menu.order', ','.join(current_settings))
-	kodi_utils.ok_dialog(text='Success')
+		choices = [{'line1': 'Highest', 'value': '0'}, {'line1': 'High', 'value': '1'}, {'line1': 'Middle', 'value': '2'},
+					{'line1': 'Low', 'value': '3'}, {'line1': 'Lowest', 'value': '4'}]
+		heading, setting = 'Choose Order', 'rescrape.%s.order'
+		kwargs = {'items': json.dumps(choices), 'heading': heading, 'narrow_window': 'true'}
+		choice = kodi_utils.select_dialog(choices, **kwargs)
+		if choice == None: return rescrape_actions_choice(params)
+		setting_value = choice['value']
+		new_settings = list(rescrape_settings)
+		new_settings.remove((choice_value, choice_action, choice_order))
+		new_settings.insert(int(setting_value), (choice_value, choice_action, setting_value))
+		for item in [(i[0], str(c)) for c, i in enumerate(new_settings)]: set_setting(setting % item[0], item[1])
+		params['set_focus'] = int(setting_value)
+	return rescrape_actions_choice(params)
+
+def context_menu_choice(params):
+	choices = kodi_utils.context_menu_items()
+	current_settings = settings.cm_enabled()
+	try: preselect = [choices.index(i) for i in choices if i['value'] in current_settings]
+	except: preselect = []
+	list_items = [{'line1': i['name']} for i in choices]
+	kwargs = {'items': json.dumps(list_items), 'heading': 'Enable Content for the Context Menu', 'multi_choice': 'true', 'preselect': preselect}
+	selection = kodi_utils.select_dialog(choices, **kwargs)
+	if selection  == []:
+		kodi_utils.ok_dialog(text='You must select at least 1 item')
+		return context_menu_choice(params)
+	elif selection == None: return
+	selection = [i['value'] for i in selection]
+	set_setting('context_menu.enabled', ','.join(selection))
+
+def context_menu_order_choice(params):
+	set_focus = params.get('set_focus', 0)
+	all_items = kodi_utils.context_menu_items()
+	enabled_items = settings.cm_enabled()
+	current_order = settings.cm_current_order()
+	active_items = [i for i in all_items if i['value'] in enabled_items]
+	sorted_active_items = sorted(active_items, key=lambda k: current_order.index(k['value']))
+	choices = [{'line1': 'Position %02d' % (count + 1), 'line2': 'Currently [B]%s[/B]' % (item['name']),
+			 'current_item': item, 'display_position': count + 1, 'position': count} for count, item in enumerate(sorted_active_items)]
+	kwargs = {'items': json.dumps(choices), 'heading': 'Choose Order for Context Menu', 'multi_line': 'true', 'narrow_window': 'true', 'set_focus': set_focus}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice == None: return
+	current_item = choice['current_item']
+	position = choice['position']
+	display_position = choice['display_position']
+	choices = [{'line1': item['name'], 'value': item['value']} for item in active_items if item != current_item]
+	kwargs = {'items': json.dumps(choices), 'narrow_window': 'true', 'heading': 'Choose Context Menu Item for Position %02d' % display_position}
+	choice = kodi_utils.select_dialog(choices, **kwargs)
+	if choice != None:
+		value = choice['value']
+		current_order.remove(value)
+		current_order.insert(position, value)
+		current_order = [str(i) for i in current_order]
+		set_setting('context_menu.order', ','.join(current_order))
+		params['set_focus'] = position
 	return context_menu_order_choice(params)
 
 def personallists_manager_choice(params):
@@ -322,7 +343,9 @@ def extras_lists_choice(params={}):
 	except: preselect = []
 	kwargs = {'items': json.dumps(list_items), 'heading': 'Enable Content for Extras Lists', 'multi_choice': 'true', 'preselect': preselect}
 	selection = kodi_utils.select_dialog(choices, **kwargs)
-	if selection  == []: return set_setting('extras.enabled', 'noop')
+	if selection  == []:
+		kodi_utils.ok_dialog(text='You must select at least 1 item')
+		return extras_lists_choice(params)
 	elif selection == None: return
 	selection = [str(i['value']) for i in selection]
 	set_setting('extras.enabled', ','.join(selection))

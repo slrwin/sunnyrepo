@@ -1072,7 +1072,7 @@
                           <property name="setting_label">TMDb Watchlist</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdbsort.watchlist_name)]</property>
-                          <property name="setting_description">Choose the sort order for your TMDb Collection media</property>
+                          <property name="setting_description">Choose the sort order for your TMDb Watchlist media</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=tmdbsort.watchlist)</onclick>
                       </item>
                       <item>
@@ -1080,7 +1080,7 @@
                           <property name="setting_label">TMDb Favorites</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.tmdbsort.favorites_name)]</property>
-                          <property name="setting_description">Choose the sort order for your TMDb Watchlist media</property>
+                          <property name="setting_description">Choose the sort order for your TMDb Favorites media</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=tmdbsort.favorites)</onclick>
                       </item>
         <!-- TMDb Lists -->
@@ -1230,10 +1230,18 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(30)</visible>
-                          <property name="setting_label">Context Menu Options</property>
+                          <property name="setting_label">Choose Content for the Context Menu</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">...</property>
-                          <property name="setting_description">Choose the order and availability for Context Menu items for Fen Light media items</property>
+                          <property name="setting_description">Choose what content is included within the Context Menu</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=context_menu_choice)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(30)</visible>
+                          <property name="setting_label">Choose Order for the Context Menu</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">...</property>
+                          <property name="setting_description">Choose how the content within the Context Menu is ordered</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=context_menu_order_choice)</onclick>
                       </item>
 <!-- SINGLE EPISODE LISTS 40 -->
@@ -2308,94 +2316,17 @@
         <!-- Rescrape -->
                       <item>
                           <visible>Container(2000).HasFocus(70)</visible>
-                          <property name="setting_label">Rescrape</property>
+                          <property name="setting_label">Rescrape Actions</property>
                           <property name="setting_type">separator</property>
                           <onclick>noop</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(70)</visible>
-                          <property name="setting_label">Rescrape With No Cache Check When No Results</property>
+                          <property name="setting_label">Choose Rescrape Actions</property>
                           <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.cache_ignored_name)]</property>
-                          <property name="setting_description">Choose whether to rescrape with the external cache check ignored when there are no results. Choices are Off, Auto or Prompt</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=rescrape.cache_ignored)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rescrape.cache_ignored),0)</visible>
-                          <property name="setting_label">    - Priority</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.cache_ignored.priority)]</property>
-                          <property name="setting_description">Enter here the priority of when this retry will be utilized. 1 -5, with 1 highest priority</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=rescrape.cache_ignored.priority)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <property name="setting_label">Rescrape With IMDb Year Data When No Results</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.imdb_year_name)]</property>
-                          <property name="setting_description">Choose whether to rescrape with the IMDb Year Data when there are no results. Choices are Off, Auto or Prompt</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=rescrape.imdb_year)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rescrape.imdb_year),0)</visible>
-                          <property name="setting_label">    - Priority</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.imdb_year.priority)]</property>
-                          <property name="setting_description">Enter here the priority of when this retry will be utilized. 1 -5, with 1 highest priority</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=rescrape.imdb_year.priority)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <property name="setting_label">Rescrape With All Scrapers When No Results</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.with_all_name)]</property>
-                          <property name="setting_description">Choose whether to rescrape with all external scrapers when there are no results. Choices are Off, Auto or Prompt</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=rescrape.with_all)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rescrape.with_all),0)</visible>
-                          <property name="setting_label">    - Priority</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.with_all.priority)]</property>
-                          <property name="setting_description">Enter here the priority of when this retry will be utilized. 1 -5, with 1 highest priority</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=rescrape.with_all.priority)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <property name="setting_label">Rescrape With Episode Group When No Results</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.episode_group_name)]</property>
-                          <property name="setting_description">Choose whether to rescrape with a custom episode grouping (if available) when there are no results. This setting only relates to episode scrapes. If a Custom Episode Group is already assigned to the TV Show, then the regular season/episode will be used. Choices are Off, Auto or Prompt</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=rescrape.episode_group)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rescrape.episode_group),0)</visible>
-                          <property name="setting_label">    - Priority</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.episode_group.priority)]</property>
-                          <property name="setting_description">Enter here the priority of when this retry will be utilized. 1 -5, with 1 highest priority</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=rescrape.episode_group.priority)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <property name="setting_label">Rescrape with Filters Ignored When No Results</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.ignore_filters_name)]</property>
-                          <property name="setting_description">Choose whether to rescrape ignoring filters when there are no results. Choices are Off, Auto or Prompt</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=rescrape.ignore_filters)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(70)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rescrape.ignore_filters),0)</visible>
-                          <property name="setting_label">    - Priority</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.rescrape.ignore_filters.priority)]</property>
-                          <property name="setting_description">Enter here the priority of when this retry will be utilized. 1 -5, with 1 highest priority</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=rescrape.ignore_filters.priority)</onclick>
+                          <property name="setting_value">...</property>
+                          <property name="setting_description">Choose what Rescrape Options are used when there are no original results</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=rescrape_actions_choice)</onclick>
                       </item>
         <!-- Sorting and Filtering -->
                       <item>
@@ -2593,7 +2524,7 @@
                           <property name="setting_label">Custom Sort To Top</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.filter.sort_to_top_name)]</property>
-                          <property name="setting_description">Choose when to Sort results certain results to the top. The options are NONE, SOURCE SELECT, AUTOPLAY or BOTH</property>
+                          <property name="setting_description">Choose when to sort certain results to the top. The options are NONE, SOURCE SELECT, AUTOPLAY or BOTH</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_from_list&amp;setting_id=filter.sort_to_top)</onclick>
                       </item>
                       <item>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from caches.settings_cache import get_setting, set_setting, default_setting_values
 from modules.kodi_utils import translate_path, get_property
-# from modules.kodi_utils import logger
+from modules.kodi_utils import logger
 
 def tmdb_api_key():
 	return get_setting('fenlight.tmdb_api', '')
@@ -168,12 +168,6 @@ def limit_number_quality():
 
 def limit_number_total():
 	return int(get_setting('fenlight.results.limit_number_total', '0'))
-
-def rescrape_settings():
-	rescrapes = [('cache_ignored', '1', '1'), ('imdb_year', '0', '2'), ('with_all', '0', '3'), ('episode_group', '0', '4'), ('ignore_filters', '0', '5')]
-	r_list = sorted([(i[0], int(get_setting('fenlight.rescrape.%s' % i[0], i[1])), int(get_setting('fenlight.rescrape.%s.priority' % i[0], i[2]))  ) \
-					for i in rescrapes if int(get_setting('fenlight.rescrape.%s' % i[0], i[1])) in (1, 2)], key=lambda x: x[1])
-	return [(i[0], i[1]) for i in r_list]
 
 def trakt_sync_interval():
 	setting = get_setting('fenlight.trakt.sync_interval', '60')
@@ -433,9 +427,29 @@ def update_delay():
 def update_action():
 	return int(get_setting('fenlight.update.action', '2'))
 
+def rescrape_settings():
+	rescrapes = [('cache_ignored', '1', '0'), ('imdb_year', '0', '1'), ('with_all', '0', '2'), ('episode_group', '0', '3'), ('ignore_filters', '0', '4')]
+	return sorted([(i[0], int(get_setting('fenlight.rescrape.%s' % i[0], i[1])), int(get_setting('fenlight.rescrape.%s.order' % i[0], i[2]))  ) \
+					for i in rescrapes if int(get_setting('fenlight.rescrape.%s' % i[0], i[1])) in (1, 2)], key=lambda x: x[2])
+
+def cm_enabled():
+	default = 'extras,options,playback_options,browse_movie_set,browse_seasons,browse_episodes,recommended,related,more_like_this,similar,in_trakt_list,' \
+				'trakt_manager,personal_manager,tmdb_manager,favorites_manager,mark_watched,unmark_previous_episode,exit,refresh,reload'
+	setting = get_setting('fenlight.context_menu.enabled', default)
+	if setting in ('', None, 'noop', '[]'): return default.split(',')
+	return setting.split(',')
+
+def cm_current_order():
+	default = 'extras,options,playback_options,browse_movie_set,browse_seasons,browse_episodes,recommended,related,more_like_this,similar,in_trakt_list,' \
+				'trakt_manager,personal_manager,tmdb_manager,favorites_manager,mark_watched,unmark_previous_episode,exit,refresh,reload'
+	setting = get_setting('fenlight.context_menu.order', default)
+	if setting in ('', None, 'noop', '[]'): return default.split(',')
+	return setting.split(',')
+
 def cm_sort_order():
-	try: return {i: c for c, i in enumerate(get_setting('fenlight.context_menu.order').split(','))}
-	except: return {i: c for c, i in enumerate(default_setting_values('context_menu.order')['setting_default'].split(','))}
+	try: setting = {i: c for c, i in enumerate([i for i in cm_current_order() if i in cm_enabled()])}
+	except: setting = cm_default_order()
+	return setting
 
 def cm_default_order():
 	return {i: c for c, i in enumerate(default_setting_values('context_menu.order')['setting_default'].split(','))}

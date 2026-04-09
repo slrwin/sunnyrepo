@@ -50,11 +50,23 @@ def extras_items():
 	{'name': 'More from Collection', 'value': 2066}]
 
 def context_menu_items():
-	return {'extras': 'Extras', 'options': 'Options', 'playback_options': 'Play Options', 'browse_movie_set': 'Browse Movie Set', 'browse_seasons': 'Browse TV Seasons',
-			'browse_episodes': 'Browse Season Episodes', 'recommended': 'Browse Recommended', 'related': 'Browse Related', 'more_like_this': 'Browse More Like This',
-			'similar': 'Browse Similar', 'in_trakt_list': 'In Trakt Lists', 'trakt_manager':'Trakt Lists Manager', 'personal_manager': 'Personal Lists Manager',
-			'tmdb_manager': 'TMDb Lists Manager', 'favorites_manager': 'Favorites Manager', 'mark_watched': 'Mark Watched/Unwatched',
-			'unmark_previous_episode': 'Unmark Previous Watched Episode', 'exit': 'Exit List', 'refresh': 'Refresh Widgets', 'reload': 'Reload Widgets'}
+	return [
+	{'name': 'Extras', 'value': 'extras'}, {'name': 'Options', 'value': 'options'}, {'name': 'Play Options', 'value': 'playback_options'},
+	{'name': 'Browse Movie Set', 'value': 'browse_movie_set'}, {'name': 'Browse TV Seasons', 'value': 'browse_seasons'},
+	{'name': 'Browse Season Episodes', 'value': 'browse_episodes'}, {'name': 'Browse Recommended', 'value': 'recommended'}, {'name': 'Browse Related', 'value': 'related'},
+	{'name': 'Browse More Like This', 'value': 'more_like_this'}, {'name': 'Browse Similar', 'value': 'similar'}, {'name': 'In Trakt Lists', 'value': 'in_trakt_list'},
+	{'name': 'Trakt Lists Manager', 'value': 'trakt_manager'}, {'name': 'Personal Lists Manager', 'value': 'personal_manager'},
+	{'name': 'TMDb Lists Manager', 'value': 'tmdb_manager'}, {'name': 'Favorites Manager', 'value': 'favorites_manager'}, {'name': 'Mark Watched/Unwatched', 'value': 'mark_watched'},
+	{'name': 'Unmark Previous Watched Episode', 'value': 'unmark_previous_episode'}, {'name': 'Exit List', 'value': 'exit'}, {'name': 'Refresh Widgets', 'value': 'refresh'},
+	{'name': 'Reload Widgets', 'value': 'reload'}]
+
+def rescrape_items():
+	return [
+	{'name': 'Rescrape With No Cache Check', 'value': 'cache_ignored'},
+	{'name': 'Rescrape With IMDb Year Data', 'value': 'imdb_year'},
+	{'name': 'Rescrape With All Scrapers', 'value': 'with_all'},
+	{'name': 'Rescrape With Episode Group', 'value': 'episode_group'},
+	{'name': 'Rescrape with Filters Ignored', 'value': 'ignore_filters'}]
 
 def video_extensions():
 	return ('m4v', '3g2', '3gp', 'nsv', 'tp', 'ts', 'ty', 'pls', 'rm', 'rmvb', 'mpd', 'ifo', 'mov', 'qt', 'divx', 'xvid', 'bivx', 'vob', 'nrg', 'img', 'iso', 'udf', 'pva',
