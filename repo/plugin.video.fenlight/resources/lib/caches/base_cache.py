@@ -204,10 +204,6 @@ def clear_cache(cache_type, silent=False):
 		if not _confirm(): return
 		from apis.alldebrid_api import AllDebrid
 		success = AllDebrid.clear_cache()
-	elif cache_type == 'ed_cloud':
-		if not _confirm(): return
-		from apis.easydebrid_api import EasyDebrid
-		success = EasyDebrid.clear_cache()
 	elif cache_type == 'tb_cloud':
 		if not _confirm(): return
 		from apis.torbox_api import TorBox

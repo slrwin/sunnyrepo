@@ -1960,51 +1960,6 @@
                           <property name="setting_description">Choose the order in which All Debrid results appear in relation to any other active accounts. The lower the number, the higher the sort order</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=ad.priority)</onclick>
                       </item>
-        <!-- Easy Debrid -->
-                      <item>
-                          <visible>Container(2000).HasFocus(60)</visible>
-                          <property name="setting_label">Easy Debrid</property>
-                          <property name="setting_type">separator</property>
-                          <onclick>noop</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(60)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(fenlight.ed.token),empty_setting)</visible>
-                          <property name="setting_label">Authorize</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">...</property>
-                          <property name="setting_description">Authorize your Easy Debrid account and use it within Fen Light</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=easydebrid.authenticate)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(60)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.ed.token),empty_setting)</visible>
-                          <property name="setting_label">Enable</property>
-                          <property name="setting_type">boolean</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.ed.enabled)]</property>
-                          <property name="setting_description">Enable the use of your Easy Debrid account</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_boolean&amp;setting_id=ed.enabled)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(60)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.ed.token),empty_setting)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(fenlight.ed.enabled),true)</visible>
-                          <property name="setting_label">Revoke Authorization</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.ed.token)]</property>
-                          <property name="setting_description">Revoke authorization of your Easy Debrid account</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=easydebrid.revoke_authentication)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(60)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(fenlight.ed.token),empty_setting)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(fenlight.ed.enabled),true)</visible>
-                          <property name="setting_label">Priority (Lower Number Equals Higher Priority)</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(fenlight.ed.priority)]</property>
-                          <property name="setting_description">Choose the order in which Easy Debrid results appear in relation to any other active accounts. The lower the number, the higher the sort order</property>
-                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_numeric&amp;setting_id=ed.priority)</onclick>
-                      </item>
         <!-- TorBox -->
                       <item>
                           <visible>Container(2000).HasFocus(60)</visible>
@@ -2963,11 +2918,6 @@
             <control type="group">
                 <top>930</top>
                 <left>15</left>
-                <!--control type="image">
-                    <width>1685</width>
-                    <height>80</height>
-                    <texture colordiffuse="$INFO[Window(10000).Property(fenlight.window_theme)]" border="30">fenlight_common/circle.png</texture>
-                </control-->
                 <control type="label">
                     <top>30</top>
                     <left>30</left>

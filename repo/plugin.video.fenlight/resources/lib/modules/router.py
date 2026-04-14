@@ -182,13 +182,6 @@ def routing(sys):
 		elif mode == 'alldebrid.delete':
 			from indexers.alldebrid import ad_delete
 			return ad_delete(params.get('id'))
-	elif 'easydebrid' in mode:
-		if mode == 'easydebrid.authenticate':
-			from apis.easydebrid_api import EasyDebridAPI
-			return EasyDebridAPI().auth()
-		elif mode == 'easydebrid.revoke_authentication':
-			from apis.easydebrid_api import EasyDebridAPI
-			return EasyDebridAPI().revoke()
 	elif 'torbox' in mode:
 		if mode == 'torbox.tb_cloud':
 			from indexers.torbox import tb_cloud

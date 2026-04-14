@@ -172,8 +172,9 @@ class Extras(BaseDialog):
 			for item in cast:
 				try:
 					listitem = self.make_listitem()
-					listitem.setProperty('name', item['name'])
-					listitem.setProperty('role', item['role'])
+					name, role = item['name'], item['role']
+					listitem.setProperty('name', '%s%s' % (name, ' as %s' % role if role else ''))
+					listitem.setProperty('name_lookup', name)
 					listitem.setProperty('thumbnail', item['thumbnail'] or icon)
 					listitem.setProperty('info_alert', self.actor_alert)
 					yield listitem
@@ -182,7 +183,7 @@ class Extras(BaseDialog):
 			icon = kodi_utils.get_icon('empty_person')
 			item_list = list(builder())
 			self.setProperty('cast.number', 'x%s' % len(item_list))
-			self.item_action_dict[self.cast_id] = 'name'
+			self.item_action_dict[self.cast_id] = 'name_lookup'
 			self.add_items(self.cast_id, item_list)
 		except: pass
 

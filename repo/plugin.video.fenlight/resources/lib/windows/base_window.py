@@ -410,7 +410,6 @@ class ExtrasUtils:
 			template = template.format(**insert_values)
 			finished_templates.append(template)
 		body = ''.join(finished_templates)
-		with kodi_utils.open_file(file) as f: content = f.read()
 		content = self.prefix_template().format(first_container=first_container, last_container=last_container) + body + self.suffix_template()
 		with kodi_utils.open_file(file, 'w') as f: f.write(content)
 		FontUtils().execute_custom_fonts(skin_files=[skin_file])

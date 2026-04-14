@@ -107,14 +107,14 @@ def tmdb_movie_keyword_results(tmdb_id, page_no):
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	string = 'tmdb_movie_keyword_results_%s_%s' % (tmdb_id, page_no)
 	url = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&language=en-US&with_keywords=%s&page=%s' % (api_key, tmdb_id, page_no)
-	return lists_cache_object(get_data, string, url, expiration=48)
+	return lists_cache_object(get_data, string, url, expiration=96)
 
 def tmdb_tv_keyword_results(tmdb_id, page_no):
 	api_key = tmdb_api_key()
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
 	string = 'tmdb_tv_keyword_results_%s_%s' % (tmdb_id, page_no)
 	url = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&language=en-US&with_keywords=%s&page=%s' % (api_key, tmdb_id, page_no)
-	return lists_cache_object(get_data, string, url, expiration=48)
+	return lists_cache_object(get_data, string, url, expiration=96)
 
 def tmdb_movie_keyword_results_direct(query, page_no):
 	if tmdb_api_key() in (None, 'empty_setting', ''): return no_api_key()
@@ -301,11 +301,10 @@ def tmdb_movies_reviews(tmdb_id, page_no):
 def tmdb_tv_discover(query, page_no):
 	api_key = tmdb_api_key()
 	if api_key in (None, 'empty_setting', ''): return no_api_key()
-	expiration = min(lists_cache_duraton(), 24)
 	if '[current_date]' in query: query = query.replace('[current_date]', get_current_date())
 	if '[random]' in query: query = query.replace('[random]', '')
 	string = url = query + '&api_key=%s&page=%s' % (api_key, page_no)
-	return lists_cache_object(get_tmdb, string, url, json=True, expiration=expiration)
+	return lists_cache_object(get_tmdb, string, url, json=True, expiration=min(lists_cache_duraton(), 24))
 
 def tmdb_tv_popular(page_no):
 	api_key = tmdb_api_key()
@@ -588,9 +587,7 @@ def get_reviews_data(media_type, tmdb_id):
 	return cache_function(builder, string, url, json=False, expiration=168)
 
 def get_data(url):
-	data = get_tmdb(url).json()
-	data['results'] = [remove_keys(i, tmdb_dict_removals()) for i in data['results']]
-	return data
+	return get_tmdb(url).json()
 
 def get_tmdb(url):
 	try: response = session.get(url, timeout=20.0)

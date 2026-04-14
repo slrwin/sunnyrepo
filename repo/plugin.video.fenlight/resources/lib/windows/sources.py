@@ -29,8 +29,8 @@ class SourcesResults(BaseDialog):
 		self.poster = self.meta_get('poster') or self.empty_poster
 		self.external_cache_check = kwargs.get('external_cache_check')
 		self.prerelease_values, self.prerelease_key = ('CAM', 'SCR', 'TELE'), 'CAM/SCR/TELE'
-		self.info_icons_dict = {'easynews': get_icon('easynews'), 'alldebrid': get_icon('alldebrid'), 'real-debrid': get_icon('realdebrid'), 'premiumize': get_icon('premiumize'),
-		'easydebrid': get_icon('easydebrid'), 'torbox': get_icon('torbox'), 'ad_cloud': get_icon('alldebrid'), 'rd_cloud': get_icon('realdebrid'),
+		self.info_icons_dict = {'easynews': get_icon('easynews'), 'alldebrid': get_icon('alldebrid'), 'real-debrid': get_icon('realdebrid'),
+		'premiumize': get_icon('premiumize'), 'torbox': get_icon('torbox'), 'ad_cloud': get_icon('alldebrid'), 'rd_cloud': get_icon('realdebrid'),
 		'pm_cloud': get_icon('premiumize'), 'tb_cloud': get_icon('torbox')}
 		self.info_quality_dict = {'4k': get_icon('flag_4k', 'flags'), '1080p': get_icon('flag_1080p', 'flags'), '720p': get_icon('flag_720p', 'flags'),
 		'sd': get_icon('flag_sd', 'flags'), 'cam': get_icon('flag_sd', 'flags'), 'tele': get_icon('flag_sd', 'flags'), 'scr': get_icon('flag_sd', 'flags')}
@@ -262,13 +262,12 @@ class SourcesResults(BaseDialog):
 		if not uncached and scrape_provider != 'folders':
 			down_file_params = {'mode': 'downloader.runner', 'action': 'meta.single', 'name': self.meta.get('rootname', ''), 'source': source,
 								'url': None, 'provider': scrape_provider, 'meta': meta_json}
-		if 'package' in item and not uncached and cache_provider != 'EasyDebrid':
+		if 'package' in item and not uncached:
 			down_pack_params = {'mode': 'downloader.runner', 'action': 'meta.pack', 'name': self.meta.get('rootname', ''), 'source': source, 'url': None,
 								'provider': cache_provider, 'meta': meta_json, 'magnet_url': magnet_url, 'info_hash': info_hash}
 		if provider_source == 'torrent':
 			browse_pack_params = {'mode': 'debrid.browse_packs', 'provider': cache_provider, 'name': name,
 								'magnet_url': magnet_url, 'info_hash': info_hash}
-			if cache_provider != 'EasyDebrid': add_magnet_to_cloud_params = {'mode': 'manual_add_magnet_to_cloud', 'provider': cache_provider, 'magnet_url': magnet_url}
 		choices_append(('Info', 'results_info'))
 		if add_magnet_to_cloud_params: choices_append(('Add to Cloud', add_magnet_to_cloud_params))
 		if browse_pack_params: choices_append(('Browse', browse_pack_params))

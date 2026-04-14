@@ -245,21 +245,21 @@ class FenLightMonitor(Monitor):
 
 	def startServices(self):
 		try: SetAddonConstants().run()
-		except Exception as error: logger('SetAddonConstants', str(e))
+		except Exception as e: logger('SetAddonConstants', str(e))
 		try: DatabaseMaintenance().run()
-		except Exception as error: logger('DatabaseMaintenance', str(e))
+		except Exception as e: logger('DatabaseMaintenance', str(e))
 		try: SyncSettings().run()
-		except Exception as error: logger('SyncSettings', str(e))
+		except Exception as e: logger('SyncSettings', str(e))
 		try: OnUpdateChanges().run()
-		except Exception as error: logger('OnUpdateChanges', str(e))
+		except Exception as e: logger('OnUpdateChanges', str(e))
 		try: AddonXMLCheck().run()
-		except Exception as error: logger('AddonXMLCheck', str(e))
+		except Exception as e: logger('AddonXMLCheck', str(e))
 		Thread(target=CustomWindowsPrepare().run).start()
 		Thread(target=TraktMonitor().run).start()
 		Thread(target=UpdateCheck().run).start()
 		Thread(target=WidgetRefresher().run).start()
 		try: AutoStart().run()
-		except Exception as error: logger('AutoStart', str(e))
+		except Exception as e: logger('AutoStart', str(e))
 
 	def onNotification(self, sender, method, data):
 		if method in ('GUI.OnScreensaverActivated', 'System.OnSleep'):

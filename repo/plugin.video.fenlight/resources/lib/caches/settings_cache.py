@@ -390,10 +390,6 @@ def default_settings():
 {'setting_id': 'autoplay.ad_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'results.sort_adcloud_first', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'ad.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
-#==================== Easy Debrid
-{'setting_id': 'ed.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'ed.enabled', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'ed.priority', 'setting_type': 'action', 'setting_default': '10', 'min_value': '1', 'max_value': '10'},
 #==================== TorBox
 {'setting_id': 'tb.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'tb.enabled', 'setting_type': 'boolean', 'setting_default': 'false'},

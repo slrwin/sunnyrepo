@@ -11,7 +11,7 @@ from modules import kodi_utils, settings
 from modules.metadata import movie_meta_external_id, tvshow_meta_external_id
 from modules.utils import sort_list, sort_for_article, get_datetime, timedelta, replace_html_codes, copy2clip, make_qrcode, make_tinyurl, \
 							TaskPool, jsondate_to_datetime as js2date
-logger = kodi_utils.logger
+# logger = kodi_utils.logger
 
 def no_client_key():
 	kodi_utils.notification('Please set a valid Trakt Client ID Key')
@@ -637,7 +637,7 @@ def trakt_indicators_movies():
 		insert_append(('movie', tmdb_id, '', '', item['last_watched_at'], movie['title']))
 	insert_list = []
 	insert_append = insert_list.append
-	params = {'path': 'sync/watched/movies%s', 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
+	params = {'path': 'sync/watched/movies%s', 'with_auth': True, 'pagination': False}
 	result = get_trakt(params)
 	threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
 	[i.join() for i in threads]
@@ -660,14 +660,14 @@ def trakt_indicators_tv():
 				insert_append(('episode', tmdb_id, season_no, e['number'], last_watched_at, title))
 	insert_list = []
 	insert_append = insert_list.append
-	params = {'path': 'users/me/watched/shows?extended=full%s', 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
+	params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
 	result = get_trakt(params)
 	threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
 	[i.join() for i in threads]
 	trakt_cache.trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
 
 def trakt_playback_progress():
-	params = {'path': 'sync/playback%s', 'params': {'limit': 999}, 'with_auth': True, 'pagination': False}
+	params = {'path': 'sync/playback%s', 'with_auth': True, 'pagination': False}
 	return get_trakt(params)
 
 def trakt_comments(media_type, imdb_id):

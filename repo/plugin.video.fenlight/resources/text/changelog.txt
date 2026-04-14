@@ -1,6 +1,10 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
+[COLOR dodgerblue][B]Version 2.1.97[/B][/COLOR]
+- Removed Easydebrid support (dead service).
+- Other changes/fixes.
+
 [COLOR dodgerblue][B]Version 2.1.96[/B][/COLOR]
 - Settings->Results->Rescrape priority settings will need to be re-set.
 - Other changes/fixes.
