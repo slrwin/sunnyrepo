@@ -268,6 +268,7 @@ class SourcesResults(BaseDialog):
 		if provider_source == 'torrent':
 			browse_pack_params = {'mode': 'debrid.browse_packs', 'provider': cache_provider, 'name': name,
 								'magnet_url': magnet_url, 'info_hash': info_hash}
+			add_magnet_to_cloud_params = {'mode': 'manual_add_magnet_to_cloud', 'provider': cache_provider, 'magnet_url': magnet_url}
 		choices_append(('Info', 'results_info'))
 		if add_magnet_to_cloud_params: choices_append(('Add to Cloud', add_magnet_to_cloud_params))
 		if browse_pack_params: choices_append(('Browse', browse_pack_params))

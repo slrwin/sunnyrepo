@@ -342,7 +342,7 @@ def default_settings():
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== RPDb
-{'setting_id': 'rpdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'rpdb_api', 'setting_type': 'string', 'setting_default': 't0-free-rpdb'},
 #==================== Google API
 {'setting_id': 'google_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== GROQ API

@@ -1456,7 +1456,7 @@
                           <property name="setting_description">Restore default Trakt Client Secret Key</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=trakt.secret)</onclick>
                       </item>
-        <!-- TMDb -->
+        <!-- TMDb API -->
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
                           <property name="setting_label">TMDb API</property>
@@ -1542,6 +1542,15 @@
                           <property name="setting_value">$INFO[Window(10000).Property(fenlight.rpdb_api)]</property>
                           <property name="setting_description">Enter here your RPDb API key. This will allow you to utilize posters that include built in ratings information when available</property>
                           <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.set_string&amp;setting_id=rpdb_api)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(fenlight.rpdb_api),t0-free-rpdb)</visible>
+                          <property name="setting_label">    - Restore Default RPDb Key</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">...</property>
+                          <property name="setting_description">Restore default RPDb API key</property>
+                          <onclick>RunPlugin(plugin://plugin.video.fenlight/?mode=settings_manager.restore_setting_default&amp;setting_id=rpdb_api)</onclick>
                       </item>
         <!-- GOOGLE -->
                       <item>
