@@ -13,7 +13,7 @@ def get_location(insert=''):
 
 def get_versions():
 	try:
-		result = requests.get(get_location('fen_light_version'))
+		result = requests.get(get_location('fenlightam_version'))
 		if result.status_code != 200: return None, None
 		online_version = result.text.replace('\n', '')
 		current_version = kodi_utils.addon_version()
@@ -27,7 +27,7 @@ def get_changes(online_version=None):
 			if not version_check(current_version, online_version): return kodi_utils.ok_dialog(heading='Fen Light Updater',
 				text='You are running the current version of Fen Light.[CR][CR]There is no new version changelog to view.')
 		kodi_utils.show_busy_dialog()
-		result = requests.get(get_location('fen_light_changes'))
+		result = requests.get(get_location('fenlightam_changes'))
 		kodi_utils.hide_busy_dialog()
 		if result.status_code != 200: return kodi_utils.notification('Error', icon=kodi_utils.get_icon('downloads'))
 		changes = result.text

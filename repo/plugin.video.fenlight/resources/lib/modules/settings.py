@@ -178,7 +178,8 @@ def lists_sort_order(setting):
 	return int(get_setting('fenlight.sort.%s' % setting, '0'))
 
 def tmdblists_sort_order(setting):
-	return str(get_setting('fenlight.tmdbsort.%s' % setting, '0'))
+	if setting == 'recommendations': return None
+	return str(get_setting('fenlight.tmdbsort.%s' % setting, '4'))
 
 def personal_lists_sort_unseen_to_top():
 	return get_setting('fenlight.personal_list.sort_unseen_to_top') == 'true'

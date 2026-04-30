@@ -97,7 +97,8 @@ class Sources():
 		self.active_external = 'external' in self.active_internal_scrapers
 		if self.active_external:
 			self.debrid_enabled = debrid.debrid_enabled()
-			if not self.debrid_enabled and all(scraper == 'external' for scraper in self.active_internal_scrapers): return self.disable_external('No Debrid Services Enabled')
+			if not self.debrid_enabled:
+				return self.disable_external('No Debrid Services Enabled' if all(scraper == 'external' for scraper in self.active_internal_scrapers) else 'EN used only')
 			self.ext_folder, self.ext_name = settings.external_scraper_info()
 			if not self.ext_folder or not self.ext_name: return self.disable_external('Error Importing External Module')
 

@@ -26,7 +26,7 @@ def get_tmdb_lists(params):
 		for item in data:
 			try:
 				list_name, list_id, item_count = item['name'], item['id'], item['number_of_items']
-				sort_order = sort_orders.get(list_id, '0')
+				sort_order = sort_orders.get(list_id, 'None')
 				updated_at = item['updated_at']
 				custom_poster = get_custom_image(list_name, 'poster', all_posters)
 				if custom_poster: poster = custom_poster
@@ -262,7 +262,7 @@ def rename_tmdb_list(current_name, list_id):
 	return list_name
 
 def sort_order_tmdb_list():
-	choices = [('Title (asc)', '0'), ('Release Date (asc)', '1'), ('Release Date (desc)', '2'), ('Shuffle', '3')]
+	choices = [('Title (asc)', '0'), ('Release Date (asc)', '1'), ('Release Date (desc)', '2'), ('Shuffle', '3'), ('Default From TMDb (None)', 'None')]
 	list_items = [{'line1': item[0]} for item in choices]
 	kwargs = {'items': json.dumps(list_items), 'heading': 'List Sort Order', 'narrow_window': 'true'}
 	sort_order = kodi_utils.select_dialog([i[1] for i in choices], **kwargs)
@@ -348,22 +348,20 @@ def get_all_tmdb_lists(sort_order=None):
 	return contents
 
 def get_tmdb_list(params):
-	list_id, media_type, sort_order = params['list_id'], params.get('media_type'), params.get('sort_order', '0')
+	list_id, media_type, sort_order = params['list_id'], params.get('media_type'), params.get('sort_order', None)
 	if list_id in ('watchlist', 'favorites', 'recommendations'):
 		contents = [dict(i, **{'media_type': media_type}) for i in tmdb_list_api.get_watchfavrecs_list_details(list_id, media_type)]
-		if list_id == 'recommendations': sort_order = None
-		else: sort_order = tmdblists_sort_order(list_id)
-	else: contents = tmdb_list_api.get_list_details(list_id)
+		sort_order = tmdblists_sort_order(list_id)
+	else:
+		contents = tmdb_list_api.get_list_details(list_id)
 	contents = [dict(i, **{'title': i.get('title') or i.get('name'), 'release_date': i.get('release_date') or i.get('first_air_date')}) for i in contents]
 	if sort_order:
 		try:
-			if sort_order in ('3', 'shuffle'):
-				shuffle(contents)
-			elif sort_order in ('', '0', 'None'):
-				contents = sort_for_article(contents, 'title', ignore_articles())
-			elif sort_order in ('1', '2'):
-				reverse = sort_order != '1'
-				contents.sort(key=lambda k: (k['release_date'] is None, k['release_date']), reverse=reverse)
+			if sort_order in ('4', 'None', '', 'original_order'): contents.sort(key=lambda k: (k['original_order'] is None, k['original_order']))
+			elif sort_order in ('3', 'shuffle'): shuffle(contents)
+			elif sort_order in ('1', '2'): contents.sort(key=lambda k: (k['release_date'] is None, k['release_date']), reverse=sort_order != '1')
+			elif sort_order in ('', '0', 'None'): contents = sort_for_article(contents, 'title', ignore_articles())
+			else: pass
 		except: pass
 	return contents
 

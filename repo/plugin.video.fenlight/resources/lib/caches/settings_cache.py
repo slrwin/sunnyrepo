@@ -277,10 +277,10 @@ def default_settings():
 {'setting_id': 'sort.collection', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Date Added', '2': 'Release Date'}},
 {'setting_id': 'sort.watchlist', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Date Added', '2': 'Release Date'}},
 #==================== Contents Sort Order For TMDb Lists
-{'setting_id': 'tmdbsort.watchlist', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Release Date (asc)', '2': 'Release Date (desc)',
-'3': 'Shuffle'}},
-{'setting_id': 'tmdbsort.favorites', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Title', '1': 'Release Date (asc)', '2': 'Release Date (desc)',
-'3': 'Shuffle'}},
+{'setting_id': 'tmdbsort.watchlist', 'setting_type': 'action', 'setting_default': '4', 'settings_options': {'0': 'Title', '1': 'Release Date (asc)', '2': 'Release Date (desc)',
+'3': 'Shuffle', '4': 'Default from TMDb (None)'}},
+{'setting_id': 'tmdbsort.favorites', 'setting_type': 'action', 'setting_default': '4', 'settings_options': {'0': 'Title', '1': 'Release Date (asc)', '2': 'Release Date (desc)',
+'3': 'Shuffle', '4': 'Default from TMDb (None)'}},
 #==================== Personal Lists
 {'setting_id': 'personal_list.sort_unseen_to_top', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'personal_list.highlight_unseen', 'setting_type': 'boolean', 'setting_default': 'false'},
