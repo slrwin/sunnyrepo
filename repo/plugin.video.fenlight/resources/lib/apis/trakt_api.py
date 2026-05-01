@@ -631,40 +631,48 @@ def get_trakt_tvshow_id(item):
 
 def trakt_indicators_movies():
 	def _process(item):
-		movie = item['movie']
-		tmdb_id = get_trakt_movie_id(movie['ids'])
-		if not tmdb_id: return
-		insert_append(('movie', tmdb_id, '', '', item['last_watched_at'], movie['title']))
-	insert_list = []
-	insert_append = insert_list.append
-	params = {'path': 'sync/watched/movies%s', 'with_auth': True, 'pagination': False}
-	result = get_trakt(params)
-	threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
-	[i.join() for i in threads]
-	trakt_cache.trakt_watched_cache.set_bulk_movie_watched(insert_list)
+		try:
+			movie = item['movie']
+			tmdb_id = get_trakt_movie_id(movie['ids'])
+			if not tmdb_id: return
+			insert_append(('movie', tmdb_id, '', '', item['last_watched_at'], movie['title']))
+		except: pass
+	try:
+		insert_list = []
+		insert_append = insert_list.append
+		params = {'path': 'sync/watched/movies%s', 'with_auth': True, 'pagination': False}
+		result = get_trakt(params)
+		threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
+		[i.join() for i in threads]
+		trakt_cache.trakt_watched_cache.set_bulk_movie_watched(insert_list)
+	except: pass
 
 def trakt_indicators_tv():
 	def _process(item):
-		reset_at = item.get('reset_at', None)
-		if reset_at: reset_at = js2date(reset_at, '%Y-%m-%dT%H:%M:%S.%fZ')
-		show = item['show']
-		seasons = item['seasons']
-		title = show['title']
-		tmdb_id = get_trakt_tvshow_id(show['ids'])
-		if not tmdb_id: return
-		for s in seasons:
-			season_no, episodes = s['number'], s['episodes']
-			for e in episodes:
-				last_watched_at = e['last_watched_at']
-				if reset_at and reset_at > js2date(last_watched_at, '%Y-%m-%dT%H:%M:%S.%fZ'): continue
-				insert_append(('episode', tmdb_id, season_no, e['number'], last_watched_at, title))
-	insert_list = []
-	insert_append = insert_list.append
-	params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
-	result = get_trakt(params)
-	threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
-	[i.join() for i in threads]
-	trakt_cache.trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
+		try:
+			reset_at = item.get('reset_at', None)
+			if reset_at: reset_at = js2date(reset_at, '%Y-%m-%dT%H:%M:%S.%fZ')
+			show = item['show']
+			seasons = item['seasons']
+			title = show['title']
+			tmdb_id = get_trakt_tvshow_id(show['ids'])
+			if not tmdb_id: return
+			for s in seasons:
+				season_no, episodes = s['number'], s['episodes']
+				for e in episodes:
+					last_watched_at = e['last_watched_at']
+					if reset_at and reset_at > js2date(last_watched_at, '%Y-%m-%dT%H:%M:%S.%fZ'): continue
+					insert_append(('episode', tmdb_id, season_no, e['number'], last_watched_at, title))
+		except: pass
+	try:
+		insert_list = []
+		insert_append = insert_list.append
+		params = {'path': 'users/me/watched/shows?extended=full%s', 'with_auth': True, 'pagination': False}
+		result = get_trakt(params)
+		threads = TaskPool().tasks(_process, result, min(len(result), settings.max_threads()))
+		[i.join() for i in threads]
+		trakt_cache.trakt_watched_cache.set_bulk_tvshow_watched(insert_list)
+	except: pass
 
 def trakt_playback_progress():
 	params = {'path': 'sync/playback%s', 'with_auth': True, 'pagination': False}

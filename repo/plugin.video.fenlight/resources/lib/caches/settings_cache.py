@@ -332,10 +332,10 @@ def default_settings():
 #=====================================================================================#
 #==================== Trakt
 {'setting_id': 'trakt.user', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'},
-{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1'},
+{'setting_id': 'trakt.client', 'setting_type': 'string', 'setting_default': 'c787278de2e4bba0a92125433e89e0d71d89a09a2f9c44dd69c2f13c8e8eef06'},
+{'setting_id': 'trakt.secret', 'setting_type': 'string', 'setting_default': '72012ed0e523e642b62e3137207dc6208b6b5b0405f7d17d57d3b31567d6a59c'},
 #==================== TMDb API
-{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': 'b370b60447737762ca38457bd77579b3'},
+{'setting_id': 'tmdb_api', 'setting_type': 'string', 'setting_default': 'b14c2656f72e5bab233def36928a202b'},
 #==================== TMDb Lists
 {'setting_id': 'tmdb.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'tmdb.username', 'setting_type': 'string', 'setting_default': 'empty_setting'},
@@ -583,5 +583,5 @@ def default_settings():
 {'setting_id': 'extras.movie.button15', 'setting_type': 'string', 'setting_default': 'show_genres'},
 {'setting_id': 'extras.movie.button16', 'setting_type': 'string', 'setting_default': 'show_director'},
 {'setting_id': 'extras.movie.button17', 'setting_type': 'string', 'setting_default': 'show_options'},
-{'setting_id': 'updatechecks.update_users_tmdblist_authentication', 'setting_type': 'string', 'setting_default': 'false'}
+{'setting_id': 'updatechecks.refresh_addon_keys', 'setting_type': 'string', 'setting_default': 'false'}
 	]
