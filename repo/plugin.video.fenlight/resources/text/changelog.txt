@@ -1,9 +1,9 @@
 [COLOR darkgoldenrod]GOD BLESS HIM AND KEEP HIM SAFE.[/COLOR]
 
 
-[COLOR dodgerblue][B]Version 2.2.01/02[/B][/COLOR]
-- New keys for TMDb and Trakt are now being used within the addon. Unfortunately, this does mean that your Trakt account will need to be re-authenticated. Apologies, but there is no alternative to this.
-- You may need to re-authenticate yoour TMDb account also, if you are using it to access TMDb Lists.
+[COLOR dodgerblue][B]Version 2.2.01//03[/B][/COLOR]
+- New keys for TMDb and Trakt are now being used within the addon. Unfortunately, this does mean that your Trakt and TMDb account will need to be re-authenticated if you are currently using them. Apologies, but there is no alternative to this.
+- You may need to clear your metacache as well.
 
 [COLOR dodgerblue][B]Version 2.1.99[/B][/COLOR]
 - Stopped defaulting to sort by title when no sort order specified for TMDb Lists. Items will be presented as given by TMDb when no sort order has been set within Fen Light.
